@@ -67,6 +67,7 @@ public abstract class Piscifactoria<T extends Pez> {
                            (totalVivos > 0 ? (totalAdultos * 100 / totalVivos) : 0) + "%)");
         System.out.println("Hembras / Machos: " + totalHembras + " / " + (totalVivos - totalHembras));
         System.out.println("Fértiles: " + totalFertiles + " / " + totalVivos);
+        
         showFood();
     }
 
