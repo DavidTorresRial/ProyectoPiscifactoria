@@ -8,10 +8,10 @@ public class Pez {
     private final boolean sexo; // True para macho, False para hembra
     private boolean fertil = false;
     private boolean vivo = true;
+    private boolean alimentado = false;
 
     private PecesDatos datos;
-
-    private boolean alimentado = false;
+    
     protected int ciclo;
 
     // Constructor del pez

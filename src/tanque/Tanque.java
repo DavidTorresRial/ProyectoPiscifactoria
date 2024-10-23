@@ -12,15 +12,14 @@ public class Tanque<T extends Pez> { // TODO revisar si el tanque tienen que ven
     private static int contadorTanques = 0;
 
     // Constructor
-    public Tanque(int capacidadMaxima, String tipoPez) {
+    public Tanque(int capacidadMaxima) {
         contadorTanques++; // Incrementa el contador estático
-        this.numeroTanque = contadorTanques;
+        this.numeroTanque = contadorTanques; // TODO hacer el contador de tanques mejor en piscifactoría 
         
         
 
         this.capacidadMaxima = capacidadMaxima;
         this.peces = new ArrayList<>();
-
     }
 
     // Metodo para mostrar el estado del tanque
