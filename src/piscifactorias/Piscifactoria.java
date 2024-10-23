@@ -56,7 +56,7 @@ public abstract class Piscifactoria<T extends Pez> {
         System.out.println("Ocupación: " + totalPeces + " / " + capacidadTotal + " (" + 
                            (totalPeces * 100 / capacidadTotal) + "%)");
         System.out.println("Peces vivos: " + totalVivos + " / " + totalPeces + " (" + 
-                           (totalPeces > 0 ? (totalVivos * 100 / totalPeces) : 0) + "%)");
+                           (totalPeces > 0 ? (totalVivos * 100 / totalPeces) : 0) + "%)"); // TODO comprobar si los peces es cero porque salta excepcion al dividir
         System.out.println("Peces alimentados: " + totalAlimentados + " / " + totalVivos + " (" + 
                            (totalVivos > 0 ? (totalAlimentados * 100 / totalVivos) : 0) + "%)");
         System.out.println("Peces adultos: " + totalAdultos + " / " + totalVivos + " (" + 
