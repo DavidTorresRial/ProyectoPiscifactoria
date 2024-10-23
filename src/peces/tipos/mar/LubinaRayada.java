@@ -1,12 +1,11 @@
 package peces.tipos.mar;
 
 import peces.Pez;
-import propiedades.PecesDatos;
+import propiedades.AlmacenPropiedades;
 
 public class LubinaRayada extends Pez {
 
-    public LubinaRayada(boolean sexo, PecesDatos datos) {
-        super(sexo, datos);
-        // TODO Auto-generated constructor stub
+    public LubinaRayada(boolean sexo) {
+        super(sexo, AlmacenPropiedades.LUBINA_RAYADA);
     }
 }

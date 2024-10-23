@@ -1,12 +1,11 @@
 package peces.tipos.mar;
 
 import peces.Pez;
-import propiedades.PecesDatos;
+import propiedades.AlmacenPropiedades;
 
 public class Robalo extends Pez {
 
-    public Robalo(boolean sexo, PecesDatos datos) {
-        super(sexo, datos);
-        // TODO Auto-generated constructor stub
+    public Robalo(boolean sexo) {
+        super(sexo, AlmacenPropiedades.ROBALO);
     }
 }

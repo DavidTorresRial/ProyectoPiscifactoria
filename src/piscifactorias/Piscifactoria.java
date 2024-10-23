@@ -15,6 +15,10 @@ public abstract class Piscifactoria<T extends Pez> {
     protected int comidaVegetalActual; // Cantidad actual de comida vegetal
     protected int comidaAnimalActual; // Cantidad actual de comida animal
 
+    private int numeroTanquesDeRio; // Número de tanques de rio
+    private int numeroTanquesDeMar; // Número de tanques de mar
+
+    // Constructor
     public Piscifactoria(String nombre, SistemaMonedas monedas) {
         this.nombre = nombre;
         this.tanques = new ArrayList<>();
@@ -140,5 +144,36 @@ public abstract class Piscifactoria<T extends Pez> {
         capacidadMaximaAlmacenComida += incremento;
         System.out.println("Almacén de comida de la piscifactoría " + nombre + " mejorado. Su capacidad ha aumentado en " + 
                            incremento + " hasta un total de " + capacidadMaximaAlmacenComida);
+    }
+
+    /**
+     * @return String return the nombre
+     */
+    public String getNombre() {
+        return nombre;
+    }
+
+    /**
+     * @param nombre the nombre to set
+     */
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+
+    public void setNumeroTanquesDeRio(int numeroTanquesDeRio) {
+        this.numeroTanquesDeRio = numeroTanquesDeRio;
+    }
+
+    public void setNumeroTanquesDeMar(int numeroTanquesDeMar) {
+        this.numeroTanquesDeMar = numeroTanquesDeMar;
+    }
+
+    public int getNumeroTanquesDeRio() {
+        return numeroTanquesDeRio;
+    }
+
+    public int getNumeroTanquesDeMar() {
+        return numeroTanquesDeMar;
     }
 }
