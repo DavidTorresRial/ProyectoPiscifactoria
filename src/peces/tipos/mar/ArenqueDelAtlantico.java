@@ -1,12 +1,11 @@
 package peces.tipos.mar;
 
 import peces.Pez;
-import propiedades.PecesDatos;
+import propiedades.AlmacenPropiedades;
 
 public class ArenqueDelAtlantico extends Pez {
 
-    public ArenqueDelAtlantico(boolean sexo, PecesDatos datos) {
-        super(sexo, datos);
-        // TODO Auto-generated constructor stub
+    public ArenqueDelAtlantico(boolean sexo) {
+        super(sexo, AlmacenPropiedades.ARENQUE_ATLANTICO);
     }
 }

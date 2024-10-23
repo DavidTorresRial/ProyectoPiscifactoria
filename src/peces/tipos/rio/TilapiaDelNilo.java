@@ -1,12 +1,11 @@
 package peces.tipos.rio;
 
 import peces.Pez;
-import propiedades.PecesDatos;
+import propiedades.AlmacenPropiedades;
 
 public class TilapiaDelNilo extends Pez {
 
-    public TilapiaDelNilo(boolean sexo, PecesDatos datos) { // TODO intentar cambiar para que los peces se instancien ya con sus datos propios
-        super(sexo, datos);
-        // TODO Auto-generated constructor stub
+    public TilapiaDelNilo(boolean sexo) {
+        super(sexo, AlmacenPropiedades.TILAPIA_NILO);
     }
 }

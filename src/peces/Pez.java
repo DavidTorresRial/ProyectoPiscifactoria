@@ -4,22 +4,24 @@ import java.util.Random;
 import propiedades.PecesDatos;
 
 public class Pez {
-    private int edad = 0;
+    private int edad = 0; // La edad inicial del pez
     private final boolean sexo; // True para macho, False para hembra
-    private boolean fertil = false;
-    private boolean vivo = true;
-    private boolean alimentado = false;
+    private boolean fertil = false; // True si el pez es fútil, False si no
+    private boolean vivo = true; // True si el pez está vivo, False si no
+    private boolean alimentado = false; // True si el pez está alimentado, False si no
 
     private PecesDatos datos;
-    
-    protected int ciclo;
+    protected int ciclo; 
 
     // Constructor del pez
     public Pez(boolean sexo, PecesDatos datos) {
-        this.edad = 0; // La edad inicial del pez
-        this.sexo = sexo;
-        this.datos = datos;
+        this.edad = 0;  // Inicialización explícita    
+        this.sexo = sexo;   // Inicialización explícita
+        this.fertil = false;    // Inicialización explícita
+        this.vivo = true;   // Inicialización explícita
+        this.alimentado = false;    // Inicialización explícita
 
+        this.datos = datos;
         this.ciclo = datos.getCiclo();
     }
 
@@ -90,24 +92,21 @@ public class Pez {
         return edad;
     }
 
+    public boolean isSexo() {
+        return sexo;
+    }
+
+     public boolean isFertil() {
+        return fertil;
+    }
+
+
     public boolean isVivo() {
         return vivo;
     }
 
     public boolean isAlimentado() {
         return alimentado;
-    }
-
-    public void alimentar() {
-        this.alimentado = true;
-    }
-
-    public boolean isFertil() {
-        return fertil;
-    }
-
-    public boolean isSexo() {
-        return sexo;
     }
 
     public int getHuevos() {
@@ -121,5 +120,9 @@ public class Pez {
     // Setters
     public void setFertil(boolean fertil) {
         this.fertil = fertil;
+    }
+
+    public void alimentar() {
+        this.alimentado = true;
     }
 }

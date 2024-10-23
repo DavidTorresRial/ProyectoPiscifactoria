@@ -4,20 +4,14 @@ import java.util.ArrayList;
 
 import peces.Pez;
 
-public class Tanque<T extends Pez> { // TODO revisar si el tanque tienen que venir ya definido con un tipo de pez que se puede meter 
+public class Tanque<T extends Pez> {
     public ArrayList<T> peces; // Lista para almacenar los peces
 
     private int capacidadMaxima; // Capacidad máxima del tanque
     private int numeroTanque; // Número del tanque
-    private static int contadorTanques = 0;
 
     // Constructor
     public Tanque(int capacidadMaxima) {
-        contadorTanques++; // Incrementa el contador estático
-        this.numeroTanque = contadorTanques; // TODO hacer el contador de tanques mejor en piscifactoría 
-        
-        
-
         this.capacidadMaxima = capacidadMaxima;
         this.peces = new ArrayList<>();
     }
@@ -44,7 +38,7 @@ public class Tanque<T extends Pez> { // TODO revisar si el tanque tienen que ven
 
     // Muestra la capacidad del tanque
     public void showCapacity() {
-        System.out.println("Tanque " + numeroTanque + " de la piscifactoría al " + (peces.size() * 100 / capacidadMaxima) + "% de capacidad. [" + peces.size() + "/" + capacidadMaxima + "]");
+        System.out.println("Tanque " + numeroTanque + " de la piscifactoría al " + (peces.size() * 100 / capacidadMaxima) + "% de capacidad. [" + peces.size() + "/" + capacidadMaxima + "]"); // TODO añadir nombre de la piscifacoria
     }
 
     // Pasa un día en el tanque 
