@@ -130,7 +130,7 @@ public abstract class Piscifactoria {
     public void nextDay() {
         System.out.println("Avanzando al siguiente día en la piscifactoría " + nombre + "...");
         for (Tanque<? extends Pez> tanque : tanques) {
-            tanque.nextDay(comidaAnimalActual, comidaVegetalActual);
+            tanque.nextDay(comidaAnimalActual, comidaVegetalActual); //TODO hacer uso de getters y setters de la comida
             alimentarPeces(tanque);
         }
     }
@@ -202,5 +202,21 @@ public abstract class Piscifactoria {
 
     public int getNumeroTanquesDeMar() {
         return numeroTanquesDeMar;
+    }
+    
+    public int getComidaVegetalActual() {
+        return comidaVegetalActual;
+    }
+
+    public void setComidaVegetalActual(int comidaVegetalActual) {
+        this.comidaVegetalActual = comidaVegetalActual;
+    }
+
+    public void setComidaAnimalActual(int comidaAnimalActual) {
+        this.comidaAnimalActual = comidaAnimalActual;
+    }
+
+    public int getComidaAnimalActual() {
+        return comidaAnimalActual;
     }
 }
