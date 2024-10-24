@@ -1,7 +1,6 @@
 package tanque;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 import peces.Pez;
 
@@ -55,8 +54,8 @@ public class Tanque<T extends Pez> {
         //venderPecesAdultos
     }
 
+    // Método de reproducción
     public void reproduccion() {
-        Random rand = new Random();
         int huevosPorHembra = 0;
 
         if (!peces.isEmpty()) {
@@ -89,16 +88,22 @@ public class Tanque<T extends Pez> {
         // Reproducción
         for (T macho : machosFertiles) {
             if (hembrasFertiles.isEmpty()) {
-                break; // Si no quedan hembras fértiles, salir del bucle de machos
+                break; 
             }
 
-            for (T hembra : new ArrayList<>(hembrasFertiles)) { // Usar una copia para evitar ConcurrentModificationException
+            for (T hembra : new ArrayList<>(hembrasFertiles)) { 
                 for (int i = 0; i < huevosPorHembra; i++) {
-                    boolean nuevoSexo = rand.nextBoolean();
-                    T nuevoPez = (T) hembra.clonar(nuevoSexo); // Clonar el pez
+                    boolean nuevoSexo;
+                    if (getHembras() <= getMachos()) {
+                        nuevoSexo = false; 
+                    } else {
+                        nuevoSexo = true; 
+                    }
+
+                    T nuevoPez = (T) hembra.clonar(nuevoSexo); 
 
                     if (peces.size() < capacidadMaxima) {
-                        peces.add(nuevoPez); // Agregar el nuevo pez al tanque
+                        peces.add(nuevoPez); 
                         if (nuevoSexo) {
                             nuevosMachos++;
                         } else {
@@ -109,10 +114,10 @@ public class Tanque<T extends Pez> {
                         break;
                     }
                 }
-                hembra.setFertil(false); // La hembra deja de ser fértil después de reproducirse
-                hembrasFertiles.remove(hembra); // Remover la hembra de la lista de fértiles
+                hembra.setFertil(false); 
+                hembrasFertiles.remove(hembra); 
             }
-            macho.setFertil(false); // El macho deja de ser fértil después de reproducirse
+            macho.setFertil(false); 
         }
 
         System.out.println("Se han creado " + nuevosMachos + " nuevos machos y " + nuevasHembras + " nuevas hembras.");
