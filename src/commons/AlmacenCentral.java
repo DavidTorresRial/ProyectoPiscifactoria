@@ -55,6 +55,15 @@ public class AlmacenCentral {
         this.nivelMejora = nivelMejora;
     }
 
+    // NUEVOS MÉTODOS GET PARA LA CAPACIDAD MÁXIMA
+    public int getCapacidadMaxVeg() {
+        return capacidadMaxVeg;
+    }
+
+    public int getCapacidadMaxAni() {
+        return capacidadMaxAni;
+    }
+
     // METODOS DE LA CLASE
 
     public void agregarComidaVeg(int cantidad) { //TODO IMPLEMENTAR SISTEMA MONEDAS
