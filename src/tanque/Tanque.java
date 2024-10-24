@@ -1,6 +1,7 @@
 package tanque;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import peces.Pez;
 
@@ -48,23 +49,75 @@ public class Tanque<T extends Pez> {
             pez.grow(); // Hace crecer cada pez
         }
 
-        // Realiza el proceso de reproducción
-        //realizarReproduccion
+        reproduccion();
 
         // Vender los peces que han alcanzado la edad óptima
         //venderPecesAdultos
     }
 
-    // Metodo para agregar un pez al tanque
-    public boolean agregarPez(T pez) { 
-        if (peces.size() < capacidadMaxima) { // TODO la capadidad maxima de peces está limitada por Piscifactoria y no por Tanque¿?¿?
-            peces.add(pez);
-            return true;
-        } else {
-            System.out.println("No se puede agregar el pez. Tanque lleno.");
-            return false;
+    public void reproduccion() {
+        Random rand = new Random();
+        int huevosPorHembra = 0;
+
+        if (!peces.isEmpty()) {
+            huevosPorHembra = peces.get(0).getHuevos();
         }
+
+        int nuevosMachos = 0;
+        int nuevasHembras = 0;
+
+        // Listas para almacenar los peces fértiles
+        ArrayList<T> machosFertiles = new ArrayList<>();
+        ArrayList<T> hembrasFertiles = new ArrayList<>();
+
+        // Clasificar los peces fértiles
+        for (T pez : peces) {
+            if (pez.isFertil()) {
+                if (pez.isSexo()) {
+                    machosFertiles.add(pez);
+                } else {
+                    hembrasFertiles.add(pez);
+                }
+            }
+        }
+
+        if (machosFertiles.isEmpty() || hembrasFertiles.isEmpty()) {
+            System.out.println("No hay suficientes peces fértiles de ambos sexos para reproducirse.");
+            return;
+        }
+
+        // Reproducción
+        for (T macho : machosFertiles) {
+            if (hembrasFertiles.isEmpty()) {
+                break; // Si no quedan hembras fértiles, salir del bucle de machos
+            }
+
+            for (T hembra : new ArrayList<>(hembrasFertiles)) { // Usar una copia para evitar ConcurrentModificationException
+                for (int i = 0; i < huevosPorHembra; i++) {
+                    boolean nuevoSexo = rand.nextBoolean();
+                    T nuevoPez = (T) hembra.clonar(nuevoSexo); // Clonar el pez
+
+                    if (peces.size() < capacidadMaxima) {
+                        peces.add(nuevoPez); // Agregar el nuevo pez al tanque
+                        if (nuevoSexo) {
+                            nuevosMachos++;
+                        } else {
+                            nuevasHembras++;
+                        }
+                    } else {
+                        System.out.println("No se puede agregar más peces. Tanque lleno.");
+                        break;
+                    }
+                }
+                hembra.setFertil(false); // La hembra deja de ser fértil después de reproducirse
+                hembrasFertiles.remove(hembra); // Remover la hembra de la lista de fértiles
+            }
+            macho.setFertil(false); // El macho deja de ser fértil después de reproducirse
+        }
+
+        System.out.println("Se han creado " + nuevosMachos + " nuevos machos y " + nuevasHembras + " nuevas hembras.");
     }
+
 
     //Getters y Setters
     
