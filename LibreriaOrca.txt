@@ -1,0 +1,390 @@
+// Source code is decompiled from a .class file using FernFlower decompiler.
+package propiedades;
+
+import java.lang.reflect.Field;
+
+public class AlmacenPropiedades {
+   public static final PecesDatos CARPA;
+   public static final PecesDatos KOI;
+   public static final PecesDatos CARPA_PLATEADA;
+   public static final PecesDatos SALMON_CHINOOK;
+   public static final PecesDatos TILAPIA_NILO;
+   public static final PecesDatos PEJERREY;
+   public static final PecesDatos SILURO_EUROPEO;
+   public static final PecesDatos PERCA_EUROPEA;
+   public static final PecesDatos LUCIO_NORTE;
+   public static final PecesDatos CARPIN_TRES_ESPINAS;
+   public static final PecesDatos RODABALLO;
+   public static final PecesDatos BESUGO;
+   public static final PecesDatos ROBALO;
+   public static final PecesDatos LENGUADO_EUROPEO;
+   public static final PecesDatos CORVINA;
+   public static final PecesDatos SARGO;
+   public static final PecesDatos LUBINA_RAYADA;
+   public static final PecesDatos ARENQUE_ATLANTICO;
+   public static final PecesDatos CABALLA;
+   public static final PecesDatos ABADEJO;
+   public static final PecesDatos COBIA;
+   public static final PecesDatos TRUCHA_ARCOIRIS;
+   public static final PecesDatos SALMON_ATLANTICO;
+   public static final PecesDatos DORADA;
+   public static final PecesDatos LUBINA_EUROPEA;
+   public static final PecesDatos BAGRE_CANAL;
+
+   static {
+      CARPA = new PecesDatos("Carpa", "Cyprinus carpio", PecesTipo.NORMAL, 50, 45, 4, 5, 5, 20, new PecesProps[]{PecesProps.OMNIVORO, PecesProps.VORAZ}, CriaTipo.RIO);
+      KOI = new PecesDatos("Koi", "Cyprinus carpio var. Koi", PecesTipo.INVERSION, 300, 80, 2, 5, 10, 45, new PecesProps[]{PecesProps.OMNIVORO, PecesProps.LONGEVO}, CriaTipo.RIO);
+      CARPA_PLATEADA = new PecesDatos("Carpa plateada", "Hypophthalmichthys molitrix", PecesTipo.BASE, 35, 15, 4, 5, 5, 10, new PecesProps[]{PecesProps.FILTRADOR}, CriaTipo.RIO);
+      SALMON_CHINOOK = new PecesDatos("Salm\u00f3n chinook", "Oncorhynchus tshawytscha", PecesTipo.NORMAL, 80, 20, 2, 5, 5, 10, new PecesProps[]{PecesProps.CARNIVORO}, CriaTipo.RIO);
+      TILAPIA_NILO = new PecesDatos("Tilapia del Nilo", "Oreochromis niloticus", PecesTipo.BASE, 25, 15, 1, 2, 1, 10, new PecesProps[]{PecesProps.FILTRADOR}, CriaTipo.RIO);
+      PEJERREY = new PecesDatos("Pejerrey ", "Odontesthes bonariensis", PecesTipo.BASE, 25, 10, 1, 1, 1, 5, new PecesProps[]{PecesProps.CARNIVORO}, CriaTipo.RIO);
+      SILURO_EUROPEO = new PecesDatos("Siluro europeo", "Silurus glanis", PecesTipo.INVERSION, 150, 50, 3, 5, 5, 20, new PecesProps[]{PecesProps.CARNIVORO, PecesProps.LONGEVO, PecesProps.VORAZ}, CriaTipo.RIO);
+      PERCA_EUROPEA = new PecesDatos("Perca europea", "Perca fluviatilis", PecesTipo.INVERSION, 100, 30, 2, 5, 3, 20, new PecesProps[]{PecesProps.CARNIVORO, PecesProps.ACTIVO}, CriaTipo.RIO);
+      LUCIO_NORTE = new PecesDatos("Lucio del norte", "Esox lucius", PecesTipo.INVERSION, 150, 35, 2, 5, 5, 25, new PecesProps[]{PecesProps.CARNIVORO, PecesProps.ACTIVO}, CriaTipo.RIO);
+      CARPIN_TRES_ESPINAS = new PecesDatos("Carp\u00edn de tres espinas", "Gasterosteus aculeatus", PecesTipo.BASE, 15, 6, 2, 1, 1, 3, new PecesProps[]{PecesProps.OMNIVORO, PecesProps.COMEDIDO}, CriaTipo.RIO);
+      RODABALLO = new PecesDatos("Rodaballo", "Scophthalmus maximus", PecesTipo.INVERSION, 250, 80, 2, 2, 5, 30, new PecesProps[]{PecesProps.CARNIVORO, PecesProps.VORAZ}, CriaTipo.MAR);
+      BESUGO = new PecesDatos("Besugo", "Pagellus bogaraveo", PecesTipo.NORMAL, 200, 55, 3, 5, 10, 40, new PecesProps[]{PecesProps.CARNIVORO}, CriaTipo.MAR);
+      ROBALO = new PecesDatos("R\u00f3balo", "Centropomus undecimalis", PecesTipo.NORMAL, 180, 15, 5, 5, 5, 10, new PecesProps[]{PecesProps.CARNIVORO}, CriaTipo.MAR);
+      LENGUADO_EUROPEO = new PecesDatos("Lenguado europeo", "Solea solea", PecesTipo.INVERSION, 250, 40, 3, 8, 10, 25, new PecesProps[]{PecesProps.CARNIVORO}, CriaTipo.MAR);
+      CORVINA = new PecesDatos("Corvina", "Argyrosomus regius", PecesTipo.INVERSION, 300, 100, 2, 5, 10, 40, new PecesProps[]{PecesProps.CARNIVORO, PecesProps.VORAZ}, CriaTipo.MAR);
+      SARGO = new PecesDatos("Sargo", "Diplodus sargus", PecesTipo.INVERSION, 150, 25, 4, 2, 5, 12, new PecesProps[]{PecesProps.OMNIVORO}, CriaTipo.MAR);
+      LUBINA_RAYADA = new PecesDatos("Lubina rayada", "Morone saxatilis", PecesTipo.INVERSION, 200, 35, 3, 5, 5, 20, new PecesProps[]{PecesProps.CARNIVORO}, CriaTipo.MAR);
+      ARENQUE_ATLANTICO = new PecesDatos("Arenque del Atl\u00e1ntico", "Clupea harengus", PecesTipo.BASE, 50, 15, 3, 5, 5, 10, new PecesProps[]{PecesProps.FILTRADOR}, CriaTipo.MAR);
+      CABALLA = new PecesDatos("Caballa", "Scomber scombrus", PecesTipo.BASE, 30, 10, 3, 2, 2, 5, new PecesProps[]{PecesProps.CARNIVORO}, CriaTipo.MAR);
+      ABADEJO = new PecesDatos("Abadejo", "Pollachius pollachius", PecesTipo.BASE, 80, 30, 2, 5, 8, 25, new PecesProps[]{PecesProps.CARNIVORO, PecesProps.COMEDIDO}, CriaTipo.MAR);
+      COBIA = new PecesDatos("Cobia", "Rachycentron canadum", PecesTipo.RIESGO, 100, 60, 5, 5, 5, 30, new PecesProps[]{PecesProps.CARNIVORO, PecesProps.VORAZ, PecesProps.COMEDIDO}, CriaTipo.MAR);
+      TRUCHA_ARCOIRIS = new PecesDatos("Trucha arco\u00edris", "Oncorhynchus mykiss", PecesTipo.BASE, 60, 10, 1, 2, 2, 8, new PecesProps[]{PecesProps.CARNIVORO}, CriaTipo.DOBLE);
+      SALMON_ATLANTICO = new PecesDatos("Salm\u00f3n atl\u00e1ntico", "Salmo salar", PecesTipo.INVERSION, 200, 30, 2, 2, 3, 10, new PecesProps[]{PecesProps.CARNIVORO}, CriaTipo.DOBLE);
+      DORADA = new PecesDatos("Dorada", "Sparus aurata", PecesTipo.NORMAL, 160, 45, 3, 5, 5, 30, new PecesProps[]{PecesProps.OMNIVORO}, CriaTipo.DOBLE);
+      LUBINA_EUROPEA = new PecesDatos("Lubina europea", "Dicentrarchus labrax", PecesTipo.BASE, 60, 25, 2, 5, 5, 20, new PecesProps[]{PecesProps.CARNIVORO}, CriaTipo.DOBLE);
+      BAGRE_CANAL = new PecesDatos("Bagre de canal", "Ictalurus punctatus", PecesTipo.INVERSION, 250, 75, 1, 5, 5, 30, new PecesProps[]{PecesProps.CARNIVORO, PecesProps.VORAZ}, CriaTipo.DOBLE);
+   }
+
+   public AlmacenPropiedades() {
+   }
+
+   public static PecesDatos getPropByName(String nombre) {
+      try {
+         Field[] props = AlmacenPropiedades.class.getFields();
+         Field[] var5 = props;
+         int var4 = props.length;
+
+         for(int var3 = 0; var3 < var4; ++var3) {
+            Field prop = var5[var3];
+            PecesDatos act = (PecesDatos)prop.get((Object)null);
+            if (act.getNombre().toLowerCase().equals(nombre.toLowerCase())) {
+               return act;
+            }
+         }
+      } catch (IllegalAccessException | IllegalArgumentException var7) {
+         System.err.println("Error en la reflexi\u00f3n de getPropByName");
+      }
+
+      return null;
+   }
+
+   public static PecesDatos getPropByScientificName(String nombre) {
+      try {
+         Field[] props = AlmacenPropiedades.class.getFields();
+         Field[] var5 = props;
+         int var4 = props.length;
+
+         for(int var3 = 0; var3 < var4; ++var3) {
+            Field prop = var5[var3];
+            PecesDatos act = (PecesDatos)prop.get((Object)null);
+            if (act.getCientifico().toLowerCase().equals(nombre.toLowerCase())) {
+               return act;
+            }
+         }
+      } catch (IllegalAccessException | IllegalArgumentException var7) {
+         System.err.println("Error en la reflexi\u00f3n de getPropByScientificName");
+      }
+
+      return null;
+   }
+}
+
+
+// Source code is decompiled from a .class file using FernFlower decompiler.
+package propiedades;
+
+public enum CriaTipo {
+   RIO("R\u00edo", 0),
+   MAR("Mar", 1),
+   DOBLE("R\u00edo y mar", 2);
+
+   private String nombre;
+   private int val;
+
+   private CriaTipo(String nombre, int value) {
+      this.nombre = nombre;
+      this.val = value;
+   }
+
+   public String getName() {
+      return this.nombre;
+   }
+
+   public int getValue() {
+      return this.val;
+   }
+}
+
+
+// Source code is decompiled from a .class file using FernFlower decompiler.
+package propiedades;
+
+import estadisticas.Estadisticas;
+
+public class Main {
+   public Main() {
+   }
+
+   public static void main(String[] args) {
+      String[] peces = new String[]{AlmacenPropiedades.CARPA.getNombre(), AlmacenPropiedades.CARPIN_TRES_ESPINAS.getNombre(), AlmacenPropiedades.KOI.getNombre(), AlmacenPropiedades.PEJERREY.getNombre(), AlmacenPropiedades.SALMON_CHINOOK.getNombre(), AlmacenPropiedades.ABADEJO.getNombre(), AlmacenPropiedades.BESUGO.getNombre(), AlmacenPropiedades.CABALLA.getNombre(), AlmacenPropiedades.RODABALLO.getNombre(), AlmacenPropiedades.SARGO.getNombre(), AlmacenPropiedades.DORADA.getNombre(), AlmacenPropiedades.TRUCHA_ARCOIRIS.getNombre()};
+      Estadisticas st = new Estadisticas(peces);
+      st.registrarNacimiento(AlmacenPropiedades.DORADA.getNombre());
+      st.registrarVenta("Salm\u00f3n chinook", 5000);
+      st.mostrar();
+      System.out.println("===========================");
+      String save = st.exportarDatos(peces);
+      System.out.println(save);
+      Estadisticas s2 = new Estadisticas(peces, save);
+      s2.mostrar();
+   }
+}
+
+
+// Source code is decompiled from a .class file using FernFlower decompiler.
+package propiedades;
+
+public class PecesDatos {
+   private final String nombre;
+   private final String cientifico;
+   private final PecesTipo tipo;
+   private final int coste;
+   private final int monedas;
+   private final int huevos;
+   private final int ciclo;
+   private final int madurez;
+   private final int optimo;
+   private final CriaTipo piscifactoria;
+   private final PecesProps[] propiedades;
+
+   public PecesDatos(String nombre, String cientifico, PecesTipo tipo, int coste, int monedas, int huevos, int ciclo, int madurez, int optimo, PecesProps[] props, CriaTipo pisc) {
+      this.nombre = nombre;
+      this.cientifico = cientifico;
+      this.tipo = tipo;
+      this.coste = coste;
+      this.monedas = monedas;
+      this.huevos = huevos;
+      this.ciclo = ciclo;
+      this.madurez = madurez;
+      this.optimo = optimo;
+      this.propiedades = props;
+      this.piscifactoria = pisc;
+   }
+
+   public String getNombre() {
+      return this.nombre;
+   }
+
+   public String getCientifico() {
+      return this.cientifico;
+   }
+
+   public PecesTipo getTipo() {
+      return this.tipo;
+   }
+
+   public int getCoste() {
+      return this.coste;
+   }
+
+   public int getMonedas() {
+      return this.monedas;
+   }
+
+   public int getHuevos() {
+      return this.huevos;
+   }
+
+   public int getCiclo() {
+      return this.ciclo;
+   }
+
+   public int getMadurez() {
+      return this.madurez;
+   }
+
+   public int getOptimo() {
+      return this.optimo;
+   }
+
+   public PecesProps[] getPropiedades() {
+      return this.propiedades;
+   }
+
+   public CriaTipo getPiscifactoria() {
+      return this.piscifactoria;
+   }
+}
+
+
+// Source code is decompiled from a .class file using FernFlower decompiler.
+package propiedades;
+
+public enum PecesProps {
+   OMNIVORO("Omn\u00edvoro"),
+   FILTRADOR("Filtrador"),
+   CARNIVORO("Carn\u00edvoro"),
+   LONGEVO("Longevo"),
+   VORAZ("Voraz"),
+   ACTIVO("Activo"),
+   COMEDIDO("Comedido");
+
+   private String nombre;
+
+   private PecesProps(String nombre) {
+      this.nombre = nombre;
+   }
+
+   public String getValue() {
+      return this.nombre;
+   }
+}
+
+
+// Source code is decompiled from a .class file using FernFlower decompiler.
+package propiedades;
+
+public enum PecesTipo {
+   BASE("Base"),
+   NORMAL("Normal"),
+   INVERSION("Inversi\u00f3n"),
+   RIESGO("Riesgo");
+
+   private String nombre;
+
+   private PecesTipo(String nombre) {
+      this.nombre = nombre;
+   }
+
+   public String getValue() {
+      return this.nombre;
+   }
+}
+
+
+// Source code is decompiled from a .class file using FernFlower decompiler.
+package estadisticas;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import propiedades.AlmacenPropiedades;
+import propiedades.PecesDatos;
+
+public class Estadisticas {
+   private final HashMap<String, Integer> vendidos;
+   private final HashMap<String, Integer> criados;
+   private final HashMap<String, Integer> ganado;
+
+   public Estadisticas(String[] nombres) throws IllegalArgumentException {
+      this(nombres, "");
+   }
+
+   public Estadisticas(String[] nombres, String datos) throws IllegalArgumentException {
+      HashMap<String, Integer> v = new HashMap();
+      HashMap<String, Integer> c = new HashMap();
+      HashMap<String, Integer> g = new HashMap();
+      boolean empty = datos == "" || datos == null;
+      String[] pData = new String[0];
+      if (!empty) {
+         pData = datos.split(";");
+      }
+
+      for(int i = 0; i < nombres.length; ++i) {
+         String nombre = nombres[i];
+         if (AlmacenPropiedades.getPropByName(nombre) == null) {
+            throw new IllegalArgumentException();
+         }
+
+         String[] info = new String[0];
+         if (!empty) {
+            info = pData[i].split(",");
+         }
+
+         v.put(nombre, empty ? 0 : Integer.parseInt(info[0]));
+         c.put(nombre, empty ? 0 : Integer.parseInt(info[1]));
+         g.put(nombre, empty ? 0 : Integer.parseInt(info[2]));
+      }
+
+      this.vendidos = v;
+      this.criados = c;
+      this.ganado = g;
+   }
+
+   public void registrarVenta(String nombre, int monedas) {
+      if (this.vendidos.containsKey(nombre)) {
+         this.vendidos.replace(nombre, (Integer)this.vendidos.get(nombre) + 1);
+         this.ganado.replace(nombre, (Integer)this.ganado.get(nombre) + monedas);
+      }
+
+   }
+
+   public void registrarNacimiento(String nombre) {
+      if (this.criados.containsKey(nombre)) {
+         this.criados.replace(nombre, (Integer)this.criados.get(nombre) + 1);
+      }
+
+   }
+
+   public void mostrar() {
+      String[] info = new String[]{"R\u00edo\n", "Mar\n", "R\u00edo o mar\n"};
+      int[] numVen = new int[info.length];
+      int[] numCria = new int[info.length];
+      int[] numGan = new int[info.length];
+
+      int g;
+      int idx;
+      for(Iterator var6 = this.vendidos.entrySet().iterator(); var6.hasNext(); numGan[idx] += g) {
+         Map.Entry<String, Integer> cos = (Map.Entry)var6.next();
+         String nom = (String)cos.getKey();
+         PecesDatos data = AlmacenPropiedades.getPropByName(nom);
+         int v = (Integer)cos.getValue();
+         int c = (Integer)this.criados.get(nom);
+         g = (Integer)this.ganado.get(nom);
+         String txt = data.getNombre() + " (" + data.getCientifico() + ")  Cr\u00edados: " + c + " Vendidos: " + v + " Ganado: " + g + " monedas.\n";
+         idx = data.getPiscifactoria().getValue();
+         String var10002 = String.valueOf(info[idx]);
+         info[idx] = var10002 + txt;
+         numVen[idx] += v;
+         numCria[idx] += c;
+      }
+
+      for(int i = 0; i < info.length; ++i) {
+         System.out.print(info[i]);
+         System.out.println("Total: " + numCria[i] + " criados. " + numVen[i] + " vendidos. " + numGan[i] + " monedas ganadas.");
+      }
+
+   }
+
+   public String exportarDatos(String[] nombres) {
+      String texto = "";
+      String[] var6 = nombres;
+      int var5 = nombres.length;
+
+      for(int var4 = 0; var4 < var5; ++var4) {
+         String nom = var6[var4];
+         if (this.vendidos.get(nom) != null) {
+            texto = texto + String.valueOf(this.vendidos.get(nom)) + "," + String.valueOf(this.criados.get(nom)) + "," + String.valueOf(this.ganado.get(nom)) + ";";
+         }
+      }
+
+      return texto.substring(0, texto.length() - 1);
+   }
+}
+
+
+
