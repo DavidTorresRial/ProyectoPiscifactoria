@@ -12,9 +12,10 @@ public class AlmacenCentral {
     private SistemaMonedas monedas;
 
     // CONSTRUCTOR
-    public AlmacenCentral() {
+    public AlmacenCentral(SistemaMonedas sistemaMonedas) {
         this.comidaVegetal = 0;
         this.comidaAnimal = 0;
+        this.monedas = sistemaMonedas;
     }
 
     // GETTERS Y SETTERS
@@ -112,17 +113,15 @@ public class AlmacenCentral {
 
     
     public void mejora() {
-        this.capacidadMaxAni += 50;
-        this.capacidadMaxVeg += 50;
-
-
-        /**if (monedas.gastarMonedas(200)) {
-            System.out.println("No hay monedas!");
-        } */
-
-        
-
-        nivelMejora++;
-        System.out.println("Nivel del almacen mejorado: Nivel " + nivelMejora );
+        int costoMejora = 200; // Costo de la mejora
+        if (monedas.gastarMonedas(costoMejora)) {
+            capacidadMaxAni += 50;
+            capacidadMaxVeg += 50;
+            nivelMejora++;
+            System.out.println("Nivel del almacén mejorado: Nivel " + nivelMejora);
+        } else {
+            System.out.println("No hay suficientes monedas para mejorar.");
+        }
     }
+    
 }
