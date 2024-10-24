@@ -2,10 +2,14 @@ package piscifactorias;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import tanque.Tanque;
 import commons.SistemaMonedas;
 import peces.Pez;
+import peces.propiedades.Activo;
+import peces.propiedades.Carnivoro;
+import peces.propiedades.Filtrador;
 
 public abstract class Piscifactoria<T extends Pez> {
     private String nombre;
@@ -103,34 +107,55 @@ public abstract class Piscifactoria<T extends Pez> {
     public void nextDay() {
         System.out.println("Avanzando al siguiente día en la piscifactoría " + nombre + "...");
         for (Tanque<T> tanque : tanques) {
-            tanque.nextDay();
             alimentarPeces(tanque);
+            tanque.nextDay();
         }
     }
 
-    // Método para alimentar los peces en un tanque
     private void alimentarPeces(Tanque<T> tanque) {
-        int pecesVivos = tanque.getVivos(); // Obtener el número de peces vivos en el tanque
+    Random rand = new Random();
 
-        int comidaNecesaria = pecesVivos;
+    for (T pez : tanque.getPeces()) {
+        if (!pez.isVivo()) {
+            continue; // No alimentar peces muertos
+        }
 
-        if (comidaVegetalActual >= comidaNecesaria && comidaAnimalActual >= comidaNecesaria) {
-            System.out.println("Alimentando " + pecesVivos + " peces en el tanque " + tanque.getNumeroTanque());
-            comidaVegetalActual -= comidaNecesaria / 2;
-            comidaAnimalActual -= comidaNecesaria / 2;
+        boolean alimentado = false;
 
-            // Alimentar solo a los peces vivos
-            for (T pez : tanque.getPeces()) { // Acceso directo a la lista de peces
-                if (pez.isVivo()) { // Verificamos que el pez esté vivo
-                    pez.alimentar(); // Marcar el pez como alimentado
+        if (pez instanceof Filtrador) {
+            // Filtrador: 50% de probabilidad de no consumir comida
+            if (rand.nextDouble() < 0.5) {
+                continue; // No consume comida
+            }
+            if (comidaVegetalActual > 0) {
+                comidaVegetalActual--;
+                alimentado = true;
+            }
+        } else if (pez instanceof Carnivoro) {
+            // Carnívoro: Consume comida animal
+            if (comidaAnimalActual > 0) {
+                comidaAnimalActual--;
+                alimentado = true;
+            }
+        }
+
+        if (pez instanceof Activo) {
+            // Activo: 50% de probabilidad de consumir el doble de comida
+            if (rand.nextDouble() < 0.5) {
+                if (pez instanceof Carnivoro && comidaAnimalActual > 0) {
+                    comidaAnimalActual--;
                 }
             }
-        } else {
-            System.out.println("No hay suficiente comida para alimentar a todos los peces.");
-            System.out.println("Comida vegetal disponible: " + comidaVegetalActual);
-            System.out.println("Comida animal disponible: " + comidaAnimalActual);
+        }
+
+        if (alimentado) {
+            pez.alimentar(); // Marcar el pez como alimentado
         }
     }
+
+    System.out.println("Comida vegetal restante: " + comidaVegetalActual);
+    System.out.println("Comida animal restante: " + comidaAnimalActual);
+}
 
     // Método que vende todos los peces adultos en la piscifactoría
     public void sellFish() {

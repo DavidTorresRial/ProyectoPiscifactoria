@@ -44,7 +44,7 @@ public class Tanque<T extends Pez> {
     }
 
     // Pasa un día en el tanque 
-    public void nextDay() { // TODO
+    public void nextDay() { 
         System.out.println("Avanzando al siguiente día para el Tanque " + numeroTanque + "...");
         for (T pez : peces) {
             pez.grow(); // Hace crecer cada pez
