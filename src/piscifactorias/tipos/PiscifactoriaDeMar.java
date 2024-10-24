@@ -4,7 +4,7 @@ import commons.SistemaMonedas;
 import peces.Pez;
 import piscifactorias.Piscifactoria;
 
-public class PiscifactoriaDeMar<T extends Pez> extends Piscifactoria<T> {
+public class PiscifactoriaDeMar<T extends Pez> extends Piscifactoria {
 
     public PiscifactoriaDeMar(String nombre, SistemaMonedas monedas) {
         super(nombre, monedas);

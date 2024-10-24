@@ -6,7 +6,7 @@ import piscifactorias.Piscifactoria;
 //import tanque.Tanque;
 import tanque.Tanque;
 
-public class PiscifactoriaDeRio<T extends Pez> extends Piscifactoria<T> {
+public class PiscifactoriaDeRio<T extends Pez> extends Piscifactoria {
 
     public PiscifactoriaDeRio(String nombre, SistemaMonedas monedas) {
         super(nombre, monedas);
