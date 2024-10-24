@@ -1,0 +1,7 @@
+# Ignora todos los archivos de la carpeta bin
+
+bin/*
+
+# Ignora todos los archivos de la carpeta .vscode
+
+.vscode/*
