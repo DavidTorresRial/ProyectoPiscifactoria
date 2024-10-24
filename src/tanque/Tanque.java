@@ -6,6 +6,7 @@ import peces.Pez;
 
 public class Tanque<T extends Pez> {
     public ArrayList<T> peces; // Lista para almacenar los peces
+    private Class<?> tipoPezActual; // Tipo de pez actual en el tanque
 
     private int capacidadMaxima; // Capacidad máxima del tanque
     private int numeroTanque; // Número del tanque
@@ -14,6 +15,7 @@ public class Tanque<T extends Pez> {
     public Tanque(int capacidadMaxima) {
         this.capacidadMaxima = capacidadMaxima;
         this.peces = new ArrayList<>();
+        this.tipoPezActual = null;
     }
 
     // Metodo para mostrar el estado del tanque
@@ -121,6 +123,30 @@ public class Tanque<T extends Pez> {
         }
 
         System.out.println("Se han creado " + nuevosMachos + " nuevos machos y " + nuevasHembras + " nuevas hembras.");
+    }
+
+    public boolean addPez(T pez) {
+        if (peces.size() >= capacidadMaxima) {
+            System.out.println("El tanque está lleno.");
+            return false;
+        }
+
+        // Si el tanque está vacío, restablece el tipo de pez permitido
+        if (peces.isEmpty()) {
+            tipoPezActual = null;
+        }
+
+        if (tipoPezActual == null) {
+            tipoPezActual = pez.getClass(); // Establece el tipo de pez actual
+        }
+
+        if (!tipoPezActual.equals(pez.getClass())) {
+            System.out.println("Este tanque solo acepta peces del tipo: " + tipoPezActual.getSimpleName());
+            return false;
+        }
+
+        peces.add(pez);
+        return true;
     }
 
 
