@@ -3,7 +3,7 @@ package commons;
 import tanque.Tanque;
 import peces.Pez;
 import peces.tipos.mar.Besugo;
-import peces.tipos.rio.Pejerrey;
+
 public class Simulador {
 
      public static void main(String[] args) {
@@ -11,7 +11,7 @@ public class Simulador {
         Tanque<Pez> tanque = new Tanque<>(20);
 
         // Agregar peces al tanque
-        // Usando Pejerrey como ejemplo, puedes cambiar a otras especies como Besugo o Robalo
+        // Usando Pejerrey como ejemplo, puedes cambiar a otras especies como Besugo o Robalo 
         tanque.peces.add(new Besugo(true));  // Macho fértil
         tanque.peces.add(new Besugo(false)); // Hembra fértil
 

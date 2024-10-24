@@ -143,8 +143,7 @@ public abstract class Piscifactoria<T extends Pez> {
     // Método que mejora el almacén de comida
     public void upgradeFood(int incremento) {
         capacidadMaximaAlmacenComida += incremento;
-        System.out.println("Almacén de comida de la piscifactoría " + nombre + " mejorado. Su capacidad ha aumentado en " + 
-                           incremento + " hasta un total de " + capacidadMaximaAlmacenComida);
+        System.out.println("Almacén de comida de la piscifactoría " + nombre + " mejorado. Su capacidad ha aumentado en " + incremento + " hasta un total de " + capacidadMaximaAlmacenComida);
     }
 
     /**
