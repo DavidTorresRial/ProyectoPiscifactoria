@@ -1,5 +1,5 @@
 package peces.propiedades;
 
-public interface Activo {
-    //TODO Activo	50% de comer 2 de alimento ese día
+public interface Activo extends Carnivoro {
+    boolean comerCarneActivo(int comidaAnimalDisponible); // Devuelve true si consume comida
 }

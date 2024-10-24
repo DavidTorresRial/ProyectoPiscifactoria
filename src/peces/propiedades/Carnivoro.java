@@ -1,5 +1,5 @@
 package peces.propiedades;
 
 public interface Carnivoro {
-    // TODO Carnívoro	Se alimenta de comida animal.
+    boolean comerCarne(int comidaAnimalDisponible); // Devuelve true si consume comida
 }
