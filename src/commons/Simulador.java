@@ -17,6 +17,6 @@ public class Simulador {
         // Usando getters
         System.out.println("Cantidad de comida vegetal actual: " + almacen.getComidaVegetal());
         System.out.println("Cantidad de comida animal actual: " + almacen.getComidaAnimal());
-        
+        almacen.mejora();
         }
     }

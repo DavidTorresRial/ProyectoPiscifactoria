@@ -6,8 +6,10 @@ public class AlmacenCentral {
     // ATRIBUTOS
     private int comidaVegetal;
     private int comidaAnimal;
-    private final int capacidadMaxVeg = 200;
-    private final int capacidadMaxAni = 200;
+    private int capacidadMaxVeg = 200;
+    private int capacidadMaxAni = 200;
+    private int nivelMejora = 1;
+    private SistemaMonedas monedas;
 
     // CONSTRUCTOR
     public AlmacenCentral() {
@@ -44,6 +46,13 @@ public class AlmacenCentral {
         this.comidaAnimal = comidaAnimal;
     }
 
+    public int getNivelMejora() {
+        return nivelMejora;
+    }
+
+    public void setNivelMejora(int nivelMejora) {
+        this.nivelMejora = nivelMejora;
+    }
 
     // METODOS DE LA CLASE
 
@@ -53,8 +62,7 @@ public class AlmacenCentral {
             return;
         }
         comidaVegetal += cantidad;
-        if (comidaVegetal > capacidadMaxVeg
-        ) {
+        if (comidaVegetal > capacidadMaxVeg) {
             comidaVegetal = capacidadMaxVeg;
             System.out.println("Capacidad máxima alcanzada para la comida vegetal.");
         }
@@ -99,5 +107,22 @@ public class AlmacenCentral {
         System.out.println("Estado del Almacén Central:");
         System.out.println("Comida Vegetal: " + comidaVegetal + " / " + capacidadMaxVeg);
         System.out.println("Comida Animal: " + comidaAnimal + " / " + capacidadMaxAni);
+    }
+
+
+    
+    public void mejora() {
+        this.capacidadMaxAni += 50;
+        this.capacidadMaxVeg += 50;
+
+
+        /**if (monedas.gastarMonedas(200)) {
+            System.out.println("No hay monedas!");
+        } */
+
+        
+
+        nivelMejora++;
+        System.out.println("Nivel del almacen mejorado: Nivel " + nivelMejora );
     }
 }
