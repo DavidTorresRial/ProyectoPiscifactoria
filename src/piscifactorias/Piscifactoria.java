@@ -7,9 +7,10 @@ import tanque.Tanque;
 import commons.SistemaMonedas;
 import peces.Pez;
 
-public abstract class Piscifactoria<T extends Pez> {
+public abstract class Piscifactoria {
     private String nombre;
-    protected List<Tanque<T>> tanques; // Lista de tanques
+    protected List<Tanque<? extends Pez>> tanques; // Lista de tanques con distintos tipos de peces
+
 
     protected int capacidadMaximaAlmacenComida; // Capacidad máxima compartida para ambos tipos de comida
     protected int comidaVegetalActual; // Cantidad actual de comida vegetal
@@ -24,12 +25,12 @@ public abstract class Piscifactoria<T extends Pez> {
         this.tanques = new ArrayList<>();
     }
 
-    // Método para agregar un tanque a la piscifactoría
-    public void agregarTanque(Tanque<T> tanque) {
+    // Método para agregar un tanque a la piscifactoría (genérico para diferentes tipos de peces)
+    public void agregarTanque(Tanque<? extends Pez> tanque) {
         this.tanques.add(tanque);
     }
 
-    public List<Tanque<T>> getTanques() {
+    public List<Tanque<? extends Pez>> getTanques() {
         return this.tanques;
     }
 
@@ -37,7 +38,7 @@ public abstract class Piscifactoria<T extends Pez> {
     public void showStatus() {
         System.out.println("\n=============== " + nombre + " ===============");
         System.out.println("Tanques: " + tanques.size());
-
+    
         int totalPeces = 0;
         int totalVivos = 0;
         int totalAlimentados = 0;
@@ -45,48 +46,74 @@ public abstract class Piscifactoria<T extends Pez> {
         int totalHembras = 0;
         int totalFertiles = 0;
         int capacidadTotal = 0;
-
-        for (Tanque<T> tanque : tanques) {
+    
+        for (Tanque<? extends Pez> tanque : tanques) {
             totalPeces += tanque.getNumPeces(); 
             totalVivos += tanque.getVivos();
             totalAlimentados += tanque.getAlimentados();
             totalAdultos += tanque.getAdultos();
             totalHembras += tanque.getHembras();
             totalFertiles += tanque.getFertiles();
-            //capacidadTotal += tanque.getCapacidadMaxima(); // TDOO: Revisar
+            //capacidadTotal += tanque.getCapacidadMaxima(); // Ahora también se suma la capacidad total
         }
-
+    
         // Muestra la ocupación y otros datos relevantes
-        System.out.println("Ocupación: " + totalPeces + " / " + capacidadTotal + " (" + 
-                           (totalPeces * 100 / capacidadTotal) + "%)");
-        System.out.println("Peces vivos: " + totalVivos + " / " + totalPeces + " (" + 
-                           (totalPeces > 0 ? (totalVivos * 100 / totalPeces) : 0) + "%)"); // TODO comprobar si los peces es cero porque salta excepcion al dividir
-        System.out.println("Peces alimentados: " + totalAlimentados + " / " + totalVivos + " (" + 
-                           (totalVivos > 0 ? (totalAlimentados * 100 / totalVivos) : 0) + "%)");
-        System.out.println("Peces adultos: " + totalAdultos + " / " + totalVivos + " (" + 
-                           (totalVivos > 0 ? (totalAdultos * 100 / totalVivos) : 0) + "%)");
+        if (capacidadTotal > 0) {
+            System.out.println("Ocupación: " + totalPeces + " / " + capacidadTotal + " (" + 
+                               (totalPeces * 100 / capacidadTotal) + "%)");
+        } else {
+            System.out.println("Ocupación: " + totalPeces + " / " + capacidadTotal + " (0%)");
+        }
+    
+        if (totalPeces > 0) {
+            System.out.println("Peces vivos: " + totalVivos + " / " + totalPeces + " (" + 
+                               (totalVivos * 100 / totalPeces) + "%)");
+        } else {
+            System.out.println("Peces vivos: " + totalVivos + " / " + totalPeces + " (0%)");
+        }
+    
+        if (totalVivos > 0) {
+            System.out.println("Peces alimentados: " + totalAlimentados + " / " + totalVivos + " (" + 
+                               (totalAlimentados * 100 / totalVivos) + "%)");
+        } else {
+            System.out.println("Peces alimentados: " + totalAlimentados + " / " + totalVivos + " (0%)");
+        }
+    
+        if (totalVivos > 0) {
+            System.out.println("Peces adultos: " + totalAdultos + " / " + totalVivos + " (" + 
+                               (totalAdultos * 100 / totalVivos) + "%)");
+        } else {
+            System.out.println("Peces adultos: " + totalAdultos + " / " + totalVivos + " (0%)");
+        }
+    
         System.out.println("Hembras / Machos: " + totalHembras + " / " + (totalVivos - totalHembras));
-        System.out.println("Fértiles: " + totalFertiles + " / " + totalVivos);
         
+        if (totalVivos > 0) {
+            System.out.println("Fértiles: " + totalFertiles + " / " + totalVivos);
+        } else {
+            System.out.println("Fértiles: " + totalFertiles + " / " + totalVivos + " (0)");
+        }
+    
         showFood();
     }
+    
 
     // Método que muestra el estado de cada tanque
     public void showTankStatus() {
-        for (Tanque<T> tanque : tanques) {
+        for (Tanque<? extends Pez> tanque : tanques) {
             tanque.showStatus(); // Mostrar el estado de cada tanque
         }
     }
 
     // Método que muestra la información de los peces de un tanque determinado
     public void showFishStatus(int numeroTanque) {
-        Tanque<T> tanque = tanques.get(numeroTanque - 1); // Asumimos que los tanques están numerados desde 1
+        Tanque<? extends Pez> tanque = tanques.get(numeroTanque - 1); // Los tanques están numerados desde 1
         tanque.showFishStatus();
     }
 
     // Método que muestra la ocupación de un tanque determinado
     public void showCapacity(int numeroTanque) {
-        Tanque<T> tanque = tanques.get(numeroTanque - 1);
+        Tanque<? extends Pez> tanque = tanques.get(numeroTanque - 1);
         tanque.showCapacity();
     }
 
@@ -102,16 +129,15 @@ public abstract class Piscifactoria<T extends Pez> {
     // Método que hace avanzar el ciclo de vida en la piscifactoría
     public void nextDay() {
         System.out.println("Avanzando al siguiente día en la piscifactoría " + nombre + "...");
-        for (Tanque<T> tanque : tanques) {
-            tanque.nextDay();
+        for (Tanque<? extends Pez> tanque : tanques) {
+            tanque.nextDay(comidaAnimalActual, comidaVegetalActual);
             alimentarPeces(tanque);
         }
     }
 
     // Método para alimentar los peces en un tanque
-    private void alimentarPeces(Tanque<T> tanque) {
+    private void alimentarPeces(Tanque<? extends Pez> tanque) {
         int pecesVivos = tanque.getVivos(); // Obtener el número de peces vivos en el tanque
-
         int comidaNecesaria = pecesVivos;
 
         if (comidaVegetalActual >= comidaNecesaria && comidaAnimalActual >= comidaNecesaria) {
@@ -120,9 +146,9 @@ public abstract class Piscifactoria<T extends Pez> {
             comidaAnimalActual -= comidaNecesaria / 2;
 
             // Alimentar solo a los peces vivos
-            for (T pez : tanque.getPeces()) { // Acceso directo a la lista de peces
+            for (Pez pez : tanque.getPeces()) { // Acceso directo a la lista de peces
                 if (pez.isVivo()) { // Verificamos que el pez esté vivo
-                    pez.alimentar(); // Marcar el pez como alimentado
+                    pez.setAlimentado(); // Marcar el pez como alimentado
                 }
             }
         } else {
@@ -135,8 +161,8 @@ public abstract class Piscifactoria<T extends Pez> {
     // Método que vende todos los peces adultos en la piscifactoría
     public void sellFish() {
         System.out.println("Vendiendo peces adultos en la piscifactoría " + nombre + "...");
-        for (Tanque<T> tanque : tanques) {
-            //tanque.venderPecesAdultos(); // Revisar
+        for (Tanque<? extends Pez> tanque : tanques) {
+            //tanque.venderPecesAdultos(); //TODO implementar metodo
         }
     }
 

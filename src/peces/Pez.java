@@ -84,6 +84,10 @@ public class Pez {
         alimentado = false;
     }
 
+    public Pez clonar(boolean nuevoSexo) {
+        return new Pez(nuevoSexo, datos);
+    }
+
     // Getters
     public int getEdad() {
         return edad;
@@ -118,7 +122,7 @@ public class Pez {
         this.fertil = fertil;
     }
 
-    public void alimentar() {
+    public void setAlimentado() {
         this.alimentado = true;
     }
 }
