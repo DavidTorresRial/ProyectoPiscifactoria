@@ -1,41 +1,42 @@
 package commons;
 
-
-import peces.tipos.rio.Pejerrey;
+import peces.Pez;
+import peces.tipos.rio.TilapiaDelNilo;
 import tanque.Tanque;
-import piscifactorias.tipos.PiscifactoriaDeRio;
-
+import peces.propiedades.Filtrador;
+import propiedades.AlmacenPropiedades;
 
 public class Simulador {
-
     public static void main(String[] args) {
-        // Creamos una instancia del sistema de monedas (simulación)
-        SistemaMonedas sistemaMonedas = new SistemaMonedas(1000);
-
-        // Creamos una piscifactoría para Pejerreyes
-        PiscifactoriaDeRio piscifactoria = new PiscifactoriaDeRio("Piscifactoria de Pejerreyes", sistemaMonedas);
-
-        // Creamos tanques y les asignamos capacidad
-        Tanque<Pejerrey> tanque1 = new Tanque<>(50);  // Capacidad para 50 peces
-
-        // Agregamos los tanques a la piscifactoría
-        piscifactoria.agregarTanque(tanque1);
-
-        // Añadimos peces a los tanques
-        tanque1.peces.add(new Pejerrey(true));  // Añadimos un Pejerrey macho
-        tanque1.peces.add(new Pejerrey(false)); // Añadimos un Pejerrey hembra
-
-        // Mostramos el estado inicial de la piscifactoría
-        piscifactoria.showStatus();
-
-        // Avanzamos un día en la piscifactoría (esto también avanzará un día en todos los tanques)
-        piscifactoria.nextDay();
-
-        // Volvemos a mostrar el estado de la piscifactoría después de avanzar un día
-        piscifactoria.showStatus();
-
-        // Muestra el estado de un tanque específico
-        piscifactoria.showFishStatus(1); // Mostrar el estado de los peces del tanque 1
-        piscifactoria.showFishStatus(2); // Mostrar el estado de los peces del tanque 2
+        // Crear un tanque con capacidad para 5 peces
+        Tanque<Pez> tanque = new Tanque<>(5);
+        
+        // Agregar peces al tanque
+        System.out.println("Agregando peces al tanque:");
+        tanque.addPez(new TilapiaDelNilo(true));  // Macho
+        tanque.addPez(new TilapiaDelNilo(false)); // Hembra
+        tanque.addPez(new TilapiaDelNilo(true));  // Macho
+        tanque.addPez(new TilapiaDelNilo(false)); // Hembra
+        
+        // Intentar agregar un pez adicional (no debería ser posible)
+        System.out.println("Intentando agregar un pez adicional:");
+        if (!tanque.addPez(new TilapiaDelNilo(true))) {
+            System.out.println("No se pudo agregar el pez, tanque lleno.");
+        }
+        
+        // Mostrar estado del tanque y de los peces
+        tanque.showStatus();
+        tanque.showFishStatus();
+        
+        // Simulación de alimentación y crecimiento durante 5 días
+        for (int dia = 1; dia <= 5; dia++) {
+            System.out.println("\nDía " + dia + ":");
+            tanque.nextDay(2, 4);  // 2 unidades de comida animal, 4 unidades de comida vegetal
+            tanque.showStatus();
+            tanque.showFishStatus();
+        }
+        
+        // Mostrar capacidad del tanque
+        tanque.showCapacity();
     }
 }

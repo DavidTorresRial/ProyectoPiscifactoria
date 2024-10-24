@@ -3,12 +3,14 @@ package tanque;
 import java.util.ArrayList;
 
 import peces.Pez;
+
 import peces.propiedades.Activo;
 import peces.propiedades.Carnivoro;
 import peces.propiedades.Filtrador;
 
 public class Tanque<T extends Pez> {
     public ArrayList<T> peces; // Lista para almacenar los peces
+    private Class<?> tipoPezActual; // Tipo de pez actual en el tanque
 
     private int capacidadMaxima; // Capacidad máxima del tanque
     private int numeroTanque; // Número del tanque
@@ -17,23 +19,21 @@ public class Tanque<T extends Pez> {
     public Tanque(int capacidadMaxima) {
         this.capacidadMaxima = capacidadMaxima;
         this.peces = new ArrayList<>();
+        this.tipoPezActual = null;
     }
 
     // Metodo para mostrar el estado del tanque
     public void showStatus() {
         System.out.println("\n=============== Tanque " + numeroTanque + " ===============");
 
-        System.out.println("Ocupación: " + peces.size() + " / " + capacidadMaxima + " ("
-                + (peces.size() * 100 / capacidadMaxima) + "%)");
-        System.out.println("Peces vivos: " + getVivos() + " / " + peces.size() + " ("
-                + (getVivos() > 0 ? (getVivos() * 100 / peces.size()) : 0) + "%)");
-        System.out.println("Peces alimentados: " + getAlimentados() + " / " + getVivos() + " ("
-                + (getVivos() > 0 ? (getAlimentados() * 100 / getVivos()) : 0) + "%)");
-        System.out.println("Peces adultos: " + getAdultos() + " / " + getVivos() + " ("
-                + (getVivos() > 0 ? (getAdultos() * 100 / getVivos()) : 0) + "%)");
+        System.out.println("Ocupación: " + peces.size() + " / " + capacidadMaxima + " (" + (peces.size() * 100 / capacidadMaxima) + "%)");
+        System.out.println("Peces vivos: " + getVivos() + " / " + peces.size() + " (" + (getVivos() > 0 ? (getVivos() * 100 / peces.size()) : 0) + "%)");
+        System.out.println("Peces alimentados: " + getAlimentados() + " / " + getVivos() + " (" + (getVivos() > 0 ? (getAlimentados() * 100 / getVivos()) : 0) + "%)");
+        System.out.println("Peces adultos: " + getAdultos() + " / " + getVivos() + " (" + (getVivos() > 0 ? (getAdultos() * 100 / getVivos()) : 0) + "%)");
         System.out.println("Hembras / Machos: " + getHembras() + " / " + getMachos());
         System.out.println("Fértiles: " + getFertiles() + " / " + getVivos());
     }
+
 
     // Muestra el estado de los peces
     public void showFishStatus() {
@@ -45,9 +45,7 @@ public class Tanque<T extends Pez> {
 
     // Muestra la capacidad del tanque
     public void showCapacity() {
-        System.out
-                .println("Tanque " + numeroTanque + " de la piscifactoría al " + (peces.size() * 100 / capacidadMaxima)
-                        + "% de capacidad. [" + peces.size() + "/" + capacidadMaxima + "]"); // TODO añadir nombre de la  piscifacoria
+        System.out.println("Tanque " + numeroTanque + " de la piscifactoría al " + (peces.size() * 100 / capacidadMaxima) + "% de capacidad. [" + peces.size() + "/" + capacidadMaxima + "]"); // TODO añadir nombre de la piscifacoria
     }
 
     // Pasa un día en el tanque
@@ -165,6 +163,30 @@ public class Tanque<T extends Pez> {
         }
 
         System.out.println("Se han creado " + nuevosMachos + " nuevos machos y " + nuevasHembras + " nuevas hembras.");
+    }
+
+    public boolean addPez(T pez) {
+        if (peces.size() >= capacidadMaxima) {
+            System.out.println("El tanque está lleno.");
+            return false;
+        }
+
+        // Si el tanque está vacío, restablece el tipo de pez permitido
+        if (peces.isEmpty()) {
+            tipoPezActual = null;
+        }
+
+        if (tipoPezActual == null) {
+            tipoPezActual = pez.getClass(); // Establece el tipo de pez actual
+        }
+
+        if (!tipoPezActual.equals(pez.getClass())) {
+            System.out.println("Este tanque solo acepta peces del tipo: " + tipoPezActual.getSimpleName());
+            return false;
+        }
+
+        peces.add(pez);
+        return true;
     }
 
     // Getters y Setters
