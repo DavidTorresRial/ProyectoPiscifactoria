@@ -10,6 +10,8 @@ import peces.Pez;
 import peces.propiedades.Activo;
 import peces.propiedades.Carnivoro;
 import peces.propiedades.Filtrador;
+import piscifactorias.tipos.PiscifactoriaDeMar;
+import piscifactorias.tipos.PiscifactoriaDeRio;
 
 public abstract class Piscifactoria {
     private String nombre;
@@ -37,6 +39,31 @@ public abstract class Piscifactoria {
     public List<Tanque<? extends Pez>> getTanques() {
         return this.tanques;
     }
+    
+    public void addPez(Pez pez) {
+        int tipoPez = pez.getTipo();
+        boolean agregado = false;
+    
+        // Verifica si el pez puede ser añadido a esta piscifactoría
+        if ((tipoPez == 0 && this instanceof PiscifactoriaDeRio) || 
+            (tipoPez == 1 && this instanceof PiscifactoriaDeMar) || 
+            tipoPez == 2) {
+            
+            // Intenta añadir el pez al primer tanque que lo acepte
+            for (Tanque<? extends Pez> tanque : tanques) {
+                // Usa el método addPez del tanque para verificar y añadir el pez
+                if (((Tanque<Pez>) tanque).addPez(pez)) {
+                    agregado = true;
+                    break;
+                }
+            }
+        }
+    
+        if (!agregado) {
+            System.out.println("No se puede añadir el pez de tipo " + tipoPez + " a esta piscifactoría.");
+        }
+    }                                                                                                                                                                
+
 
     // Método que muestra toda la información de la piscifactoría
     public void showStatus() {
@@ -134,7 +161,7 @@ public abstract class Piscifactoria {
     public void nextDay() {
         System.out.println("Avanzando al siguiente día en la piscifactoría " + nombre + "...");
         for (Tanque<? extends Pez> tanque : tanques) {
-            tanque.nextDay(); //TODO hacer uso de getters y setters de la comida
+            tanque.nextDay(); 
             alimentarPeces(tanque);
         }
     }
@@ -176,7 +203,7 @@ public abstract class Piscifactoria {
         }
 
         if (alimentado) {
-            pez.alimentar(); // Marcar el pez como alimentado
+            pez.setAlimentar(); // Marcar el pez como alimentado
         }
     }
 
