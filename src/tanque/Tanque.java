@@ -3,26 +3,41 @@ package tanque;
 import java.util.ArrayList;
 
 import peces.Pez;
+import piscifactorias.Piscifactoria;
 
-import peces.propiedades.Activo;
-import peces.propiedades.Carnivoro;
-import peces.propiedades.Filtrador;
-
+/**
+ * La clase Tanque representa un contenedor para peces de un tipo específico. 
+ * 
+ * @param <T> Tipo de pez que extiende de la clase Pez.
+ */
 public class Tanque<T extends Pez> {
-    public ArrayList<T> peces; // Lista para almacenar los peces
-    private Class<?> tipoPezActual; // Tipo de pez actual en el tanque
 
-    private int capacidadMaxima; // Capacidad máxima del tanque
-    private int numeroTanque; // Número del tanque
+    /** Lista para almacenar los peces del tanque */
+    public ArrayList<T> peces;
 
-    // Constructor
+    /** Tipo de pez actual permitido en el tanque */
+    private Class<?> tipoPezActual;
+
+    /** Capacidad máxima de peces que puede almacenar el tanque */
+    private int capacidadMaxima;
+
+    /** Número identificador del tanque */
+    private int numeroTanque;
+
+    /**
+     * Constructor que inicializa el tanque con una capacidad máxima.
+     *
+     * @param capacidadMaxima Capacidad máxima del tanque.
+     */
     public Tanque(int capacidadMaxima) {
         this.capacidadMaxima = capacidadMaxima;
         this.peces = new ArrayList<>();
         this.tipoPezActual = null;
     }
 
-    // Metodo para mostrar el estado del tanque
+    /**
+     * Muestra el estado general del tanque.
+     */
     public void showStatus() {
         System.out.println("\n=============== Tanque " + numeroTanque + " ===============");
 
@@ -34,8 +49,9 @@ public class Tanque<T extends Pez> {
         System.out.println("Fértiles: " + getFertiles() + " / " + getVivos());
     }
 
-
-    // Muestra el estado de los peces
+    /**
+     * Muestra el estado individual de cada pez en el tanque.
+     */
     public void showFishStatus() {
         System.out.println("--------------- Peces en el Tanque " + numeroTanque + " ---------------");
         for (T pez : peces) {
@@ -43,60 +59,30 @@ public class Tanque<T extends Pez> {
         }
     }
 
-    // Muestra la capacidad del tanque
+    /**
+     * Muestra la capacidad actual del tanque en porcentaje.
+     */
     public void showCapacity() {
-        System.out.println("Tanque " + numeroTanque + " de la piscifactoría al " + (peces.size() * 100 / capacidadMaxima) + "% de capacidad. [" + peces.size() + "/" + capacidadMaxima + "]"); // TODO añadir nombre de la piscifacoria
+        System.out.println("Tanque " + numeroTanque + " de la piscifactoría: " + Piscifactoria.getNombre() + " al " + (peces.size() * 100 / capacidadMaxima) + "% de capacidad. [" + peces.size() + "/" + capacidadMaxima + "]");
     }
 
-    // Pasa un día en el tanque
-    public void nextDay(int comidaAnimalActual, int comidaVegetalActual) {
+    /**
+     * Simula el paso de un día en el tanque. Hace crecer a los peces y gestiona la reproducción.
+     */
+    public void nextDay() { 
         System.out.println("Avanzando al siguiente día para el Tanque " + numeroTanque + "...");
-
-        alimentarPeces(comidaAnimalActual, comidaVegetalActual);
-
         for (T pez : peces) {
             pez.grow(); // Hace crecer cada pez
         }
 
-        reproduccion();
+        reproduccion(); // Reproduce los peces
+
+        //venderPecesAdultos //TODO implementar metodo
     }
 
-    public void alimentarPeces(int comidaAnimalActual, int comidaVegetalActual) {
-        for (T pez : peces) {
-            if (!pez.isVivo()) {
-                continue; // Saltar los peces muertos
-            }
-
-            // Si el pez es filtrador
-            if (pez instanceof Filtrador) {
-                boolean consumioComida = ((Filtrador) pez).comerVegetal(comidaVegetalActual);
-                if (consumioComida) {
-                    comidaVegetalActual--; // Reducir comida vegetal si consumió
-                }
-                pez.setAlimentado(); // Marcar el pez como alimentado
-            }
-
-            // Si el pez es carnívoro
-            if (pez instanceof Carnivoro) {
-                // Si el pez también es activo (carnívoro activo)
-                if (pez instanceof Activo) {
-                    boolean consumioComida = ((Activo) pez).comerCarneActivo(comidaAnimalActual);
-                    if (consumioComida) {
-                        comidaAnimalActual--; // Reducir comida animal si consumió
-                    }
-                } else {
-                    // Si el pez es solo carnívoro
-                    boolean consumioComida = ((Carnivoro) pez).comerCarne(comidaAnimalActual);
-                    if (consumioComida) {
-                        comidaAnimalActual--; // Reducir comida animal si consumió
-                    }
-                }
-                pez.setAlimentado(); // Marcar el pez como alimentado
-            }
-        }
-    }
-
-    // Método de reproducción
+    /**
+     * Método que gestiona la reproducción de los peces dentro del tanque.
+     */
     public void reproduccion() {
         int huevosPorHembra = 0;
 
@@ -165,6 +151,12 @@ public class Tanque<T extends Pez> {
         System.out.println("Se han creado " + nuevosMachos + " nuevos machos y " + nuevasHembras + " nuevas hembras.");
     }
 
+    /**
+     * Añade un pez al tanque si hay espacio y el tipo de pez es compatible con los ya presentes.
+     *
+     * @param pez El pez a añadir al tanque.
+     * @return true si se añadió con éxito, false si el tanque está lleno o el tipo de pez no es compatible.
+     */
     public boolean addPez(T pez) {
         if (peces.size() >= capacidadMaxima) {
             System.out.println("El tanque está lleno.");
@@ -191,22 +183,30 @@ public class Tanque<T extends Pez> {
 
     // Getters y Setters
 
-    // Devuelve el número del tanque
+    /**
+     * @return El número identificador del tanque.
+     */
     public int getNumeroTanque() {
         return numeroTanque;
     }
 
-    // Devuelve el numero de peces del tanque
+    /**
+     * @return El número de peces presentes en el tanque.
+     */
     public int getNumPeces() {
         return peces.size();
     }
 
-    // Devuelve los peces del tanque
+    /**
+     * @return La lista de peces en el tanque.
+     */
     public ArrayList<T> getPeces() {
         return peces;
     }
 
-    // Cuenta las hembras del tanque
+    /**
+     * @return El número de hembras en el tanque.
+     */
     public int getHembras() {
         // Contar hembras
         int hembras = 0;
@@ -218,7 +218,9 @@ public class Tanque<T extends Pez> {
         return hembras;
     }
 
-    // Cuenta los machos del tanque
+    /**
+     * @return El número de machos en el tanque.
+     */
     public int getMachos() {
         // Contar machos
         int machos = 0;
@@ -230,7 +232,9 @@ public class Tanque<T extends Pez> {
         return machos;
     }
 
-    // Cuenta los peces fertiles del tanque
+    /**
+     * @return El número de peces fértiles en el tanque.
+     */
     public int getFertiles() {
         // Contar peces fértiles
         int fertiles = 0;
@@ -242,7 +246,9 @@ public class Tanque<T extends Pez> {
         return fertiles;
     }
 
-    // Cuenta los peces vivos del tanque
+    /**
+     * @return El número de peces vivos en el tanque.
+     */
     public int getVivos() {
         // Contar peces vivos
         int pecesVivos = 0;
@@ -254,7 +260,9 @@ public class Tanque<T extends Pez> {
         return pecesVivos;
     }
 
-    // Cuenta los peces vivos del tanque
+    /**
+     * @return El número de peces alimentados en el tanque.
+     */
     public int getAlimentados() {
         // Contar peces alimentados
         int pecesAlimentados = 0;
@@ -266,7 +274,9 @@ public class Tanque<T extends Pez> {
         return pecesAlimentados;
     }
 
-    // Cuenta los peces adultos del tanque
+    /**
+     * @return El número de peces adultos en el tanque.
+     */
     public int getAdultos() {
         // Contar peces adultos
         int pecesAdultos = 0;
