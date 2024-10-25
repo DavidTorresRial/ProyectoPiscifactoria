@@ -186,9 +186,17 @@ public class AlmacenCentral {
      */
     public void distribuirDiariamente(int cantidadVegetal, int cantidadAnimal, int numPiscifactorías) {
         System.out.println("Distribución diaria de comida:");
+        
+        // Asegurarse de que haya al menos una piscifactoría
+        if (numPiscifactorías < 1) {
+            System.out.println("No hay piscifactorías disponibles para distribuir comida.");
+            return;
+        }
+    
+        // Intentar distribuir la comida
         distribuirComida(cantidadVegetal, cantidadAnimal, numPiscifactorías);
     }
-
+    
     /**
      * Muestra el estado actual del almacén, incluyendo cantidades de comida y capacidades máximas.
      */
