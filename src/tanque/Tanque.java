@@ -1,7 +1,9 @@
 package tanque;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
+import commons.SistemaMonedas;
 import peces.Pez;
 
 public class Tanque<T extends Pez> {
@@ -10,12 +12,14 @@ public class Tanque<T extends Pez> {
 
     private int capacidadMaxima; // Capacidad máxima del tanque
     private int numeroTanque; // Número del tanque
+    private SistemaMonedas monedas;
 
     // Constructor
-    public Tanque(int capacidadMaxima) {
+    public Tanque(int capacidadMaxima, SistemaMonedas monedas) {
         this.capacidadMaxima = capacidadMaxima;
         this.peces = new ArrayList<>();
         this.tipoPezActual = null;
+        this.monedas = monedas;
     }
 
     // Metodo para mostrar el estado del tanque
@@ -51,9 +55,7 @@ public class Tanque<T extends Pez> {
         }
 
         reproduccion();
-
-        // Vender los peces que han alcanzado la edad óptima
-        //venderPecesAdultos
+        sellFish();    
     }
 
     // Método de reproducción
@@ -147,6 +149,18 @@ public class Tanque<T extends Pez> {
 
         peces.add(pez);
         return true;
+    }
+
+    public void sellFish() {
+        Iterator<T> iterator = peces.iterator();
+
+        while (iterator.hasNext()) {
+            T pez = iterator.next();
+            if (pez.getEdad() >= pez.getDatos().getOptimo()) {
+                monedas.ganarMonedas(pez.getDatos().getMonedas());
+                iterator.remove(); // Eliminar el pez del tanque
+            }
+        }
     }
 
 
