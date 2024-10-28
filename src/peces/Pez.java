@@ -131,6 +131,11 @@ public class Pez {
         return new Pez(nuevoSexo, datos);
     }
 
+    public int getTipo() {
+        return datos.getPiscifactoria().getValue();
+    }
+
+
     // Getters
 
     /**
