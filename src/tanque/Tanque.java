@@ -6,8 +6,8 @@ import java.util.Iterator;
 import commons.SistemaMonedas;
 import peces.Pez;
 
-public class Tanque<T extends Pez> {
-    public ArrayList<T> peces; // Lista para almacenar los peces
+public class Tanque {
+    public ArrayList<Pez> peces; // Lista para almacenar los peces
     private Class<?> tipoPezActual; // Tipo de pez actual en el tanque
 
     private int capacidadMaxima; // Capacidad máxima del tanque
@@ -37,7 +37,7 @@ public class Tanque<T extends Pez> {
     // Muestra el estado de los peces
     public void showFishStatus() {
         System.out.println("--------------- Peces en el Tanque " + numeroTanque + " ---------------");
-        for (T pez : peces) {
+        for (Pez pez : peces) {
             pez.showStatus();
         }
     }
@@ -49,7 +49,7 @@ public class Tanque<T extends Pez> {
 
     // Pasa un día en el tanque 
     public void nextDay() { 
-        for (T pez : peces) {
+        for (Pez pez : peces) {
             pez.grow(); // Hace crecer cada pez
         }
 
@@ -69,11 +69,11 @@ public class Tanque<T extends Pez> {
         int nuevasHembras = 0;
 
         // Listas para almacenar los peces fértiles
-        ArrayList<T> machosFertiles = new ArrayList<>();
-        ArrayList<T> hembrasFertiles = new ArrayList<>();
+        ArrayList<Pez> machosFertiles = new ArrayList<>();
+        ArrayList<Pez> hembrasFertiles = new ArrayList<>();
 
         // Clasificar los peces fértiles
-        for (T pez : peces) {
+        for (Pez pez : peces) {
             if (pez.isFertil()) {
                 if (pez.isSexo()) {
                     machosFertiles.add(pez);
@@ -89,12 +89,12 @@ public class Tanque<T extends Pez> {
         }
 
         // Reproducción
-        for (T macho : machosFertiles) {
+        for (Pez macho : machosFertiles) {
             if (hembrasFertiles.isEmpty()) {
                 break; 
             }
 
-            for (T hembra : new ArrayList<>(hembrasFertiles)) { 
+            for (Pez hembra : new ArrayList<>(hembrasFertiles)) { 
                 for (int i = 0; i < huevosPorHembra; i++) {
                     boolean nuevoSexo;
                     if (getHembras() <= getMachos()) {
@@ -103,7 +103,7 @@ public class Tanque<T extends Pez> {
                         nuevoSexo = true; 
                     }
 
-                    T nuevoPez = (T) hembra.clonar(nuevoSexo); 
+                    Pez nuevoPez = (Pez) hembra.clonar(nuevoSexo); 
 
                     if (peces.size() < capacidadMaxima) {
                         peces.add(nuevoPez); 
@@ -126,7 +126,7 @@ public class Tanque<T extends Pez> {
         System.out.println("Se han creado " + nuevosMachos + " nuevos machos y " + nuevasHembras + " nuevas hembras.");
     }
 
-    public boolean addPez(T pez) {
+    public boolean addPez(Pez pez) {
         if (peces.size() >= capacidadMaxima) {
             System.out.println("El tanque está lleno.");
             return false;
@@ -156,12 +156,12 @@ public class Tanque<T extends Pez> {
     }
 
     public void sellFish() {
-        Iterator<T> iterator = peces.iterator();
+        Iterator<Pez> iterator = peces.iterator();
         int pecesVendidos = 0;
         int monedasGanadas = 0;
     
         while (iterator.hasNext()) {
-            T pez = iterator.next();
+            Pez pez = iterator.next();
             if (pez.getEdad() >= pez.getDatos().getOptimo()) {
                 int monedasPez = pez.getDatos().getMonedas();
                 monedas.ganarMonedas(monedasPez);
@@ -194,7 +194,7 @@ public class Tanque<T extends Pez> {
     }
 
     // Devuelve los peces del tanque
-    public ArrayList<T> getPeces() {
+    public ArrayList<Pez> getPeces() {
         return peces;
     }
 
@@ -202,7 +202,7 @@ public class Tanque<T extends Pez> {
     public int getHembras() {
         // Contar hembras
         int hembras = 0;
-        for (T pez : peces) {
+        for (Pez pez : peces) {
             if (!pez.isSexo()) { // false es hembra
                 hembras++;
             }
@@ -214,7 +214,7 @@ public class Tanque<T extends Pez> {
     public int getMachos() {
         // Contar machos
         int machos = 0;
-        for (T pez : peces) {
+        for (Pez pez : peces) {
             if (pez.isSexo()) { // true si es macho
                 machos++;
             }
@@ -226,7 +226,7 @@ public class Tanque<T extends Pez> {
     public int getFertiles() {
         // Contar peces fértiles
         int fertiles = 0;
-        for (T pez : peces) {
+        for (Pez pez : peces) {
             if (pez.isFertil()) {
                 fertiles++;
             }
@@ -238,7 +238,7 @@ public class Tanque<T extends Pez> {
     public int getVivos() {
         // Contar peces vivos
         int pecesVivos = 0;
-        for (T pez : peces) {
+        for (Pez pez : peces) {
             if (pez.isVivo()) {
                 pecesVivos++;
             }
@@ -250,7 +250,7 @@ public class Tanque<T extends Pez> {
     public int getAlimentados() {
         // Contar peces alimentados
         int pecesAlimentados = 0;
-        for (T pez : peces) {
+        for (Pez pez : peces) {
             if (pez.isAlimentado()) {
                 pecesAlimentados++;
             }
@@ -262,7 +262,7 @@ public class Tanque<T extends Pez> {
     public int getAdultos() {
         // Contar peces adultos
         int pecesAdultos = 0;
-        for (T pez : peces) {
+        for (Pez pez : peces) {
             if (pez.getEdad() >= pez.getDatos().getMadurez()) {
                 pecesAdultos++;
             }

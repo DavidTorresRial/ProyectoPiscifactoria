@@ -14,6 +14,6 @@ public class PiscifactoriaDeMar extends Piscifactoria {
         this.comidaAnimalActual = 100;
 
         // Aquí se puede agregar un tanque si es necesario, o dejar que se agreguen desde la clase principal
-        this.tanques.add(new Tanque<>(100, monedas));
+        this.tanques.add(new Tanque(100, monedas));
     }
 }
