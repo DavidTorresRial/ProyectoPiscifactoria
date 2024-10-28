@@ -26,7 +26,7 @@ public class Tanque<T extends Pez> {
     public void showStatus() {
         System.out.println("\n=============== Tanque " + numeroTanque + " ===============");
 
-        System.out.println("Ocupación: " + peces.size() + " / " + capacidadMaxima + " (" + (peces.size() * 100 / capacidadMaxima) + "%)");
+        System.out.println("Ocupación: " + peces.size() + " / " + getCapacidad() + " (" + (peces.size() * 100 / getCapacidad()) + "%)");
         System.out.println("Peces vivos: " + getVivos() + " / " + peces.size() + " (" + (getVivos() > 0 ? (getVivos() * 100 / peces.size()) : 0) + "%)");
         System.out.println("Peces alimentados: " + getAlimentados() + " / " + getVivos() + " (" + (getVivos() > 0 ? (getAlimentados() * 100 / getVivos()) : 0) + "%)");
         System.out.println("Peces adultos: " + getAdultos() + " / " + getVivos() + " (" + (getVivos() > 0 ? (getAdultos() * 100 / getVivos()) : 0) + "%)");
@@ -49,7 +49,6 @@ public class Tanque<T extends Pez> {
 
     // Pasa un día en el tanque 
     public void nextDay() { 
-        System.out.println("Avanzando al siguiente día para el Tanque " + numeroTanque + "...");
         for (T pez : peces) {
             pez.grow(); // Hace crecer cada pez
         }
@@ -151,16 +150,29 @@ public class Tanque<T extends Pez> {
         return true;
     }
 
+     // Método getter para obtener el tipo de pez actual
+     public Class<?> getTipoPezActual() {
+        return tipoPezActual;
+    }
+
     public void sellFish() {
         Iterator<T> iterator = peces.iterator();
-
+        int pecesVendidos = 0;
+        int monedasGanadas = 0;
+    
         while (iterator.hasNext()) {
             T pez = iterator.next();
             if (pez.getEdad() >= pez.getDatos().getOptimo()) {
-                monedas.ganarMonedas(pez.getDatos().getMonedas());
+                int monedasPez = pez.getDatos().getMonedas();
+                monedas.ganarMonedas(monedasPez);
+                monedasGanadas += monedasPez;
                 iterator.remove(); // Eliminar el pez del tanque
+                pecesVendidos++;
             }
         }
+    
+        System.out.println("Peces vendidos: " + pecesVendidos);
+        System.out.println("Monedas ganadas: " + monedasGanadas);
     }
 
 
@@ -169,6 +181,11 @@ public class Tanque<T extends Pez> {
     // Devuelve el número del tanque
     public int getNumeroTanque() {
         return numeroTanque;
+    }
+
+    // Devuelve la capacidad máxima del tanque
+    public int getCapacidad() {
+        return capacidadMaxima;
     }
 
     // Devuelve el numero de peces del tanque
