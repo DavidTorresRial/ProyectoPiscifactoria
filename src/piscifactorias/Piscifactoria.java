@@ -16,7 +16,7 @@ import piscifactorias.tipos.PiscifactoriaDeRio;
 
 public abstract class Piscifactoria {
     private String nombre;
-    protected List<Tanque<? extends Pez>> tanques; // Lista de tanques con distintos tipos de peces
+    protected List<Tanque> tanques; // Lista de tanques con distintos tipos de peces
     private SistemaMonedas monedas;
 
 
@@ -35,11 +35,11 @@ public abstract class Piscifactoria {
     }
 
     // Método para agregar un tanque a la piscifactoría (genérico para diferentes tipos de peces)
-    public void agregarTanque(Tanque<? extends Pez> tanque) {
+    public void agregarTanque(Tanque tanque) {
         this.tanques.add(tanque);
     }
 
-    public List<Tanque<? extends Pez>> getTanques() {
+    public List<Tanque> getTanques() {
         return this.tanques;
     }
     
@@ -53,9 +53,9 @@ public abstract class Piscifactoria {
             tipoPez == 2) {
             
             // Intenta añadir el pez al primer tanque que lo acepte
-            for (Tanque<? extends Pez> tanque : tanques) {
+            for (Tanque tanque : tanques) {
                 // Usa el método addPez del tanque para verificar y añadir el pez
-                if (((Tanque<Pez>) tanque).addPez(pez)) {
+                if (((Tanque) tanque).addPez(pez)) {
                     agregado = true;
                     break;
                 }
@@ -104,20 +104,20 @@ public abstract class Piscifactoria {
 
     // Método que muestra el estado de cada tanque
     public void showTankStatus() {
-        for (Tanque<? extends Pez> tanque : tanques) {
+        for (Tanque tanque : tanques) {
             tanque.showStatus(); // Mostrar el estado de cada tanque
         }
     }
 
     // Método que muestra la información de los peces de un tanque determinado
     public void showFishStatus(int numeroTanque) {
-        Tanque<? extends Pez> tanque = tanques.get(numeroTanque - 1); // Los tanques están numerados desde 1
+        Tanque tanque = tanques.get(numeroTanque - 1); // Los tanques están numerados desde 1
         tanque.showFishStatus();
     }
 
     // Método que muestra la ocupación de un tanque determinado
     public void showCapacity(int numeroTanque) {
-        Tanque<? extends Pez> tanque = tanques.get(numeroTanque - 1);
+        Tanque tanque = tanques.get(numeroTanque - 1);
         tanque.showCapacity();
     }
 
@@ -130,13 +130,13 @@ public abstract class Piscifactoria {
 
     // Método que hace avanzar el ciclo de vida en la piscifactoría
     public void nextDay() {
-        for (Tanque<? extends Pez> tanque : tanques) {
+        for (Tanque tanque : tanques) {
             alimentarPeces(tanque);
             tanque.nextDay(); 
         }
     }
 
-    private void alimentarPeces(Tanque<?> tanque) {
+    private void alimentarPeces(Tanque tanque) {
         Random rand = new Random();
 
         for (Pez pez : tanque.getPeces()) {
@@ -188,7 +188,7 @@ public abstract class Piscifactoria {
         int totalPecesVendidos = 0;
         int totalMonedasGanadas = 0;
     
-        for (Tanque<? extends Pez> tanque : tanques) {
+        for (Tanque tanque : tanques) {
             Iterator<? extends Pez> iterator = tanque.getPeces().iterator();
             while (iterator.hasNext()) {
                 Pez pez = iterator.next();
@@ -214,7 +214,7 @@ public abstract class Piscifactoria {
 
     public int getTotalPeces() {
         int totalPeces = 0;
-        for (Tanque<? extends Pez> tanque : tanques) {
+        for (Tanque tanque : tanques) {
             totalPeces += tanque.getNumPeces();
         }
         return totalPeces;
@@ -222,7 +222,7 @@ public abstract class Piscifactoria {
     
     public int getTotalVivos() {
         int totalVivos = 0;
-        for (Tanque<? extends Pez> tanque : tanques) {
+        for (Tanque tanque : tanques) {
             totalVivos += tanque.getVivos();
         }
         return totalVivos;
@@ -230,7 +230,7 @@ public abstract class Piscifactoria {
     
     public int getTotalAlimentados() {
         int totalAlimentados = 0;
-        for (Tanque<? extends Pez> tanque : tanques) {
+        for (Tanque tanque : tanques) {
             totalAlimentados += tanque.getAlimentados();
         }
         return totalAlimentados;
@@ -238,7 +238,7 @@ public abstract class Piscifactoria {
     
     public int getTotalAdultos() {
         int totalAdultos = 0;
-        for (Tanque<? extends Pez> tanque : tanques) {
+        for (Tanque tanque : tanques) {
             totalAdultos += tanque.getAdultos();
         }
         return totalAdultos;
@@ -246,7 +246,7 @@ public abstract class Piscifactoria {
     
     public int getTotalHembras() {
         int totalHembras = 0;
-        for (Tanque<? extends Pez> tanque : tanques) {
+        for (Tanque tanque : tanques) {
             totalHembras += tanque.getHembras();
         }
         return totalHembras;
@@ -254,7 +254,7 @@ public abstract class Piscifactoria {
     
     public int getTotalFertiles() {
         int totalFertiles = 0;
-        for (Tanque<? extends Pez> tanque : tanques) {
+        for (Tanque tanque : tanques) {
             totalFertiles += tanque.getFertiles();
         }
         return totalFertiles;
@@ -263,7 +263,7 @@ public abstract class Piscifactoria {
     public int getCapacidadTotal() {
         int capacidadTotal = 0;
         // Calcula la capacidad total sumando las capacidades de todos los tanques
-        for (Tanque<? extends Pez> tanque : tanques) {
+        for (Tanque tanque : tanques) {
             capacidadTotal += tanque.getCapacidad();
         }
         return capacidadTotal;

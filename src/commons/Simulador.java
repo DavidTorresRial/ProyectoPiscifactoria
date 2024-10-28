@@ -5,8 +5,6 @@ import piscifactorias.tipos.PiscifactoriaDeRio;
 import tanque.Tanque;
 import helpers.InputHelper;
 import helpers.MenuHelper;
-import peces.Pez;
-import peces.tipos.mar.Besugo;
 import peces.tipos.rio.Pejerrey;
 
 import java.util.List;
@@ -103,9 +101,9 @@ public class Simulador {
         menuHelper.clearOptions(); // Limpiar opciones previas
         System.out.println("Seleccione un Tanque:");
 
-        List<Tanque<? extends Pez>> tanques = piscifactoria.getTanques();
+        List<Tanque> tanques = piscifactoria.getTanques();
         for (int i = 0; i < tanques.size(); i++) {
-            Tanque<? extends Pez> tanque = tanques.get(i);
+            Tanque tanque = tanques.get(i);
             String optionText = "Tanque " + (i + 1) + " [Tipo de pez: " + tanque.getTipoPezActual().getSimpleName() + "]";
             menuHelper.addOption(i + 1, optionText);
         }
