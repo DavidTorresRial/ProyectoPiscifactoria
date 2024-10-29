@@ -1,5 +1,5 @@
 package peces.propiedades;
 
-public class Carnivoro {
-
+public interface Carnivoro {
+    // TODO Carnívoro	Se alimenta de comida animal.
 }

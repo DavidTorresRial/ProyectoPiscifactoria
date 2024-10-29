@@ -1,12 +1,13 @@
 package peces.tipos.rio;
 
 import peces.Pez;
-import propiedades.PecesDatos;
+import peces.propiedades.Activo;
+import peces.propiedades.Carnivoro;
+import propiedades.AlmacenPropiedades;
 
-public class PercaEuropea extends Pez {
+public class PercaEuropea extends Pez implements Carnivoro, Activo {
 
-    public PercaEuropea(boolean sexo, PecesDatos datos) {
-        super(sexo, datos);
-        // TODO Auto-generated constructor stub
+    public PercaEuropea(boolean sexo) {
+        super(sexo, AlmacenPropiedades.PERCA_EUROPEA);
     }
 }

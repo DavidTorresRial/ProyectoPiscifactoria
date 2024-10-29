@@ -1,12 +1,12 @@
 package peces.tipos.rio;
 
 import peces.Pez;
-import propiedades.PecesDatos;
+import peces.propiedades.Carnivoro;
+import propiedades.AlmacenPropiedades;
 
-public class Pejerrey extends Pez {
+public class Pejerrey extends Pez implements Carnivoro {
 
-    public Pejerrey(boolean sexo, PecesDatos datos) {
-        super(sexo, datos);
-        // TODO Auto-generated constructor stub
+    public Pejerrey(boolean sexo) {
+        super(sexo, AlmacenPropiedades.PEJERREY);
     }
 }

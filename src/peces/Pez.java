@@ -1,33 +1,38 @@
 package peces;
 
 import java.util.Random;
+
 import propiedades.PecesDatos;
 
 public class Pez {
-    private int edad = 0;
+    private int edad = 0; // La edad inicial del pez
     private final boolean sexo; // True para macho, False para hembra
-    private boolean fertil = false;
-    private boolean vivo = true;
-    private boolean alimentado = false;
+    private boolean fertil = false; // True si el pez es fútil, False si no
+    private boolean vivo = true; // True si el pez está vivo, False si no
+    private boolean alimentado = false; // True si el pez está alimentado, False si no
+    private final String nombre;
 
     private PecesDatos datos;
-    
     protected int ciclo;
 
     // Constructor del pez
     public Pez(boolean sexo, PecesDatos datos) {
-        this.edad = 0; // La edad inicial del pez
-        this.sexo = sexo;
-        this.datos = datos;
+        this.edad = 0; // Inicialización explícita
+        this.sexo = sexo; // Inicialización explícita
+        this.fertil = false; // Inicialización explícita
+        this.vivo = true; // Inicialización explícita
+        this.alimentado = false; // Inicialización explícita
 
+        this.datos = datos;
         this.ciclo = datos.getCiclo();
+        this.nombre = datos.getNombre();
     }
 
     // Método que muestra el estado actual del pez
     public void showStatus() {
-        System.out.println("--------------- " + datos.getNombre() + " ---------------");
+        System.out.println("--------------- " + nombre + " ---------------");
         System.out.println("Edad: " + edad + " días");
-        System.out.println("Sexo: " + (sexo ? "M" : "H")); // "M" para macho, "H" para hembra
+        System.out.println("Sexo: " + (sexo ? "M" : "H"));
         System.out.println("Vivo: " + (vivo ? "Si" : "No"));
         System.out.println("Alimentado: " + (alimentado ? "Si" : "No"));
         System.out.println("Adulto: " + (edad >= datos.getMadurez() ? "Si" : "No"));
@@ -35,12 +40,12 @@ public class Pez {
     }
 
     // Método que simula el crecimiento del pez
-    public void grow() { // TODO revisar en que orden se ejecutan el metodo y si lo de restar la comida tiene que ir aqui
+    public void grow() {
         if (vivo) {
+            Random rand = new Random();
 
             // Si no está alimentado, tiene 50% de probabilidad de morir
             if (!alimentado) {
-                Random rand = new Random();
                 if (rand.nextDouble() < 0.5) {
                     vivo = false; // El pez muere
                     return; // No realizar más acciones si está muerto
@@ -50,28 +55,25 @@ public class Pez {
             // Incrementar la edad del pez
             edad++;
 
-            // Si la edad alcanza la madurez, el pez se hace fértil
+            // Manejo del ciclo reproductivo y fertilidad
             if (edad >= datos.getMadurez()) {
-                fertil = true;
+                // Si el pez ha alcanzado la madurez y no es fértil, se reduce el ciclo
+                if (!fertil) {
+                    ciclo--;
+                    if (ciclo <= 0) {
+                        fertil = true; // Se vuelve fértil después de completar el ciclo
+                    }
+                }
             } else {
+                // Si el pez no ha alcanzado la madurez, aseguramos que no es fértil
                 fertil = false;
             }
 
-            alimentado = false;
-
-            if (edad >= datos.getMadurez() && fertil == false) {
-                ciclo--;
-                if (ciclo == 0) {
-                    fertil = true;
-                }
-            }
-
-            // Si es joven (antes de alcanzar la madurez), tiene un 5% de probabilidad de morir cada 2 días
+            // Si el pez es joven (antes de la madurez), tiene un 5% de probabilidad de morir cada 2 días
             if (edad < datos.getMadurez() && edad % 2 == 0) {
-                Random rand = new Random();
                 if (rand.nextDouble() < 0.05) {
-                    vivo = false;
-                    return;
+                    vivo = false; // El pez muere
+                    return; // No realizar más acciones si está muerto
                 }
             }
         }
@@ -85,9 +87,25 @@ public class Pez {
         alimentado = false;
     }
 
+    public Pez clonar(boolean nuevoSexo) {
+        return new Pez(nuevoSexo, datos);
+    }
+
+    public int getTipo() {
+        return datos.getPiscifactoria().getValue();
+    }
+
     // Getters
     public int getEdad() {
         return edad;
+    }
+
+    public boolean isSexo() {
+        return sexo;
+    }
+
+    public boolean isFertil() {
+        return fertil;
     }
 
     public boolean isVivo() {
@@ -96,18 +114,6 @@ public class Pez {
 
     public boolean isAlimentado() {
         return alimentado;
-    }
-
-    public void alimentar() {
-        this.alimentado = true;
-    }
-
-    public boolean isFertil() {
-        return fertil;
-    }
-
-    public boolean isSexo() {
-        return sexo;
     }
 
     public int getHuevos() {
@@ -121,5 +127,9 @@ public class Pez {
     // Setters
     public void setFertil(boolean fertil) {
         this.fertil = fertil;
+    }
+
+    public void setAlimentar() {
+        this.alimentado = true;
     }
 }

@@ -1,12 +1,12 @@
 package peces.tipos.rio;
 
 import peces.Pez;
-import propiedades.PecesDatos;
+import peces.propiedades.Carnivoro;
+import propiedades.AlmacenPropiedades;
 
-public class SalmonChinook extends Pez {
+public class SalmonChinook extends Pez implements Carnivoro {
 
-    public SalmonChinook(boolean sexo, PecesDatos datos) {
-        super(sexo, datos);
-        // TODO Auto-generated constructor stub
+    public SalmonChinook(boolean sexo) {
+        super(sexo, AlmacenPropiedades.SALMON_CHINOOK);
     }
 }

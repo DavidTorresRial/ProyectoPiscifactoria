@@ -1,12 +1,12 @@
 package peces.tipos.rio;
 
 import peces.Pez;
-import propiedades.PecesDatos;
+import peces.propiedades.Filtrador;
+import propiedades.AlmacenPropiedades;
 
-public class CarpaPlateada extends Pez {
+public class CarpaPlateada extends Pez implements Filtrador {
 
-    public CarpaPlateada(boolean sexo, PecesDatos datos) {
-        super(sexo, datos);
-        // TODO Auto-generated constructor stub
+    public CarpaPlateada(boolean sexo) {
+        super(sexo, AlmacenPropiedades.CARPA_PLATEADA);
     }
 }

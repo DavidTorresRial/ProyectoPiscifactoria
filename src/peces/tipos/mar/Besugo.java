@@ -1,12 +1,12 @@
 package peces.tipos.mar;
 
 import peces.Pez;
-import propiedades.PecesDatos;
+import peces.propiedades.Carnivoro;
+import propiedades.AlmacenPropiedades;
 
-public class Besugo extends Pez {
+public class Besugo extends Pez implements Carnivoro {
 
-    public Besugo(boolean sexo, PecesDatos datos) {
-        super(sexo, datos);
-        // TODO Auto-generated constructor stub
+    public Besugo(boolean sexo) {
+        super(sexo, AlmacenPropiedades.BESUGO);
     }
 }

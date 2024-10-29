@@ -1,12 +1,12 @@
 package peces.tipos.doble;
 
 import peces.Pez;
-import propiedades.PecesDatos;
+import peces.propiedades.Carnivoro;
+import propiedades.AlmacenPropiedades;
 
-public class TruchaArcoiris extends Pez {
+public class TruchaArcoiris extends Pez implements Carnivoro {
 
-    public TruchaArcoiris(boolean sexo, PecesDatos datos) {
-        super(sexo, datos);
-        // TODO Auto-generated constructor stub
+    public TruchaArcoiris(boolean sexo) {
+        super(sexo, AlmacenPropiedades.TRUCHA_ARCOIRIS);
     }
 }
