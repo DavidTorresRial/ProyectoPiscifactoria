@@ -8,12 +8,12 @@ import propiedades.PecesDatos;
  * Clase padre de los peces.
  */
 public class Pez {
-
+    
     /** Nombre común del pez */
     private final String nombre; 
 
     /** Nombre cientifico del pez */
-    private final String nombreCientifico; // Nombre cientifico del pez
+    private final String nombreCientifico;
 
     /** Edad del pez en días */
     private int edad = 0;
@@ -26,6 +26,8 @@ public class Pez {
 
     /** Estado de vida del pez: true si está vivo, false si está muerto */
     private boolean vivo = true;
+    
+
 
     /** Estado de alimentación del pez: true si ha sido alimentado, false si no lo ha sido */
     private boolean alimentado = false;
@@ -36,28 +38,29 @@ public class Pez {
     /** Datos específicos del pez extraídos de PecesDatos */
     private PecesDatos datos;
 
+    
     /**
      * Constructor que inicializa un Pez con su sexo y datos asociados.
      *
      * @param sexo true para macho, false para hembra
      * @param datos contiene las propiedades del pez
      */
-    public Pez(boolean sexo, PecesDatos datos) {
+    public Pez(boolean sexo, PecesDatos datos) { //TODO preguntar por la inicialización explícita de atributos
         this.nombre = datos.getNombre();
         this.nombreCientifico = datos.getCientifico();
 
-        this.edad = 0; // Inicialización explícita
         this.sexo = sexo; // Inicialización explícita
+        this.edad = 0; // Inicialización explícita
         this.fertil = false; // Inicialización explícita
         this.vivo = true; // Inicialización explícita
+        
         this.alimentado = false; // Inicialización explícita
-
         this.datos = datos;
         this.ciclo = datos.getCiclo();
     }
 
     /**
-     * Muestra el estado actual del pez (edad, sexo, estado de vida, estado de alimentación, madurez, fertilidad).
+     * Muestra el estado actual del pez.
      */
     public void showStatus() {
         System.out.println("--------------- " + nombre + " ---------------");
@@ -70,7 +73,7 @@ public class Pez {
     }
 
     /**
-     * Simula el crecimiento del pez a lo largo de un día, actualizando su edad, estado de fertilidad y vida.
+     * Simula el crecimiento del pez a lo largo de un día.
      */
     public void grow() {
         if (vivo) {
@@ -119,6 +122,8 @@ public class Pez {
         fertil = false;
         vivo = true;
         alimentado = false;
+
+        ciclo = datos.getCiclo(); //TODO revisar si hay que rehiniciar el ciclo
     }
 
     /**
@@ -131,12 +136,21 @@ public class Pez {
         return new Pez(nuevoSexo, datos);
     }
 
-    public int getTipo() {
-        return datos.getPiscifactoria().getValue();
+    // Getters //TODO preguntar si se deben añadir todos los getters y setters de todos los atributos
+
+    /**
+     * @return el nombre común del pez
+     */
+    public String getNombre() {
+        return nombre;
     }
 
-
-    // Getters
+    /**
+     * @return el nombre científico del pez
+     */
+    public String getNombreCientifico() {
+        return nombreCientifico;
+    }
 
     /**
      * @return la edad actual del pez en días
@@ -174,27 +188,65 @@ public class Pez {
     }
 
     /**
-     * @return el objeto PecesDatos asociado con este pez, que contiene datos específicos como el ciclo de vida
+     * @return el ciclo reproductivo del pez
+     */
+    public int getCiclo() {
+        return ciclo;
+    }
+
+    /**
+     * @return el objeto PecesDatos asociado con este pez
      */
     public PecesDatos getDatos() {
         return datos;
     }
 
-    /**
-     * @return el número de huevos que pone este tipo de pez
-     */
-    public int getHuevos() {
-        return datos.getHuevos();
-    }
-
-    /**
-     * @return el nombre de la piscifactoría a la que pertenece este pez
-     */
-    public String geTipo(){
-        return datos.getPiscifactoria().getName();
-    }
-
     // Setters
+
+    /**
+     * Establece la edad del pez.
+     * 
+     * @param edad la nueva edad del pez
+     */
+    public void setEdad(int edad) {
+        this.edad = edad;
+    }
+
+    /**
+     * Establece si el pez está vivo.
+     * 
+     * @param vivo true si el pez está vivo, false si está muerto
+     */
+    public void setVivo(boolean vivo) {
+        this.vivo = vivo;
+    }
+
+    /**
+     * Establece el estado de alimentación del pez.
+     * 
+     * @param alimentado true si el pez ha sido alimentado, false si no
+     */
+    public void setAlimentado(boolean alimentado) {
+        this.alimentado = alimentado;
+    }
+
+    /**
+     * Establece el ciclo reproductivo del pez.
+     * 
+     * @param ciclo el nuevo ciclo reproductivo
+     */
+    public void setCiclo(int ciclo) {
+        this.ciclo = ciclo;
+    }
+
+    /**
+     * Establece los datos específicos del pez.
+     * 
+     * @param datos el objeto PecesDatos asociado
+     */
+    public void setDatos(PecesDatos datos) {
+        this.datos = datos;
+    }
 
     /**
      * Establece si el pez es fértil.
@@ -203,12 +255,5 @@ public class Pez {
      */
     public void setFertil(boolean fertil) {
         this.fertil = fertil;
-    }
-
-    /**
-     * Marca el pez como alimentado.
-     */
-    public void setAlimentado() {
-        this.alimentado = true;
     }
 }

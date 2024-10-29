@@ -1,7 +1,9 @@
 package piscifactorias.tipos;
 
 import commons.SistemaMonedas;
+
 import piscifactorias.Piscifactoria;
+import tanque.Tanque;
 
 public class PiscifactoriaDeMar extends Piscifactoria {
 
@@ -12,9 +14,6 @@ public class PiscifactoriaDeMar extends Piscifactoria {
         this.comidaAnimalActual = 100;
 
         // Aquí se puede agregar un tanque si es necesario, o dejar que se agreguen desde la clase principal
-        // Ejemplo: 
-        // this.tanques.add(new Tanque<>(1, 100, "Peces de Mar", monedas));  // Elimínalo si no deseas inicialización automática
+        this.tanques.add(new Tanque(100, monedas));
     }
-
-    // Otros métodos específicos para piscifactorías de mar si los necesitas
 }
