@@ -55,8 +55,10 @@ public class Tanque {
      */
     public void showFishStatus() {
         System.out.println("--------------- Peces en el Tanque " + numeroTanque + " ---------------");
-        for (Pez pez : peces) {
-            pez.showStatus();
+        if (peces.isEmpty()) {
+            System.out.println("El tanque está vacío.");
+        } else {
+            peces.forEach(Pez::showStatus);
         }
     }
 
@@ -77,34 +79,25 @@ public class Tanque {
         }
 
         reproduccion();
-        sellFish();
+
+        // Si el tanque está vacío, restablece el tipo de pez permitido
+        if (peces.isEmpty()) {
+            tipoPezActual = null;
+        }
     }
 
     /**
      * Método que maneja la reproducción de los peces en el tanque.
      */
     public void reproduccion() {
-        int huevosPorHembra = 0;
-
-        if (!peces.isEmpty()) {
-            huevosPorHembra = peces.get(0).getDatos().getHuevos();
-        }
-
-        int nuevosMachos = 0;
-        int nuevasHembras = 0;
-
-        // Listas para almacenar los peces fértiles
+        int huevosPorHembra = peces.isEmpty() ? 0 : peces.get(0).getDatos().getHuevos();
         ArrayList<Pez> machosFertiles = new ArrayList<>();
         ArrayList<Pez> hembrasFertiles = new ArrayList<>();
 
-        // Clasificar los peces fértiles
         for (Pez pez : peces) {
             if (pez.isFertil()) {
-                if (pez.isSexo()) {
-                    machosFertiles.add(pez);
-                } else {
-                    hembrasFertiles.add(pez);
-                }
+                if (pez.isSexo()) machosFertiles.add(pez);
+                else hembrasFertiles.add(pez);
             }
         }
 
@@ -113,42 +106,21 @@ public class Tanque {
             return;
         }
 
-        // Reproducción
+        int nuevosMachos = 0, nuevasHembras = 0;
         for (Pez macho : machosFertiles) {
-            if (hembrasFertiles.isEmpty()) {
-                break;
-            }
-
             for (Pez hembra : new ArrayList<>(hembrasFertiles)) {
-                for (int i = 0; i < huevosPorHembra; i++) {
-                    boolean nuevoSexo;
-                    if (getHembras() <= getMachos()) {
-                        nuevoSexo = false;
-                    } else {
-                        nuevoSexo = true;
-                    }
-
-                    Pez nuevoPez = (Pez) hembra.clonar(nuevoSexo);
-
-                    if (peces.size() < capacidadMaxima) {
-                        peces.add(nuevoPez);
-                        if (nuevoSexo) {
-                            nuevosMachos++;
-                        } else {
-                            nuevasHembras++;
-                        }
-                    } else {
-                        System.out.println("No se puede agregar más peces. Tanque lleno.");
-                        break;
-                    }
+                for (int i = 0; i < huevosPorHembra && peces.size() < capacidadMaxima; i++) {
+                    Pez nuevoPez = (Pez) hembra.clonar(getHembras() <= getMachos());
+                    peces.add(nuevoPez);
+                    if (nuevoPez.isSexo()) nuevosMachos++;
+                    else nuevasHembras++;
                 }
                 hembra.setFertil(false);
                 hembrasFertiles.remove(hembra);
             }
             macho.setFertil(false);
         }
-
-        System.out.println("Se han creado " + nuevosMachos + " nuevos machos y " + nuevasHembras + " nuevas hembras.");
+        System.out.println("Nuevos peces: " + nuevosMachos + " machos, " + nuevasHembras + " hembras.");
     }
 
     /**
@@ -161,11 +133,6 @@ public class Tanque {
         if (peces.size() >= capacidadMaxima) {
             System.out.println("El tanque está lleno.");
             return false;
-        }
-
-        // Si el tanque está vacío, restablece el tipo de pez permitido
-        if (peces.isEmpty()) {
-            tipoPezActual = null;
         }
 
         if (tipoPezActual == null) {
@@ -190,27 +157,6 @@ public class Tanque {
         return tipoPezActual;
     }
 
-    /**
-     * Vende los peces que han alcanzado la edad óptima y actualiza el sistema de
-     * monedas.
-     */
-    public void sellFish() {
-        Iterator<Pez> iterator = peces.iterator();
-        int pecesVendidos = 0;
-        int monedasGanadas = 0;
-        while (iterator.hasNext()) {
-            Pez pez = iterator.next();
-            if (pez.getEdad() >= pez.getDatos().getOptimo()) {
-                int monedasPez = pez.getDatos().getMonedas();
-                monedas.ganarMonedas(monedasPez);
-                monedasGanadas += monedasPez;
-                iterator.remove(); // Eliminar el pez del tanque
-                pecesVendidos++;
-            }
-        }
-        System.out.println("Peces vendidos: " + pecesVendidos);
-        System.out.println("Monedas ganadas: " + monedasGanadas);
-    }
 
     // Getters y Setters
 

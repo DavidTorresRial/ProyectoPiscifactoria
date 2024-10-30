@@ -103,8 +103,12 @@ public class AlmacenCentral {
      */
     public void mostrarEstado() {
         System.out.println("Estado del Almacén Central:");
-        System.out.println("Comida Vegetal: " + comidaVegetal + " / " + capacidadMaxVeg);
-        System.out.println("Comida Animal: " + comidaAnimal + " / " + capacidadMaxAni);
+    
+        // Muestra el estado de la comida vegetal
+        System.out.println("Comida Vegetal: " + comidaVegetal + " / " + capacidadMaxVeg + " (" + (capacidadMaxVeg > 0 ? (comidaVegetal * 100 / capacidadMaxVeg) : 0) + "%)");
+    
+        // Muestra el estado de la comida animal
+        System.out.println("Comida Animal: " + comidaAnimal + " / " + capacidadMaxAni + " (" + (capacidadMaxAni > 0 ? (comidaAnimal * 100 / capacidadMaxAni) : 0) + "%)");
     }
 
     /**

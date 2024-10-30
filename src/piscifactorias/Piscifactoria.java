@@ -17,6 +17,7 @@ import piscifactorias.tipos.PiscifactoriaDeRio;
 
 import commons.SistemaMonedas;
 
+
 /**
  * Clase abstracta que representa una piscifactoría que gestiona tanques de peces.
  */
@@ -24,16 +25,16 @@ public abstract class Piscifactoria {
 
     /** El nombre de la piscifactoría. */
     private String nombre;
-    
+
     /** Lista de tanques con distintos tipos de peces. */
     protected List<Tanque> tanques;
-    
+
     /** Sistema de monedas para gestionar el dinero ganado. */
     private SistemaMonedas monedas;
 
     /** Capacidad máxima compartida para ambos tipos de comida. */
     protected int capacidadMaximaAlmacenComida;
-    
+
     /** Cantidad actual de comida vegetal. */
     protected int comidaVegetalActual;
 
@@ -45,7 +46,6 @@ public abstract class Piscifactoria {
 
     /** Número de tanques de mar. */
     private int numeroTanquesDeMar;
-
 
     /**
      * Constructor para crear una nueva piscifactoría.
@@ -76,7 +76,7 @@ public abstract class Piscifactoria {
     public List<Tanque> getTanques() {
         return this.tanques;
     }
-    
+
     /**
      * Agrega un pez a la piscifactoría, verificando que sea del tipo adecuado.
      *
@@ -85,12 +85,12 @@ public abstract class Piscifactoria {
     public void addPez(Pez pez) {
         int tipoPez = pez.getDatos().getPiscifactoria().getValue();
         boolean agregado = false;
-    
+
         // Verifica si el pez puede ser añadido a esta piscifactoría
-        if ((tipoPez == 0 && this instanceof PiscifactoriaDeRio) || 
-            (tipoPez == 1 && this instanceof PiscifactoriaDeMar) || 
-            tipoPez == 2) {
-            
+        if ((tipoPez == 0 && this instanceof PiscifactoriaDeRio) ||
+                (tipoPez == 1 && this instanceof PiscifactoriaDeMar) ||
+                tipoPez == 2) {
+
             // Intenta añadir el pez al primer tanque que lo acepte
             for (Tanque tanque : tanques) {
                 // Usa el método addPez del tanque para verificar y añadir el pez
@@ -100,11 +100,11 @@ public abstract class Piscifactoria {
                 }
             }
         }
-    
+
         if (!agregado) {
             System.out.println("No se puede añadir el pez de tipo " + tipoPez + " a esta piscifactoría.");
         }
-    }                                                                                                                                                                
+    }
 
     /**
      * Muestra toda la información de la piscifactoría.
@@ -112,7 +112,7 @@ public abstract class Piscifactoria {
     public void showStatus() {
         System.out.println("\n=============== " + nombre + " ===============");
         System.out.println("Tanques: " + tanques.size());
-    
+
         int totalPeces = getTotalPeces();
         int totalVivos = getTotalVivos();
         int totalAlimentados = getTotalAlimentados();
@@ -120,27 +120,37 @@ public abstract class Piscifactoria {
         int totalHembras = getTotalHembras();
         int totalFertiles = getTotalFertiles();
         int capacidadTotal = getCapacidadTotal();
-    
-        String ocupacion = (capacidadTotal > 0) ? "Ocupación: " + totalPeces + " / " + capacidadTotal + " (" + (totalPeces * 100 / capacidadTotal) + "%)" : "Ocupación: 0 / 0 (0%)";
+
+        String ocupacion = (capacidadTotal > 0)
+                ? "Ocupación: " + totalPeces + " / " + capacidadTotal + " (" + (totalPeces * 100 / capacidadTotal)
+                        + "%)"
+                : "Ocupación: 0 / 0 (0%)";
         System.out.println(ocupacion);
 
-        String pecesVivos = (totalPeces > 0) ? "Peces vivos: " + totalVivos + " / " + totalPeces + " (" + (totalVivos * 100 / totalPeces) + "%)" : "Peces vivos: 0 / 0 (0%)";
+        String pecesVivos = (totalPeces > 0)
+                ? "Peces vivos: " + totalVivos + " / " + totalPeces + " (" + (totalVivos * 100 / totalPeces) + "%)"
+                : "Peces vivos: 0 / 0 (0%)";
         System.out.println(pecesVivos);
 
-        String pecesAlimentados = (totalVivos > 0) ? "Peces alimentados: " + totalAlimentados + " / " + totalVivos + " (" + (totalAlimentados * 100 / totalVivos) + "%)" : "Peces alimentados: 0 / 0 (0%)";
+        String pecesAlimentados = (totalVivos > 0)
+                ? "Peces alimentados: " + totalAlimentados + " / " + totalVivos + " ("
+                        + (totalAlimentados * 100 / totalVivos) + "%)"
+                : "Peces alimentados: 0 / 0 (0%)";
         System.out.println(pecesAlimentados);
 
-        String pecesAdultos = (totalVivos > 0) ? "Peces adultos: " + totalAdultos + " / " + totalVivos + " (" + (totalAdultos * 100 / totalVivos) + "%)" : "Peces adultos: 0 / 0 (0%)";
+        String pecesAdultos = (totalVivos > 0)
+                ? "Peces adultos: " + totalAdultos + " / " + totalVivos + " (" + (totalAdultos * 100 / totalVivos)
+                        + "%)"
+                : "Peces adultos: 0 / 0 (0%)";
         System.out.println(pecesAdultos);
 
         System.out.println("Hembras / Machos: " + totalHembras + " / " + (totalVivos - totalHembras));
 
         String fertiles = (totalVivos > 0) ? "Fértiles: " + totalFertiles + " / " + totalVivos : "Fértiles: 0 / 0 (0)";
         System.out.println(fertiles);
-    
+
         showFood();
     }
-    
 
     /**
      * Muestra el estado de cada tanque en la piscifactoría.
@@ -176,17 +186,21 @@ public abstract class Piscifactoria {
      */
     public void showFood() {
         System.out.println("Depósito de comida de la piscifactoría " + nombre + ":");
-        System.out.println("Comida vegetal al " + (comidaVegetalActual * 100 / capacidadMaximaAlmacenComida) + "% de su capacidad. [" + comidaVegetalActual + "/" + capacidadMaximaAlmacenComida + "]");
-        System.out.println("Comida animal al " + (comidaAnimalActual * 100 / capacidadMaximaAlmacenComida) + "% de su capacidad. [" + comidaAnimalActual + "/" + capacidadMaximaAlmacenComida + "]");
+        System.out.println("Comida vegetal al " + (comidaVegetalActual * 100 / capacidadMaximaAlmacenComida)
+                + "% de su capacidad. [" + comidaVegetalActual + "/" + capacidadMaximaAlmacenComida + "]");
+        System.out.println("Comida animal al " + (comidaAnimalActual * 100 / capacidadMaximaAlmacenComida)
+                + "% de su capacidad. [" + comidaAnimalActual + "/" + capacidadMaximaAlmacenComida + "]");
     }
 
     /**
-     * Hace avanzar el ciclo de vida en la piscifactoría, alimentando a los peces y actualizando sus estados.
+     * Hace avanzar el ciclo de vida en la piscifactoría, alimentando a los peces y
+     * actualizando sus estados.
      */
-    public void nextDay() {
+    public void nextDay() {   // TODO tiene que realizar el crezimiento, la reproduccion y la venta de peces optimos (desglosar metodos)
         for (Tanque tanque : tanques) {
             alimentarPeces(tanque);
-            tanque.nextDay(); 
+            tanque.nextDay();
+            sellFish();
         }
     }
 
@@ -244,9 +258,11 @@ public abstract class Piscifactoria {
      * Vende los peces maduros y actualiza el sistema de monedas.
      */
     public void sellFish() {
-        int totalPecesVendidos = 0;
-        int totalMonedasGanadas = 0;
-    
+        int totalPecesVendidos = 0, totalMonedasGanadas = 0;
+
+        // Asumimos que tienes un método que retorna el nombre de la piscifactoría
+        String nombrePiscifactoria = this.getNombre();
+
         for (Tanque tanque : tanques) {
             Iterator<? extends Pez> iterator = tanque.getPeces().iterator();
             while (iterator.hasNext()) {
@@ -260,9 +276,10 @@ public abstract class Piscifactoria {
                 }
             }
         }
-    
-        System.out.println("Total de peces vendidos: " + totalPecesVendidos);
-        System.out.println("Total de monedas ganadas: " + totalMonedasGanadas);
+
+        // Cambiar la impresión para cumplir con el nuevo formato
+        System.out.println("Piscifactoría " + nombrePiscifactoria + ": " + totalPecesVendidos + " peces vendidos por "
+                + totalMonedasGanadas + " monedas.");
     }
 
     /**
@@ -272,7 +289,9 @@ public abstract class Piscifactoria {
      */
     public void upgradeFood(int incremento) {
         capacidadMaximaAlmacenComida += incremento;
-        System.out.println("Almacén de comida de la piscifactoría " + nombre + " mejorado. Su capacidad ha aumentado en " + incremento + " hasta un total de " + capacidadMaximaAlmacenComida);
+        System.out
+                .println("Almacén de comida de la piscifactoría " + nombre + " mejorado. Su capacidad ha aumentado en "
+                        + incremento + " hasta un total de " + capacidadMaximaAlmacenComida);
     }
 
     /**
@@ -287,7 +306,7 @@ public abstract class Piscifactoria {
         }
         return totalPeces;
     }
-    
+
     /**
      * Devuelve el total de peces vivos en la piscifactoría.
      *
@@ -300,7 +319,7 @@ public abstract class Piscifactoria {
         }
         return totalVivos;
     }
-    
+
     /**
      * Devuelve el total de peces alimentados en la piscifactoría.
      *
@@ -313,7 +332,7 @@ public abstract class Piscifactoria {
         }
         return totalAlimentados;
     }
-    
+
     /**
      * Devuelve el total de peces adultos en la piscifactoría.
      *
@@ -326,7 +345,7 @@ public abstract class Piscifactoria {
         }
         return totalAdultos;
     }
-    
+
     /**
      * Devuelve el total de hembras en la piscifactoría.
      *
@@ -339,7 +358,7 @@ public abstract class Piscifactoria {
         }
         return totalHembras;
     }
-    
+
     /**
      * Devuelve el total de peces feudiles en la piscifactoría.
      *
@@ -352,7 +371,7 @@ public abstract class Piscifactoria {
         }
         return totalFertiles;
     }
-    
+
     /**
      * Devuelve la capacidad total de todos los tanques de la piscifactoría.
      *
@@ -420,7 +439,7 @@ public abstract class Piscifactoria {
     public int getNumeroTanquesDeMar() {
         return numeroTanquesDeMar;
     }
-    
+
     /**
      * Devuelve la cantidad actual de comida vegetal en la piscifactoría.
      *
