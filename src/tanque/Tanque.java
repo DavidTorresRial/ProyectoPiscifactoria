@@ -1,9 +1,7 @@
 package tanque;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
-import commons.SistemaMonedas;
 import peces.Pez;
 
 public class Tanque {
@@ -20,20 +18,16 @@ public class Tanque {
     /** Número del tanque. */
     private int numeroTanque;
 
-    /** Sistema de monedas asociado al tanque. */
-    private SistemaMonedas monedas;
-
     /**
      * Constructor para crear un nuevo tanque.
      *
      * @param capacidadMaxima capacidad máxima del tanque
      * @param monedas sistema de monedas para gestionar el dinero ganado
      */
-    public Tanque(int capacidadMaxima, SistemaMonedas monedas) {
+    public Tanque(int capacidadMaxima) {
         this.capacidadMaxima = capacidadMaxima;
         this.peces = new ArrayList<>();
         this.tipoPezActual = null;
-        this.monedas = monedas;
     }
 
     /**
@@ -70,8 +64,7 @@ public class Tanque {
     }
 
     /**
-     * Avanza un día en el tanque, haciendo crecer los peces y ejecutando la
-     * reproducción.
+     * Avanza un día en el tanque, haciendo crecer los peces y ejecutando la reproducción.
      */
     public void nextDay() { // TODO cambiaria el orden ene el que se ejecutan los metodos en cada clase
         for (Pez pez : peces) {

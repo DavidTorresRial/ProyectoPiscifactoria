@@ -193,14 +193,13 @@ public abstract class Piscifactoria {
     }
 
     /**
-     * Hace avanzar el ciclo de vida en la piscifactoría, alimentando a los peces y
-     * actualizando sus estados.
+     * Hace avanzar el ciclo de vida en la piscifactoría, alimentando a los peces y actualizando sus estados.
      */
     public void nextDay() {   // TODO tiene que realizar el crezimiento, la reproduccion y la venta de peces optimos (desglosar metodos)
         for (Tanque tanque : tanques) {
             alimentarPeces(tanque);
             tanque.nextDay();
-            sellFish();
+            sellFish(); // TODO revisar porque se venden todos los peces el primer dia
         }
     }
 
@@ -278,8 +277,7 @@ public abstract class Piscifactoria {
         }
 
         // Cambiar la impresión para cumplir con el nuevo formato
-        System.out.println("Piscifactoría " + nombrePiscifactoria + ": " + totalPecesVendidos + " peces vendidos por "
-                + totalMonedasGanadas + " monedas.");
+        System.out.println("Piscifactoría " + nombrePiscifactoria + ": " + totalPecesVendidos + " peces vendidos por " + totalMonedasGanadas + " monedas.");
     }
 
     /**
