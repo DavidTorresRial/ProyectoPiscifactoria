@@ -74,38 +74,23 @@ public class Simulador {
         menuHelper.showMenu();
     }
 
-    public void menuPisc() { //TODO se puede seleccionar la piscifactoria?
+    public void menuPisc() {
+        menuHelper.clearOptions(); // Limpiar opciones previas si es necesario
         System.out.println("\nSeleccione una opción:");
         System.out.println("--------------- Piscifactorías ---------------");
         System.out.println("[Peces vivos / Peces totales / Espacio total]");
         System.out.println();
     
-        // Mostrar opciones
         for (int i = 0; i < piscifacorias.size(); i++) {
             Piscifactoria piscifactoria = piscifacorias.get(i);
-            int vivos = piscifactoria.getTotalVivos();
-            int total = piscifactoria.getTotalPeces();
-            int capacidad = piscifactoria.getCapacidadTotal();
-    
-            System.out.println((i + 1) + ".- " + piscifactoria.getNombre() + " [" + vivos + "/" + total + "/" + capacidad + "]");
+            String optionText = piscifactoria.getNombre() + " [" + piscifactoria.getTotalVivos() + "/" + piscifactoria.getTotalPeces() + "/" + piscifactoria.getCapacidadTotal() + "]";
+            menuHelper.addOption(i + 1, optionText);
         }
+        menuHelper.addOption(0, "Cancelar");
     
-        System.out.println("0.- Cancelar");
-    
-        // Leer entrada del usuario
-        int seleccion = inputHelper.readInt("Ingrese su selección: ");
-        
-        // Validar selección
-        if (seleccion < 0 || seleccion > piscifacorias.size()) {
-            System.out.println("Selección no válida. Inténtalo de nuevo.");
-            menuPisc();  // Llamada recursiva para repetir el menú
-        } else if (seleccion == 0) {
-            System.out.println("Operación cancelada.");
-        } else {
-            Piscifactoria piscifactoriaSeleccionada = piscifacorias.get(seleccion - 1);
-            System.out.println("Has seleccionado la piscifactoría: " + piscifactoriaSeleccionada.getNombre());
-        }
+        menuHelper.showMenu();
     }
+
 
     public int selectPisc() {
         menuPisc();
@@ -144,29 +129,24 @@ public class Simulador {
     }
     
     public void showGeneralStatus() {
+        System.out.println("\n=================== " + nombreEntidad + " ===================");
         System.out.println("Día actual: " + dias);
         System.out.println("Monedas disponibles: " + monedas.getMonedas());
 
         for (Piscifactoria piscifactoria : piscifacorias) {
-            System.out.println("Piscifactoría: " + piscifactoria.getNombre());
-            System.out.println("Comida vegetal actual: " + piscifactoria.getComidaVegetalActual());
-            System.out.println("Comida animal actual: " + piscifactoria.getComidaAnimalActual());
             piscifactoria.showStatus();
         }
 
         if (almacenCentral != null) {
-            int comidaVegetal = almacenCentral.getComidaVegetal();
-            int comidaAnimal = almacenCentral.getComidaAnimal();
-            int capacidadMaxVeg = almacenCentral.getCapacidadMaxVeg();
-            int capacidadMaxAni = almacenCentral.getCapacidadMaxAni();
-
             System.out.println("Almacén Central:");
-            System.out.println("Comida vegetal almacenada: " + comidaVegetal + " / " + capacidadMaxVeg + " (" + (comidaVegetal * 100 / capacidadMaxVeg) + "%)");
-            System.out.println("Comida animal almacenada: " + comidaAnimal + " / " + capacidadMaxAni + " (" + (comidaAnimal * 100 / capacidadMaxAni) + "%)");
+            System.out.println("Comida vegetal almacenada: " + almacenCentral.getComidaVegetal() + " / " + almacenCentral.getCapacidadMaxVeg() + " (" + (almacenCentral.getComidaVegetal() * 100 / almacenCentral.getCapacidadMaxVeg()) + "%)");
+            System.out.println("Comida animal almacenada: " + almacenCentral.getComidaAnimal() + " / " + almacenCentral.getCapacidadMaxAni() + " (" + (almacenCentral.getComidaAnimal() * 100 / almacenCentral.getCapacidadMaxAni()) + "%)");
         } else {
             System.out.println("No hay Almacén Central disponible.");
         }
+        System.out.println("======================================================");
     }
+
     public void showSpecificStatus() {
         int selection = selectPisc();
     
@@ -199,7 +179,7 @@ public class Simulador {
 
 
 
-    public void upgrade() {
+    /**public void upgrade() {
         
         while (true) {
             // Configuramos el menú principal
@@ -210,7 +190,8 @@ public class Simulador {
     
             // Mostramos el menú y obtenemos la opción seleccionada
             menuHelper.showMenu();
-            int opcion = menuHelper.getSelection();
+            int opcion = menuHelper.getSelection(); //TODO usar input helper
+            
     
             switch (opcion) {
                 case 1:
@@ -260,7 +241,7 @@ public class Simulador {
                     break;
             }
         }
-    }
+    } */
 
 
 
