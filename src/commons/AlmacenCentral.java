@@ -2,20 +2,12 @@ package commons;
 
 /**
  * Clase que representa un almacén central para la distribución de alimentos en una piscifactoría.
-<<<<<<< HEAD
- * Este almacén permite almacenar y distribuir comida de tipo vegetal y animal,
- * así como mejorar su capacidad mediante el gasto de monedas.
-=======
->>>>>>> origin/DavidTrama
  */
 public class AlmacenCentral {
 
     // ATRIBUTOS
-<<<<<<< HEAD
-=======
     private boolean comprado = false;
     
->>>>>>> origin/DavidTrama
     private int comidaVegetal;
     private int comidaAnimal;
     private int capacidadMaxVeg = 200;
@@ -23,12 +15,6 @@ public class AlmacenCentral {
     private int nivelMejora = 1;
     private SistemaMonedas monedas;
     private static final int COSTO_CREACION = 2000;
-<<<<<<< HEAD
-
-    /**
-     * Constructor privado para crear una instancia de AlmacenCentral. 
-     * Solo accesible desde el método {@link #crearAlmacen(SistemaMonedas)}.
-=======
     private static final int COSTO_MEJORA = 200;
     private static final int MEJORA_CAPACIDAD = 50;
 
@@ -36,7 +22,6 @@ public class AlmacenCentral {
 
     /**
      * Constructor privado para crear una instancia de AlmacenCentral.
->>>>>>> origin/DavidTrama
      *
      * @param sistemaMonedas Sistema de monedas asociado para gestionar los costos.
      */
@@ -63,110 +48,6 @@ public class AlmacenCentral {
         }
     }
 
-<<<<<<< HEAD
-    // GETTERS Y SETTERS
-
-    /**
-     * Obtiene la cantidad de comida vegetal almacenada.
-     * @return cantidad de comida vegetal.
-     */
-    public int getComidaVegetal() {
-        return comidaVegetal;
-    }
-
-    /**
-     * Establece la cantidad de comida vegetal almacenada.
-     * @param comidaVegetal la cantidad de comida vegetal.
-     */
-    public void setComidaVegetal(int comidaVegetal) {
-        this.comidaVegetal = comidaVegetal;
-    }
-
-    /**
-     * Obtiene la cantidad de comida animal almacenada.
-     * @return cantidad de comida animal.
-     */
-    public int getComidaAnimal() {
-        return comidaAnimal;
-    }
-
-    /**
-     * Establece la cantidad de comida animal almacenada.
-     * @param comidaAnimal la cantidad de comida animal.
-     */
-    public void setComidaAnimal(int comidaAnimal) {
-        this.comidaAnimal = comidaAnimal;
-    }
-
-    /**
-     * Obtiene el nivel de mejora actual del almacén.
-     * @return el nivel de mejora.
-     */
-    public int getNivelMejora() {
-        return nivelMejora;
-    }
-
-    /**
-     * Establece el nivel de mejora del almacén.
-     * @param nivelMejora el nivel de mejora.
-     */
-    public void setNivelMejora(int nivelMejora) {
-        this.nivelMejora = nivelMejora;
-    }
-
-    /**
-     * Obtiene la capacidad máxima de comida vegetal.
-     * @return capacidad máxima de comida vegetal.
-     */
-    public int getCapacidadMaxVeg() {
-        return capacidadMaxVeg;
-    }
-
-    /**
-     * Obtiene la capacidad máxima de comida animal.
-     * @return capacidad máxima de comida animal.
-     */
-    public int getCapacidadMaxAni() {
-        return capacidadMaxAni;
-    }
-
-    // MÉTODOS DE LA CLASE
-
-    /**
-     * Agrega una cantidad especificada de comida vegetal al almacén.
-     * Si la cantidad total excede la capacidad máxima, se ajusta al máximo.
-     *
-     * @param cantidad Cantidad de comida vegetal a agregar.
-     */
-    public void agregarComidaVeg(int cantidad) {
-        if (cantidad < 0) {
-            System.out.println("No es posible añadir una cantidad de comida negativa.");
-            return;
-        }
-        comidaVegetal += cantidad;
-        if (comidaVegetal > capacidadMaxVeg) {
-            comidaVegetal = capacidadMaxVeg;
-            System.out.println("Capacidad máxima alcanzada para la comida vegetal.");
-        }
-    }
-
-    /**
-     * Agrega una cantidad especificada de comida animal al almacén.
-     * Si la cantidad total excede la capacidad máxima, se ajusta al máximo.
-     *
-     * @param cantidad Cantidad de comida animal a agregar.
-     */
-    public void agregarComidaAnimal(int cantidad) {
-        if (cantidad < 0) {
-            System.out.println("No se puede agregar una cantidad negativa.");
-            return;
-        }
-
-        comidaAnimal += cantidad;
-        if (comidaAnimal > capacidadMaxAni) {
-            comidaAnimal = capacidadMaxAni;
-            System.out.println("Capacidad máxima alcanzada para la comida animal.");
-=======
     /**
      * Agrega una cantidad especificada de comida al almacén.
      *
@@ -185,7 +66,6 @@ public class AlmacenCentral {
         } else if (tipo == TipoComida.ANIMAL) {
             comidaAnimal = Math.min(comidaAnimal + cantidad, capacidadMaxAni);
             System.out.println("Añadida " + cantidad + " de comida animal.");
->>>>>>> origin/DavidTrama
         }
     }
 
@@ -198,14 +78,6 @@ public class AlmacenCentral {
      * @param numPiscifactorías Número de piscifactorías.
      */
     public void distribuirComida(int cantidadVegetal, int cantidadAnimal, int numPiscifactorías) {
-<<<<<<< HEAD
-        int totalNecesitadoVegetal = cantidadVegetal * numPiscifactorías;
-        int totalNecesitadoAnimal = cantidadAnimal * numPiscifactorías;
-
-        if (totalNecesitadoVegetal <= comidaVegetal) {
-            comidaVegetal -= totalNecesitadoVegetal;
-            System.out.println("Distribuidos " + totalNecesitadoVegetal + " de comida vegetal.");
-=======
         if (numPiscifactorías < 1) {
             System.out.println("No hay piscifactorías disponibles para distribuir comida.");
             return;
@@ -214,49 +86,19 @@ public class AlmacenCentral {
         if (cantidadVegetal * numPiscifactorías <= comidaVegetal) {
             comidaVegetal -= cantidadVegetal * numPiscifactorías;
             System.out.println("Distribuidos " + cantidadVegetal * numPiscifactorías + " de comida vegetal.");
->>>>>>> origin/DavidTrama
         } else {
             System.out.println("No hay suficiente comida vegetal para distribuir.");
         }
 
-<<<<<<< HEAD
-        if (totalNecesitadoAnimal <= comidaAnimal) {
-            comidaAnimal -= totalNecesitadoAnimal;
-            System.out.println("Distribuidos " + totalNecesitadoAnimal + " de comida animal.");
-=======
         if (cantidadAnimal * numPiscifactorías <= comidaAnimal) {
             comidaAnimal -= cantidadAnimal * numPiscifactorías;
             System.out.println("Distribuidos " + cantidadAnimal * numPiscifactorías + " de comida animal.");
->>>>>>> origin/DavidTrama
         } else {
             System.out.println("No hay suficiente comida animal para distribuir.");
         }
     }
 
     /**
-<<<<<<< HEAD
-     * Realiza la distribución diaria de comida entre las piscifactorías.
-     *
-     * @param cantidadVegetal Cantidad de comida vegetal a distribuir por piscifactoría.
-     * @param cantidadAnimal Cantidad de comida animal a distribuir por piscifactoría.
-     * @param numPiscifactorías Número de piscifactorías.
-     */
-    public void distribuirDiariamente(int cantidadVegetal, int cantidadAnimal, int numPiscifactorías) {
-        System.out.println("Distribución diaria de comida:");
-        
-        // Asegurarse de que haya al menos una piscifactoría
-        if (numPiscifactorías < 1) {
-            System.out.println("No hay piscifactorías disponibles para distribuir comida.");
-            return;
-        }
-    
-        // Intentar distribuir la comida
-        distribuirComida(cantidadVegetal, cantidadAnimal, numPiscifactorías);
-    }
-    
-    /**
-=======
->>>>>>> origin/DavidTrama
      * Muestra el estado actual del almacén, incluyendo cantidades de comida y capacidades máximas.
      */
     public void mostrarEstado() {
@@ -270,24 +112,15 @@ public class AlmacenCentral {
      * Requiere 200 monedas para incrementar la capacidad en 50 unidades.
      */
     public void mejora() {
-<<<<<<< HEAD
-        int costoMejora = 200;
-        if (monedas.gastarMonedas(costoMejora)) {
-            capacidadMaxAni += 50;
-            capacidadMaxVeg += 50;
-=======
         if (monedas.gastarMonedas(COSTO_MEJORA)) {
             capacidadMaxAni += MEJORA_CAPACIDAD;
             capacidadMaxVeg += MEJORA_CAPACIDAD;
->>>>>>> origin/DavidTrama
             nivelMejora++;
             System.out.println("Nivel del almacén mejorado: Nivel " + nivelMejora);
         } else {
             System.out.println("No hay suficientes monedas para mejorar.");
         }
     }
-<<<<<<< HEAD
-=======
 
     // GETTERS Y SETTERS
 
@@ -348,5 +181,4 @@ public class AlmacenCentral {
     public void setNivelMejora(int nivelMejora) {
         this.nivelMejora = nivelMejora;
     }
->>>>>>> origin/DavidTrama
 }

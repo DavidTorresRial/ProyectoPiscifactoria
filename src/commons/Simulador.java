@@ -7,61 +7,21 @@ import helpers.InputHelper;
 import helpers.MenuHelper;
 import peces.tipos.rio.Pejerrey;
 
-<<<<<<< HEAD
-import java.util.List;
-import java.util.ArrayList;
-=======
 import java.util.ArrayList;
 import java.util.List;
->>>>>>> origin/DavidTrama
 
 public class Simulador {
     
     private int dias;
-<<<<<<< HEAD
-    private String nombreEntidad;
-
-    private List<Piscifactoria> piscifacorias;
-=======
     private ArrayList<Piscifactoria> piscifacorias;
     private String nombreEntidad;
 
->>>>>>> origin/DavidTrama
     private SistemaMonedas monedas;
     private InputHelper inputHelper;
     private MenuHelper menuHelper;
     private AlmacenCentral almacenCentral;
 
     public Simulador() {
-<<<<<<< HEAD
-        this.dias = 0;
-        this.piscifacorias = new ArrayList<>();
-        this.monedas = new SistemaMonedas(100);
-        this.inputHelper = new InputHelper();
-        this.menuHelper = new MenuHelper();
-        this.nombreEntidad = nombreEntidad;
-        this.almacenCentral = null;
-    }
-
-    public void init() {
-        nombreEntidad = inputHelper.readString("Ingrese el nombbre de la entidad/empresa/partida: ");
-        System.out.println();
-
-        String nombrePiscifactoria = inputHelper.readString("Ingrese el nombre de la primera de la Piscifactoria: ");
-        System.out.println();
-
-        PiscifactoriaDeRio piscifactoriaDeRio = new PiscifactoriaDeRio(nombrePiscifactoria, monedas);
-
-        piscifactoriaDeRio.addPez(new Pejerrey(false));
-        piscifactoriaDeRio.addPez(new Pejerrey(true));
-
-        piscifacorias.add(piscifactoriaDeRio); 
-        
-        
-    }
-
-    public void menu() {
-=======
         inputHelper = new InputHelper();
         menuHelper = new MenuHelper();
         piscifacorias = new ArrayList<>();
@@ -97,7 +57,6 @@ public class Simulador {
     public void menu() {
         menuHelper.clearOptions(); // Limpiar opciones previas si es necesario
 
->>>>>>> origin/DavidTrama
         menuHelper.addOption(1, "Estado general");
         menuHelper.addOption(2, "Estado piscifactoría");
         menuHelper.addOption(3, "Estado tanque");
@@ -115,35 +74,18 @@ public class Simulador {
         menuHelper.showMenu();
     }
 
-<<<<<<< HEAD
-    public void menuPisc() {
-        menuHelper.clearOptions(); // Limpiar opciones previas si es necesario
-        System.out.println("Seleccione una opción:");
-=======
     public void menuPisc() { //TODO se puede seleccionar la piscifactoria?
         System.out.println("\nSeleccione una opción:");
->>>>>>> origin/DavidTrama
         System.out.println("--------------- Piscifactorías ---------------");
         System.out.println("[Peces vivos / Peces totales / Espacio total]");
         System.out.println();
     
-<<<<<<< HEAD
-=======
         // Mostrar opciones
->>>>>>> origin/DavidTrama
         for (int i = 0; i < piscifacorias.size(); i++) {
             Piscifactoria piscifactoria = piscifacorias.get(i);
             int vivos = piscifactoria.getTotalVivos();
             int total = piscifactoria.getTotalPeces();
             int capacidad = piscifactoria.getCapacidadTotal();
-<<<<<<< HEAD
-            String optionText = piscifactoria.getNombre() + " [" + vivos + "/" + total + "/" + capacidad + "]";
-            menuHelper.addOption(i + 1, optionText);
-        }
-        menuHelper.addOption(0, "Cancelar");
-    
-        menuHelper.showMenu();
-=======
     
             System.out.println((i + 1) + ".- " + piscifactoria.getNombre() + " [" + vivos + "/" + total + "/" + capacidad + "]");
         }
@@ -163,7 +105,6 @@ public class Simulador {
             Piscifactoria piscifactoriaSeleccionada = piscifacorias.get(seleccion - 1);
             System.out.println("Has seleccionado la piscifactoría: " + piscifactoriaSeleccionada.getNombre());
         }
->>>>>>> origin/DavidTrama
     }
 
     public int selectPisc() {
@@ -179,19 +120,6 @@ public class Simulador {
 
     public int selectTank(Piscifactoria piscifactoria) {
         menuHelper.clearOptions(); // Limpiar opciones previas
-<<<<<<< HEAD
-        System.out.println("Seleccione un Tanque:");
-
-        List<Tanque> tanques = piscifactoria.getTanques();
-        for (int i = 0; i < tanques.size(); i++) {
-            Tanque tanque = tanques.get(i);
-            String optionText = "Tanque " + (i + 1) + " [Tipo de pez: " + tanque.getTipoPezActual().getSimpleName() + "]";
-            menuHelper.addOption(i + 1, optionText);
-        }
-        menuHelper.addOption(0, "Cancelar");
-        menuHelper.showMenu();
-
-=======
         System.out.println("\nSeleccione un Tanque:");
     
         List<Tanque> tanques = piscifactoria.getTanques();
@@ -206,7 +134,6 @@ public class Simulador {
         menuHelper.addOption(0, "Cancelar");
         menuHelper.showMenu();
     
->>>>>>> origin/DavidTrama
         int selection = inputHelper.readInt("Ingrese su selección: ");
         System.out.println();
         if (selection < 0 || selection > tanques.size()) {
@@ -215,13 +142,7 @@ public class Simulador {
         }
         return selection;
     }
-<<<<<<< HEAD
-
     
-
-=======
-    
->>>>>>> origin/DavidTrama
     public void showGeneralStatus() {
         System.out.println("Día actual: " + dias);
         System.out.println("Monedas disponibles: " + monedas.getMonedas());
@@ -246,11 +167,6 @@ public class Simulador {
             System.out.println("No hay Almacén Central disponible.");
         }
     }
-<<<<<<< HEAD
-    
-=======
-
->>>>>>> origin/DavidTrama
     public void showSpecificStatus() {
         int selection = selectPisc();
     
@@ -269,8 +185,6 @@ public class Simulador {
         }
     }
 
-<<<<<<< HEAD
-=======
 
 
 
@@ -456,7 +370,6 @@ public class Simulador {
     
     
 
->>>>>>> origin/DavidTrama
     public void showTankStatus() {
         // Selecciona una piscifactoría
         int piscifactoriaSeleccionada = selectPisc();
@@ -498,26 +411,7 @@ public class Simulador {
     
 
 
-<<<<<<< HEAD
-    public static void main(String[] args) {
-        Simulador simulador = new Simulador();
-        simulador.init();
-        simulador.showTankStatus();
-        simulador.nextDay();
-        simulador.nextDay();
-        simulador.nextDay();
-        simulador.nextDay();
-        simulador.nextDay();
-        simulador.nextDay();
-        simulador.nextDay();
-        simulador.nextDay();
-        simulador.nextDay();
-        simulador.nextDay();
-        simulador.showTankStatus();
-    }
-=======
     
->>>>>>> origin/DavidTrama
 
     /**
      * @return int return the dias
@@ -557,11 +451,7 @@ public class Simulador {
     /**
      * @param piscifacorias the piscifacorias to set
      */
-<<<<<<< HEAD
-    public void setPiscifacorias(List<Piscifactoria> piscifacorias) {
-=======
     public void setPiscifacorias(ArrayList<Piscifactoria> piscifacorias) {
->>>>>>> origin/DavidTrama
         this.piscifacorias = piscifacorias;
     }
 
