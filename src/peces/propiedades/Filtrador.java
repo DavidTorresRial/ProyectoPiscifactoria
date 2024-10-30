@@ -1,6 +1,7 @@
 package peces.propiedades;
 
+/**
+ * Interfaz que indica que un pez es un filtrador.
+ */
 public interface Filtrador {
-    // TODO Filtrador	Se alimenta de comida vegetal. 50% de posibilidades de no consumir comida
-	
 }
