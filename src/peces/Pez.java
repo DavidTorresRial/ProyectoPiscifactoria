@@ -8,18 +8,9 @@ import propiedades.PecesDatos;
  * Clase padre de los peces.
  */
 public class Pez {
-<<<<<<< HEAD
-    private int edad = 0; // La edad inicial del pez
-    private final boolean sexo; // True para macho, False para hembra
-    private boolean fertil = false; // True si el pez es fútil, False si no
-    private boolean vivo = true; // True si el pez está vivo, False si no
-    private boolean alimentado = false; // True si el pez está alimentado, False si no
-    private final String nombre;
-=======
     
     /** Nombre común del pez */
     private final String nombre; 
->>>>>>> origin/DavidTrama
 
     /** Nombre cientifico del pez */
     private final String nombreCientifico;
@@ -60,7 +51,6 @@ public class Pez {
         this.sexo = sexo;
         this.datos = datos;
         this.ciclo = datos.getCiclo();
-        this.nombre = datos.getNombre();
     }
 
     /**
@@ -136,10 +126,6 @@ public class Pez {
      * @param nuevoSexo true para macho, false para hembra
      * @return una nueva instancia de Pez con el mismo tipo pero con el sexo especificado
      */
-    public Pez clonar(boolean nuevoSexo) {
-        return new Pez(nuevoSexo, datos);
-    }
-
     public Pez clonar(boolean nuevoSexo) {
         return new Pez(nuevoSexo, datos);
     }
@@ -268,11 +254,4 @@ public class Pez {
     public void setFertil(boolean fertil) {
         this.fertil = fertil;
     }
-<<<<<<< HEAD
-
-    public void setAlimentar() {
-        this.alimentado = true;
-    }
-=======
->>>>>>> origin/DavidTrama
 }

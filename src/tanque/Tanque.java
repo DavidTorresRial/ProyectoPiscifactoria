@@ -7,16 +7,6 @@ import commons.SistemaMonedas;
 import peces.Pez;
 
 public class Tanque {
-<<<<<<< HEAD
-    public ArrayList<Pez> peces; // Lista para almacenar los peces
-    private Class<?> tipoPezActual; // Tipo de pez actual en el tanque
-
-    private int capacidadMaxima; // Capacidad máxima del tanque
-    private int numeroTanque; // Número del tanque
-    private SistemaMonedas monedas;
-
-    // Constructor
-=======
 
     /** Lista para almacenar los peces en el tanque. */
     public ArrayList<Pez> peces;
@@ -39,7 +29,6 @@ public class Tanque {
      * @param capacidadMaxima capacidad máxima del tanque
      * @param monedas sistema de monedas para gestionar el dinero ganado
      */
->>>>>>> origin/DavidTrama
     public Tanque(int capacidadMaxima, SistemaMonedas monedas) {
         this.capacidadMaxima = capacidadMaxima;
         this.peces = new ArrayList<>();
@@ -78,43 +67,27 @@ public class Tanque {
         System.out.println("Tanque " + numeroTanque + " de la piscifactoría al " + (peces.size() * 100 / capacidadMaxima) + "% de capacidad. [" + peces.size() + "/" + capacidadMaxima + "]"); // TODO añadir nombre de la piscifacoria
     }
 
-<<<<<<< HEAD
-    // Pasa un día en el tanque 
-    public void nextDay() { 
-=======
     /**
      * Avanza un día en el tanque, haciendo crecer los peces y ejecutando la
      * reproducción.
      */
     public void nextDay() { // TODO cambiaria el orden ene el que se ejecutan los metodos en cada clase
->>>>>>> origin/DavidTrama
         for (Pez pez : peces) {
             pez.grow(); // Hace crecer cada pez
         }
 
         reproduccion();
-<<<<<<< HEAD
-        sellFish();    
-    }
-
-    // Método de reproducción
-=======
         sellFish();
     }
 
     /**
      * Método que maneja la reproducción de los peces en el tanque.
      */
->>>>>>> origin/DavidTrama
     public void reproduccion() {
         int huevosPorHembra = 0;
 
         if (!peces.isEmpty()) {
-<<<<<<< HEAD
-            huevosPorHembra = peces.get(0).getHuevos();
-=======
             huevosPorHembra = peces.get(0).getDatos().getHuevos();
->>>>>>> origin/DavidTrama
         }
 
         int nuevosMachos = 0;
@@ -143,24 +116,6 @@ public class Tanque {
         // Reproducción
         for (Pez macho : machosFertiles) {
             if (hembrasFertiles.isEmpty()) {
-<<<<<<< HEAD
-                break; 
-            }
-
-            for (Pez hembra : new ArrayList<>(hembrasFertiles)) { 
-                for (int i = 0; i < huevosPorHembra; i++) {
-                    boolean nuevoSexo;
-                    if (getHembras() <= getMachos()) {
-                        nuevoSexo = false; 
-                    } else {
-                        nuevoSexo = true; 
-                    }
-
-                    Pez nuevoPez = (Pez) hembra.clonar(nuevoSexo); 
-
-                    if (peces.size() < capacidadMaxima) {
-                        peces.add(nuevoPez); 
-=======
                 break;
             }
 
@@ -177,7 +132,6 @@ public class Tanque {
 
                     if (peces.size() < capacidadMaxima) {
                         peces.add(nuevoPez);
->>>>>>> origin/DavidTrama
                         if (nuevoSexo) {
                             nuevosMachos++;
                         } else {
@@ -188,31 +142,21 @@ public class Tanque {
                         break;
                     }
                 }
-<<<<<<< HEAD
-                hembra.setFertil(false); 
-                hembrasFertiles.remove(hembra); 
-            }
-            macho.setFertil(false); 
-=======
                 hembra.setFertil(false);
                 hembrasFertiles.remove(hembra);
             }
             macho.setFertil(false);
->>>>>>> origin/DavidTrama
         }
 
         System.out.println("Se han creado " + nuevosMachos + " nuevos machos y " + nuevasHembras + " nuevas hembras.");
     }
 
-<<<<<<< HEAD
-=======
     /**
      * Agrega un pez al tanque.
      *
      * @param pez pez a añadir
      * @return true si el pez se añadió correctamente, false en caso contrario
      */
->>>>>>> origin/DavidTrama
     public boolean addPez(Pez pez) {
         if (peces.size() >= capacidadMaxima) {
             System.out.println("El tanque está lleno.");
@@ -237,13 +181,6 @@ public class Tanque {
         return true;
     }
 
-<<<<<<< HEAD
-     // Método getter para obtener el tipo de pez actual
-     public Class<?> getTipoPezActual() {
-        return tipoPezActual;
-    }
-
-=======
     /**
      * Devuelve el tipo de pez actual.
      * 
@@ -257,16 +194,10 @@ public class Tanque {
      * Vende los peces que han alcanzado la edad óptima y actualiza el sistema de
      * monedas.
      */
->>>>>>> origin/DavidTrama
     public void sellFish() {
         Iterator<Pez> iterator = peces.iterator();
         int pecesVendidos = 0;
         int monedasGanadas = 0;
-<<<<<<< HEAD
-    
-=======
-
->>>>>>> origin/DavidTrama
         while (iterator.hasNext()) {
             Pez pez = iterator.next();
             if (pez.getEdad() >= pez.getDatos().getOptimo()) {
@@ -277,21 +208,10 @@ public class Tanque {
                 pecesVendidos++;
             }
         }
-<<<<<<< HEAD
-    
-=======
-
->>>>>>> origin/DavidTrama
         System.out.println("Peces vendidos: " + pecesVendidos);
         System.out.println("Monedas ganadas: " + monedasGanadas);
     }
 
-<<<<<<< HEAD
-
-    //Getters y Setters
-    
-    // Devuelve el número del tanque
-=======
     // Getters y Setters
 
     /**
@@ -299,46 +219,33 @@ public class Tanque {
      *
      * @return número del tanque
      */
->>>>>>> origin/DavidTrama
     public int getNumeroTanque() {
         return numeroTanque;
     }
 
-<<<<<<< HEAD
-    // Devuelve la capacidad máxima del tanque
-=======
     /**
      * Devuelve la capacidad del tanque.
      * 
      * @return capacidad máxima del tanque
      */
->>>>>>> origin/DavidTrama
     public int getCapacidad() {
         return capacidadMaxima;
     }
 
-<<<<<<< HEAD
-    // Devuelve el numero de peces del tanque
-=======
     /**
      * Devuelve el número de peces del tanque.
      * 
      * @return número de peces en el tanque
      */
->>>>>>> origin/DavidTrama
     public int getNumPeces() {
         return peces.size();
     }
 
-<<<<<<< HEAD
-    // Devuelve los peces del tanque
-=======
     /**
      * Devuelve la lista de peces en el tanque.
      * 
      * @return lista de peces en el tanque
      */
->>>>>>> origin/DavidTrama
     public ArrayList<Pez> getPeces() {
         return peces;
     }
