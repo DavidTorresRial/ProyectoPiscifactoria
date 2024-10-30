@@ -5,11 +5,9 @@ import java.util.Map;
 
 public class MenuHelper {
     private Map<Integer, String> menuOptions;
-    private InputHelper inputHelper;
 
     public MenuHelper() {
         this.menuOptions = new HashMap<>();
-        this.inputHelper = new InputHelper();
     }
 
     // Método para agregar opciones al menú
@@ -19,22 +17,16 @@ public class MenuHelper {
 
     // Método para mostrar el menú
     public void showMenu() {
+        // Mostrar todas las opciones excepto la 0
         for (Map.Entry<Integer, String> entry : menuOptions.entrySet()) {
-            System.out.println(entry.getKey() + ". " + entry.getValue());
-        }
-    }
-
-    // Método para manejar la selección de opciones usando InputHelper
-    public int getSelection() {
-        int selection = -1;
-        while (selection == -1) {
-            selection = inputHelper.readInt("Ingrese su opción: ");
-            if (!menuOptions.containsKey(selection)) {
-                System.out.println("Opción no válida. Intente de nuevo.");
-                selection = -1;
+            if (entry.getKey() != 0) {  // Excluir la opción 0 en esta iteración
+                System.out.println(entry.getKey() + ". " + entry.getValue());
             }
         }
-        return selection;
+        // Mostrar la opción 0 al final
+        if (menuOptions.containsKey(0)) {
+            System.out.println("0. " + menuOptions.get(0));
+        }
     }
 
     public void clearOptions() {
