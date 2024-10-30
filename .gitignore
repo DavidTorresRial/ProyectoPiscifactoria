@@ -4,4 +4,8 @@ bin/*
 
 # Ignora todos los archivos de la carpeta .vscode
 
+<<<<<<< HEAD
 .vscode/*
+=======
+.vscode/*
+>>>>>>> origin/DavidTrama

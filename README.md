@@ -12,4 +12,8 @@ Este proyecto simula el funcionamiento de una piscifactoría, abarcando todo lo 
 ## Requisitos
 
 - **Java**: Versión 21.0.4
+<<<<<<< HEAD
 - **Librería**: [OrcaLib](lib/Orca_lib_1.2.1.jar)
+=======
+- **Librería**: [OrcaLib](lib/Orca_lib_1.2.1.jar)
+>>>>>>> origin/DavidTrama

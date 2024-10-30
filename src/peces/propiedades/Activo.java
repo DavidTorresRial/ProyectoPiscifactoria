@@ -1,5 +1,7 @@
 package peces.propiedades;
 
-public interface Activo {
-    //TODO Activo	50% de comer 2 de alimento ese día
+/**
+ * Interfaz que indica que un pez es un activo y carnívoro.
+ */
+public interface Activo extends Carnivoro {
 }

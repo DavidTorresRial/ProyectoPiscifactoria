@@ -1,5 +1,7 @@
 package peces.propiedades;
 
+/**
+ * Interfaz que indica que un pez es carnívoro.
+ */
 public interface Carnivoro {
-    // TODO Carnívoro	Se alimenta de comida animal.
 }
