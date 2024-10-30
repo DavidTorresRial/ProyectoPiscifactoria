@@ -9,6 +9,7 @@ public class Pez {
     private boolean fertil = false; // True si el pez es fútil, False si no
     private boolean vivo = true; // True si el pez está vivo, False si no
     private boolean alimentado = false; // True si el pez está alimentado, False si no
+    private final String nombre;
 
     private PecesDatos datos;
     protected int ciclo;
@@ -23,11 +24,12 @@ public class Pez {
 
         this.datos = datos;
         this.ciclo = datos.getCiclo();
+        this.nombre = datos.getNombre();
     }
 
     // Método que muestra el estado actual del pez
     public void showStatus() {
-        System.out.println("--------------- " + datos.getNombre() + " ---------------");
+        System.out.println("--------------- " + nombre + " ---------------");
         System.out.println("Edad: " + edad + " días");
         System.out.println("Sexo: " + (sexo ? "M" : "H"));
         System.out.println("Vivo: " + (vivo ? "Si" : "No"));
@@ -88,6 +90,10 @@ public class Pez {
         return new Pez(nuevoSexo, datos);
     }
 
+    public int getTipo() {
+        return datos.getPiscifactoria().getValue();
+    }
+
     // Getters
     public int getEdad() {
         return edad;
@@ -122,7 +128,7 @@ public class Pez {
         this.fertil = fertil;
     }
 
-    public void alimentar() {
+    public void setAlimentar() {
         this.alimentado = true;
     }
 }
