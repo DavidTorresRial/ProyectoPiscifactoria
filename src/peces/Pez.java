@@ -45,16 +45,10 @@ public class Pez {
      * @param sexo true para macho, false para hembra
      * @param datos contiene las propiedades del pez
      */
-    public Pez(boolean sexo, PecesDatos datos) { //TODO preguntar por la inicialización explícita de atributos
+    public Pez(boolean sexo, PecesDatos datos) {
         this.nombre = datos.getNombre();
         this.nombreCientifico = datos.getCientifico();
-
-        this.sexo = sexo; // Inicialización explícita
-        this.edad = 0; // Inicialización explícita
-        this.fertil = false; // Inicialización explícita
-        this.vivo = true; // Inicialización explícita
-        
-        this.alimentado = false; // Inicialización explícita
+        this.sexo = sexo;
         this.datos = datos;
         this.ciclo = datos.getCiclo();
     }
@@ -123,7 +117,7 @@ public class Pez {
         vivo = true;
         alimentado = false;
 
-        ciclo = datos.getCiclo(); //TODO revisar si hay que rehiniciar el ciclo
+        ciclo = datos.getCiclo();
     }
 
     /**
@@ -136,7 +130,7 @@ public class Pez {
         return new Pez(nuevoSexo, datos);
     }
 
-    // Getters //TODO preguntar si se deben añadir todos los getters y setters de todos los atributos
+    // Getters
 
     /**
      * @return el nombre común del pez

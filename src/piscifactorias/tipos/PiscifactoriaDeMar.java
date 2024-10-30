@@ -9,11 +9,11 @@ public class PiscifactoriaDeMar extends Piscifactoria {
 
     public PiscifactoriaDeMar(String nombre, SistemaMonedas monedas) {
         super(nombre, monedas);
-        this.capacidadMaximaAlmacenComida = 100;
-        this.comidaVegetalActual = 100; //TODO revisar (En el pdf la comida inicail de los de rio)
-        this.comidaAnimalActual = 100;
+        capacidadMaximaAlmacenComida = 100;
+        comidaVegetalActual = 0;
+        comidaAnimalActual = 0;
 
         // Aquí se puede agregar un tanque si es necesario, o dejar que se agreguen desde la clase principal
-        this.tanques.add(new Tanque(100, monedas));
+        tanques.add(new Tanque(100, monedas));
     }
 }
