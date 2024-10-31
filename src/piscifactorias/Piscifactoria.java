@@ -21,7 +21,7 @@ import commons.SistemaMonedas;
 /**
  * Clase abstracta que representa una piscifactoría que gestiona tanques de peces.
  */
-public abstract class Piscifactoria {
+public abstract class  Piscifactoria {
 
     /** El nombre de la piscifactoría. */
     private String nombre;

@@ -252,7 +252,8 @@ public class Simulador {
     }
 
     public void nextDay() {
-        int totalPecesVendidos = 0, totalMonedasGanadas = 0;
+        int totalPecesVendidos = 0; 
+        int totalMonedasGanadas = 0;
 
         for (Piscifactoria piscifactoria : piscifacorias) {
             piscifactoria.nextDay(); // Llama al método nextDay de cada piscifactoría
@@ -544,4 +545,137 @@ public class Simulador {
         this.inputHelper = inputHelper;
     }
 
+
+
+
+//TODO : Ai que corregir estos errores.
+    public void addFood() {
+        // Si el almacenCentral está disponible, se omite la selección de piscifactoría
+        if (almacenCentral != null) {
+            System.out.println("Añadiendo comida al Almacén Central.");
+            String tipoComida = selectFoodType(); // Método para seleccionar tipo de comida
+            int cantidad = selectFoodAmount(); // Método para seleccionar cantidad
+    
+            // Calcular el costo
+            int totalCost = calculateCost(cantidad);
+    
+            // Verificar si hay suficientes monedas
+            if (monedas.getMonedas() < totalCost) {
+                System.out.println("No tienes suficientes monedas para realizar esta compra.");
+                return;
+            }
+    
+            // Añadir comida al almacen central
+            almacenCentral.agregarComida(TipoComida.valueOf(tipoComida.toUpperCase()), cantidad);
+            monedas.gastarMonedas(totalCost);
+    
+            // Mostrar el estado
+            System.out.printf("Añadida %d de comida %s%n", cantidad, tipoComida);
+            System.out.printf("Depósito de comida %s del Almacén Central al %.2f%% de su capacidad. [%d/%d]%n",
+                    tipoComida,
+                    almacenCentral.getComidaActual(TipoComida.valueOf(tipoComida.toUpperCase())) / (float) almacenCentral.getCapacidadTotal(TipoComida.valueOf(tipoComida.toUpperCase())) * 100,
+                    almacenCentral.getComidaActual(TipoComida.valueOf(tipoComida.toUpperCase())),
+                    almacenCentral.getCapacidadTotal(TipoComida.valueOf(tipoComida.toUpperCase())));
+        } else {
+            // Seleccionar una piscifactoría
+            int piscifactoriaSeleccionada = selectPisc();
+            if (piscifactoriaSeleccionada == 0) {
+                System.out.println("Operación cancelada.");
+                return;
+            }
+            Piscifactoria piscifactoria = piscifacorias.get(piscifactoriaSeleccionada - 1);
+    
+            // Determinar el tipo de piscifactoría
+            String tipoPiscifactoria = piscifactoria.getTipo(); // Suponiendo que este método existe
+    
+            // Elegir tipo de comida
+            String tipoComida = selectFoodType(); // Método para seleccionar tipo de comida
+            int cantidad = selectFoodAmount(); // Método para seleccionar cantidad
+    
+            // Calcular el costo
+            int totalCost = calculateCost(cantidad);
+    
+            // Verificar si hay suficientes monedas
+            if (monedas.getMonedas() < totalCost) {
+                System.out.println("No tienes suficientes monedas para realizar esta compra.");
+                return;
+            }
+    
+            // Añadir comida a la piscifactoría según su tipo
+            switch (tipoPiscifactoria) {
+                case "RIO":
+                    piscifactoria.addComida(TipoComida.valueOf(tipoComida.toUpperCase()), cantidad);
+                    break;
+                case "MAR":
+                    piscifactoria.addComida(TipoComida.valueOf(tipoComida.toUpperCase()), cantidad);
+                    break;
+                default:
+                    System.out.println("Tipo de piscifactoría desconocido.");
+                    return;
+            }
+    
+            monedas.gastarMonedas(totalCost);
+    
+            // Mostrar el estado
+            System.out.printf("Añadida %d de comida %s%n", cantidad, tipoComida);
+            System.out.printf("Depósito de comida %s de la piscifactoría %s al %.2f%% de su capacidad. [%d/%d]%n",
+                    tipoComida,
+                    piscifactoria.getNombre(),
+                    piscifactoria.getComidaActual(TipoComida.valueOf(tipoComida.toUpperCase())) / (float) piscifactoria.getCapacidadTotal(TipoComida.valueOf(tipoComida.toUpperCase())) * 100,
+                    piscifactoria.getComidaActual(TipoComida.valueOf(tipoComida.toUpperCase())),
+                    piscifactoria.getCapacidadTotal(TipoComida.valueOf(tipoComida.toUpperCase())));
+        }
+    }
+    
+    private String selectFoodType() {
+        menuHelper.clearOptions();
+        menuHelper.addOption(1, "VEGETAL");
+        menuHelper.addOption(2, "ANIMAL");
+        menuHelper.addOption(0, "Cancelar");
+        menuHelper.showMenu();
+        int opcion = inputHelper.readInt("Seleccione el tipo de comida: ");
+        switch (opcion) {
+            case 1: return "VEGETAL";
+            case 2: return "ANIMAL";
+            case 0: 
+                System.out.println("Operación cancelada.");
+                return null;
+            default:
+                System.out.println("Opción no válida.");
+                return selectFoodType(); // Repetir hasta seleccionar una opción válida
+        }
+    }
+    
+    private int selectFoodAmount() {
+        menuHelper.clearOptions();
+        menuHelper.addOption(1, "5");
+        menuHelper.addOption(2, "10");
+        menuHelper.addOption(3, "25");
+        menuHelper.addOption(4, "Llenar");
+        menuHelper.addOption(0, "Cancelar");
+        menuHelper.showMenu();
+        int opcion = inputHelper.readInt("Seleccione la cantidad de comida a añadir: ");
+        switch (opcion) {
+            case 1: return 5;
+            case 2: return 10;
+            case 3: return 25;
+            case 4: return Integer.MAX_VALUE; // Llenar
+            case 0:
+                System.out.println("Operación cancelada.");
+                return 0;
+            default:
+                System.out.println("Opción no válida.");
+                return selectFoodAmount(); // Repetir hasta seleccionar una opción válida
+        }
+    }
+    
+    private int calculateCost(int cantidad) {
+        int totalCost = cantidad; // 1 moneda por cada comida
+        // Aplicar descuento
+        if (cantidad >= 25) {
+            int descuento = (cantidad / 25) * 5; // 5 monedas de descuento por cada 25
+            totalCost -= descuento;
+        }
+        return totalCost;
+    }
 }
