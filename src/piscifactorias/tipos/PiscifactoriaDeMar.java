@@ -13,7 +13,7 @@ public class PiscifactoriaDeMar extends Piscifactoria {
         comidaVegetalActual = 0;
         comidaAnimalActual = 0;
 
-        // Aquí se puede agregar un tanque si es necesario, o dejar que se agreguen desde la clase principal
         tanques.add(new Tanque(100));
-    }
+    } 
+    //TODO añadir meto de añadir tanques
 }

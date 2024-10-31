@@ -66,7 +66,7 @@ public class Tanque {
     /**
      * Avanza un día en el tanque, haciendo crecer los peces y ejecutando la reproducción.
      */
-    public void nextDay() { // TODO cambiaria el orden ene el que se ejecutan los metodos en cada clase
+    public void nextDay() {
         for (Pez pez : peces) {
             pez.grow(); // Hace crecer cada pez
         }
@@ -124,19 +124,17 @@ public class Tanque {
      */
     public boolean addPez(Pez pez) {
         if (peces.size() >= capacidadMaxima) {
-            System.out.println("El tanque está lleno.");
+            System.out.println("El tanque está lleno. Capacidad máxima alcanzada.");
             return false;
         }
-
+    
         if (tipoPezActual == null) {
-            tipoPezActual = pez.getClass(); // Establece el tipo de pez actual
-        }
-
-        if (!tipoPezActual.equals(pez.getClass())) {
-            System.out.println("Este tanque solo acepta peces del tipo: " + tipoPezActual.getSimpleName());
+            tipoPezActual = pez.getClass();
+        } else if (!tipoPezActual.equals(pez.getClass())) {
+            System.out.printf("Este tanque solo acepta peces del tipo: %s, pero se intentó añadir: %s\n", tipoPezActual.getSimpleName(), pez.getClass().getSimpleName());
             return false;
         }
-
+    
         peces.add(pez);
         return true;
     }
