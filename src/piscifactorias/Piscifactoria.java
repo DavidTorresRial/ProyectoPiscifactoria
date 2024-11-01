@@ -14,14 +14,14 @@ import tanque.Tanque;
 
 import piscifactorias.tipos.PiscifactoriaDeMar;
 import piscifactorias.tipos.PiscifactoriaDeRio;
-
+import commons.AlmacenCentral;
 import commons.SistemaMonedas;
 
-
 /**
- * Clase abstracta que representa una piscifactoría que gestiona tanques de peces.
+ * Clase abstracta que representa una piscifactoría que gestiona tanques de
+ * peces.
  */
-public abstract class  Piscifactoria {
+public abstract class Piscifactoria {
 
     /** El nombre de la piscifactoría. */
     private String nombre;
@@ -33,7 +33,7 @@ public abstract class  Piscifactoria {
     private SistemaMonedas monedas;
 
     /** Capacidad máxima compartida para ambos tipos de comida. */
-    protected int capacidadMaximaAlmacenComida;
+    protected int capacidadMaximaComidaPiscifactoria;
 
     /** Cantidad actual de comida vegetal. */
     protected int comidaVegetalActual;
@@ -46,6 +46,9 @@ public abstract class  Piscifactoria {
 
     /** Número de tanques de mar. */
     private int numeroTanquesDeMar;
+
+    /** Almacén central para gestionar el almacenamiento de comida. */
+    private AlmacenCentral almacenCentral;
 
     /**
      * Constructor para crear una nueva piscifactoría.
@@ -186,20 +189,22 @@ public abstract class  Piscifactoria {
      */
     public void showFood() {
         System.out.println("Depósito de comida de la piscifactoría " + nombre + ":");
-        System.out.println("Comida vegetal al " + (comidaVegetalActual * 100 / capacidadMaximaAlmacenComida)
-                + "% de su capacidad. [" + comidaVegetalActual + "/" + capacidadMaximaAlmacenComida + "]");
-        System.out.println("Comida animal al " + (comidaAnimalActual * 100 / capacidadMaximaAlmacenComida)
-                + "% de su capacidad. [" + comidaAnimalActual + "/" + capacidadMaximaAlmacenComida + "]");
+        System.out.println("Comida vegetal al " + (comidaVegetalActual * 100 / capacidadMaximaComidaPiscifactoria)
+                + "% de su capacidad. [" + comidaVegetalActual + "/" + capacidadMaximaComidaPiscifactoria + "]");
+        System.out.println("Comida animal al " + (comidaAnimalActual * 100 / capacidadMaximaComidaPiscifactoria)
+                + "% de su capacidad. [" + comidaAnimalActual + "/" + capacidadMaximaComidaPiscifactoria + "]");
     }
 
     /**
-     * Hace avanzar el ciclo de vida en la piscifactoría, alimentando a los peces y actualizando sus estados.
+     * Hace avanzar el ciclo de vida en la piscifactoría, alimentando a los peces y
+     * actualizando sus estados.
      */
-    public void nextDay() {   // TODO tiene que realizar el crezimiento, la reproduccion y la venta de peces optimos (desglosar metodos)
+    public void nextDay() { // TODO tiene que realizar el crezimiento, la reproduccion y la venta de peces
+                            // optimos (desglosar metodos)
         for (Tanque tanque : tanques) {
             alimentarPeces(tanque);
             tanque.nextDay();
-            //sellFish(); // TODO revisar porque se venden todos los peces el primer dia
+            // sellFish(); // TODO revisar porque se venden todos los peces el primer dia
         }
     }
 
@@ -223,23 +228,47 @@ public abstract class  Piscifactoria {
                 if (rand.nextDouble() < 0.5) {
                     continue; // No consume comida
                 }
+                // Intentar alimentar al filtrador
                 if (comidaVegetalActual > 0) {
                     comidaVegetalActual--;
                     alimentado = true;
+                } else if (almacenCentral.isConstruido() && almacenCentral.getCantidadComidaVegetal() > 0) {
+                    // Extraer comida vegetal del almacén
+                    if (almacenCentral.getCantidadComidaVegetal() >= 1) {
+                        almacenCentral.setCantidadComidaVegetal(almacenCentral.getCantidadComidaVegetal() - 1);
+                        comidaVegetalActual++;
+                        alimentado = true;
+                    } else {
+                        System.out.println("No hay suficiente comida vegetal.");
+                    }
                 }
             } else if (pez instanceof Carnivoro) {
                 // Carnívoro: Consume comida animal
                 if (comidaAnimalActual > 0) {
                     comidaAnimalActual--;
                     alimentado = true;
+                } else if (almacenCentral.isConstruido() && almacenCentral.getCantidadComidaAnimal() > 0) {
+                    // Extraer comida animal del almacén
+                    if (almacenCentral.getCantidadComidaAnimal() >= 1) {
+                        almacenCentral.setCantidadComidaAnimal(almacenCentral.getCantidadComidaAnimal() - 1);
+                        comidaAnimalActual++;
+                        alimentado = true;
+                    } else {
+                        System.out.println("No hay suficiente comida animal.");
+                    }
                 }
             }
 
+            // Activo: 50% de probabilidad de consumir el doble de comida
             if (pez instanceof Activo) {
-                // Activo: 50% de probabilidad de consumir el doble de comida
-                if (rand.nextDouble() < 0.5) {
-                    if (pez instanceof Carnivoro && comidaAnimalActual > 0) {
-                        comidaAnimalActual--;
+                if (alimentado) {
+                    // Verificar si puede consumir el doble
+                    if (rand.nextDouble() < 0.5) {
+                        if (pez instanceof Carnivoro && comidaAnimalActual > 0) {
+                            comidaAnimalActual--; // Consume una unidad adicional si es posible
+                        } else if (pez instanceof Filtrador && comidaVegetalActual > 0) {
+                            comidaVegetalActual--; // Consume una unidad adicional si es posible
+                        }
                     }
                 }
             }
@@ -249,6 +278,7 @@ public abstract class  Piscifactoria {
             }
         }
 
+        // Mostrar estado actual de la comida
         System.out.println("Comida vegetal restante: " + comidaVegetalActual);
         System.out.println("Comida animal restante: " + comidaAnimalActual);
     }
@@ -277,7 +307,8 @@ public abstract class  Piscifactoria {
         }
 
         // Cambiar la impresión para cumplir con el nuevo formato
-        System.out.println("Piscifactoría " + nombrePiscifactoria + ": " + totalPecesVendidos + " peces vendidos por " + totalMonedasGanadas + " monedas.");
+        System.out.println("Piscifactoría " + nombrePiscifactoria + ": " + totalPecesVendidos + " peces vendidos por "
+                + totalMonedasGanadas + " monedas.");
     }
 
     /**
@@ -286,10 +317,10 @@ public abstract class  Piscifactoria {
      * @param incremento El incremento de capacidad.
      */
     public void upgradeFood(int incremento) {
-        capacidadMaximaAlmacenComida += incremento;
+        capacidadMaximaComidaPiscifactoria += incremento;
         System.out
                 .println("Almacén de comida de la piscifactoría " + nombre + " mejorado. Su capacidad ha aumentado en "
-                        + incremento + " hasta un total de " + capacidadMaximaAlmacenComida);
+                        + incremento + " hasta un total de " + capacidadMaximaComidaPiscifactoria);
     }
 
     /**
@@ -355,6 +386,19 @@ public abstract class  Piscifactoria {
             totalHembras += tanque.getHembras();
         }
         return totalHembras;
+    }
+
+    /**
+     * Devuelve el total de machos en la piscifactoría.
+     *
+     * @return El total de machos.
+     */
+    public int getTotalMachos() {
+        int totalMachos = 0;
+        for (Tanque tanque : tanques) {
+            totalMachos += tanque.getHembras();
+        }
+        return totalMachos;
     }
 
     /**

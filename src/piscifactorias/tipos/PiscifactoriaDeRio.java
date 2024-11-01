@@ -14,7 +14,7 @@ public class PiscifactoriaDeRio extends Piscifactoria {
 
     public PiscifactoriaDeRio(String nombre, SistemaMonedas monedas) {
         super(nombre, monedas);
-        capacidadMaximaAlmacenComida = 25;
+        capacidadMaximaComidaPiscifactoria = 25;
         comidaVegetalActual = 0;
         comidaAnimalActual = 0;
 
