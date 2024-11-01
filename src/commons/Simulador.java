@@ -22,7 +22,6 @@ import peces.tipos.doble.*;
 import peces.tipos.mar.*;
 import peces.tipos.rio.*;
 
-
 public class Simulador {
 
     /** Días transcurridos en la simulación, comenzando en 0. */
@@ -37,20 +36,23 @@ public class Simulador {
     /** Nombre de la piscifactoría. */
     private String nombrePiscifactoria;
 
-    /** Sistema de estadísticas para registrar la cría, venta y ganancias de los peces. */
-    private Estadisticas estadisticas = new Estadisticas(new String[]{
-        AlmacenPropiedades.SALMON_ATLANTICO.getNombre(),
-        AlmacenPropiedades.TRUCHA_ARCOIRIS.getNombre(),
-        AlmacenPropiedades.ARENQUE_ATLANTICO.getNombre(),
-        AlmacenPropiedades.BESUGO.getNombre(),
-        AlmacenPropiedades.LENGUADO_EUROPEO.getNombre(),
-        AlmacenPropiedades.LUBINA_RAYADA.getNombre(),
-        AlmacenPropiedades.ROBALO.getNombre(),
-        AlmacenPropiedades.CARPA_PLATEADA.getNombre(),
-        AlmacenPropiedades.PEJERREY.getNombre(),
-        AlmacenPropiedades.PERCA_EUROPEA.getNombre(),
-        AlmacenPropiedades.SALMON_CHINOOK.getNombre(),
-        AlmacenPropiedades.TILAPIA_NILO.getNombre()
+    /**
+     * Sistema de estadísticas para registrar la cría, venta y ganancias de los
+     * peces.
+     */
+    private Estadisticas estadisticas = new Estadisticas(new String[] {
+            AlmacenPropiedades.SALMON_ATLANTICO.getNombre(),
+            AlmacenPropiedades.TRUCHA_ARCOIRIS.getNombre(),
+            AlmacenPropiedades.ARENQUE_ATLANTICO.getNombre(),
+            AlmacenPropiedades.BESUGO.getNombre(),
+            AlmacenPropiedades.LENGUADO_EUROPEO.getNombre(),
+            AlmacenPropiedades.LUBINA_RAYADA.getNombre(),
+            AlmacenPropiedades.ROBALO.getNombre(),
+            AlmacenPropiedades.CARPA_PLATEADA.getNombre(),
+            AlmacenPropiedades.PEJERREY.getNombre(),
+            AlmacenPropiedades.PERCA_EUROPEA.getNombre(),
+            AlmacenPropiedades.SALMON_CHINOOK.getNombre(),
+            AlmacenPropiedades.TILAPIA_NILO.getNombre()
     });
 
     /** Sistema de monedas para manejar transacciones. */
@@ -60,16 +62,13 @@ public class Simulador {
     private AlmacenCentral almacenCentral;
 
     /** Utilidad para manejar la entrada de datos del usuario. */
-    private InputHelper inputHelper;
+    private InputHelper inputHelper = new InputHelper();
 
     /** Utilidad para gestionar los menús de la simulación. */
-    private MenuHelper menuHelper;
+    private MenuHelper menuHelper = new MenuHelper();
 
     /** Metodo que inicializa todo el sistema. */
     public void init() {
-        inputHelper = new InputHelper();
-        menuHelper = new MenuHelper();
-
         nombreEntidad = inputHelper.readString("Ingrese el nombre de la entidad/empresa/partida: ");
         System.out.println();
         nombrePiscifactoria = inputHelper.readString("Ingrese el nombre de la primera Piscifactoria: ");
@@ -130,8 +129,7 @@ public class Simulador {
      * Devuelve la opción seleccionada o repite la solicitud si la selección es
      * inválida.
      *
-     * @return La opción seleccionada por el usuario (índice de la piscifactoría) o
-     *         0 para cancelar.
+     * @return La opción seleccionada por el usuario (índice de la piscifactoría) o 0 para cancelar.
      */
     public int selectPisc() {
         menuPisc();
@@ -266,69 +264,29 @@ public class Simulador {
         System.out.println("===========================================");
     }
 
-
     public void showIctio() {
-    menuHelper.clearOptions(); // Limpiar opciones previas
+        // Llama al método selectFish para obtener el pez seleccionado
+        Pez pezSeleccionado = selectFish(true);
 
-    // Array de los peces específicos
-    PecesDatos[] pecesEspecificos = {
-        AlmacenPropiedades.SALMON_ATLANTICO,
-        AlmacenPropiedades.TRUCHA_ARCOIRIS,
-        AlmacenPropiedades.ARENQUE_ATLANTICO,
-        AlmacenPropiedades.BESUGO,
-        AlmacenPropiedades.LENGUADO_EUROPEO,
-        AlmacenPropiedades.LUBINA_EUROPEA,
-        AlmacenPropiedades.ROBALO,
-        AlmacenPropiedades.CARPA_PLATEADA,
-        AlmacenPropiedades.PEJERREY,
-        AlmacenPropiedades.PERCA_EUROPEA,
-        AlmacenPropiedades.SALMON_CHINOOK,
-        AlmacenPropiedades.TILAPIA_NILO
-    };
+        // Si el pez seleccionado es nulo, significa que la operación fue cancelada
+        if (pezSeleccionado == null) {
+            return; // Salimos del método si la selección fue cancelada
+        }
 
-    // Agregar opciones de peces al menú
-    for (int i = 0; i < pecesEspecificos.length; i++) {
-        PecesDatos pez = pecesEspecificos[i];
-        menuHelper.addOption(i + 1, pez.getNombre());
-    }
+        // Mostrar la información del pez seleccionado
+        System.out.println("\nInformación del pez seleccionado:");
+        System.out.println("Nombre: " + pezSeleccionado.getDatos().getNombre());
+        System.out.println("Nombre científico: " + pezSeleccionado.getDatos().getCientifico());
+        System.out.println("Tipo: " + pezSeleccionado.getDatos().getTipo());
+        System.out.println("Coste: " + pezSeleccionado.getDatos().getCoste() + " unidades");
+        System.out.println("Monedas: " + pezSeleccionado.getDatos().getMonedas());
+        System.out.println("Huevos: " + pezSeleccionado.getDatos().getHuevos());
+        System.out.println("Ciclo: " + pezSeleccionado.getDatos().getCiclo() + " días");
+        System.out.println("Madurez: " + pezSeleccionado.getDatos().getMadurez() + " días");
+        System.out.println("Óptimo: " + pezSeleccionado.getDatos().getOptimo() + " unidades");
 
-    // Opción para cancelar
-    menuHelper.addOption(0, "Cancelar");
-
-    // Mostrar el menú
-    menuHelper.showMenu();
-
-    // Leer la selección del usuario
-    int seleccion = inputHelper.readInt("Seleccione un pez para más información: ");
-
-    // Verificar la selección
-    if (seleccion == 0) {
-        System.out.println("Operación cancelada.");
-        return;
-    } else if (seleccion < 1 || seleccion > pecesEspecificos.length) {
-        System.out.println("Selección no válida. Inténtalo de nuevo.");
-        showIctio(); // Mostrar menú de nuevo si la selección es inválida
-        return;
-    }
-
-    // Obtener el pez seleccionado
-    PecesDatos pezSeleccionado = pecesEspecificos[seleccion - 1];
-
-    // Mostrar la información del pez seleccionado
-    if (pezSeleccionado != null) {
-        System.out.println("Información del pez seleccionado:");
-        System.out.println("Nombre: " + pezSeleccionado.getNombre());
-        System.out.println("Nombre científico: " + pezSeleccionado.getCientifico());
-        System.out.println("Tipo: " + pezSeleccionado.getTipo());
-        System.out.println("Coste: " + pezSeleccionado.getCoste() + " unidades");
-        System.out.println("Monedas: " + pezSeleccionado.getMonedas());
-        System.out.println("Huevos: " + pezSeleccionado.getHuevos());
-        System.out.println("Ciclo: " + pezSeleccionado.getCiclo() + " días");
-        System.out.println("Madurez: " + pezSeleccionado.getMadurez() + " días");
-        System.out.println("Óptimo: " + pezSeleccionado.getOptimo() + " unidades");
-        
         // Mostrar propiedades
-        PecesProps[] propiedades = pezSeleccionado.getPropiedades();
+        PecesProps[] propiedades = pezSeleccionado.getDatos().getPropiedades();
         System.out.print("Propiedades: ");
         for (int i = 0; i < propiedades.length; i++) {
             System.out.print(propiedades[i]);
@@ -338,35 +296,8 @@ public class Simulador {
         }
         System.out.println();
 
-        System.out.println("Tipo de cría: " + pezSeleccionado.getPiscifactoria());
-    } else {
-        System.out.println("No se encontró información para el pez seleccionado.");
+        System.out.println("Tipo de cría: " + pezSeleccionado.getDatos().getPiscifactoria());
     }
-
-    // Volver a mostrar el menú de ictiología
-    showIctio();
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     public void nextDay() {
         int totalPecesVendidos = 0;
@@ -378,76 +309,146 @@ public class Simulador {
             // TODO implementar logica para que vaya sumando los peces vendidos y las
             // monedas ganadas a un total
         }
-
         // Muestra los resultados totales
         System.out.println(totalPecesVendidos + " peces vendidos por un total de " + totalMonedasGanadas + " monedas.");
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
-     * public void upgrade() {
+     * Método para seleccionar un pez mediante un menú.
      * 
-     * while (true) {
-     * // Configuramos el menú principal
-     * menuHelper.clearOptions();
-     * menuHelper.addOption(1, "Comprar edificios");
-     * menuHelper.addOption(2, "Mejorar edificios");
-     * menuHelper.addOption(3, "Cancelar");
-     * 
-     * // Mostramos el menú y obtenemos la opción seleccionada
-     * menuHelper.showMenu();
-     * int opcion = menuHelper.getSelection(); //TODO usar input helper
-     * 
-     * 
-     * switch (opcion) {
-     * case 1:
-     * // Comprar edificios
-     * menuHelper.clearOptions();
-     * menuHelper.addOption(1, "Piscifactoría");
-     * menuHelper.addOption(2, "Almacén central");
-     * 
-     * 
-     * 
-     * break;
-     * 
-     * case 2:
-     * // Mejorar edificios
-     * menuHelper.clearOptions();
-     * menuHelper.addOption(1, "Piscifactoría");
-     * menuHelper.addOption(2, "Almacén central");
-     * 
-     * menuHelper.showMenu();
-     * int edificioAMejorar = menuHelper.getSelection();
-     * 
-     * if (edificioAMejorar == 1) {
-     * // Mejorar piscifactoría
-     * menuHelper.clearOptions();
-     * menuHelper.addOption(1, "Comprar tanque");
-     * menuHelper.addOption(2, "Aumentar almacén de comida");
-     * 
-     * 
-     * 
-     * } else if (edificioAMejorar == 2) {
-     * // Mejorar almacén central (si se tiene)
-     * 
-     * 
-     * 
-     * } else {
-     * System.out.println("Opción no válida. Por favor, intenta de nuevo.");
-     * }
-     * break;
-     * 
-     * case 3:
-     * // Cancelar
-     * System.out.println("Operación cancelada.");
-     * return; // Salir del método
-     * 
-     * default:
-     * System.out.println("Opción no válida. Por favor, intenta de nuevo.");
-     * break;
-     * }
-     * }
-     * }
+     * @param permitirHembras Indica si se permiten hembras en la selección.
+     * @return El pez seleccionado o null si se cancela.
      */
+    public Pez selectFish(boolean permitirHembras) {
+        menuHelper.clearOptions(); // Limpiar opciones previas
+
+        // Array de los peces específicos
+        PecesDatos[] pecesEspecificos = {
+                AlmacenPropiedades.SALMON_ATLANTICO,
+                AlmacenPropiedades.TRUCHA_ARCOIRIS,
+                AlmacenPropiedades.ARENQUE_ATLANTICO,
+                AlmacenPropiedades.BESUGO,
+                AlmacenPropiedades.LENGUADO_EUROPEO,
+                AlmacenPropiedades.LUBINA_EUROPEA,
+                AlmacenPropiedades.ROBALO,
+                AlmacenPropiedades.CARPA_PLATEADA,
+                AlmacenPropiedades.PEJERREY,
+                AlmacenPropiedades.PERCA_EUROPEA,
+                AlmacenPropiedades.SALMON_CHINOOK,
+                AlmacenPropiedades.TILAPIA_NILO
+        };
+
+        // Agregar opciones de peces al menú
+        for (int i = 0; i < pecesEspecificos.length; i++) {
+            PecesDatos pez = pecesEspecificos[i];
+            menuHelper.addOption(i + 1, pez.getNombre());
+        }
+
+        // Opción para cancelar
+        menuHelper.addOption(0, "Cancelar");
+
+        // Mostrar el menú
+        menuHelper.showMenu();
+
+        // Leer la selección del usuario
+        int seleccion = inputHelper.readInt("Seleccione un pez:");
+
+        // Validar la selección y asignar el sexo basado en permitirHembras
+        switch (seleccion) {
+            case 1:
+                return new SalmonAtlantico(permitirHembras ? false : true); // false es hembra
+            case 2:
+                return new TruchaArcoiris(permitirHembras ? false : true);
+            case 3:
+                return new ArenqueDelAtlantico(permitirHembras ? false : true);
+            case 4:
+                return new Besugo(permitirHembras ? false : true);
+            case 5:
+                return new LenguadoEuropeo(permitirHembras ? false : true);
+            case 6:
+                return new LubinaRayada(permitirHembras ? false : true);
+            case 7:
+                return new Robalo(permitirHembras ? false : true);
+            case 8:
+                return new CarpaPlateada(permitirHembras ? false : true);
+            case 9:
+                return new Pejerrey(permitirHembras ? false : true);
+            case 10:
+                return new PercaEuropea(permitirHembras ? false : true);
+            case 11:
+                return new SalmonChinook(permitirHembras ? false : true);
+            case 12:
+                return new TilapiaDelNilo(permitirHembras ? false : true);
+            case 0:
+                System.out.println("Operación cancelada.");
+                return null; // O puedes lanzar una excepción o manejarlo de otra manera
+            default:
+                System.out.println("Selección inválida. Por favor, intente de nuevo.");
+                return null; // O puedes lanzar una excepción o manejarlo de otra manera
+        }
+    }
+
+    public void addFish() {
+        // Seleccionar una piscifactoría
+        int piscifactoriaIndex = selectPisc();
+        if (piscifactoriaIndex == 0) {
+            System.out.println("Operación cancelada al seleccionar piscifactoría.");
+            return; // Salir si se cancela
+        }
+        
+        // Obtener la piscifactoría seleccionada
+        Piscifactoria piscifactoria = piscifacorias.get(piscifactoriaIndex - 1); // Ajustar el índice
+    
+        // Seleccionar un tanque dentro de la piscifactoría
+        int tanqueIndex = selectTank(piscifactoria);
+        if (tanqueIndex == 0) {
+            System.out.println("Operación cancelada al seleccionar tanque.");
+            return; // Salir si se cancela
+        }
+    
+        // Obtener el tanque seleccionado
+        Tanque tanqueSeleccionado = piscifactoria.getTanques().get(tanqueIndex - 1); // Ajustar el índice
+    
+        // Contar hembras y machos en el tanque
+        int hembras = tanqueSeleccionado.getHembras();
+        int machos = tanqueSeleccionado.getMachos();
+    
+        // Seleccionar un pez según la lógica de sexo
+        Pez pezSeleccionado = selectFish(hembras <= machos);
+        if (pezSeleccionado == null) {
+            System.out.println("No se ha seleccionado ningún pez.");
+            return; // Si no se seleccionó un pez, salimos del método
+        }
+    
+        // Verificar si hay espacio en el tanque
+        if (tanqueSeleccionado.addPez(pezSeleccionado)) { // Intenta añadir el pez
+            System.out.println("Pez añadido al tanque correctamente.");
+            // Mostrar estado del tanque
+            tanqueSeleccionado.showCapacity(); // Mostrar capacidad del tanque
+        } else {
+            System.out.println("No se pudo añadir el pez al tanque " + tanqueIndex + " de la piscifactoría. Tanque lleno o tipo de pez no permitido.");
+        }
+    }
+    
 
     public static void main(String[] args) {
         InputHelper inputHelper = new InputHelper(); // Crear una instancia de InputHelper
@@ -481,6 +482,12 @@ public class Simulador {
                     break;
                 case 6:
                     simulador.nextDay(); // Lógica para pasar al siguiente día
+                    break;
+                case 7:
+
+                    break;
+                case 8:
+                    simulador.addFish();
                     break;
                 case 98:
                     // Lógica para agregar peces gratuitos a una piscifactoría
