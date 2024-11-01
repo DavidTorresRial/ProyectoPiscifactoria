@@ -3,6 +3,7 @@ package commons;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
 import helpers.InputHelper;
 import helpers.MenuHelper;
@@ -851,7 +852,7 @@ public class Simulador {
                     simulador.avanzarDias(dias);
                     break;
                 case 98:
-                    // Lógica para agregar peces gratuitos a una piscifactoría
+                    // Metodo que añade cuatro peces al azar y de forma gratuita a una piscifactoría seleccionada
                     break;
                 case 99:
                     simulador.getMonedas().ganarMonedas(1000);
@@ -867,6 +868,7 @@ public class Simulador {
             }
         }
     }
+
 
     /**
      * @return int return the dias
