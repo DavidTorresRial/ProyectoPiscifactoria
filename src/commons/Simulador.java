@@ -420,6 +420,129 @@ public class Simulador {
         System.out.println("El tanque ha sido vaciado.");
     }
 
+    public void upgrade() {
+        while (true) {
+            menuHelper.clearOptions();
+
+            menuHelper.addOption(1, "Comprar edificios");
+            menuHelper.addOption(2, "Mejorar edificios");
+            menuHelper.addOption(3, "Cancelar");
+    
+            menuHelper.showMenu();
+            int opcion = inputHelper.readInt("Ingrese su opción:");
+    
+            switch (opcion) {
+                case 1:
+                // Comprar edificios
+                menuHelper.clearOptions();
+                menuHelper.addOption(1, "Piscifactoría");
+                menuHelper.addOption(2, "Almacén central");
+
+                menuHelper.showMenu();
+                int edificioAComprar = inputHelper.readInt("Seleccione el edificio a comprar:");
+
+                if (edificioAComprar == 1) {
+                    // Compra de Piscifactoría
+                    String nombrePiscifactoria = inputHelper.readString("Ingrese el nombre de la piscifactoría:");
+
+                    menuHelper.clearOptions();
+                    
+                    menuHelper.addOption(1, "Piscifactoría de río");
+                    menuHelper.addOption(2, "Piscifactoría de mar");
+
+                    menuHelper.showMenu();
+                    int tipoSeleccionado = inputHelper.readInt("Seleccione el tipo de piscifactoría (1 o 2):");
+
+                    Piscifactoria nuevaPiscifactoria = null;
+
+                    if (tipoSeleccionado == 1) {
+                        // Crear Piscifactoría de Río
+                        SistemaMonedas monedasRio = getMonedas(); // Método para obtener el sistema de monedas
+                        nuevaPiscifactoria = new PiscifactoriaDeRio(nombrePiscifactoria, monedasRio);
+                        System.out.println("Piscifactoría de Río '" + nombrePiscifactoria + "' comprada.");
+                    } else if (tipoSeleccionado == 2) {
+                        // Crear Piscifactoría de Mar
+                        SistemaMonedas monedasMar = getMonedas(); // Método para obtener el sistema de monedas
+                        nuevaPiscifactoria = new PiscifactoriaDeMar(nombrePiscifactoria, monedasMar);
+                        System.out.println("Piscifactoría de Mar '" + nombrePiscifactoria + "' comprada.");
+                    } else {
+                        System.out.println("Tipo de piscifactoría no válido. Operación cancelada.");
+                        return; // O manejar la cancelación según corresponda
+                    }
+
+                    // Añadir la nueva piscifactoría a la lista de piscifactorías
+                    piscifacorias.add(nuevaPiscifactoria);
+
+                } else if (edificioAComprar == 2) {
+                    // Aquí puedes añadir la lógica para comprar un Almacén central
+                    System.out.println("Funcionalidad para comprar almacén central no implementada aún.");
+                } else {
+                    System.out.println("Opción no válida. Por favor, intenta de nuevo.");
+                }
+                break;
+    
+                case 2:
+                    // Mejorar edificios
+                    menuHelper.clearOptions();
+                    menuHelper.addOption(1, "Piscifactoría");
+                    menuHelper.addOption(2, "Almacén central");
+    
+                    menuHelper.showMenu();
+                    int edificioAMejorar = inputHelper.readInt("Seleccione el edificio a mejorar:");
+    
+                    if (edificioAMejorar == 1) {
+                        // Mejorar piscifactoría
+                        menuHelper.clearOptions();
+                        menuHelper.addOption(1, "Comprar tanque");
+                        menuHelper.addOption(2, "Aumentar almacén de comida");
+    
+                        menuHelper.showMenu();
+                        int mejoraPiscifactoria = inputHelper.readInt("Seleccione la mejora:");
+    
+                        if (mejoraPiscifactoria == 1) {
+                            // Comprar tanque
+                            // Implementar lógica para comprar un tanque
+                            System.out.println("Tanque comprado para la piscifactoría.");
+                        } else if (mejoraPiscifactoria == 2) {
+                            // Aumentar almacén de comida
+                            // Implementar lógica para aumentar el almacén de comida
+                            System.out.println("Almacén de comida aumentado en la piscifactoría.");
+                        } else {
+                            System.out.println("Opción no válida. Por favor, intenta de nuevo.");
+                        }
+                    } else if (edificioAMejorar == 2) {
+                        // Mejorar almacén central (si se tiene)
+                        // Aquí podrías verificar si el almacén central existe antes de permitir mejoras
+                        menuHelper.clearOptions();
+                        menuHelper.addOption(1, "Aumentar capacidad");
+    
+                        menuHelper.showMenu();
+                        int mejoraAlmacenCentral = inputHelper.readInt("Seleccione la mejora:");
+    
+                        if (mejoraAlmacenCentral == 1) {
+                            // Aumentar capacidad del almacén central
+                            // Implementar lógica para aumentar la capacidad
+                            System.out.println("Capacidad del almacén central aumentada.");
+                        } else {
+                            System.out.println("Opción no válida. Por favor, intenta de nuevo.");
+                        }
+                    } else {
+                        System.out.println("Opción no válida. Por favor, intenta de nuevo.");
+                    }
+                    break;
+    
+                case 3:
+                    // Cancelar
+                    System.out.println("Operación cancelada.");
+                    return; // Salir del método
+    
+                default:
+                    System.out.println("Opción no válida. Por favor, intenta de nuevo.");
+                    break;
+            }
+        }
+    }
+    
     public static void main(String[] args) {
         InputHelper inputHelper = new InputHelper(); // Crear una instancia de InputHelper
         Simulador simulador = new Simulador();
@@ -469,7 +592,7 @@ public class Simulador {
                     simulador.emptyTank();
                     break;
                 case 12:
-                    //upgrade();
+                    simulador.upgrade();
                     break;
                 case 13: 
                     // Pasar varios días
