@@ -37,8 +37,7 @@ public class Simulador {
     private String nombrePiscifactoria;
 
     /**
-     * Sistema de estadísticas para registrar la cría, venta y ganancias de los
-     * peces.
+     * Sistema de estadísticas para registrar la cría, venta y ganancias de los peces.
      */
     private Estadisticas estadisticas = new Estadisticas(new String[] {
             AlmacenPropiedades.SALMON_ATLANTICO.getNombre(),
@@ -123,40 +122,26 @@ public class Simulador {
         menuHelper.showMenu();
     }
 
-    /**
-     * Muestra el menú de piscifactorías y permite al usuario seleccionar una de
-     * ellas.
-     * Devuelve la opción seleccionada o repite la solicitud si la selección es
-     * inválida.
-     *
-     * @return La opción seleccionada por el usuario (índice de la piscifactoría) o 0 para cancelar.
-     */
-    public int selectPisc() {
+    public Piscifactoria selectPisc() {
         menuPisc();
         int selection = inputHelper.readInt("Ingrese su selección: ");
-        if (selection < 0 || selection > piscifacorias.size()) {
+
+        if (selection < 1 || selection > piscifacorias.size()) {
             System.out.println("Selección no válida. Inténtalo de nuevo.");
             return selectPisc(); // Llamada recursiva hasta que se haga una selección válida
         }
-        return selection;
+
+        return piscifacorias.get(selection - 1); // Ajustamos el índice
     }
 
-    /**
-     * Método que muestra el menú de tanques de una piscifactoría y permite
-     * seleccionar uno de ellos, devolviendo la opción seleccionada.
-     * 
-     * @param piscifactoria La piscifactoría que contiene los tanques a seleccionar.
-     * @return La opción seleccionada por el usuario (índice del tanque) o 0 para
-     *         cancelar.
-     */
-    public int selectTank(Piscifactoria piscifactoria) {
+    public Tanque selectTank(Piscifactoria piscifactoria) {
         menuHelper.clearOptions(); // Limpiar opciones previas
 
         System.out.println("\nSeleccione un Tanque:");
         List<Tanque> tanques = piscifactoria.getTanques();
+
         for (int i = 0; i < tanques.size(); i++) {
             Tanque tanque = tanques.get(i);
-            // Verifica si el tipo de pez actual es nulo
             String tipoPez = tanque.getTipoPezActual() != null ? tanque.getTipoPezActual().getSimpleName()
                     : "Tanque sin tipo de pez asignado";
             String optionText = "Tanque " + (i + 1) + " [Tipo de pez: " + tipoPez + "]";
@@ -168,11 +153,13 @@ public class Simulador {
 
         int selection = inputHelper.readInt("Ingrese su selección: ");
         System.out.println();
-        if (selection < 0 || selection > tanques.size()) {
+
+        if (selection < 1 || selection > tanques.size()) {
             System.out.println("Selección no válida. Inténtalo de nuevo.");
             return selectTank(piscifactoria); // Llamada recursiva hasta que se haga una selección válida
         }
-        return selection;
+
+        return tanques.get(selection - 1); // Ajustamos el índice
     }
 
     /** Método que muestra el estado de las piscifactorías. */
@@ -193,68 +180,52 @@ public class Simulador {
         System.out.println("======================================================");
     }
 
-    /** Método que muestra el estado de una piscifactoría. */
     public void showSpecificStatus() {
-        int selection = selectPisc();
+        // Obtener la piscifactoría seleccionada
+        Piscifactoria piscifactoria = selectPisc();
 
-        if (selection == 0) {
+        // Verificar si se canceló la selección
+        if (piscifactoria == null) {
             System.out.println("Operación cancelada.");
             return;
-
-        } else if (selection > 0 && selection <= piscifacorias.size()) {
-            Piscifactoria piscifactoria = piscifacorias.get(selection - 1);
-            piscifactoria.showTankStatus();
-        } else {
-            System.out.println("Selección no válida. Inténtalo de nuevo.");
         }
+
+        // Si se seleccionó una piscifactoría, mostrar su estado
+        piscifactoria.showTankStatus();
     }
 
     public void showTankStatus() {
-        int selection = selectPisc();
-
-        if (selection == 0) {
+        // Obtener la piscifactoría seleccionada
+        Piscifactoria piscifactoria = selectPisc();
+    
+        // Verificar si se canceló la selección
+        if (piscifactoria == null) {
             System.out.println("Operación cancelada.");
             return;
         }
-
-        // Validar selección de piscifactoría
-        if (selection < 1 || selection > piscifacorias.size()) {
-            System.out.println("Selección de piscifactoría no válida. Inténtalo de nuevo.");
-            return;
-        }
-
-        // Obtiene la piscifactoría seleccionada
-        Piscifactoria piscifactoria = piscifacorias.get(selection - 1);
-
+    
         // Paso 2: Selecciona un tanque dentro de la piscifactoría
-        int tanqueSeleccionado = selectTank(piscifactoria);
-
-        // Cancelar si se selecciona 0
-        if (tanqueSeleccionado == 0) {
+        Tanque tanqueSeleccionado = selectTank(piscifactoria);
+    
+        // Cancelar si se selecciona null
+        if (tanqueSeleccionado == null) {
             System.out.println("Operación cancelada.");
             return;
         }
-
-        // Validar selección de tanque
-        if (tanqueSeleccionado < 1 || tanqueSeleccionado > piscifactoria.getTanques().size()) {
-            System.out.println("Selección de tanque no válida. Inténtalo de nuevo.");
-            return;
-        }
-
+    
         // Paso 3: Muestra el estado de todos los peces en el tanque seleccionado
-        Tanque tanque = piscifactoria.getTanques().get(tanqueSeleccionado - 1);
-        System.out.println("\nEstado de los peces en el tanque " + tanque.getNumeroTanque() + ":");
-
+        System.out.println("\nEstado de los peces en el tanque " + tanqueSeleccionado.getNumeroTanque() + ":");
+    
         // Verificar si hay peces en el tanque
-        if (tanque.getPeces().isEmpty()) {
+        if (tanqueSeleccionado.getPeces().isEmpty()) {
             System.out.println("Este tanque no contiene peces actualmente.");
         } else {
-            for (int i = 0; i < tanque.getPeces().size(); i++) {
-                tanque.getPeces().get(i).showStatus();
+            for (int i = 0; i < tanqueSeleccionado.getPeces().size(); i++) {
+                tanqueSeleccionado.getPeces().get(i).showStatus();
             }
         }
     }
-
+    
     /**
      * Muestra un desglose de las estadísticas por cada tipo de pez.
      */
@@ -312,25 +283,6 @@ public class Simulador {
         // Muestra los resultados totales
         System.out.println(totalPecesVendidos + " peces vendidos por un total de " + totalMonedasGanadas + " monedas.");
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     /**
      * Método para seleccionar un pez mediante un menú.
@@ -409,24 +361,18 @@ public class Simulador {
 
     public void addFish() {
         // Seleccionar una piscifactoría
-        int piscifactoriaIndex = selectPisc();
-        if (piscifactoriaIndex == 0) {
+        Piscifactoria piscifactoria = selectPisc(); // Ahora retorna el objeto directamente
+        if (piscifactoria == null) {
             System.out.println("Operación cancelada al seleccionar piscifactoría.");
             return; // Salir si se cancela
         }
-        
-        // Obtener la piscifactoría seleccionada
-        Piscifactoria piscifactoria = piscifacorias.get(piscifactoriaIndex - 1); // Ajustar el índice
     
         // Seleccionar un tanque dentro de la piscifactoría
-        int tanqueIndex = selectTank(piscifactoria);
-        if (tanqueIndex == 0) {
+        Tanque tanqueSeleccionado = selectTank(piscifactoria); // Ahora retorna el objeto directamente
+        if (tanqueSeleccionado == null) {
             System.out.println("Operación cancelada al seleccionar tanque.");
             return; // Salir si se cancela
         }
-    
-        // Obtener el tanque seleccionado
-        Tanque tanqueSeleccionado = piscifactoria.getTanques().get(tanqueIndex - 1); // Ajustar el índice
     
         // Contar hembras y machos en el tanque
         int hembras = tanqueSeleccionado.getHembras();
@@ -445,7 +391,8 @@ public class Simulador {
             // Mostrar estado del tanque
             tanqueSeleccionado.showCapacity(); // Mostrar capacidad del tanque
         } else {
-            System.out.println("No se pudo añadir el pez al tanque " + tanqueIndex + " de la piscifactoría. Tanque lleno o tipo de pez no permitido.");
+            System.out.println("No se pudo añadir el pez al tanque " + tanqueSeleccionado.getNumeroTanque() 
+                    + " de la piscifactoría. Tanque lleno o tipo de pez no permitido.");
         }
     }
     
@@ -484,7 +431,7 @@ public class Simulador {
                     simulador.nextDay(); // Lógica para pasar al siguiente día
                     break;
                 case 7:
-
+                    //addFood(); // TODO implement
                     break;
                 case 8:
                     simulador.addFish();
