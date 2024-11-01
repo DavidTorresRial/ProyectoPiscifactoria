@@ -199,7 +199,7 @@ public abstract class  Piscifactoria {
         for (Tanque tanque : tanques) {
             alimentarPeces(tanque);
             tanque.nextDay();
-            sellFish(); // TODO revisar porque se venden todos los peces el primer dia
+            //sellFish(); // TODO revisar porque se venden todos los peces el primer dia
         }
     }
 
