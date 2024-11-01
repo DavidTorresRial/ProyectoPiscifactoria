@@ -37,7 +37,8 @@ public class Simulador {
     private String nombrePiscifactoria;
 
     /**
-     * Sistema de estadísticas para registrar la cría, venta y ganancias de los peces.
+     * Sistema de estadísticas para registrar la cría, venta y ganancias de los
+     * peces.
      */
     private Estadisticas estadisticas = new Estadisticas(new String[] {
             AlmacenPropiedades.SALMON_ATLANTICO.getNombre(),
@@ -197,25 +198,25 @@ public class Simulador {
     public void showTankStatus() {
         // Obtener la piscifactoría seleccionada
         Piscifactoria piscifactoria = selectPisc();
-    
+
         // Verificar si se canceló la selección
         if (piscifactoria == null) {
             System.out.println("Operación cancelada.");
             return;
         }
-    
+
         // Paso 2: Selecciona un tanque dentro de la piscifactoría
         Tanque tanqueSeleccionado = selectTank(piscifactoria);
-    
+
         // Cancelar si se selecciona null
         if (tanqueSeleccionado == null) {
             System.out.println("Operación cancelada.");
             return;
         }
-    
+
         // Paso 3: Muestra el estado de todos los peces en el tanque seleccionado
         System.out.println("\nEstado de los peces en el tanque " + tanqueSeleccionado.getNumeroTanque() + ":");
-    
+
         // Verificar si hay peces en el tanque
         if (tanqueSeleccionado.getPeces().isEmpty()) {
             System.out.println("Este tanque no contiene peces actualmente.");
@@ -225,7 +226,7 @@ public class Simulador {
             }
         }
     }
-    
+
     /**
      * Muestra un desglose de las estadísticas por cada tipo de pez.
      */
@@ -366,60 +367,58 @@ public class Simulador {
             System.out.println("Operación cancelada al seleccionar piscifactoría.");
             return; // Salir si se cancela
         }
-    
+
         // Seleccionar un tanque dentro de la piscifactoría
         Tanque tanqueSeleccionado = selectTank(piscifactoria); // Ahora retorna el objeto directamente
         if (tanqueSeleccionado == null) {
             System.out.println("Operación cancelada al seleccionar tanque.");
             return; // Salir si se cancela
         }
-    
+
         // Contar hembras y machos en el tanque
         int hembras = tanqueSeleccionado.getHembras();
         int machos = tanqueSeleccionado.getMachos();
-    
+
         // Seleccionar un pez según la lógica de sexo
         Pez pezSeleccionado = selectFish(hembras <= machos);
         if (pezSeleccionado == null) {
             System.out.println("No se ha seleccionado ningún pez.");
             return; // Si no se seleccionó un pez, salimos del método
         }
-    
+
         // Verificar si hay espacio en el tanque
         if (tanqueSeleccionado.addPez(pezSeleccionado)) { // Intenta añadir el pez
             System.out.println("Pez añadido al tanque correctamente.");
             // Mostrar estado del tanque
             tanqueSeleccionado.showCapacity(); // Mostrar capacidad del tanque
         } else {
-            System.out.println("No se pudo añadir el pez al tanque " + tanqueSeleccionado.getNumeroTanque() 
+            System.out.println("No se pudo añadir el pez al tanque " + tanqueSeleccionado.getNumeroTanque()
                     + " de la piscifactoría. Tanque lleno o tipo de pez no permitido.");
         }
     }
-    
-      // Método para limpiar un tanque de todos los peces muertos
-      public void cleanTank() {
+
+    // Método para limpiar un tanque de todos los peces muertos
+    public void cleanTank() {
         Tanque tanque = selectTank(selectPisc()); // Seleccionar un tanque
         List<Pez> peces = tanque.getPeces(); // Asumiendo que el tanque tiene un método para obtener sus peces
 
         // Usamos un bucle for en reversa para eliminar peces muertos
         for (int i = peces.size() - 1; i >= 0; i--) {
-        Pez pez = peces.get(i);
-        if (!pez.isVivo()) { // Si el pez está muerto
-            peces.remove(i); // Elimina el pez del tanque
+            Pez pez = peces.get(i);
+            if (!pez.isVivo()) { // Si el pez está muerto
+                peces.remove(i); // Elimina el pez del tanque
+            }
         }
-    }
         System.out.println("Todos los peces muertos han sido eliminados del tanque.");
     }
 
-      // Método para vaciar un tanque de todos los peces, independientemente de su estado
-      public void emptyTank() {
-        Tanque tanque = selectTank(selectPisc()); // Seleccionar un tanque
-        List<Pez> peces = tanque.getPeces(); // Asumiendo que el tanque tiene un método para obtener sus peces
-        peces.clear(); // Elimina todos los peces del tanque
+    // Método para vaciar un tanque de todos los peces, independientemente de su
+    // estado
+    public void emptyTank() {
+        Tanque tanque = selectTank(selectPisc());
+        tanque.getPeces().clear(); // Elimina todos los peces del tanque
         System.out.println("El tanque ha sido vaciado.");
     }
-
-
 
     public static void main(String[] args) {
         InputHelper inputHelper = new InputHelper(); // Crear una instancia de InputHelper
@@ -455,10 +454,25 @@ public class Simulador {
                     simulador.nextDay(); // Lógica para pasar al siguiente día
                     break;
                 case 7:
-                    //addFood(); // TODO implement
+                    // addFood(); // TODO implement
                     break;
                 case 8:
                     simulador.addFish();
+                    break;
+                case 9:
+                    //sell(); // TODO implement
+                    break;
+                case 10:
+                    simulador.cleanTank();
+                    break;
+                case 11:
+                    simulador.emptyTank();
+                    break;
+                case 12:
+                    //upgrade();
+                    break;
+                case 13: 
+                    // Pasar varios días
                     break;
                 case 98:
                     // Lógica para agregar peces gratuitos a una piscifactoría
