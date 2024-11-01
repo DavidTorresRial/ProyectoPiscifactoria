@@ -396,6 +396,12 @@ public class Simulador {
         }
     }
     
+      // Método para vaciar un tanque de todos los peces, independientemente de su estado
+      public void emptyTank(Tanque tanque) {
+        List<Pez> peces = tanque.getPeces(); // Asumiendo que el tanque tiene un método para obtener sus peces
+        peces.clear(); // Elimina todos los peces del tanque
+        System.out.println("El tanque ha sido vaciado.");
+    }
 
     public static void main(String[] args) {
         InputHelper inputHelper = new InputHelper(); // Crear una instancia de InputHelper
