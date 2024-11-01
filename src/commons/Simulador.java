@@ -1,6 +1,7 @@
 package commons;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import helpers.InputHelper;
@@ -397,6 +398,41 @@ public class Simulador {
         }
     }
 
+    public void sell() {
+        // Suponiendo que tanqueSeleccionado es la piscifactoría seleccionada
+        Tanque tanqueSeleccionado = selectTank(selectPisc()); // Aquí debes obtener la piscifactoría seleccionada
+        int pecesVendidos = 0;
+        int totalDinero = 0;
+        
+    
+        // Usamos un iterador para evitar ConcurrentModificationException
+        Iterator<Pez> iterator = tanqueSeleccionado.getPeces().iterator();
+    
+        while (iterator.hasNext()) {
+            Pez pez = iterator.next();
+    
+            // Verificamos si el pez es adulto y está vivo
+            if (pez.getEdad() >= pez.getDatos().getMadurez() && pez.isVivo()) {
+                int precioNormal = pez.getDatos().getMonedas(); // Obtener el precio normal del pez
+                int precioVenta = precioNormal;
+    
+                // Si el pez es longevo, le damos la mitad del precio normal
+               
+    
+                // Actualizamos el total de dinero y la cuenta de peces vendidos
+                totalDinero += precioVenta;
+                pecesVendidos++;
+    
+                // Eliminamos el pez del tanque usando el iterador
+                iterator.remove();
+            }
+        }
+    
+        // Mostramos el resultado de la venta
+        System.out.println("Piscifactoría :" + pecesVendidos + " peces vendidos por " + totalDinero + " monedas");
+    }
+    
+
     // Método para limpiar un tanque de todos los peces muertos
     public void cleanTank() {
         Tanque tanque = selectTank(selectPisc()); // Seleccionar un tanque
@@ -658,7 +694,7 @@ public class Simulador {
                     simulador.addFish();
                     break;
                 case 9:
-                    //sell(); // TODO implement
+                    simulador.sell(); // TODO: Revisar falta longevidad
                     break;
                 case 10:
                     simulador.cleanTank();
