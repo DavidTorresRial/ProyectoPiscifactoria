@@ -3,6 +3,7 @@ package commons;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
 import helpers.InputHelper;
 import helpers.MenuHelper;
@@ -29,7 +30,7 @@ public class Simulador {
     private int dias = 0;
 
     /** Lista de piscifactorías en el sistema. */
-    private ArrayList<Piscifactoria> piscifacorias = new ArrayList<>();
+    private ArrayList<Piscifactoria> piscifactorias = new ArrayList<>();
 
     /** Nombre de la entidad o partida en la simulación. */
     private String nombreEntidad;
@@ -77,9 +78,9 @@ public class Simulador {
         monedas = new SistemaMonedas(100000);
 
         // Añadimos la nueva PiscifactoriaDeRio directamente a la lista
-        piscifacorias.add(new PiscifactoriaDeRio(nombrePiscifactoria, monedas));
-        piscifacorias.get(0).setComidaAnimalActual(piscifacorias.get(0).getCapacidadTotal());
-        piscifacorias.get(0).setComidaVegetalActual(piscifacorias.get(0).getCapacidadTotal());
+        piscifactorias.add(new PiscifactoriaDeRio(nombrePiscifactoria, monedas));
+        piscifactorias.get(0).setComidaAnimalActual(piscifactorias.get(0).getCapacidadTotal());
+        piscifactorias.get(0).setComidaVegetalActual(piscifactorias.get(0).getCapacidadTotal());
     }
 
     /** Método que muestra el texto del menú. */
@@ -113,8 +114,8 @@ public class Simulador {
         System.out.println("[Peces vivos / Peces totales / Espacio total]");
         System.out.println();
 
-        for (int i = 0; i < piscifacorias.size(); i++) {
-            Piscifactoria piscifactoria = piscifacorias.get(i);
+        for (int i = 0; i < piscifactorias.size(); i++) {
+            Piscifactoria piscifactoria = piscifactorias.get(i);
             String optionText = piscifactoria.getNombre() + " [" + piscifactoria.getTotalVivos() + "/"
                     + piscifactoria.getTotalPeces() + "/" + piscifactoria.getCapacidadTotal() + "]";
             menuHelper.addOption(i + 1, optionText);
@@ -128,12 +129,12 @@ public class Simulador {
         menuPisc();
         int selection = inputHelper.readInt("Ingrese su selección: ");
 
-        if (selection < 1 || selection > piscifacorias.size()) {
+        if (selection < 1 || selection > piscifactorias.size()) {
             System.out.println("Selección no válida. Inténtalo de nuevo.");
             return selectPisc(); // Llamada recursiva hasta que se haga una selección válida
         }
 
-        return piscifacorias.get(selection - 1); // Ajustamos el índice
+        return piscifactorias.get(selection - 1); // Ajustamos el índice
     }
 
     public Tanque selectTank(Piscifactoria piscifactoria) {
@@ -170,7 +171,7 @@ public class Simulador {
         System.out.println("Día actual: " + dias);
         System.out.println("Monedas disponibles: " + monedas.getMonedas());
 
-        for (Piscifactoria piscifactoria : piscifacorias) {
+        for (Piscifactoria piscifactoria : piscifactorias) {
             piscifactoria.showStatus();
         }
 
@@ -276,7 +277,7 @@ public class Simulador {
         int totalPecesVendidos = 0;
         int totalMonedasGanadas = 0;
 
-        for (Piscifactoria piscifactoria : piscifacorias) {
+        for (Piscifactoria piscifactoria : piscifactorias) {
             piscifactoria.nextDay(); // Llama al método nextDay de cada piscifactoría
 
             // TODO implementar logica para que vaya sumando los peces vendidos y las
@@ -469,7 +470,7 @@ public class Simulador {
      */
     public int contarPiscifactoriaDeRio() {
         int contador = 0;
-        for (Piscifactoria p : piscifacorias) {
+        for (Piscifactoria p : piscifactorias) {
             if (p instanceof PiscifactoriaDeRio) {
                 contador++;
             }
@@ -483,7 +484,7 @@ public class Simulador {
      */
     public int contarPiscifactoriaDeMar() {
         int contador = 0;
-        for (Piscifactoria p : piscifacorias) {
+        for (Piscifactoria p : piscifactorias) {
             if (p instanceof PiscifactoriaDeMar) {
                 contador++;
             }
@@ -557,7 +558,7 @@ public class Simulador {
     
                         // Añadir la nueva piscifactoría a la lista de piscifactorías, si fue creada
                         if (nuevaPiscifactoria != null) {
-                            piscifacorias.add(nuevaPiscifactoria);
+                            piscifactorias.add(nuevaPiscifactoria);
                         }
     
                     } else if (edificioAComprar == 2) {
@@ -716,7 +717,7 @@ public class Simulador {
                     simulador.avanzarDias(dias);
                     break;
                 case 98:
-                    // Lógica para agregar peces gratuitos a una piscifactoría
+                    simulador.agregarPecesAleatorios(option);
                     break;
                 case 99:
                     simulador.getMonedas().ganarMonedas(1000);
@@ -732,6 +733,39 @@ public class Simulador {
             }
         }
     }
+
+public void agregarPecesAleatorios(int indicePiscifactoria) {
+    // Verifica que el índice sea válido
+    if (indicePiscifactoria < 0 || indicePiscifactoria >= piscifactorias.size()) {
+        System.out.println("Índice de piscifactoría no válido.");
+        return;
+    }
+
+    // Selecciona la piscifactoría
+    Piscifactoria piscifactoriaSeleccionada = piscifactorias.get(indicePiscifactoria);
+
+    // Generador de números aleatorios
+    Random random = new Random();
+
+    // Añade cuatro peces al azar
+    for (int i = 0; i < 4; i++) {
+        // Genera datos aleatorios para el pez
+        boolean sexo = random.nextBoolean(); // true para macho, false para hembra
+        String nombre = "Pez Aleatorio " + (i + 1);
+        String nombreCientifico = "Pezus aleatorius " + (i + 1);
+
+        // Crea un nuevo objeto PecesDatos con valores aleatorios
+        PecesDatos datosAleatorios = new PecesDatos(nombre, nombreCientifico, random.nextInt(100), random.nextInt(10), random.nextInt(10));
+
+        // Crea un nuevo pez con los datos aleatorios
+        Pez pezAleatorio = new Pez(sexo, datosAleatorios);
+
+        // Agrega el pez a la piscifactoría seleccionada
+        piscifactoriaSeleccionada.addPez(pezAleatorio);
+    }
+
+    System.out.println("Se han agregado cuatro peces aleatorios a la piscifactoría seleccionada.");
+}
 
     /**
      * @return int return the dias
@@ -762,17 +796,17 @@ public class Simulador {
     }
 
     /**
-     * @return List<Piscifactoria> return the piscifacorias
+     * @return List<Piscifactoria> return the piscifactorias
      */
-    public List<Piscifactoria> getPiscifacorias() {
-        return piscifacorias;
+    public List<Piscifactoria> getpiscifactorias() {
+        return piscifactorias;
     }
 
     /**
-     * @param piscifacorias the piscifacorias to set
+     * @param piscifactorias the piscifactorias to set
      */
-    public void setPiscifacorias(ArrayList<Piscifactoria> piscifacorias) {
-        this.piscifacorias = piscifacorias;
+    public void setpiscifactorias(ArrayList<Piscifactoria> piscifactorias) {
+        this.piscifactorias = piscifactorias;
     }
 
     /**
