@@ -90,6 +90,67 @@ public class AlmacenCentral {
     }
 
     /**
+     * Método para añadir comida animal al almacén.
+     * @param cantidad La cantidad de comida animal a añadir.
+     * @return true si se añadió la comida, false si no se pudo añadir.
+     */
+    public boolean añadirComidaAnimal(int cantidad) {
+        if (cantidad <= 0) {
+            System.out.println("La cantidad a añadir debe ser positiva.");
+            return false;
+        }
+        int nuevaCantidad = cantidadComidaAnimal + cantidad;
+        if (nuevaCantidad <= capacidadAlmacen) {
+            cantidadComidaAnimal = nuevaCantidad;
+            return true;
+        } else {
+            System.out.println("No se puede añadir la cantidad de comida animal: excede la capacidad.");
+            // Añadir solo lo que quepa
+            int espacioLibre = capacidadAlmacen - cantidadComidaAnimal;
+            cantidadComidaAnimal = capacidadAlmacen; // Llenar hasta la capacidad máxima
+            return espacioLibre > 0; // Indica si se añadió algo
+        }
+    }
+
+    /**
+     * Método para añadir comida vegetal al almacén.
+     * @param cantidad La cantidad de comida vegetal a añadir.
+     * @return true si se añadió la comida, false si no se pudo añadir.
+     */
+    public boolean añadirComidaVegetal(int cantidad) {
+        if (cantidad <= 0) {
+            System.out.println("La cantidad a añadir debe ser positiva.");
+            return false;
+        }
+        int nuevaCantidad = cantidadComidaVegetal + cantidad;
+        if (nuevaCantidad <= capacidadAlmacen) {
+            cantidadComidaVegetal = nuevaCantidad;
+            return true;
+        } else {
+            System.out.println("No se puede añadir la cantidad de comida vegetal: excede la capacidad.");
+            // Añadir solo lo que quepa
+            int espacioLibre = capacidadAlmacen - cantidadComidaVegetal;
+            cantidadComidaVegetal = capacidadAlmacen; // Llenar hasta la capacidad máxima
+            return espacioLibre > 0; // Indica si se añadió algo
+        }
+    }
+
+    /**
+     * Método para calcular el costo de añadir una cantidad de comida.
+     * @param cantidad La cantidad de comida a añadir.
+     * @return El costo total de añadir esa cantidad de comida.
+     */
+    public int calcularCosto(int cantidad) {
+        int costo = cantidad; // Cada comida cuesta 1 moneda
+        // Descuento por cada 25 añadidos
+        if (cantidad >= 25) {
+            int descuentos = cantidad / 25;
+            costo -= descuentos * 5; // Descuento de 5 monedas por cada 25
+        }
+        return costo;
+    }
+
+    /**
      * Muestra el estado actual del almacén.
      */
     public void mostrarEstado() {
