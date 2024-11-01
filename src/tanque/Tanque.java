@@ -68,7 +68,7 @@ public class Tanque {
      */
     public void nextDay() {
         for (Pez pez : peces) {
-            pez.grow(); // Hace crecer cada pez
+            pez.grow();
         }
 
         reproduccion();

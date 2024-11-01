@@ -1,68 +1,36 @@
 package commons;
 
 /**
- * Clase que representa un almacén central básico con atributos para comida animal y vegetal,
- * además de un indicador de construcción.
+ * Clase que representa un almacén central básico con capacidad para almacenar
+ * comida animal y vegetal.
+ * Permite construir el almacén, aumentar su capacidad y gestionar la comida
+ * almacenada.
  */
 public class AlmacenCentral {
 
-    private int capacidadAlmacen;          // Capacidad total del almacén
-    private int cantidadComidaAnimal;      // Cantidad actual de comida animal almacenada
-    private int cantidadComidaVegetal;     // Cantidad actual de comida vegetal almacenada
-    private boolean construido;             // Indica si el almacén ha sido construido
+    /** Capacidad total del almacén. */
+    private int capacidadAlmacen;
 
-    /**
-     * Constructor del almacén central.
-     */
+    /** Cantidad actual de comida animal almacenada. */
+    private int cantidadComidaAnimal;
+
+    /** Cantidad actual de comida vegetal almacenada. */
+    private int cantidadComidaVegetal;
+
+    /** Indica si el almacén ha sido construido. */
+    private boolean construido;
+
+    /** Constructor del almacén central. */
     public AlmacenCentral() {
-        this.capacidadAlmacen = 200; 
-        this.cantidadComidaAnimal = 0;      // Inicialmente no hay comida almacenada
-        this.cantidadComidaVegetal = 0;     // Inicialmente no hay comida almacenada
-        this.construido = false;             // El almacén no está construido inicialmente
-    }
-
-    // Getters y Setters
-
-    public int getCapacidadAlmacen() {
-        return capacidadAlmacen;
-    }
-
-    public void setCapacidadAlmacen(int capacidadAlmacen) {
-        this.capacidadAlmacen = capacidadAlmacen;
-    }
-
-    public int getCantidadComidaAnimal() {
-        return cantidadComidaAnimal;
-    }
-
-    public void setCantidadComidaAnimal(int cantidadComidaAnimal) {
-        // Asegurarse de que la cantidad no exceda la capacidad
-        if (cantidadComidaAnimal <= capacidadAlmacen) {
-            this.cantidadComidaAnimal = cantidadComidaAnimal;
-        } else {
-            System.out.println("No se puede establecer la cantidad de comida animal: excede la capacidad.");
-        }
-    }
-
-    public int getCantidadComidaVegetal() {
-        return cantidadComidaVegetal;
-    }
-
-    public void setCantidadComidaVegetal(int cantidadComidaVegetal) {
-        // Asegurarse de que la cantidad no exceda la capacidad
-        if (cantidadComidaVegetal <= capacidadAlmacen) {
-            this.cantidadComidaVegetal = cantidadComidaVegetal;
-        } else {
-            System.out.println("No se puede establecer la cantidad de comida vegetal: excede la capacidad.");
-        }
-    }
-
-    public boolean isConstruido() {
-        return construido;
+        this.capacidadAlmacen = 200;
+        this.cantidadComidaAnimal = 0;
+        this.cantidadComidaVegetal = 0;
+        this.construido = false;
     }
 
     /**
      * Método para construir el almacén.
+     * 
      * @return true si la construcción fue exitosa, false si ya está construido.
      */
     public boolean construir() {
@@ -78,7 +46,9 @@ public class AlmacenCentral {
 
     /**
      * Aumenta la capacidad del almacén central en una cantidad específica.
-     * @param aumento La cantidad en la que se desea aumentar la capacidad.
+     * 
+     * @param aumento La cantidad en la que se desea aumentar la capacidad. Debe ser
+     *                positiva.
      */
     public void aumentarCapacidad(int aumento) {
         if (aumento > 0) {
@@ -91,7 +61,8 @@ public class AlmacenCentral {
 
     /**
      * Método para añadir comida animal al almacén.
-     * @param cantidad La cantidad de comida animal a añadir.
+     * 
+     * @param cantidad La cantidad de comida animal a añadir. Debe ser positiva.
      * @return true si se añadió la comida, false si no se pudo añadir.
      */
     public boolean añadirComidaAnimal(int cantidad) {
@@ -114,7 +85,8 @@ public class AlmacenCentral {
 
     /**
      * Método para añadir comida vegetal al almacén.
-     * @param cantidad La cantidad de comida vegetal a añadir.
+     * 
+     * @param cantidad La cantidad de comida vegetal a añadir. Debe ser positiva.
      * @return true si se añadió la comida, false si no se pudo añadir.
      */
     public boolean añadirComidaVegetal(int cantidad) {
@@ -137,7 +109,8 @@ public class AlmacenCentral {
 
     /**
      * Método para calcular el costo de añadir una cantidad de comida.
-     * @param cantidad La cantidad de comida a añadir.
+     * 
+     * @param cantidad La cantidad de comida a añadir. Debe ser positiva.
      * @return El costo total de añadir esa cantidad de comida.
      */
     public int calcularCosto(int cantidad) {
@@ -154,10 +127,85 @@ public class AlmacenCentral {
      * Muestra el estado actual del almacén.
      */
     public void mostrarEstado() {
-        System.out.println("\nEstado del Almacén Central:");
+        System.out.println("Estado del Almacén Central:");
         System.out.println("Capacidad Total: " + capacidadAlmacen);
         System.out.println("Cantidad de Comida Animal: " + cantidadComidaAnimal);
         System.out.println("Cantidad de Comida Vegetal: " + cantidadComidaVegetal);
         System.out.println("Almacén construido: " + (construido ? "Sí" : "No"));
+    }
+
+    // Getters y Setters
+
+    /**
+     * Devuelve la capacidad total del almacén.
+     * 
+     * @return La capacidad del almacén.
+     */
+    public int getCapacidadAlmacen() {
+        return capacidadAlmacen;
+    }
+
+    /**
+     * Establece la capacidad del almacén.
+     * 
+     * @param capacidadAlmacen Nueva capacidad del almacén.
+     */
+    public void setCapacidadAlmacen(int capacidadAlmacen) {
+        this.capacidadAlmacen = capacidadAlmacen;
+    }
+
+    /**
+     * Devuelve la cantidad de comida animal actualmente almacenada.
+     * 
+     * @return La cantidad de comida animal.
+     */
+    public int getCantidadComidaAnimal() {
+        return cantidadComidaAnimal;
+    }
+
+    /**
+     * Establece la cantidad de comida animal en el almacén.
+     * 
+     * @param cantidadComidaAnimal Nueva cantidad de comida animal.
+     */
+    public void setCantidadComidaAnimal(int cantidadComidaAnimal) {
+        // Asegurarse de que la cantidad no exceda la capacidad
+        if (cantidadComidaAnimal <= capacidadAlmacen) {
+            this.cantidadComidaAnimal = cantidadComidaAnimal;
+        } else {
+            System.out.println("No se puede establecer la cantidad de comida animal: excede la capacidad.");
+        }
+    }
+
+    /**
+     * Devuelve la cantidad de comida vegetal actualmente almacenada.
+     * 
+     * @return La cantidad de comida vegetal.
+     */
+    public int getCantidadComidaVegetal() {
+        return cantidadComidaVegetal;
+    }
+
+    /**
+     * Establece la cantidad de comida vegetal en el almacén.
+     * 
+     * @param cantidadComidaVegetal Nueva cantidad de comida vegetal.
+     */
+    public void setCantidadComidaVegetal(int cantidadComidaVegetal) {
+        // Asegurarse de que la cantidad no exceda la capacidad
+        if (cantidadComidaVegetal <= capacidadAlmacen) {
+            this.cantidadComidaVegetal = cantidadComidaVegetal;
+        } else {
+            System.out.println("No se puede establecer la cantidad de comida vegetal: excede la capacidad.");
+        }
+    }
+
+    /**
+     * Indica si el almacén ha sido construido.
+     * 
+     * @return true si el almacén está construido, false en caso contrario.
+     */
+    public boolean isConstruido() {
+        return construido;
     }
 }

@@ -8,9 +8,9 @@ import propiedades.PecesDatos;
  * Clase padre de los peces.
  */
 public class Pez {
-    
+
     /** Nombre común del pez */
-    private final String nombre; 
+    private final String nombre;
 
     /** Nombre cientifico del pez */
     private final String nombreCientifico;
@@ -26,10 +26,11 @@ public class Pez {
 
     /** Estado de vida del pez: true si está vivo, false si está muerto */
     private boolean vivo = true;
-    
 
-
-    /** Estado de alimentación del pez: true si ha sido alimentado, false si no lo ha sido */
+    /**
+     * Estado de alimentación del pez: true si ha sido alimentado, false si no lo ha
+     * sido
+     */
     private boolean alimentado = false;
 
     /** Ciclo reproductivo del pez, decrementa hasta que el pez se vuelve fértil */
@@ -38,11 +39,10 @@ public class Pez {
     /** Datos específicos del pez extraídos de PecesDatos */
     private PecesDatos datos;
 
-    
     /**
      * Constructor que inicializa un Pez con su sexo y datos asociados.
      *
-     * @param sexo true para macho, false para hembra
+     * @param sexo  true para macho, false para hembra
      * @param datos contiene las propiedades del pez
      */
     public Pez(boolean sexo, PecesDatos datos) {
@@ -66,9 +66,7 @@ public class Pez {
         System.out.println("Fértil: " + (fertil ? "Si" : "No"));
     }
 
-    /**
-     * Simula el crecimiento del pez a lo largo de un día.
-     */
+    /** Simula el crecimiento del pez a lo largo de un día. */
     public void grow() {
         if (vivo) {
             Random rand = new Random();
@@ -76,15 +74,14 @@ public class Pez {
             // Si no está alimentado, tiene 50% de probabilidad de morir
             if (!alimentado) {
                 if (rand.nextDouble() < 0.5) {
-                    vivo = false; // El pez muere
-                    return; // No realizar más acciones si está muerto
+                    vivo = false;
+                    fertil = false;
+                    return;
                 }
             }
 
-            // Incrementar la edad del pez
             edad++;
 
-            // Manejo del ciclo reproductivo y fertilidad
             if (edad >= datos.getMadurez()) {
                 // Si el pez ha alcanzado la madurez y no es fértil, se reduce el ciclo
                 if (!fertil) {
@@ -101,22 +98,19 @@ public class Pez {
             // Si el pez es joven (antes de la madurez), tiene un 5% de probabilidad de morir cada 2 días
             if (edad < datos.getMadurez() && edad % 2 == 0) {
                 if (rand.nextDouble() < 0.05) {
-                    vivo = false; // El pez muere
-                    return; // No realizar más acciones si está muerto
+                    vivo = false;
+                    return;
                 }
             }
         }
     }
 
-    /**
-     * Reinicia el estado del pez a su condición inicial (edad 0, no fértil, vivo, no alimentado).
-     */
+    /** Reinicia el estado del pez a su condición inicial. */
     public void reset() {
         edad = 0;
         fertil = false;
         vivo = true;
         alimentado = false;
-
         ciclo = datos.getCiclo();
     }
 
@@ -129,7 +123,6 @@ public class Pez {
     public Pez clonar(boolean nuevoSexo) {
         return new Pez(nuevoSexo, datos);
     }
-
 
     // Getters
 
@@ -196,7 +189,6 @@ public class Pez {
         return datos;
     }
 
-    
     // Setters
 
     /**

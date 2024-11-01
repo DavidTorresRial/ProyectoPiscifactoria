@@ -31,9 +31,9 @@ public class InputHelper {
 
             // Validar que no esté vacía y no contenga caracteres especiales
             if (input.isEmpty()) {
-                System.out.println("La entrada no puede estar vacía. Intente nuevamente.");
+                System.out.println("\nLa entrada no puede estar vacía. Intente nuevamente.");
             } else if (!input.matches("[a-zA-Z0-9\\s]*")) { // Solo letras, números y espacios
-                System.out.println("Entrada no válida. Por favor, no ingrese caracteres especiales.");
+                System.out.println("\nEntrada no válida. Por favor, no ingrese caracteres especiales.");
             } else {
                 return input; // Entrada válida, retornamos el valor
             }
@@ -54,7 +54,7 @@ public class InputHelper {
             String input = scanner.nextLine();
 
             if (input.isEmpty()) {
-                System.out.println("La entrada no puede estar vacía. Intente nuevamente.");
+                System.out.println("\nLa entrada no puede estar vacía. Intente nuevamente.");
                 continue;
             }
 
@@ -62,7 +62,7 @@ public class InputHelper {
                 number = Integer.parseInt(input);
                 valid = true;
             } catch (NumberFormatException e) {
-                System.out.println("Entrada no válida. Por favor, ingrese un número entero.");
+                System.out.println("\nEntrada no válida. Por favor, ingrese un número entero.");
             }
         }
         return number;
