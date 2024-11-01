@@ -717,7 +717,7 @@ public class Simulador {
                     simulador.avanzarDias(dias);
                     break;
                 case 98:
-                    simulador.agregarPecesAleatorios(option);
+                    // Metodo que añade cuatro peces al azar y de forma gratuita a una piscifactoría seleccionada
                     break;
                 case 99:
                     simulador.getMonedas().ganarMonedas(1000);
@@ -734,38 +734,6 @@ public class Simulador {
         }
     }
 
-public void agregarPecesAleatorios(int indicePiscifactoria) {
-    // Verifica que el índice sea válido
-    if (indicePiscifactoria < 0 || indicePiscifactoria >= piscifactorias.size()) {
-        System.out.println("Índice de piscifactoría no válido.");
-        return;
-    }
-
-    // Selecciona la piscifactoría
-    Piscifactoria piscifactoriaSeleccionada = piscifactorias.get(indicePiscifactoria);
-
-    // Generador de números aleatorios
-    Random random = new Random();
-
-    // Añade cuatro peces al azar
-    for (int i = 0; i < 4; i++) {
-        // Genera datos aleatorios para el pez
-        boolean sexo = random.nextBoolean(); // true para macho, false para hembra
-        String nombre = "Pez Aleatorio " + (i + 1);
-        String nombreCientifico = "Pezus aleatorius " + (i + 1);
-
-        // Crea un nuevo objeto PecesDatos con valores aleatorios
-        PecesDatos datosAleatorios = new PecesDatos(nombre, nombreCientifico, random.nextInt(100), random.nextInt(10), random.nextInt(10));
-
-        // Crea un nuevo pez con los datos aleatorios
-        Pez pezAleatorio = new Pez(sexo, datosAleatorios);
-
-        // Agrega el pez a la piscifactoría seleccionada
-        piscifactoriaSeleccionada.addPez(pezAleatorio);
-    }
-
-    System.out.println("Se han agregado cuatro peces aleatorios a la piscifactoría seleccionada.");
-}
 
     /**
      * @return int return the dias
