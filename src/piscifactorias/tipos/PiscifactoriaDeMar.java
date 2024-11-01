@@ -1,7 +1,6 @@
 package piscifactorias.tipos;
 
 import commons.SistemaMonedas;
-
 import piscifactorias.Piscifactoria;
 import tanque.Tanque;
 
@@ -9,6 +8,9 @@ public class PiscifactoriaDeMar extends Piscifactoria {
 
     // Capacidad máxima del array de tanques
     private static final int CAPACIDAD_MAXIMA_TANQUES = 10;
+
+    // Contador de tanques
+    private int contadorTanquesMar;
 
     public PiscifactoriaDeMar(String nombre, SistemaMonedas monedas) {
         super(nombre, monedas);
@@ -18,6 +20,7 @@ public class PiscifactoriaDeMar extends Piscifactoria {
 
         // Inicializa con un tanque de capacidad 100
         tanques.add(new Tanque(100));
+        contadorTanquesMar = 1; // Inicia con 1 tanque
     }
 
     /**
@@ -28,11 +31,17 @@ public class PiscifactoriaDeMar extends Piscifactoria {
         // Verifica si hay espacio en el array de tanques
         if (tanques.size() < CAPACIDAD_MAXIMA_TANQUES) {
             tanques.add(new Tanque(100));
-            System.out.println("Tanque añadido con capacidad de 100 unidades.");
+            contadorTanquesMar++; // Incrementa el contador de tanques
+            System.out.println("Tanque añadido con capacidad de 100 unidades. Total de tanques: " + contadorTanquesMar);
             return true;
         } else {
             System.out.println("Error: No hay espacio disponible para más tanques.");
             return false;
         }
+    }
+
+    // Método para obtener el contador de tanques
+    public int getTanquesMar() {
+        return contadorTanquesMar;
     }
 }

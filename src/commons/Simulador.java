@@ -59,7 +59,7 @@ public class Simulador {
     private SistemaMonedas monedas;
 
     /** Almacén central de comida para abastecer las piscifactorías. */
-    private AlmacenCentral almacenCentral;
+    private AlmacenCentral almacenCentral = new AlmacenCentral();
 
     /** Utilidad para manejar la entrada de datos del usuario. */
     private InputHelper inputHelper = new InputHelper();
@@ -73,7 +73,7 @@ public class Simulador {
         System.out.println();
         nombrePiscifactoria = inputHelper.readString("Ingrese el nombre de la primera Piscifactoria: ");
 
-        monedas = new SistemaMonedas(100);
+        monedas = new SistemaMonedas(100000);
 
         // Añadimos la nueva PiscifactoriaDeRio directamente a la lista
         piscifacorias.add(new PiscifactoriaDeRio(nombrePiscifactoria, monedas));
@@ -420,10 +420,39 @@ public class Simulador {
         System.out.println("El tanque ha sido vaciado.");
     }
 
+
+    /**
+     * Método que cuenta las piscifactorías de río.
+     * @return El número de piscifactorías de río.
+     */
+    public int contarPiscifactoriaDeRio() {
+        int contador = 0;
+        for (Piscifactoria p : piscifacorias) {
+            if (p instanceof PiscifactoriaDeRio) {
+                contador++;
+            }
+        }
+        return contador;
+    }
+
+    /**
+     * Método que cuenta las piscifactorías de mar.
+     * @return El número de piscifactorías de mar.
+     */
+    public int contarPiscifactoriaDeMar() {
+        int contador = 0;
+        for (Piscifactoria p : piscifacorias) {
+            if (p instanceof PiscifactoriaDeMar) {
+                contador++;
+            }
+        }
+        return contador;
+    }
+
     public void upgrade() {
         while (true) {
             menuHelper.clearOptions();
-
+    
             menuHelper.addOption(1, "Comprar edificios");
             menuHelper.addOption(2, "Mejorar edificios");
             menuHelper.addOption(3, "Cancelar");
@@ -433,53 +462,78 @@ public class Simulador {
     
             switch (opcion) {
                 case 1:
-                // Comprar edificios
-                menuHelper.clearOptions();
-                menuHelper.addOption(1, "Piscifactoría");
-                menuHelper.addOption(2, "Almacén central");
-
-                menuHelper.showMenu();
-                int edificioAComprar = inputHelper.readInt("Seleccione el edificio a comprar:");
-
-                if (edificioAComprar == 1) {
-                    // Compra de Piscifactoría
-                    String nombrePiscifactoria = inputHelper.readString("Ingrese el nombre de la piscifactoría:");
-
+                    // Comprar edificios
                     menuHelper.clearOptions();
-                    
-                    menuHelper.addOption(1, "Piscifactoría de río");
-                    menuHelper.addOption(2, "Piscifactoría de mar");
-
-                    menuHelper.showMenu();
-                    int tipoSeleccionado = inputHelper.readInt("Seleccione el tipo de piscifactoría (1 o 2):");
-
-                    Piscifactoria nuevaPiscifactoria = null;
-
-                    if (tipoSeleccionado == 1) {
-                        // Crear Piscifactoría de Río
-                        SistemaMonedas monedasRio = getMonedas(); // Método para obtener el sistema de monedas
-                        nuevaPiscifactoria = new PiscifactoriaDeRio(nombrePiscifactoria, monedasRio);
-                        System.out.println("Piscifactoría de Río '" + nombrePiscifactoria + "' comprada.");
-                    } else if (tipoSeleccionado == 2) {
-                        // Crear Piscifactoría de Mar
-                        SistemaMonedas monedasMar = getMonedas(); // Método para obtener el sistema de monedas
-                        nuevaPiscifactoria = new PiscifactoriaDeMar(nombrePiscifactoria, monedasMar);
-                        System.out.println("Piscifactoría de Mar '" + nombrePiscifactoria + "' comprada.");
-                    } else {
-                        System.out.println("Tipo de piscifactoría no válido. Operación cancelada.");
-                        return; // O manejar la cancelación según corresponda
+                    menuHelper.addOption(1, "Piscifactoría");
+    
+                    // Solo mostrar la opción de comprar almacén central si no está construido
+                    if (almacenCentral != null && !almacenCentral.isConstruido()) {
+                        menuHelper.addOption(2, "Almacén central");
                     }
-
-                    // Añadir la nueva piscifactoría a la lista de piscifactorías
-                    piscifacorias.add(nuevaPiscifactoria);
-
-                } else if (edificioAComprar == 2) {
-                    // Aquí puedes añadir la lógica para comprar un Almacén central
-                    System.out.println("Funcionalidad para comprar almacén central no implementada aún.");
-                } else {
-                    System.out.println("Opción no válida. Por favor, intenta de nuevo.");
-                }
-                break;
+    
+                    menuHelper.showMenu();
+                    int edificioAComprar = inputHelper.readInt("Seleccione el edificio a comprar:");
+    
+                    if (edificioAComprar == 1) {
+                        // Compra de Piscifactoría
+                        String nombrePiscifactoria = inputHelper.readString("Ingrese el nombre de la piscifactoría:");
+    
+                        // Costo de la piscifactoría de río
+                        int costoPiscifactoríaRio = 500 * (contarPiscifactoriaDeRio() + 1); // Incrementamos el contador
+                        // Costo de la piscifactoría de mar
+                        int costoPiscifactoríaMar = 2000 * (contarPiscifactoriaDeMar() + 1); // Incrementamos el contador
+    
+                        menuHelper.clearOptions();
+                        menuHelper.addOption(1, "Piscifactoría de río (" + costoPiscifactoríaRio + " monedas)");
+                        menuHelper.addOption(2, "Piscifactoría de mar (" + costoPiscifactoríaMar + " monedas)");
+    
+                        menuHelper.showMenu();
+                        int tipoSeleccionado = inputHelper.readInt("Seleccione el tipo de piscifactoría (1 o 2):");
+    
+                        Piscifactoria nuevaPiscifactoria = null;
+    
+                        if (tipoSeleccionado == 1) {
+                            // Verificar si hay suficientes monedas y realizar la compra
+                            if (getMonedas().gastarMonedas(costoPiscifactoríaRio)) {
+                                nuevaPiscifactoria = new PiscifactoriaDeRio(nombrePiscifactoria, monedas);
+                                System.out.println("Piscifactoría de Río '" + nombrePiscifactoria + "' comprada.");
+                            } else {
+                                System.out.println("No tienes suficientes monedas para comprar la piscifactoría de río.");
+                            }
+                        } else if (tipoSeleccionado == 2) {
+                            // Verificar si hay suficientes monedas y realizar la compra
+                            if (getMonedas().gastarMonedas(costoPiscifactoríaMar)) {
+                                nuevaPiscifactoria = new PiscifactoriaDeMar(nombrePiscifactoria, monedas);
+                                System.out.println("Piscifactoría de Mar '" + nombrePiscifactoria + "' comprada.");
+                            } else {
+                                System.out.println("No tienes suficientes monedas para comprar la piscifactoría de mar.");
+                            }
+                        } else {
+                            System.out.println("Tipo de piscifactoría no válido. Operación cancelada.");
+                            return; // O manejar la cancelación según corresponda
+                        }
+    
+                        // Añadir la nueva piscifactoría a la lista de piscifactorías, si fue creada
+                        if (nuevaPiscifactoria != null) {
+                            piscifacorias.add(nuevaPiscifactoria);
+                        }
+    
+                    } else if (edificioAComprar == 2) {
+                        // Solo se permite construir el almacén central si no está construido
+                        if (almacenCentral != null && !almacenCentral.isConstruido()) {
+                            if (getMonedas().gastarMonedas(2000)) {
+                                almacenCentral.construir();
+                                System.out.println("Almacén central construido.");
+                            } else {
+                                System.out.println("No tienes suficientes monedas para construir el almacén central.");
+                            }
+                        } else {
+                            System.out.println("El almacén central ya está construido.");
+                        }
+                    } else {
+                        System.out.println("Opción no válida. Por favor, intenta de nuevo.");
+                    }
+                    break;
     
                 case 2:
                     // Mejorar edificios
@@ -501,30 +555,48 @@ public class Simulador {
     
                         if (mejoraPiscifactoria == 1) {
                             // Comprar tanque
-                            // Implementar lógica para comprar un tanque
-                            System.out.println("Tanque comprado para la piscifactoría.");
+                            int cantidadTanques = selectPisc().getTanques().size(); // Método que cuenta los tanques en la piscifactoría
+                            int costoTanque = 150 * cantidadTanques;
+                            
+                            if (getMonedas().gastarMonedas(costoTanque)) {
+                                // Implementar lógica para comprar un tanque
+                                System.out.println("Tanque comprado para la piscifactoría.");
+                            } else {
+                                System.out.println("No tienes suficientes monedas para comprar el tanque.");
+                            }
                         } else if (mejoraPiscifactoria == 2) {
                             // Aumentar almacén de comida
-                            // Implementar lógica para aumentar el almacén de comida
-                            System.out.println("Almacén de comida aumentado en la piscifactoría.");
+                            int costoAumento = 50;
+                            if (getMonedas().gastarMonedas(costoAumento)) {
+                                almacenCentral.aumentarCapacidad(25); // Aumenta 25 unidades
+                                System.out.println("Almacén de comida aumentado en la piscifactoría.");
+                            } else {
+                                System.out.println("No tienes suficientes monedas para aumentar el almacén de comida.");
+                            }
                         } else {
                             System.out.println("Opción no válida. Por favor, intenta de nuevo.");
                         }
                     } else if (edificioAMejorar == 2) {
-                        // Mejorar almacén central (si se tiene)
-                        // Aquí podrías verificar si el almacén central existe antes de permitir mejoras
-                        menuHelper.clearOptions();
-                        menuHelper.addOption(1, "Aumentar capacidad");
-    
-                        menuHelper.showMenu();
-                        int mejoraAlmacenCentral = inputHelper.readInt("Seleccione la mejora:");
-    
-                        if (mejoraAlmacenCentral == 1) {
-                            // Aumentar capacidad del almacén central
-                            // Implementar lógica para aumentar la capacidad
-                            System.out.println("Capacidad del almacén central aumentada.");
+                        // Mejorar almacén central
+                        if (almacenCentral != null && !almacenCentral.isConstruido()) {
+                            System.out.println("El almacén central no está construido. No se puede mejorar.");
                         } else {
-                            System.out.println("Opción no válida. Por favor, intenta de nuevo.");
+                            menuHelper.clearOptions();
+                            menuHelper.addOption(1, "Aumentar capacidad");
+    
+                            menuHelper.showMenu();
+                            int mejoraAlmacenCentral = inputHelper.readInt("Seleccione la mejora:");
+    
+                            if (mejoraAlmacenCentral == 1) {
+                                int costoMejora = 200; // Costo de mejora
+                                if (getMonedas().gastarMonedas(costoMejora)) {
+                                    almacenCentral.aumentarCapacidad(50); // Aumenta 50 unidades
+                                } else {
+                                    System.out.println("No tienes suficientes monedas para aumentar la capacidad del almacén central.");
+                                }
+                            } else {
+                                System.out.println("Opción no válida. Por favor, intenta de nuevo.");
+                            }
                         }
                     } else {
                         System.out.println("Opción no válida. Por favor, intenta de nuevo.");
@@ -542,6 +614,9 @@ public class Simulador {
             }
         }
     }
+    
+    
+    
     
     public static void main(String[] args) {
         InputHelper inputHelper = new InputHelper(); // Crear una instancia de InputHelper
