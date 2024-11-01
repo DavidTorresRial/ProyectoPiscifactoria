@@ -286,6 +286,12 @@ public class Simulador {
         System.out.println(totalPecesVendidos + " peces vendidos por un total de " + totalMonedasGanadas + " monedas.");
     }
 
+    public void avanzarDias(int numeroDeDias) {
+        for (int i = 0; i < numeroDeDias; i++) {
+            nextDay();
+        }
+    }
+
     /**
      * Método para seleccionar un pez mediante un menú.
      * 
@@ -706,7 +712,8 @@ public class Simulador {
                     simulador.upgrade();
                     break;
                 case 13: 
-                    // Pasar varios días
+                    int dias = inputHelper.readInt("Ingrese los dias para avanzar en el simulador: ");
+                    simulador.avanzarDias(dias);
                     break;
                 case 98:
                     // Lógica para agregar peces gratuitos a una piscifactoría
