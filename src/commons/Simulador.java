@@ -396,12 +396,30 @@ public class Simulador {
         }
     }
     
+      // Método para limpiar un tanque de todos los peces muertos
+      public void cleanTank() {
+        Tanque tanque = selectTank(selectPisc()); // Seleccionar un tanque
+        List<Pez> peces = tanque.getPeces(); // Asumiendo que el tanque tiene un método para obtener sus peces
+
+        // Usamos un bucle for en reversa para eliminar peces muertos
+        for (int i = peces.size() - 1; i >= 0; i--) {
+        Pez pez = peces.get(i);
+        if (!pez.isVivo()) { // Si el pez está muerto
+            peces.remove(i); // Elimina el pez del tanque
+        }
+    }
+        System.out.println("Todos los peces muertos han sido eliminados del tanque.");
+    }
+
       // Método para vaciar un tanque de todos los peces, independientemente de su estado
-      public void emptyTank(Tanque tanque) {
+      public void emptyTank() {
+        Tanque tanque = selectTank(selectPisc()); // Seleccionar un tanque
         List<Pez> peces = tanque.getPeces(); // Asumiendo que el tanque tiene un método para obtener sus peces
         peces.clear(); // Elimina todos los peces del tanque
         System.out.println("El tanque ha sido vaciado.");
     }
+
+
 
     public static void main(String[] args) {
         InputHelper inputHelper = new InputHelper(); // Crear una instancia de InputHelper
