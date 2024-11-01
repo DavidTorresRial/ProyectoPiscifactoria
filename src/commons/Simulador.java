@@ -3,7 +3,6 @@ package commons;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
 
 import helpers.InputHelper;
 import helpers.MenuHelper;
@@ -648,6 +647,9 @@ public class Simulador {
                     if (almacenCentral != null && !almacenCentral.isConstruido()) {
                         menuHelper.addOption(2, "Almacén central");
                     }
+                    
+                    // Añadimos la opción "Cancelar" en el submenú de comprar edificios
+                    menuHelper.addOption(3, "Cancelar");
     
                     menuHelper.showMenu();
                     int edificioAComprar = inputHelper.readInt("Seleccione el edificio a comprar:");
@@ -656,14 +658,15 @@ public class Simulador {
                         // Compra de Piscifactoría
                         String nombrePiscifactoria = inputHelper.readString("Ingrese el nombre de la piscifactoría:");
     
-                        // Costo de la piscifactoría de río
-                        int costoPiscifactoríaRio = 500 * (contarPiscifactoriaDeRio() + 1); // Incrementamos el contador
-                        // Costo de la piscifactoría de mar
-                        int costoPiscifactoríaMar = 2000 * (contarPiscifactoriaDeMar() + 1); // Incrementamos el contador
+                        int costoPiscifactoríaRio = 500 * (contarPiscifactoriaDeRio() + 1);
+                        int costoPiscifactoríaMar = 2000 * (contarPiscifactoriaDeMar() + 1);
     
                         menuHelper.clearOptions();
                         menuHelper.addOption(1, "Piscifactoría de río (" + costoPiscifactoríaRio + " monedas)");
                         menuHelper.addOption(2, "Piscifactoría de mar (" + costoPiscifactoríaMar + " monedas)");
+                        
+                        // Añadimos la opción "Cancelar" en el submenú de seleccionar tipo de piscifactoría
+                        menuHelper.addOption(3, "Cancelar");
     
                         menuHelper.showMenu();
                         int tipoSeleccionado = inputHelper.readInt("Seleccione el tipo de piscifactoría (1 o 2):");
@@ -671,7 +674,6 @@ public class Simulador {
                         Piscifactoria nuevaPiscifactoria = null;
     
                         if (tipoSeleccionado == 1) {
-                            // Verificar si hay suficientes monedas y realizar la compra
                             if (getMonedas().gastarMonedas(costoPiscifactoríaRio)) {
                                 nuevaPiscifactoria = new PiscifactoriaDeRio(nombrePiscifactoria, monedas);
                                 System.out.println("Piscifactoría de Río '" + nombrePiscifactoria + "' comprada.");
@@ -679,45 +681,49 @@ public class Simulador {
                                 System.out.println("No tienes suficientes monedas para comprar la piscifactoría de río.");
                             }
                         } else if (tipoSeleccionado == 2) {
-                            // Verificar si hay suficientes monedas y realizar la compra
                             if (getMonedas().gastarMonedas(costoPiscifactoríaMar)) {
                                 nuevaPiscifactoria = new PiscifactoriaDeMar(nombrePiscifactoria, monedas);
                                 System.out.println("Piscifactoría de Mar '" + nombrePiscifactoria + "' comprada.");
                             } else {
                                 System.out.println("No tienes suficientes monedas para comprar la piscifactoría de mar.");
                             }
+                        } else if (tipoSeleccionado == 3) { // Verificación de la opción "Cancelar" en el submenú de tipo de piscifactoría
+                            System.out.println("Operación de compra cancelada.");
+                            break;
                         } else {
                             System.out.println("Tipo de piscifactoría no válido. Operación cancelada.");
-                            return; // O manejar la cancelación según corresponda
+                            return;
                         }
     
-                        // Añadir la nueva piscifactoría a la lista de piscifactorías, si fue creada
                         if (nuevaPiscifactoria != null) {
                             piscifactorias.add(nuevaPiscifactoria);
                         }
     
                     } else if (edificioAComprar == 2) {
-                        // Solo se permite construir el almacén central si no está construido
                         if (almacenCentral != null && !almacenCentral.isConstruido()) {
                             if (getMonedas().gastarMonedas(2000)) {
                                 almacenCentral.construir();
-                                System.out.println("Almacén central construido.");
                             } else {
                                 System.out.println("No tienes suficientes monedas para construir el almacén central.");
                             }
                         } else {
                             System.out.println("El almacén central ya está construido.");
                         }
+                    } else if (edificioAComprar == 3) { // Verificación de la opción "Cancelar" en el submenú de comprar edificios
+                        System.out.println("Operación de compra cancelada.");
                     } else {
                         System.out.println("Opción no válida. Por favor, intenta de nuevo.");
                     }
                     break;
     
-                case 2:
+                    case 2:
                     // Mejorar edificios
                     menuHelper.clearOptions();
                     menuHelper.addOption(1, "Piscifactoría");
                     menuHelper.addOption(2, "Almacén central");
+    
+                    // Añadimos la opción "Cancelar" en el submenú de mejorar edificios
+                    menuHelper.addOption(3, "Cancelar");
     
                     menuHelper.showMenu();
                     int edificioAMejorar = inputHelper.readInt("Seleccione el edificio a mejorar:");
@@ -728,54 +734,63 @@ public class Simulador {
                         menuHelper.addOption(1, "Comprar tanque");
                         menuHelper.addOption(2, "Aumentar almacén de comida");
     
+                        // Añadimos la opción "Cancelar" en el submenú de mejoras de piscifactoría
+                        menuHelper.addOption(3, "Cancelar");
+    
                         menuHelper.showMenu();
                         int mejoraPiscifactoria = inputHelper.readInt("Seleccione la mejora:");
     
                         if (mejoraPiscifactoria == 1) {
-                            // Comprar tanque
-                            int cantidadTanques = selectPisc().getTanques().size(); // Método que cuenta los tanques en la piscifactoría
+                            int cantidadTanques = selectPisc().getTanques().size();
                             int costoTanque = 150 * cantidadTanques;
                             
                             if (getMonedas().gastarMonedas(costoTanque)) {
-                                // Implementar lógica para comprar un tanque
                                 System.out.println("Tanque comprado para la piscifactoría.");
                             } else {
                                 System.out.println("No tienes suficientes monedas para comprar el tanque.");
                             }
                         } else if (mejoraPiscifactoria == 2) {
-                            // Aumentar almacén de comida
                             int costoAumento = 50;
                             if (getMonedas().gastarMonedas(costoAumento)) {
-                                almacenCentral.aumentarCapacidad(25); // Aumenta 25 unidades
+                                almacenCentral.aumentarCapacidad(25);
                                 System.out.println("Almacén de comida aumentado en la piscifactoría.");
                             } else {
                                 System.out.println("No tienes suficientes monedas para aumentar el almacén de comida.");
                             }
+                        } else if (mejoraPiscifactoria == 3) { // Verificación de la opción "Cancelar" en el submenú de mejoras de piscifactoría
+                            System.out.println("Operación de mejora cancelada.");
                         } else {
                             System.out.println("Opción no válida. Por favor, intenta de nuevo.");
                         }
+    
                     } else if (edificioAMejorar == 2) {
-                        // Mejorar almacén central
                         if (almacenCentral != null && !almacenCentral.isConstruido()) {
                             System.out.println("El almacén central no está construido. No se puede mejorar.");
                         } else {
                             menuHelper.clearOptions();
                             menuHelper.addOption(1, "Aumentar capacidad");
     
+                            // Añadimos la opción "Cancelar" en el submenú de mejoras del almacén central
+                            menuHelper.addOption(2, "Cancelar");
+    
                             menuHelper.showMenu();
                             int mejoraAlmacenCentral = inputHelper.readInt("Seleccione la mejora:");
     
                             if (mejoraAlmacenCentral == 1) {
-                                int costoMejora = 200; // Costo de mejora
+                                int costoMejora = 200;
                                 if (getMonedas().gastarMonedas(costoMejora)) {
-                                    almacenCentral.aumentarCapacidad(50); // Aumenta 50 unidades
+                                    almacenCentral.aumentarCapacidad(50);
                                 } else {
                                     System.out.println("No tienes suficientes monedas para aumentar la capacidad del almacén central.");
                                 }
+                            } else if (mejoraAlmacenCentral == 2) { // Verificación de la opción "Cancelar" en el submenú de mejoras del almacén central
+                                System.out.println("Operación de mejora cancelada.");
                             } else {
                                 System.out.println("Opción no válida. Por favor, intenta de nuevo.");
                             }
                         }
+                    } else if (edificioAMejorar == 3) { // Verificación de la opción "Cancelar" en el submenú de mejorar edificios
+                        System.out.println("Operación de mejora cancelada.");
                     } else {
                         System.out.println("Opción no válida. Por favor, intenta de nuevo.");
                     }

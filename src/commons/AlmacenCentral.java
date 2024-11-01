@@ -156,8 +156,13 @@ public class AlmacenCentral {
     public void mostrarEstado() {
         System.out.println("\nEstado del Almacén Central:");
         System.out.println("Capacidad Total: " + capacidadAlmacen);
-        System.out.println("Cantidad de Comida Animal: " + cantidadComidaAnimal);
-        System.out.println("Cantidad de Comida Vegetal: " + cantidadComidaVegetal);
+        // Calculamos el porcentaje de ocupación
+        int porcentajeComidaAnimal = (cantidadComidaAnimal * 100) / capacidadAlmacen;
+        int porcentajeComidaVegetal = (cantidadComidaVegetal * 100) / capacidadAlmacen;
+        
+        System.out.println("Cantidad de Comida Animal: " + cantidadComidaAnimal + " / " + capacidadAlmacen + ", " + porcentajeComidaAnimal + "%");
+        System.out.println("Cantidad de Comida Vegetal: " + cantidadComidaVegetal + " / " + capacidadAlmacen + ", " + porcentajeComidaVegetal + "%");
         System.out.println("Almacén construido: " + (construido ? "Sí" : "No"));
     }
+
 }
