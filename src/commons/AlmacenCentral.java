@@ -9,7 +9,7 @@ public class AlmacenCentral {
     private int capacidadAlmacen;          // Capacidad total del almacén
     private int cantidadComidaAnimal;      // Cantidad actual de comida animal almacenada
     private int cantidadComidaVegetal;     // Cantidad actual de comida vegetal almacenada
-    private boolean construido;             // Indica si el almacén ha sido construido
+    private boolean construido;            // Indica si el almacén ha sido construido
 
     /**
      * Constructor del almacén central.
@@ -18,7 +18,7 @@ public class AlmacenCentral {
         this.capacidadAlmacen = 200; 
         this.cantidadComidaAnimal = 0;      // Inicialmente no hay comida almacenada
         this.cantidadComidaVegetal = 0;     // Inicialmente no hay comida almacenada
-        this.construido = false;             // El almacén no está construido inicialmente
+        this.construido = false;            // El almacén no está construido inicialmente
     }
 
     // Getters y Setters
@@ -165,4 +165,20 @@ public class AlmacenCentral {
         System.out.println("Almacén construido: " + (construido ? "Sí" : "No"));
     }
 
+    /**
+     * Método toString para representar el estado del almacén en formato de texto.
+     * @return Una cadena que describe el estado actual del almacén central.
+     */
+    @Override
+    public String toString() {
+        int porcentajeComidaAnimal = (cantidadComidaAnimal * 100) / capacidadAlmacen;
+        int porcentajeComidaVegetal = (cantidadComidaVegetal * 100) / capacidadAlmacen;
+
+        return "AlmacenCentral {" +
+               "Capacidad Total = " + capacidadAlmacen +
+               ", Comida Animal = " + cantidadComidaAnimal + " / " + capacidadAlmacen + " (" + porcentajeComidaAnimal + "%)" +
+               ", Comida Vegetal = " + cantidadComidaVegetal + " / " + capacidadAlmacen + " (" + porcentajeComidaVegetal + "%)" +
+               ", Construido = " + (construido ? "Sí" : "No") +
+               '}';
+    }
 }

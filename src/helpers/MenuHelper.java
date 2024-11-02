@@ -37,4 +37,17 @@ public class MenuHelper {
     public void executeOption(int optionNumber) {
         System.out.println("Ejecutando la opción: " + optionNumber);
     }
+
+    /**
+     * Método toString para representar el estado del MenuHelper.
+     * @return Una cadena que describe las opciones del menú.
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("Opciones del Menú:\n");
+        for (Map.Entry<Integer, String> entry : menuOptions.entrySet()) {
+            sb.append(entry.getKey()).append(". ").append(entry.getValue()).append("\n");
+        }
+        return sb.toString();
+    }
 }

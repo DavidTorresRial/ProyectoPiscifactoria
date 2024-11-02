@@ -44,4 +44,15 @@ public class PiscifactoriaDeMar extends Piscifactoria {
     public int getTanquesMar() {
         return contadorTanquesMar;
     }
+
+    @Override
+    public String toString() {
+        return "PiscifactoriaDeMar{" +
+                "nombre='" + getNombre() + '\'' +  // Supone que hay un método getNombre() en la clase padre
+                ", tanques=" + contadorTanquesMar +
+                ", capacidadMaximaAlmacenComida=" + capacidadMaximaAlmacenComida +
+                ", comidaVegetalActual=" + comidaVegetalActual +
+                ", comidaAnimalActual=" + comidaAnimalActual +
+                '}';
+    }
 }

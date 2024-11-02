@@ -282,4 +282,20 @@ public class Tanque {
         }
         return pecesAdultos;
     }
+
+    @Override
+public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("Tanque ").append(numeroTanque).append(":\n");
+    sb.append("Capacidad: ").append(capacidadMaxima).append("\n");
+    sb.append("Peces en el tanque: ").append(peces.size()).append("\n");
+    sb.append("Tipo de pez permitido: ").append(tipoPezActual != null ? tipoPezActual.getSimpleName() : "Ninguno").append("\n");
+    sb.append("Peces vivos: ").append(getVivos()).append("\n");
+    sb.append("Peces alimentados: ").append(getAlimentados()).append("\n");
+    sb.append("Peces adultos: ").append(getAdultos()).append("\n");
+    sb.append("Hembras: ").append(getHembras()).append(", Machos: ").append(getMachos()).append("\n");
+    sb.append("Peces fértiles: ").append(getFertiles()).append("\n");
+    return sb.toString();
+}
+
 }

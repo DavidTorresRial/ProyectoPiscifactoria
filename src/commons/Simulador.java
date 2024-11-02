@@ -954,4 +954,10 @@ public class Simulador {
     public void setInputHelper(InputHelper inputHelper) {
         this.inputHelper = inputHelper;
     }
+
+    @Override
+    public String toString() {
+        return "Entidad: " + this.getClass().getSimpleName() + ", Piscifactoría: " + this.nombrePiscifactoria;
+}
+
 }

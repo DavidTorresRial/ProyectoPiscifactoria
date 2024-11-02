@@ -473,4 +473,27 @@ public abstract class  Piscifactoria {
     public int getComidaAnimalActual() {
         return comidaAnimalActual;
     }
+
+    /**
+ * Devuelve una representación en cadena de la piscifactoría.
+ *
+ * @return Una cadena que representa la piscifactoría.
+ */
+@Override
+public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("Piscifactoria: ").append(nombre).append("\n");
+    sb.append("Número de tanques: ").append(tanques.size()).append("\n");
+    sb.append("Capacidad total: ").append(getCapacidadTotal()).append("\n");
+    sb.append("Comida vegetal: ").append(comidaVegetalActual).append(" / ").append(capacidadMaximaAlmacenComida).append("\n");
+    sb.append("Comida animal: ").append(comidaAnimalActual).append(" / ").append(capacidadMaximaAlmacenComida).append("\n");
+    sb.append("Tanques:\n");
+    
+    for (Tanque tanque : tanques) {
+        sb.append("\t").append(tanque.toString()).append("\n"); // Asumiendo que también tienes un toString en Tanque
+    }
+    
+    return sb.toString();
+}
+
 }

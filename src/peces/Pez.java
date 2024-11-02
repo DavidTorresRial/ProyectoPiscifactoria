@@ -26,8 +26,6 @@ public class Pez {
 
     /** Estado de vida del pez: true si está vivo, false si está muerto */
     private boolean vivo = true;
-    
-
 
     /** Estado de alimentación del pez: true si ha sido alimentado, false si no lo ha sido */
     private boolean alimentado = false;
@@ -38,7 +36,6 @@ public class Pez {
     /** Datos específicos del pez extraídos de PecesDatos */
     private PecesDatos datos;
 
-    
     /**
      * Constructor que inicializa un Pez con su sexo y datos asociados.
      *
@@ -116,7 +113,6 @@ public class Pez {
         fertil = false;
         vivo = true;
         alimentado = false;
-
         ciclo = datos.getCiclo();
     }
 
@@ -130,6 +126,24 @@ public class Pez {
         return new Pez(nuevoSexo, datos);
     }
 
+    /**
+     * Representa el estado del pez en formato de cadena.
+     *
+     * @return una cadena con la información detallada del pez
+     */
+    @Override
+    public String toString() {
+        return "Pez{" +
+               "nombre='" + nombre + '\'' +
+               ", nombreCientifico='" + nombreCientifico + '\'' +
+               ", edad=" + edad +
+               ", sexo=" + (sexo ? "Macho" : "Hembra") +
+               ", fertil=" + (fertil ? "Si" : "No") +
+               ", vivo=" + (vivo ? "Si" : "No") +
+               ", alimentado=" + (alimentado ? "Si" : "No") +
+               ", ciclo=" + ciclo +
+               '}';
+    }
 
     // Getters
 
@@ -196,7 +210,6 @@ public class Pez {
         return datos;
     }
 
-    
     // Setters
 
     /**

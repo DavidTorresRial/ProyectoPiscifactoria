@@ -59,4 +59,13 @@ public class SistemaMonedas {
         System.out.println("No hay suficientes monedas para realizar esta acción.");
         return false;  // No se puede gastar más de lo que se tiene o una cantidad no válida
     }
+
+    /**
+     * Método toString para representar el estado del sistema de monedas en formato de texto.
+     * @return Una cadena que describe el saldo actual de monedas.
+     */
+    @Override
+    public String toString() {
+        return "SistemaMonedas {Saldo de monedas = " + monedas + "}";
+    }
 }

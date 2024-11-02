@@ -104,4 +104,13 @@ public class InputHelper {
             scanner.close();
         }
     }
+
+    /**
+     * Método toString para representar el estado del InputHelper.
+     * @return Una cadena que describe el estado del InputHelper.
+     */
+    @Override
+    public String toString() {
+        return "InputHelper {scanner activo = " + (scanner != null) + "}";
+    }
 }
