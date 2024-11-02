@@ -74,7 +74,7 @@ public class Simulador {
         System.out.println();
         nombrePiscifactoria = inputHelper.readString("Ingrese el nombre de la primera Piscifactoria: ");
 
-        monedas = new SistemaMonedas(100000);
+        monedas = new SistemaMonedas(100);
 
         // Añadimos la nueva PiscifactoriaDeRio directamente a la lista
         piscifactorias.add(new PiscifactoriaDeRio(nombrePiscifactoria, monedas));
@@ -90,7 +90,7 @@ public class Simulador {
         menuHelper.addOption(2, "Estado piscifactoría");
         menuHelper.addOption(3, "Estado tanque");
         menuHelper.addOption(4, "Informes");
-        menuHelper.addOption(5, "Icitopedia");
+        menuHelper.addOption(5, "Ictiopedia");
         menuHelper.addOption(6, "Pasar día");
         menuHelper.addOption(7, "Comprar Comida");
         menuHelper.addOption(8, "Comprar peces");
