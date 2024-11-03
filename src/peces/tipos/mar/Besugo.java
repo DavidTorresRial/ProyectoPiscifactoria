@@ -4,10 +4,11 @@ import peces.Pez;
 import peces.propiedades.Carnivoro;
 import propiedades.AlmacenPropiedades;
 
+/** Pez de mar Besugo */
 public class Besugo extends Pez implements Carnivoro {
 
     /**
-     * Constructor que inicializa un Besugo con su sexo específico.
+     * Crea una instancia de Besugo con el sexo especificado.
      * 
      * @param sexo El sexo del pez: true para macho, false para hembra.
      */

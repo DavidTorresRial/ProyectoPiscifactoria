@@ -4,10 +4,11 @@ import peces.Pez;
 import peces.propiedades.Carnivoro;
 import propiedades.AlmacenPropiedades;
 
+/** Pez de mar Lenguado Europeo */
 public class LenguadoEuropeo extends Pez implements Carnivoro {
 
     /**
-     * Constructor que inicializa un LenguadoEuropeo con su sexo específico.
+     * Crea una instancia de LenguadoEuropeo con el sexo especificado.
      * 
      * @param sexo El sexo del pez: true para macho, false para hembra.
      */

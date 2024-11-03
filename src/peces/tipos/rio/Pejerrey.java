@@ -4,10 +4,11 @@ import peces.Pez;
 import peces.propiedades.Carnivoro;
 import propiedades.AlmacenPropiedades;
 
+/** Pez de río Pejerrey */
 public class Pejerrey extends Pez implements Carnivoro {
 
     /**
-     * Constructor que inicializa un Pejerrey con su sexo específico.
+     * Crea una instancia de Pejerrey con el sexo especificado.
      * 
      * @param sexo El sexo del pez: true para macho, false para hembra.
      */

@@ -4,10 +4,11 @@ import peces.Pez;
 import peces.propiedades.Filtrador;
 import propiedades.AlmacenPropiedades;
 
+/** Pez de río Tilapia del Nilo */
 public class TilapiaDelNilo extends Pez implements Filtrador {
 
     /**
-     * Constructor que inicializa una TilapiaDelNilo con su sexo específico.
+     * Crea una instancia de TilapiaDelNilo con el sexo especificado.
      * 
      * @param sexo El sexo del pez: true para macho, false para hembra.
      */
