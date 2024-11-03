@@ -91,7 +91,7 @@ public class Simulador {
         menuHelper.addOption(2, "Estado piscifactoría");
         menuHelper.addOption(3, "Estado tanque");
         menuHelper.addOption(4, "Informes");
-        menuHelper.addOption(5, "Icitopedia");
+        menuHelper.addOption(5, "Ictiopedia");
         menuHelper.addOption(6, "Pasar día");
         menuHelper.addOption(7, "Comprar Comida");
         menuHelper.addOption(8, "Comprar peces");
@@ -217,7 +217,6 @@ public class Simulador {
         Piscifactoria piscifactoria = selectPisc();
 
         if (piscifactoria == null) {
-            System.out.println("Operación cancelada.");
             return;
         }
 
@@ -567,30 +566,28 @@ public class Simulador {
     /**
      * Método para seleccionar un pez mediante un menú.
      *
-     * @param permitirHembras Indica si se permiten hembras en la selección.
-     * @param esDeMar         Indica si la piscifactoría es de mar. Si es verdadero,
-     *                        solo se permitirán peces de mar.
-     * @return El pez seleccionado o null si se cancela.
+     * @param permitirHembras un booleano que indica si se permite seleccionar hembras (true) o no (false).
+     * @param esDeMar un booleano que indica si se está seleccionando un pez de mar (true) o de río (false).
+     * @return un objeto de tipo Pez que representa el pez seleccionado por el usuario, o null si la selección fue inválida o si la operación fue cancelada.
      */
     public Pez selectFish(boolean permitirHembras, boolean esDeMar) {
         menuHelper.clearOptions(); // Limpiar opciones previas
-
+    
         System.out.println("\nPeces disponibles: ");
         PecesDatos[] pecesEspecificos;
-
+    
         // Filtrar los peces según el tipo de piscifactoría
         if (esDeMar) {
-            pecesEspecificos = new PecesDatos[] {
+            pecesEspecificos = new PecesDatos[]{
                     AlmacenPropiedades.SALMON_ATLANTICO,
-                    AlmacenPropiedades.TRUCHA_ARCOIRIS,
                     AlmacenPropiedades.ARENQUE_ATLANTICO,
                     AlmacenPropiedades.BESUGO,
-                    AlmacenPropiedades.ARENQUE_ATLANTICO,
+                    AlmacenPropiedades.LENGUADO_EUROPEO,
                     AlmacenPropiedades.LUBINA_EUROPEA,
                     AlmacenPropiedades.ROBALO
             };
         } else {
-            pecesEspecificos = new PecesDatos[] {
+            pecesEspecificos = new PecesDatos[]{
                     AlmacenPropiedades.SALMON_ATLANTICO,
                     AlmacenPropiedades.TRUCHA_ARCOIRIS,
                     AlmacenPropiedades.CARPA_PLATEADA,
@@ -600,39 +597,45 @@ public class Simulador {
                     AlmacenPropiedades.TILAPIA_NILO
             };
         }
-
+    
         // Agregar opciones de peces al menú
         for (int i = 0; i < pecesEspecificos.length; i++) {
             PecesDatos pez = pecesEspecificos[i];
             menuHelper.addOption(i + 1, pez.getNombre());
         }
-
+    
         // Opción para cancelar
         menuHelper.addOption(0, "Cancelar");
-
+    
         // Mostrar el menú
         menuHelper.showMenu();
-
+    
         // Leer la selección del usuario
         int seleccion = inputHelper.readInt("Seleccione un pez: ");
-
+    
         // Validar la selección y asignar el sexo basado en permitirHembras
         Pez pezSeleccionado = null; // Variable para almacenar el pez seleccionado
-
-        // Primer switch para peces de mar
+    
+        // Procesar la selección para peces de mar
         if (esDeMar) {
             switch (seleccion) {
                 case 1:
-                    pezSeleccionado = new SalmonAtlantico(permitirHembras ? false : true); // false es hembra
+                    pezSeleccionado = new SalmonAtlantico(!permitirHembras);
                     break;
                 case 2:
-                    pezSeleccionado = new ArenqueDelAtlantico(permitirHembras ? false : true);
+                    pezSeleccionado = new ArenqueDelAtlantico(!permitirHembras);
                     break;
                 case 3:
-                    pezSeleccionado = new LubinaRayada(permitirHembras ? false : true);
+                    pezSeleccionado = new Besugo(!permitirHembras);
                     break;
                 case 4:
-                    pezSeleccionado = new Robalo(permitirHembras ? false : true);
+                    pezSeleccionado = new LenguadoEuropeo(!permitirHembras);
+                    break;
+                case 5:
+                    pezSeleccionado = new LubinaRayada(!permitirHembras);
+                    break;
+                case 6:
+                    pezSeleccionado = new Robalo(!permitirHembras);
                     break;
                 case 0:
                     System.out.println("Operación cancelada.");
@@ -641,25 +644,28 @@ public class Simulador {
                     System.out.println("\nSelección inválida. Por favor, intente de nuevo.");
                     return null; // Selección inválida
             }
-        } else { // Segundo switch para peces de río
+        } else { // Procesar la selección para peces de río
             switch (seleccion) {
                 case 1:
-                    pezSeleccionado = new TruchaArcoiris(permitirHembras ? false : true);
+                    pezSeleccionado = new SalmonAtlantico(!permitirHembras);
                     break;
                 case 2:
-                    pezSeleccionado = new CarpaPlateada(permitirHembras ? false : true);
+                    pezSeleccionado = new TruchaArcoiris(!permitirHembras);
                     break;
                 case 3:
-                    pezSeleccionado = new Pejerrey(permitirHembras ? false : true);
+                    pezSeleccionado = new CarpaPlateada(!permitirHembras);
                     break;
                 case 4:
-                    pezSeleccionado = new PercaEuropea(permitirHembras ? false : true);
+                    pezSeleccionado = new Pejerrey(!permitirHembras);
                     break;
                 case 5:
-                    pezSeleccionado = new SalmonChinook(permitirHembras ? false : true);
+                    pezSeleccionado = new PercaEuropea(!permitirHembras);
                     break;
                 case 6:
-                    pezSeleccionado = new TilapiaDelNilo(permitirHembras ? false : true);
+                    pezSeleccionado = new SalmonChinook(!permitirHembras);
+                    break;
+                case 7:
+                    pezSeleccionado = new TilapiaDelNilo(!permitirHembras);
                     break;
                 case 0:
                     System.out.println("Operación cancelada.");
@@ -669,9 +675,10 @@ public class Simulador {
                     return null; // Selección inválida
             }
         }
-
+    
         return pezSeleccionado; // Devolver el pez seleccionado
     }
+    
 
     public void addFish() {
         // Selecciona el tanque en el que se desea añadir un pez
@@ -789,8 +796,12 @@ public class Simulador {
             }
         }
 
-        // Mostramos el resultado de la venta
+       // Mostrar resultados de la venta
+        if (pecesVendidos > 0) {
         System.out.println(pecesVendidos + " peces vendidos por " + totalDinero + " monedas.");
+        } else {
+        System.out.println("No se vendieron peces adultos en esta operación.");
+        }
     }
 
     // Método para limpiar un tanque de todos los peces muertos
