@@ -124,34 +124,30 @@ public abstract class Piscifactoria {
         int totalFertiles = getTotalFertiles();
         int capacidadTotal = getCapacidadTotal();
 
-        String ocupacion = (capacidadTotal > 0)
-                ? "Ocupación: " + totalPeces + " / " + capacidadTotal + " (" + (totalPeces * 100 / capacidadTotal)
-                        + "%)"
-                : "Ocupación: 0 / 0 (0%)";
-        System.out.println(ocupacion);
+        // Ocupación
+        int porcentajeOcupacion = (capacidadTotal > 0) ? (totalPeces * 100) / capacidadTotal : 0;
+        System.out.println("Ocupación: " + totalPeces + " / " + capacidadTotal + " (" + porcentajeOcupacion + "%)");
 
-        String pecesVivos = (totalPeces > 0)
-                ? "Peces vivos: " + totalVivos + " / " + totalPeces + " (" + (totalVivos * 100 / totalPeces) + "%)"
-                : "Peces vivos: 0 / 0 (0%)";
-        System.out.println(pecesVivos);
+        // Peces vivos
+        int porcentajeVivos = (totalPeces > 0) ? (totalVivos * 100) / totalPeces : 0;
+        System.out.println("Peces vivos: " + totalVivos + " / " + totalPeces + " (" + porcentajeVivos + "%)");
 
-        String pecesAlimentados = (totalVivos > 0)
-                ? "Peces alimentados: " + totalAlimentados + " / " + totalVivos + " ("
-                        + (totalAlimentados * 100 / totalVivos) + "%)"
-                : "Peces alimentados: 0 / 0 (0%)";
-        System.out.println(pecesAlimentados);
+        // Peces alimentados
+        int porcentajeAlimentados = (totalVivos > 0) ? (totalAlimentados * 100) / totalVivos : 0;
+        System.out.println(
+                "Peces alimentados: " + totalAlimentados + " / " + totalVivos + " (" + porcentajeAlimentados + "%)");
 
-        String pecesAdultos = (totalVivos > 0)
-                ? "Peces adultos: " + totalAdultos + " / " + totalVivos + " (" + (totalAdultos * 100 / totalVivos)
-                        + "%)"
-                : "Peces adultos: 0 / 0 (0%)";
-        System.out.println(pecesAdultos);
+        // Peces adultos
+        int porcentajeAdultos = (totalVivos > 0) ? (totalAdultos * 100) / totalVivos : 0;
+        System.out.println("Peces adultos: " + totalAdultos + " / " + totalVivos + " (" + porcentajeAdultos + "%)");
 
+        // Hembras y machos
         System.out.println("Hembras / Machos: " + totalHembras + " / " + (totalVivos - totalHembras));
 
-        String fertiles = (totalVivos > 0) ? "Fértiles: " + totalFertiles + " / " + totalVivos : "Fértiles: 0 / 0 (0)";
-        System.out.println(fertiles);
+        // Peces fértiles
+        System.out.println("Fértiles: " + totalFertiles + " / " + totalVivos);
 
+        // Mostrar comida
         showFood();
     }
 
@@ -199,12 +195,11 @@ public abstract class Piscifactoria {
      * Hace avanzar el ciclo de vida en la piscifactoría, alimentando a los peces y
      * actualizando sus estados.
      */
-    public void nextDay() { // TODO tiene que realizar el crezimiento, la reproduccion y la venta de peces
-                            // optimos (desglosar metodos)
+    public void nextDay() {
         for (Tanque tanque : tanques) {
             alimentarPeces(tanque);
             tanque.nextDay();
-            // sellFish(); // TODO revisar porque se venden todos los peces el primer dia
+            sellFish();
         }
     }
 
@@ -322,6 +317,36 @@ public abstract class Piscifactoria {
                 .println("Almacén de comida de la piscifactoría " + nombre + " mejorado. Su capacidad ha aumentado en "
                         + incremento + " hasta un total de " + capacidadMaximaComidaPiscifactoria);
     }
+
+    public boolean verificarTanqueYPiscifactoria(Tanque tanqueBuscado) {
+        // Verificar si el tanque está en la lista de tanques de la piscifactoría actual
+        boolean tanqueEncontrado = false;
+        
+        for (Tanque tanque : tanques) {
+            if (tanque == tanqueBuscado) { // Verifica si es el tanque buscado
+                tanqueEncontrado = true;
+                break;
+            }
+        }
+    
+        if (!tanqueEncontrado) {
+            System.out.println("El tanque no pertenece a esta piscifactoría.");
+            return false; // Retorna false o lanza una excepción en caso de que el tanque no pertenezca a la piscifactoría
+        }
+    
+        // Determinar si la piscifactoría es de tipo río o de mar
+        if (this instanceof PiscifactoriaDeRio) {
+            System.out.println("El tanque pertenece a una piscifactoría de tipo río.");
+            return true; // Retorna true si es de tipo río
+        } else if (this instanceof PiscifactoriaDeMar) {
+            System.out.println("El tanque pertenece a una piscifactoría de tipo mar.");
+            return false; // Retorna false si es de tipo mar
+        } else {
+            System.out.println("La piscifactoría no es de tipo río ni mar.");
+            return false; // En caso de error, retorna false por defecto
+        }
+    }
+    
 
     /**
      * Devuelve el total de peces en la piscifactoría.
