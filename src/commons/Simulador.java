@@ -24,6 +24,14 @@ import peces.tipos.doble.*;
 import peces.tipos.mar.*;
 import peces.tipos.rio.*;
 
+/**
+ * La clase Simulador gestiona la simulación de una piscifactoría,
+ * permitiendo realizar diversas operaciones de administración de peces,
+ * tanques y recursos monetarios. Incluye un menú interactivo para la
+ * navegación entre las diferentes opciones de gestión de la piscifactoría.
+ * 
+ * @author David, Fran, Marcos.
+ */
 public class Simulador {
 
     /** Días transcurridos en la simulación, comenzando en 1 */
@@ -124,6 +132,11 @@ public class Simulador {
         menuHelper.showMenu();
     }
 
+    /**
+     * Muestra la lista de piscifactorías actuales y permite al usuario seleccionar
+     * una.
+     * @return La piscifactoría seleccionada, o null si se canceló la operación.
+     */
     public Piscifactoria selectPisc() {
         while (true) {
             menuPisc();
@@ -796,7 +809,7 @@ public class Simulador {
                 totalDinero += pez.getDatos().getMonedas(); // Asumiendo que tienes un método para obtener el precio
                 pecesVendidos++;
 
-                // Eliminamos el pez del tanque usando el iterador
+                // Eliminamos el pez del tanque
                 iterator.remove();
             }
         }
@@ -822,8 +835,8 @@ public class Simulador {
         // Usamos un bucle for en reversa para eliminar peces muertos
         for (int i = peces.size() - 1; i >= 0; i--) {
             Pez pez = peces.get(i);
-            if (!pez.isVivo()) { // Si el pez está muerto
-                peces.remove(i); // Elimina el pez del tanque
+            if (!pez.isVivo()) { 
+                peces.remove(i); 
             }
         }
         System.out.println("Todos los peces muertos han sido eliminados del tanque.");
@@ -872,6 +885,10 @@ public class Simulador {
         return contador;
     }
 
+    /**
+     * Método que muestra el menú de mejoras para el usuario y permite 
+     * seleccionar y realizar mejoras en los edificios.
+     */
     public void upgrade() {
         while (true) {
             menuHelper.clearOptions();
@@ -925,7 +942,7 @@ public class Simulador {
 
                             if (tipoSeleccionado < 0 || tipoSeleccionado > 2) {
                                 System.out.println("\n¡Tipo de piscifactoría no válido! Intente de nuevo.\n");
-                                continue; // Salir de la selección
+                                continue;
                             }
 
                             Piscifactoria nuevaPiscifactoria = null;
@@ -972,7 +989,7 @@ public class Simulador {
                             }
                         } else if (edificioAComprar == 0) {
                             System.out.println("\nOperación cancelada.\n");
-                            break; // Salir del bucle de compra
+                            break;
                         }
                     }
                     break;
@@ -991,7 +1008,7 @@ public class Simulador {
 
                         if (edificioAMejorar < 0 || edificioAMejorar > 2) {
                             System.out.println("\n¡Opción no válida! Por favor, intenta de nuevo.\n");
-                            continue; // Volver a pedir la opción
+                            continue;
                         }
 
                         if (edificioAMejorar == 1) {
@@ -1008,7 +1025,7 @@ public class Simulador {
 
                                 if (mejoraPiscifactoria < 0 || mejoraPiscifactoria > 2) {
                                     System.out.println("\n¡Opción no válida! Por favor, intenta de nuevo.\n");
-                                    continue; // Volver a pedir la opción
+                                    continue;
                                 }
 
                                 if (mejoraPiscifactoria == 1) {
@@ -1081,9 +1098,8 @@ public class Simulador {
                     break;
 
                 case 0:
-                    // Cancelar
                     System.out.println("\nOperación cancelada.\n");
-                    return; // Salir del método
+                    return;
 
                 default:
                     System.out.println("\n¡Opción no válida! Por favor, intenta de nuevo.\n");
@@ -1098,7 +1114,7 @@ public class Simulador {
      * Solo se añaden peces compatibles con el tipo de piscifactoría (río o mar).
      */
     public void agregarPecesAleatorios() {
-        // Seleccionar una piscifactoría
+     
         Piscifactoria piscifactoria = selectPisc();
         if (piscifactoria == null) {
             System.out.println("Operación cancelada. No se seleccionó ninguna piscifactoría.");
@@ -1171,7 +1187,6 @@ public class Simulador {
                 }
             }
 
-            // Si no se pudo añadir en ningún tanque, terminamos el proceso
             if (!pezAñadido) {
                 System.out
                         .println("No se pudo añadir el pez. La piscifactoría o tanque está lleno o no es compatible.");
@@ -1183,11 +1198,18 @@ public class Simulador {
                 .println("Se añadieron " + pecesAnadidos + " peces de forma gratuita a la piscifactoría seleccionada.");
     }
 
+        /**
+         * Punto de entrada principal del simulador. Inicializa la simulación y
+         * entra en un bucle principal que muestra el menú y ejecuta las acciones
+         * seleccionadas por el usuario.
+         *
+         * @param args argumentos de la línea de comandos
+         */
     public static void main(String[] args) {
-        InputHelper inputHelper = new InputHelper(); // Crear una instancia de InputHelper
+        InputHelper inputHelper = new InputHelper();
         Simulador simulador = new Simulador();
 
-        simulador.init(); // Inicializa la simulación
+        simulador.init();
 
         boolean running = true; // Controla el bucle principal
         while (running) {
@@ -1244,7 +1266,7 @@ public class Simulador {
                     simulador.getMonedas().ganarMonedas(1000);
                     System.out.println("\nSe han añadido 1000 monedas para pruebas.");
                     break;
-                case 14: // Opción para salir
+                case 14: 
                     running = false; // Termina el bucle
                     System.out.println("\nSaliendo del simulador.");
                     break;
@@ -1255,16 +1277,20 @@ public class Simulador {
         }
     }
 
+   
     /**
-     * @return int return the dias
+     * @return el número de días
      */
     public int getDias() {
         return dias;
     }
 
+    
     /**
-     * @param dias the dias to set
-     */
+    * Sets the number of days for the simulation.
+    *
+    * @param dias the number of days to set
+    */
     public void setDias(int dias) {
         this.dias = dias;
     }
@@ -1297,29 +1323,41 @@ public class Simulador {
         this.piscifactorias = piscifactorias;
     }
 
+    
     /**
-     * @return SistemaMonedas return the monedas
-     */
+    * Devuelve el sistema de gestión de monedas utilizado en el simulador.
+    *
+    * @return El objeto SistemaMonedas actual.
+    */
     public SistemaMonedas getMonedas() {
         return monedas;
     }
 
+    
     /**
-     * @param monedas the monedas to set
-     */
+    * Establece el sistema de gestión de monedas utilizado en el simulador.
+    *
+    * @param monedas El objeto SistemaMonedas a establecer.
+    */
     public void setMonedas(SistemaMonedas monedas) {
         this.monedas = monedas;
     }
 
+    
     /**
-     * @return InputHelper return the inputHelper
+     * Devuelve el objeto InputHelper utilizado para la lectura de datos desde teclado.
+     *
+     * @return El objeto InputHelper actual.
      */
     public InputHelper getInputHelper() {
         return inputHelper;
     }
 
+   
     /**
-     * @param inputHelper the inputHelper to set
+     * Establece el objeto InputHelper que se utilizará para la lectura de datos desde teclado.
+     *
+     * @param inputHelper El objeto InputHelper a utilizar.
      */
     public void setInputHelper(InputHelper inputHelper) {
         this.inputHelper = inputHelper;
