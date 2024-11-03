@@ -4,10 +4,11 @@ import peces.Pez;
 import peces.propiedades.Carnivoro;
 import propiedades.AlmacenPropiedades;
 
+/** Pez doble Salmon Atlántico */
 public class SalmonAtlantico extends Pez implements Carnivoro {
 
     /**
-     * Constructor que inicializa un SalmonAtlantico con su sexo específico.
+     * Crea una instancia de SalmonAtlantico con el sexo especificado.
      * 
      * @param sexo El sexo del pez: true para macho, false para hembra.
      */

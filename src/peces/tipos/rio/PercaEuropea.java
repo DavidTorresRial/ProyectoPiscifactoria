@@ -4,10 +4,11 @@ import peces.Pez;
 import peces.propiedades.Activo;
 import propiedades.AlmacenPropiedades;
 
+/** Pez de río Perca Europea */
 public class PercaEuropea extends Pez implements Activo {
 
     /**
-     * Constructor que inicializa una PercaEuropea con su sexo específico.
+     * Crea una instancia de PercaEuropea con el sexo especificado.
      * 
      * @param sexo El sexo del pez: true para macho, false para hembra.
      */

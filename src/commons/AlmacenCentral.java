@@ -1,26 +1,21 @@
 package commons;
 
-/**
- * Clase que representa un almacén central básico con capacidad para almacenar
- * comida animal y vegetal.
- * Permite construir el almacén, aumentar su capacidad y gestionar la comida
- * almacenada.
- */
+/** Representa un almacén central con capacidad para almacenar comida animal y vegetal */
 public class AlmacenCentral {
 
-    /** Capacidad total del almacén. */
+    /** Capacidad total del almacén */
     private int capacidadAlmacen;
 
-    /** Cantidad actual de comida animal almacenada. */
+    /** Cantidad actual de comida animal almacenada */
     private int cantidadComidaAnimal;
 
-    /** Cantidad actual de comida vegetal almacenada. */
+    /** Cantidad actual de comida vegetal almacenada */
     private int cantidadComidaVegetal;
 
-    /** Indica si el almacén ha sido construido. */
+    /** Indica si el almacén ha sido construido */
     private boolean construido;
 
-    /** Constructor del almacén central. */
+    /** Constructor del almacén central */
     public AlmacenCentral() {
         this.capacidadAlmacen = 200;
         this.cantidadComidaAnimal = 0;
@@ -47,8 +42,7 @@ public class AlmacenCentral {
     /**
      * Aumenta la capacidad del almacén central en una cantidad específica.
      * 
-     * @param aumento La cantidad en la que se desea aumentar la capacidad. Debe ser
-     *                positiva.
+     * @param aumento La cantidad en la que se desea aumentar la capacidad.
      */
     public void aumentarCapacidad(int aumento) {
         if (aumento > 0) {
@@ -76,10 +70,9 @@ public class AlmacenCentral {
             return true;
         } else {
             System.out.println("No se puede añadir la cantidad de comida animal: excede la capacidad.");
-            // Añadir solo lo que quepa
             int espacioLibre = capacidadAlmacen - cantidadComidaAnimal;
-            cantidadComidaAnimal = capacidadAlmacen; // Llenar hasta la capacidad máxima
-            return espacioLibre > 0; // Indica si se añadió algo
+            cantidadComidaAnimal = capacidadAlmacen;
+            return espacioLibre > 0;
         }
     }
 
@@ -102,8 +95,8 @@ public class AlmacenCentral {
             System.out.println("No se puede añadir la cantidad de comida vegetal: excede la capacidad.");
             // Añadir solo lo que quepa
             int espacioLibre = capacidadAlmacen - cantidadComidaVegetal;
-            cantidadComidaVegetal = capacidadAlmacen; // Llenar hasta la capacidad máxima
-            return espacioLibre > 0; // Indica si se añadió algo
+            cantidadComidaVegetal = capacidadAlmacen;
+            return espacioLibre > 0;
         }
     }
 
@@ -114,8 +107,7 @@ public class AlmacenCentral {
      * @return El costo total de añadir esa cantidad de comida.
      */
     public int calcularCosto(int cantidad) {
-        int costo = cantidad; // Cada comida cuesta 1 moneda
-        // Descuento por cada 25 añadidos
+        int costo = cantidad;
         if (cantidad >= 25) {
             int descuentos = cantidad / 25;
             costo -= descuentos * 5; // Descuento de 5 monedas por cada 25
@@ -130,15 +122,12 @@ public class AlmacenCentral {
         System.out.println("Estado del Almacén Central:");
         System.out.println("Capacidad Total: " + capacidadAlmacen);
 
-        // Calcular el porcentaje de comida animal y vegetal
         double porcentajeComidaAnimal = (cantidadComidaAnimal * 100.0) / capacidadAlmacen;
         double porcentajeComidaVegetal = (cantidadComidaVegetal * 100.0) / capacidadAlmacen;
 
         // Mostrar la cantidad y el porcentaje
-        System.out.println("Cantidad de Comida Animal: " + cantidadComidaAnimal + " (" + porcentajeComidaAnimal
-                + "% de la capacidad)");
-        System.out.println("Cantidad de Comida Vegetal: " + cantidadComidaVegetal + " (" + porcentajeComidaVegetal
-                + "% de la capacidad)");
+        System.out.println("Cantidad de Comida Animal: " + cantidadComidaAnimal + " (" + porcentajeComidaAnimal + "% de la capacidad)");
+        System.out.println("Cantidad de Comida Vegetal: " + cantidadComidaVegetal + " (" + porcentajeComidaVegetal + "% de la capacidad)");
     }
 
     // Getters y Setters
@@ -214,5 +203,16 @@ public class AlmacenCentral {
      */
     public boolean isConstruido() {
         return construido;
+    }
+
+    @Override
+    public String toString() {
+        return "Almacen Central:\n" +
+                "Capacidad Total: " + capacidadAlmacen + "\n" +
+                "Cantidad de Comida Animal: " + cantidadComidaAnimal + " (" +
+                ((cantidadComidaAnimal * 100.0) / capacidadAlmacen) + "% de la capacidad)\n" +
+                "Cantidad de Comida Vegetal: " + cantidadComidaVegetal + " (" +
+                ((cantidadComidaVegetal * 100.0) / capacidadAlmacen) + "% de la capacidad)\n" +
+                "Construido: " + (construido ? "Sí" : "No") + "\n";
     }
 }

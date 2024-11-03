@@ -27,10 +27,7 @@ public class Pez {
     /** Estado de vida del pez: true si está vivo, false si está muerto */
     private boolean vivo = true;
 
-    /**
-     * Estado de alimentación del pez: true si ha sido alimentado, false si no lo ha
-     * sido
-     */
+    /** Estado de alimentación del pez: true si ha sido alimentado, false si no */
     private boolean alimentado = false;
 
     /** Ciclo reproductivo del pez, decrementa hasta que el pez se vuelve fértil */
@@ -66,12 +63,11 @@ public class Pez {
         System.out.println("Fértil: " + (fertil ? "Si" : "No"));
     }
 
-    /** Simula el crecimiento del pez a lo largo de un día. */
+    /** Hace crecer un día el pez, realizando toda la lógica */
     public void grow() {
         if (vivo) {
             Random rand = new Random();
 
-            // Si no está alimentado, tiene 50% de probabilidad de morir
             if (!alimentado) {
                 if (rand.nextDouble() < 0.5) {
                     vivo = false;
@@ -83,7 +79,6 @@ public class Pez {
             edad++;
 
             if (edad >= datos.getMadurez()) {
-                // Si el pez ha alcanzado la madurez y no es fértil, se reduce el ciclo
                 if (!fertil) {
                     ciclo--;
                     if (ciclo <= 0) {
@@ -91,11 +86,9 @@ public class Pez {
                     }
                 }
             } else {
-                // Si el pez no ha alcanzado la madurez, aseguramos que no es fértil
                 fertil = false;
             }
 
-            // Si el pez es joven (antes de la madurez), tiene un 5% de probabilidad de morir cada 2 días
             if (edad < datos.getMadurez() && edad % 2 == 0) {
                 if (rand.nextDouble() < 0.05) {
                     vivo = false;
@@ -118,7 +111,8 @@ public class Pez {
      * Crea una copia del pez con un nuevo sexo.
      *
      * @param nuevoSexo true para macho, false para hembra
-     * @return una nueva instancia de Pez con el mismo tipo pero con el sexo especificado
+     * @return una nueva instancia de Pez con el mismo tipo pero con el sexo
+     *         especificado
      */
     public Pez clonar(boolean nuevoSexo) {
         return new Pez(nuevoSexo, datos);
@@ -244,4 +238,24 @@ public class Pez {
     public void setFertil(boolean fertil) {
         this.fertil = fertil;
     }
+
+    /**
+     * Representa el estado del pez en formato de cadena.
+     *
+     * @return una cadena con la información detallada del pez
+     */
+    @Override
+    public String toString() {
+        return "Pez{" +
+                "nombre='" + nombre + '\'' +
+                ", nombreCientifico='" + nombreCientifico + '\'' +
+                ", edad=" + edad +
+                ", sexo=" + (sexo ? "Macho" : "Hembra") +
+                ", fertil=" + (fertil ? "Si" : "No") +
+                ", vivo=" + (vivo ? "Si" : "No") +
+                ", alimentado=" + (alimentado ? "Si" : "No") +
+                ", ciclo=" + ciclo +
+                '}';
+    }
+
 }

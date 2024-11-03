@@ -4,10 +4,11 @@ import peces.Pez;
 import peces.propiedades.Carnivoro;
 import propiedades.AlmacenPropiedades;
 
+/** Pez de mar Lubina Rayada */
 public class LubinaRayada extends Pez implements Carnivoro {
 
     /**
-     * Constructor que inicializa una LubinaRayada con su sexo específico.
+     * Crea una instancia de LubinaRayada con el sexo especificado.
      * 
      * @param sexo El sexo del pez: true para macho, false para hembra.
      */

@@ -4,35 +4,41 @@ import commons.SistemaMonedas;
 import piscifactorias.Piscifactoria;
 import tanque.Tanque;
 
+/** Clase que representa una piscifactoría de río que gestiona tanques de peces */
 public class PiscifactoriaDeRio extends Piscifactoria {
 
-    // Capacidad máxima del array de tanques
+    /** Capacidad máxima de tanques */
     private static final int CAPACIDAD_MAXIMA_TANQUES = 10;
 
-    // Contador de tanques
+    /** Contador de tanques en la piscifactoría */
     private int contadorTanquesRio;
 
+    /**
+     * Constructor de la piscifactoría de río.
+     *
+     * @param nombre el nombre de la piscifactoría
+     * @param monedas el sistema de monedas asociado
+     */
     public PiscifactoriaDeRio(String nombre, SistemaMonedas monedas) {
         super(nombre, monedas);
         capacidadMaximaComidaPiscifactoria = 25;
         comidaVegetalActual = 0;
         comidaAnimalActual = 0;
 
-        // Inicializa con un tanque de capacidad 25
         tanques.add(new Tanque(25));
-        contadorTanquesRio = 1; // Inicia con 1 tanque
+        contadorTanquesRio = 1;
     }
 
     /**
-     * Añade un nuevo tanque con capacidad fija de 25 unidades a la piscifactoría, si hay espacio disponible.
-     * @return true si el tanque se añadió correctamente, false si no hay espacio.
+     * Añade un tanque de 25 unidades.
+     *
+     * @return true si se añadió el tanque, false si no hay espacio.
      */
     public boolean añadirTanque() {
-        // Verifica si hay espacio en el array de tanques
         if (tanques.size() < CAPACIDAD_MAXIMA_TANQUES) {
             tanques.add(new Tanque(25));
-            contadorTanquesRio++; // Incrementa el contador de tanques
-            System.out.println("Tanque añadido con capacidad de 25 unidades. Total de tanques: " + contadorTanquesRio);
+            contadorTanquesRio++;
+            System.out.println("Tanque añadido. Total: " + contadorTanquesRio);
             return true;
         } else {
             System.out.println("Error: No hay espacio disponible para más tanques.");
@@ -40,7 +46,11 @@ public class PiscifactoriaDeRio extends Piscifactoria {
         }
     }
 
-    // Método para obtener el contador de tanques
+    /**
+     * Obtiene el número de tanques en la piscifactoría.
+     *
+     * @return el número de tanques.
+     */
     public int getTanquesRio() {
         return contadorTanquesRio;
     }

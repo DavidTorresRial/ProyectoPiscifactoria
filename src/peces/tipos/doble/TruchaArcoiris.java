@@ -4,10 +4,11 @@ import peces.Pez;
 import peces.propiedades.Carnivoro;
 import propiedades.AlmacenPropiedades;
 
+/** Pez doble Trucha Arcoiris */
 public class TruchaArcoiris extends Pez implements Carnivoro {
 
     /**
-     * Constructor que inicializa una TruchaArcoiris con su sexo específico.
+     * Crea una instancia de TruchaArcoiris con el sexo especificado.
      * 
      * @param sexo El sexo del pez: true para macho, false para hembra.
      */
