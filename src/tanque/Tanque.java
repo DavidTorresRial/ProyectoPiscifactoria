@@ -34,7 +34,7 @@ public class Tanque {
      * Muestra el estado actual del tanque.
      */
     public void showStatus() {
-        System.out.println("\n=============== Tanque " + numeroTanque + " ===============");
+        System.out.println("\n=============== Tanque " + (numeroTanque + 1) + " ===============");
 
         System.out.println("Ocupación: " + peces.size() + " / " + getCapacidad() + " (" + (peces.size() * 100 / getCapacidad()) + "%)");
         System.out.println("Peces vivos: " + getVivos() + " / " + peces.size() + " (" + (getVivos() > 0 ? (getVivos() * 100 / peces.size()) : 0) + "%)");
@@ -60,7 +60,7 @@ public class Tanque {
      * Muestra la capacidad actual del tanque.
      */
     public void showCapacity() {
-        System.out.println("Tanque " + numeroTanque + " de la piscifactoría al " + (peces.size() * 100 / capacidadMaxima) + "% de capacidad. [" + peces.size() + "/" + capacidadMaxima + "]"); // TODO añadir nombre de la piscifacoria
+        System.out.println("Tanque " + numeroTanque + " de la piscifactoría al " + (peces.size() * 100 / capacidadMaxima) + "% de capacidad. [" + peces.size() + "/" + capacidadMaxima + "]");
     }
 
     /**

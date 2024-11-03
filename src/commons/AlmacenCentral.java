@@ -129,9 +129,16 @@ public class AlmacenCentral {
     public void mostrarEstado() {
         System.out.println("Estado del Almacén Central:");
         System.out.println("Capacidad Total: " + capacidadAlmacen);
-        System.out.println("Cantidad de Comida Animal: " + cantidadComidaAnimal);
-        System.out.println("Cantidad de Comida Vegetal: " + cantidadComidaVegetal);
-        System.out.println("Almacén construido: " + (construido ? "Sí" : "No"));
+
+        // Calcular el porcentaje de comida animal y vegetal
+        double porcentajeComidaAnimal = (cantidadComidaAnimal * 100.0) / capacidadAlmacen;
+        double porcentajeComidaVegetal = (cantidadComidaVegetal * 100.0) / capacidadAlmacen;
+
+        // Mostrar la cantidad y el porcentaje
+        System.out.println("Cantidad de Comida Animal: " + cantidadComidaAnimal + " (" + porcentajeComidaAnimal
+                + "% de la capacidad)");
+        System.out.println("Cantidad de Comida Vegetal: " + cantidadComidaVegetal + " (" + porcentajeComidaVegetal
+                + "% de la capacidad)");
     }
 
     // Getters y Setters
