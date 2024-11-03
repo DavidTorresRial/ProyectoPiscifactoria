@@ -436,6 +436,16 @@ public abstract class Piscifactoria {
     }
 
     /**
+     * Establece la capacidad máxima de comida en la piscifactoría.
+     *
+     * @param capacidadMaximaComidaPiscifactoria La nueva capacidad máxima de comida.
+     * @return 
+     */
+    public int setCapacidadMaximaComidaPiscifactoria(int num) {
+        return capacidadMaximaComidaPiscifactoria += num;
+    }
+
+    /**
      * Establece el nombre de la piscifactoría.
      *
      * @param nombre El nuevo nombre de la piscifactoría.
