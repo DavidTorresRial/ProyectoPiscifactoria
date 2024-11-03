@@ -205,6 +205,11 @@ public class AlmacenCentral {
         return construido;
     }
 
+    /**
+     * Devuelve una representacion en cadena del estado del almacen central.
+     * 
+     * @return una cadena que describe el estado del almacen central.
+     */
     @Override
     public String toString() {
         return "Almacen Central:\n" +
