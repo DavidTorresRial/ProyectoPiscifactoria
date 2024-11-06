@@ -25,7 +25,7 @@ public class PiscifactoriaDeMar extends Piscifactoria {
         comidaVegetalActual = 0;
         comidaAnimalActual = 0;
 
-        tanques.add(new Tanque(100));
+        tanques.add(new Tanque(tanques.size() + 1, 100));
         contadorTanquesMar = 1;
     }
 
@@ -36,7 +36,7 @@ public class PiscifactoriaDeMar extends Piscifactoria {
      */
     public boolean añadirTanque() {
         if (tanques.size() < CAPACIDAD_MAXIMA_TANQUES) {
-            tanques.add(new Tanque(100));
+            tanques.add(new Tanque(tanques.size() + 1, 100));
             contadorTanquesMar++;
             System.out.println("Tanque añadido. Total: " + contadorTanquesMar);
             return true;

@@ -83,7 +83,7 @@ public class Simulador {
         System.out.println();
         nombrePiscifactoria = inputHelper.readString("Ingrese el nombre de la primera Piscifactoria: ");
 
-        monedas = new SistemaMonedas(1000);
+        monedas = new SistemaMonedas(100);
 
         piscifactorias.add(new PiscifactoriaDeRio(nombrePiscifactoria, monedas));
         piscifactorias.get(0).setComidaAnimalActual(piscifactorias.get(0).getCapacidadTotal());
@@ -382,15 +382,15 @@ public class Simulador {
 
     /** Simula un día en todas las piscifactorías. */
     public void nextDay() {
-        int totalPecesVendidos = 0, totalMonedasGanadas = 0;
+        //int totalPecesVendidos = 0, totalMonedasGanadas = 0;
 
         dias++;
 
         for (Piscifactoria piscifactoria : piscifactorias) {
             piscifactoria.nextDay();
         }
-        showGeneralStatus();
-        System.out.println(totalPecesVendidos + " peces vendidos por un total de " + totalMonedasGanadas + " monedas.");
+        //showGeneralStatus();
+        //System.out.println(totalPecesVendidos + " peces vendidos por un total de " + totalMonedasGanadas + " monedas.");
     }
 
     /**
