@@ -1,22 +1,24 @@
 package tanque;
 
+import java.util.List;
 import java.util.ArrayList;
 
 import peces.Pez;
 
+/** Representa un tanque para almacenar peces con capacidades de gestión y reproducción. */
 public class Tanque {
 
     /** Lista para almacenar los peces en el tanque. */
-    public ArrayList<Pez> peces;
+    private List<Pez> peces = new ArrayList<>();
 
     /** Tipo de pez actual permitido en el tanque. */
     private Class<?> tipoPezActual;
 
-    /** Capacidad máxima del tanque. */
-    private int capacidadMaxima;
-
     /** Número del tanque. */
     private int numeroTanque;
+
+    /** Capacidad máxima del tanque. */
+    private int capacidadMaxima;
 
     /**
      * Constructor para crear un nuevo tanque.
@@ -24,17 +26,17 @@ public class Tanque {
      * @param capacidadMaxima capacidad máxima del tanque
      * @param monedas         sistema de monedas para gestionar el dinero ganado
      */
-    public Tanque(int capacidadMaxima) {
+    public Tanque(int numeroTanque, int capacidadMaxima) {
+        this.numeroTanque = numeroTanque;
         this.capacidadMaxima = capacidadMaxima;
-        this.peces = new ArrayList<>();
         this.tipoPezActual = null;
     }
 
     /** Muestra el estado actual del tanque */
     public void showStatus() {
-        System.out.println("\n=============== Tanque " + (numeroTanque + 1) + " ===============");
+        System.out.println("\n=============== Tanque " + numeroTanque + " ===============");
 
-        System.out.println("Ocupación: " + peces.size() + " / " + getCapacidad() + " (" + (peces.size() * 100 / getCapacidad()) + "%)");
+        System.out.println("Ocupación: " + peces.size() + " / " + capacidadMaxima + " (" + (peces.size() * 100 / capacidadMaxima) + "%)");
         System.out.println("Peces vivos: " + getVivos() + " / " + peces.size() + " (" + (getVivos() > 0 ? (getVivos() * 100 / peces.size()) : 0) + "%)");
         System.out.println("Peces alimentados: " + getAlimentados() + " / " + getVivos() + " (" + (getVivos() > 0 ? (getAlimentados() * 100 / getVivos()) : 0) + "%)");
         System.out.println("Peces adultos: " + getAdultos() + " / " + getVivos() + " (" + (getVivos() > 0 ? (getAdultos() * 100 / getVivos()) : 0) + "%)");
@@ -57,10 +59,7 @@ public class Tanque {
         System.out.println("Tanque " + numeroTanque + " de la piscifactoría al " + (peces.size() * 100 / capacidadMaxima) + "% de capacidad. [" + peces.size() + "/" + capacidadMaxima + "]");
     }
 
-    /**
-     * Avanza un día en el tanque, haciendo crecer los peces y ejecutando la
-     * reproducción
-     */
+    /** Avanza un día en el tanque, haciendo crecer los peces y ejecutando la reproducción */
     public void nextDay() {
         for (Pez pez : peces) {
             pez.grow();
@@ -75,41 +74,46 @@ public class Tanque {
 
     /** Método que maneja la reproducción de los peces en el tanque */
     public void reproduccion() {
-        int huevosPorHembra = peces.isEmpty() ? 0 : peces.get(0).getDatos().getHuevos();
-        ArrayList<Pez> machosFertiles = new ArrayList<>();
-        ArrayList<Pez> hembrasFertiles = new ArrayList<>();
-
-        for (Pez pez : peces) {
-            if (pez.isFertil()) {
-                if (pez.isSexo())
-                    machosFertiles.add(pez);
-                else
-                    hembrasFertiles.add(pez);
-            }
-        }
-
-        if (machosFertiles.isEmpty() || hembrasFertiles.isEmpty()) {
-            System.out.println("No hay suficientes peces fértiles de ambos sexos para reproducirse.");
-            return;
-        }
-
         int nuevosMachos = 0, nuevasHembras = 0;
-        for (Pez macho : machosFertiles) {
-            for (Pez hembra : new ArrayList<>(hembrasFertiles)) {
-                for (int i = 0; i < huevosPorHembra && peces.size() < capacidadMaxima; i++) {
-                    Pez nuevoPez = (Pez) hembra.clonar(getHembras() <= getMachos());
-                    peces.add(nuevoPez);
-                    if (nuevoPez.isSexo())
-                        nuevosMachos++;
-                    else
-                        nuevasHembras++;
-                }
-                hembra.setFertil(false);
-                hembrasFertiles.remove(hembra);
+
+        boolean hayMachoFertil = false;
+        for (Pez pez : peces) {
+            if (pez.isSexo() && pez.isFertil()) {
+                hayMachoFertil = true;
+                break;
             }
-            macho.setFertil(false);
         }
-        System.out.println("Nuevos peces: " + nuevosMachos + " machos, " + nuevasHembras + " hembras.");
+
+        if (hayMachoFertil) {
+            List<Pez> nuevosPeces = new ArrayList<>();
+            for (Pez pez : peces) {
+                if (pez.isFertil() && !pez.isSexo()) {
+                    for (int i = 0; i < pez.getDatos().getHuevos(); i++) {
+                        if (peces.size() < capacidadMaxima) {
+                            boolean nuevoSexo = (getHembras() <= getMachos()) ? false : true;
+
+                            Pez nuevoPez = (Pez) pez.clonar(nuevoSexo);
+                            nuevosPeces.add(nuevoPez);
+
+                            if (nuevoSexo) {
+                                nuevosMachos++;
+                            } else {
+                                nuevasHembras++;
+                            }
+                        } else {
+                            System.out.println("No hay espacio para añadir más peces. Capacidad máxima alcanzada.");
+                            break;
+                        }
+                    }
+                    pez.setFertil(false);
+                }
+            }
+            peces.addAll(nuevosPeces);
+
+            System.out.println("Se han creado " + nuevosMachos + " nuevos machos y " + nuevasHembras + " nuevas hembras.");
+        } else {
+            System.out.println("No hay machos fértiles en el tanque. No se realizará reproducción.");
+        }
     }
 
     /**
@@ -128,12 +132,22 @@ public class Tanque {
             tipoPezActual = pez.getClass();
 
         } else if (!tipoPezActual.equals(pez.getClass())) {
-            System.out.printf("Este tanque solo acepta peces del tipo: %s, pero se intentó añadir: %s\n", tipoPezActual.getSimpleName(), pez.getClass().getSimpleName());
+            System.out.printf("Este tanque solo acepta peces del tipo: %s, pero se intentó añadir: %s\n",
+                    tipoPezActual.getSimpleName(), pez.getClass().getSimpleName());
             return false;
         }
 
         peces.add(pez);
         return true;
+    }
+
+    /**
+     * Devuelve la lista de peces en el tanque.
+     * 
+     * @return lista de peces en el tanque
+     */
+    public List<Pez> getPeces() {
+        return peces;
     }
 
     /**
@@ -144,8 +158,6 @@ public class Tanque {
     public Class<?> getTipoPezActual() {
         return tipoPezActual;
     }
-
-    // Getters y Setters
 
     /**
      * Devuelve el número del tanque.
@@ -175,12 +187,18 @@ public class Tanque {
     }
 
     /**
-     * Devuelve la lista de peces en el tanque.
-     * 
-     * @return lista de peces en el tanque
+     * Cuenta y devuelve el número de machos en el tanque.
+     *
+     * @return número de machos en el tanque.
      */
-    public ArrayList<Pez> getPeces() {
-        return peces;
+    public int getMachos() {
+        int machos = 0;
+        for (Pez pez : peces) {
+            if (pez.isSexo()) {
+                machos++;
+            }
+        }
+        return machos;
     }
 
     /**
@@ -189,30 +207,13 @@ public class Tanque {
      * @return número de hembras en el tanque
      */
     public int getHembras() {
-        // Contar hembras
         int hembras = 0;
         for (Pez pez : peces) {
-            if (!pez.isSexo()) { // false es hembra
+            if (!pez.isSexo()) {
                 hembras++;
             }
         }
         return hembras;
-    }
-
-    /**
-     * Cuenta y devuelve el número de machos en el tanque.
-     *
-     * @return número de machos en el tanque.
-     */
-    public int getMachos() {
-        // Contar machos
-        int machos = 0;
-        for (Pez pez : peces) {
-            if (pez.isSexo()) { // true si es macho
-                machos++;
-            }
-        }
-        return machos;
     }
 
     /**
@@ -221,7 +222,6 @@ public class Tanque {
      * @return número de peces fértiles en el tanque.
      */
     public int getFertiles() {
-        // Contar peces fértiles
         int fertiles = 0;
         for (Pez pez : peces) {
             if (pez.isFertil()) {
@@ -237,7 +237,6 @@ public class Tanque {
      * @return número de peces vivos en el tanque.
      */
     public int getVivos() {
-        // Contar peces vivos
         int pecesVivos = 0;
         for (Pez pez : peces) {
             if (pez.isVivo()) {
@@ -253,7 +252,6 @@ public class Tanque {
      * @return número de peces alimentados en el tanque.
      */
     public int getAlimentados() {
-        // Contar peces alimentados
         int pecesAlimentados = 0;
         for (Pez pez : peces) {
             if (pez.isAlimentado()) {
@@ -269,7 +267,6 @@ public class Tanque {
      * @return número de peces adultos en el tanque.
      */
     public int getAdultos() {
-        // Contar peces adultos
         int pecesAdultos = 0;
         for (Pez pez : peces) {
             if (pez.getEdad() >= pez.getDatos().getMadurez()) {
@@ -280,8 +277,10 @@ public class Tanque {
     }
 
     /**
-     * Devuelve una representación en cadena del estado del tanque, incluyendo su número,
-     * capacidad, número de peces, tipo de pez permitido, y estadísticas de los peces.
+     * Devuelve una representación en cadena del estado del tanque, incluyendo su
+     * número,
+     * capacidad, número de peces, tipo de pez permitido, y estadísticas de los
+     * peces.
      * 
      * @return una cadena que representa el estado del tanque.
      */
