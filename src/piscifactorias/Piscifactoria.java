@@ -8,44 +8,49 @@ import java.util.Iterator;
 import peces.propiedades.Activo;
 import peces.propiedades.Carnivoro;
 import peces.propiedades.Filtrador;
-
+import propiedades.CriaTipo;
 import peces.Pez;
 import tanque.Tanque;
 
-import piscifactorias.tipos.PiscifactoriaDeMar;
-import piscifactorias.tipos.PiscifactoriaDeRio;
 import commons.AlmacenCentral;
 import commons.SistemaMonedas;
 
-/** Clase abstracta que representa una piscifactoría que gestiona tanques de peces */
-public abstract class Piscifactoria {
+/**
+ * Clase abstracta que representa una piscifactoría que gestiona tanques de
+ * peces
+ */
+public class Piscifactoria {
 
     /** El nombre de la piscifactoría */
     private String nombre;
 
     /** Lista de tanques con distintos tipos de peces */
-    protected List<Tanque> tanques = new ArrayList<>();
+    private List<Tanque> tanques = new ArrayList<>();
 
     /** Sistema de monedas para gestionar el dinero ganado */
-    private SistemaMonedas monedas;
+    private SistemaMonedas monedas = SistemaMonedas.getInstancia();
 
     /** Capacidad máxima compartida para ambos tipos de comida */
-    protected int capacidadMaximaComidaPiscifactoria;
+    private int capacidadMaximaComidaPiscifactoria;
 
     /** Cantidad actual de comida vegetal */
-    protected int comidaVegetalActual;
+    private int comidaVegetalActual;
 
     /** Cantidad actual de comida animal */
-    protected int comidaAnimalActual;
+    private int comidaAnimalActual;
+
+    private int numeroMaximoTanquesPiscifactoria = 10;
 
     /** Número de tanques de río */
-    private int numeroTanquesDeRio;
+    private int numeroTanquesDeRio = 0;
 
     /** Número de tanques de mar */
-    private int numeroTanquesDeMar;
+    private int numeroTanquesDeMar = 0;
 
     /** Almacén central para gestionar el almacenamiento de comida */
     private AlmacenCentral almacenCentral;
+
+    private boolean esDeRio;
 
     /**
      * Constructor para crear una nueva piscifactoría.
@@ -53,18 +58,47 @@ public abstract class Piscifactoria {
      * @param nombre  El nombre de la piscifactoría.
      * @param monedas El sistema de monedas para gestionar el dinero ganado.
      */
-    public Piscifactoria(String nombre, SistemaMonedas monedas) { //TODO cambiar constructor implementar sistema de monedas con el singleton, añadir booleano (esDeRio por ejemplo) para poder borrar las clases de piscificas de mar y rio.
+    public Piscifactoria(String nombre, boolean esDeRio) {
         this.nombre = nombre;
-        this.monedas = monedas;
+        this.esDeRio = esDeRio;
+        if (esDeRio) {
+            tanques.add(new Tanque(tanques.size() + 1, 25));
+            numeroTanquesDeRio++;
+            capacidadMaximaComidaPiscifactoria = 25;
+        } else {
+            tanques.add(new Tanque(tanques.size() + 1, 100));
+            numeroTanquesDeMar++;
+            capacidadMaximaComidaPiscifactoria = 100;
+        }
     }
 
-    /**
-     * Agrega un tanque a la piscifactoría.
-     *
-     * @param tanque El tanque a agregar.
-     */
-    public void agregarTanque(Tanque tanque) {
-        this.tanques.add(tanque);
+    /** Agrega un tanque según el tipo (río o mar), verifica monedas y el límite de tanques. */
+    public void addTanque() {
+        if (tanques.size() < numeroMaximoTanquesPiscifactoria) {
+            if (esDeRio) {
+                int costoTanque = 150 * (tanques.size() + 1);
+                if (monedas.getMonedas() >= costoTanque) {
+                    tanques.add(new Tanque(tanques.size() + 1, 25));
+                    numeroTanquesDeRio++;
+                    monedas.gastarMonedas(costoTanque);
+                    System.out.println("\nTanque de río agregado exitosamente. " + costoTanque + " monedas han sido descontadas.");
+                } else {
+                    System.out.println("\nNo tienes suficientes monedas para agregar un tanque de río. Necesitas " + costoTanque + " monedas.");
+                }
+            } else {
+                int costoTanque = 600 * (tanques.size() + 1);
+                if (monedas.getMonedas() >= costoTanque) {
+                    tanques.add(new Tanque(tanques.size() + 1, 100));
+                    numeroTanquesDeMar++;
+                    monedas.gastarMonedas(costoTanque);
+                    System.out.println("\nTanque de mar agregado exitosamente. " + costoTanque + " monedas han sido descontadas.");
+                } else {
+                    System.out.println("\nNo tienes suficientes monedas para agregar un tanque de mar. Necesitas " + costoTanque + " monedas.");
+                }
+            }
+        } else {
+            System.out.println("\nNo se pueden agregar más tanques. Se ha alcanzado el límite máximo de tanques.");
+        }
     }
 
     /**
@@ -77,28 +111,25 @@ public abstract class Piscifactoria {
     }
 
     /**
-     * Agrega un pez a la piscifactoría, verificando que sea del tipo adecuado.
+     * Agrega un pez a un tanque específico de la piscifactoría, verificando que sea
+     * compatible
+     * con su tipo (río, mar o ambos).
      *
-     * @param pez El pez a agregar.
+     * @param pez    El pez a agregar.
+     * @param tanque El tanque donde se intentará agregar el pez.
      */
-    public void addPez(Pez pez) {
-        int tipoPez = pez.getDatos().getPiscifactoria().getValue();
-        boolean agregado = false;
+    public void addPez(Pez pez, Tanque tanque) {
+        CriaTipo tipoPiscifactoriaPez = pez.getDatos().getPiscifactoria();
 
-        // Verifica si el pez puede ser añadido a esta piscifactoría
-        if ((tipoPez == 0 && this instanceof PiscifactoriaDeRio) ||
-                (tipoPez == 1 && this instanceof PiscifactoriaDeMar) ||
-                tipoPez == 2) {
-            for (Tanque tanque : tanques) {
-                if (((Tanque) tanque).addPez(pez)) {
-                    agregado = true;
-                    break;
-                }
-            }
-        }
+        if ((esDeRio && (tipoPiscifactoriaPez == CriaTipo.RIO || tipoPiscifactoriaPez == CriaTipo.DOBLE)) ||
+                (!esDeRio && (tipoPiscifactoriaPez == CriaTipo.MAR || tipoPiscifactoriaPez == CriaTipo.DOBLE))) {
 
-        if (!agregado) {
-            System.out.println("No se puede añadir el pez de tipo " + tipoPez + " a esta piscifactoría.");
+            tanque.addPez(pez);
+        } else {
+            System.out.printf(
+                    "No se pudo añadir el pez %s porque no es compatible con una piscifactoría de tipo %s.%n",
+                    pez.getDatos().getNombre(),
+                    esDeRio ? "río" : "mar");
         }
     }
 
@@ -124,7 +155,8 @@ public abstract class Piscifactoria {
         System.out.println("Peces vivos: " + totalVivos + " / " + totalPeces + " (" + porcentajeVivos + "%)");
 
         int porcentajeAlimentados = (totalVivos > 0) ? (totalAlimentados * 100) / totalVivos : 0;
-        System.out.println("Peces alimentados: " + totalAlimentados + " / " + totalVivos + " (" + porcentajeAlimentados + "%)");
+        System.out.println(
+                "Peces alimentados: " + totalAlimentados + " / " + totalVivos + " (" + porcentajeAlimentados + "%)");
 
         int porcentajeAdultos = (totalVivos > 0) ? (totalAdultos * 100) / totalVivos : 0;
         System.out.println("Peces adultos: " + totalAdultos + " / " + totalVivos + " (" + porcentajeAdultos + "%)");
@@ -165,13 +197,14 @@ public abstract class Piscifactoria {
         tanque.showCapacity();
     }
 
-    /**
-     * Muestra el estado del almacén de comida de la piscifactoría.
-     */
     public void showFood() {
         System.out.println("Depósito de comida de la piscifactoría " + nombre + ":");
-        System.out.println("Comida vegetal al " + (comidaVegetalActual * 100 / capacidadMaximaComidaPiscifactoria) + "% de su capacidad. [" + comidaVegetalActual + "/" + capacidadMaximaComidaPiscifactoria + "]");
-        System.out.println("Comida animal al " + (comidaAnimalActual * 100 / capacidadMaximaComidaPiscifactoria) + "% de su capacidad. [" + comidaAnimalActual + "/" + capacidadMaximaComidaPiscifactoria + "]");
+
+        System.out.println("Comida vegetal al " + (comidaVegetalActual * 100 / capacidadMaximaComidaPiscifactoria)
+                + "% de su capacidad. [" + comidaVegetalActual + "/" + capacidadMaximaComidaPiscifactoria + "]");
+        System.out.println("Comida animal al " + (comidaAnimalActual * 100 / capacidadMaximaComidaPiscifactoria)
+                + "% de su capacidad. [" + comidaAnimalActual + "/" + capacidadMaximaComidaPiscifactoria + "]");
+
     }
 
     /**
@@ -280,7 +313,8 @@ public abstract class Piscifactoria {
                 }
             }
         }
-        System.out.println("Piscifactoría " + nombrePiscifactoria + ": " + totalPecesVendidos + " peces vendidos por " + totalMonedasGanadas + " monedas.");
+        System.out.println("Piscifactoría " + nombrePiscifactoria + ": " + totalPecesVendidos + " peces vendidos por "
+                + totalMonedasGanadas + " monedas.");
     }
 
     /**
@@ -290,34 +324,25 @@ public abstract class Piscifactoria {
      */
     public void upgradeFood(int incremento) {
         capacidadMaximaComidaPiscifactoria += incremento;
-        System.out.println("Almacén de comida de la piscifactoría " + nombre + " mejorado. Su capacidad ha aumentado en " + incremento + " hasta un total de " + capacidadMaximaComidaPiscifactoria);
+        System.out
+                .println("Almacén de comida de la piscifactoría " + nombre + " mejorado. Su capacidad ha aumentado en "
+                        + incremento + " hasta un total de " + capacidadMaximaComidaPiscifactoria);
     }
 
-    public boolean verificarTanqueYPiscifactoria(Tanque tanqueBuscado) {
-        boolean tanqueEncontrado = false;
+    public boolean isEsDeRio() {
+        return esDeRio;
+    }
 
-        for (Tanque tanque : tanques) {
-            if (tanque == tanqueBuscado) {
-                tanqueEncontrado = true;
-                break;
-            }
-        }
+    public void setEsDeRio(boolean esDeRio) {
+        this.esDeRio = esDeRio;
+    }
 
-        if (!tanqueEncontrado) {
-            System.out.println("El tanque no pertenece a esta piscifactoría.");
-            return false;
-        }
+    public int getNumeroMaximoTanquesPiscifactoria() {
+        return numeroMaximoTanquesPiscifactoria;
+    }
 
-        if (this instanceof PiscifactoriaDeRio) {
-            System.out.println("El tanque pertenece a una piscifactoría de tipo río.");
-            return true; // Retorna true si es de tipo río
-        } else if (this instanceof PiscifactoriaDeMar) {
-            System.out.println("El tanque pertenece a una piscifactoría de tipo mar.");
-            return false; // Retorna false si es de tipo mar
-        } else {
-            System.out.println("La piscifactoría no es de tipo río ni mar.");
-            return false; // En caso de error, retorna false por defecto
-        }
+    public void setNumeroMaximoTanquesPiscifactoria(int numeroMaximoTanquesPiscifactoria) {
+        this.numeroMaximoTanquesPiscifactoria = numeroMaximoTanquesPiscifactoria;
     }
 
     /**
@@ -434,11 +459,16 @@ public abstract class Piscifactoria {
         return nombre;
     }
 
+    public int getCapacidadMaximaComidaPiscifactoria() {
+        return capacidadMaximaComidaPiscifactoria;
+    }
+
     /**
      * Establece la capacidad máxima de comida en la piscifactoría.
      *
-     * @param capacidadMaximaComidaPiscifactoria La nueva capacidad máxima de comida.
-     * @return 
+     * @param capacidadMaximaComidaPiscifactoria La nueva capacidad máxima de
+     *                                           comida.
+     * @return
      */
     public int setCapacidadMaximaComidaPiscifactoria(int num) {
         return capacidadMaximaComidaPiscifactoria += num;
@@ -526,7 +556,8 @@ public abstract class Piscifactoria {
     }
 
     /**
-     * Devuelve una representación en cadena del estado de la piscifactoría incluyendo su nombre,
+     * Devuelve una representación en cadena del estado de la piscifactoría
+     * incluyendo su nombre,
      * el número de tanques, y estadísticas de los peces.
      * 
      * @return una cadena que representa el estado de la piscifactoría.

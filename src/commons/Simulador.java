@@ -9,8 +9,6 @@ import helpers.InputHelper;
 import helpers.MenuHelper;
 
 import piscifactorias.Piscifactoria;
-import piscifactorias.tipos.PiscifactoriaDeRio;
-import piscifactorias.tipos.PiscifactoriaDeMar;
 
 import propiedades.AlmacenPropiedades;
 import propiedades.PecesDatos;
@@ -34,8 +32,8 @@ import peces.tipos.rio.*;
  */
 public class Simulador {
 
-    /** Días transcurridos en la simulación, comenzando en 1 */
-    private int dias = 1;
+    /** Días transcurridos en la simulación, comenzando en 0 */
+    private int dias = 0;
 
     /** Lista de piscifactorías en el sistema */
     private List<Piscifactoria> piscifactorias = new ArrayList<>();
@@ -83,9 +81,9 @@ public class Simulador {
         System.out.println();
         nombrePiscifactoria = inputHelper.readString("Ingrese el nombre de la primera Piscifactoria: ");
 
-        piscifactorias.add(new PiscifactoriaDeRio(nombrePiscifactoria, monedas));
-        piscifactorias.get(0).setComidaAnimalActual(piscifactorias.get(0).getCapacidadTotal());
-        piscifactorias.get(0).setComidaVegetalActual(piscifactorias.get(0).getCapacidadTotal());
+        piscifactorias.add(new Piscifactoria(nombrePiscifactoria, true));
+        piscifactorias.get(0).setComidaAnimalActual(piscifactorias.get(0).getCapacidadMaximaComidaPiscifactoria());
+        piscifactorias.get(0).setComidaVegetalActual(piscifactorias.get(0).getCapacidadMaximaComidaPiscifactoria());
     }
 
     /** Método que muestra el texto del menú. */
@@ -556,7 +554,7 @@ public class Simulador {
                         cantidadComida = 25;
                         break;
                     case 4:
-                        if (piscifactoriaSeleccionada instanceof PiscifactoriaDeMar) {
+                        if (!piscifactoriaSeleccionada.isEsDeRio()) {
                             cantidadComida = 100 - piscifactoriaSeleccionada.getComidaAnimalActual()
                                     - piscifactoriaSeleccionada.getComidaVegetalActual();
                         } else {
@@ -747,7 +745,7 @@ public class Simulador {
         }
 
         // Determina si el tanque es de río o de mar
-        boolean esDeRio = piscifactorias.get(0).verificarTanqueYPiscifactoria(tanqueSeleccionado);
+        boolean esDeRio = piscifactorias.get(0).isEsDeRio();
         Class<?> tipoPezActual = tanqueSeleccionado.getTipoPezActual();
 
         if (tipoPezActual == null) {
@@ -859,7 +857,7 @@ public class Simulador {
     public int contarPiscifactoriasDeRio() {
         int contador = 0;
         for (Piscifactoria p : piscifactorias) {
-            if (p instanceof PiscifactoriaDeRio) {
+            if (p.isEsDeRio()) {
                 contador++;
             }
         }
@@ -874,7 +872,7 @@ public class Simulador {
     public int contarPiscifactoriasDeMar() {
         int contador = 0;
         for (Piscifactoria p : piscifactorias) {
-            if (p instanceof PiscifactoriaDeMar) {
+            if (!p.isEsDeRio()) {
                 contador++;
             }
         }
@@ -944,7 +942,7 @@ public class Simulador {
                             Piscifactoria nuevaPiscifactoria = null;
                             if (tipoSeleccionado == 1) {
                                 if (getMonedas().gastarMonedas(costoPiscifactoríaRio)) {
-                                    nuevaPiscifactoria = new PiscifactoriaDeRio(nombrePiscifactoria, monedas);
+                                    nuevaPiscifactoria = new Piscifactoria(nombrePiscifactoria, true);
                                     System.out.println(
                                             "\nPiscifactoría de Río '" + nombrePiscifactoria + "' comprada.\n");
                                 } else {
@@ -953,7 +951,7 @@ public class Simulador {
                                 }
                             } else if (tipoSeleccionado == 2) {
                                 if (getMonedas().gastarMonedas(costoPiscifactoríaMar)) {
-                                    nuevaPiscifactoria = new PiscifactoriaDeMar(nombrePiscifactoria, monedas);
+                                    nuevaPiscifactoria = new Piscifactoria(nombrePiscifactoria, false);
                                     System.out.println(
                                             "\nPiscifactoría de Mar '" + nombrePiscifactoria + "' comprada.\n");
                                 } else {
@@ -1025,16 +1023,7 @@ public class Simulador {
                                 }
                         
                                 if (mejoraPiscifactoria == 1) {
-                                    // Comprar tanque
-                                    int cantidadTanques = selectPisc().getTanques().size();
-                                    int costoTanque = 150 * cantidadTanques;
-                        
-                                    if (getMonedas().gastarMonedas(costoTanque)) {
-                                        System.out.println("\nTanque comprado para la piscifactoría.\n");
-                                        break;
-                                    } else {
-                                        System.out.println("\nNo tienes suficientes monedas para comprar el tanque.\n");
-                                    }
+                                    selectPisc().addTanque();
                                 } else if (mejoraPiscifactoria == 2) {
                                     // Aumentar almacén de comida de la piscifactoría seleccionada
                                     Piscifactoria piscifactoriaSeleccionada = selectPisc(); // Método para seleccionar una piscifactoría
@@ -1123,7 +1112,7 @@ public class Simulador {
         }
 
         Random rand = new Random();
-        boolean esPiscifactoríaDeRio = piscifactoria instanceof PiscifactoriaDeRio;
+        boolean esPiscifactoríaDeRio = piscifactoria.isEsDeRio();
 
         // Array de peces de río y de mar disponibles
         PecesDatos[] pecesDeRio = {
