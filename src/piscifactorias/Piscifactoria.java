@@ -24,7 +24,7 @@ public abstract class Piscifactoria {
     private String nombre;
 
     /** Lista de tanques con distintos tipos de peces */
-    protected List<Tanque> tanques;
+    protected List<Tanque> tanques = new ArrayList<>();
 
     /** Sistema de monedas para gestionar el dinero ganado */
     private SistemaMonedas monedas;
@@ -53,9 +53,8 @@ public abstract class Piscifactoria {
      * @param nombre  El nombre de la piscifactoría.
      * @param monedas El sistema de monedas para gestionar el dinero ganado.
      */
-    public Piscifactoria(String nombre, SistemaMonedas monedas) {
+    public Piscifactoria(String nombre, SistemaMonedas monedas) { //TODO cambiar constructor implementar sistema de monedas con el singleton, añadir booleano (esDeRio por ejemplo) para poder borrar las clases de piscificas de mar y rio.
         this.nombre = nombre;
-        this.tanques = new ArrayList<>();
         this.monedas = monedas;
     }
 
