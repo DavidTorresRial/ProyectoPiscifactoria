@@ -21,10 +21,10 @@ public class Tanque {
     private int capacidadMaxima;
 
     /**
-     * Constructor para crear un nuevo tanque.
-     *
-     * @param capacidadMaxima capacidad máxima del tanque
-     * @param monedas         sistema de monedas para gestionar el dinero ganado
+     * Crea un tanque con el número y capacidad especificados.
+     * 
+     * @param numeroTanque    El identificador del tanque.
+     * @param capacidadMaxima La capacidad máxima del tanque.
      */
     public Tanque(int numeroTanque, int capacidadMaxima) {
         this.numeroTanque = numeroTanque;
@@ -32,7 +32,7 @@ public class Tanque {
         this.tipoPezActual = null;
     }
 
-    /** Muestra el estado actual del tanque */
+    /** Muestra el estado actual del tanque. */
     public void showStatus() {
         System.out.println("\n=============== Tanque " + numeroTanque + " ===============");
 
@@ -44,7 +44,7 @@ public class Tanque {
         System.out.println("Fértiles: " + getFertiles() + " / " + getVivos());
     }
 
-    /** Muestra el estado de todos los peces del tanque */
+    /** Muestra el estado de todos los peces del tanque. */
     public void showFishStatus() {
         System.out.println("--------------- Peces en el Tanque " + numeroTanque + " ---------------");
         if (peces.isEmpty()) {
@@ -54,12 +54,12 @@ public class Tanque {
         }
     }
 
-    /** Muestra la capacidad actual del tanque */
+    /** Muestra la capacidad actual del tanque. */
     public void showCapacity() {
         System.out.println("Tanque " + numeroTanque + " de la piscifactoría al " + (peces.size() * 100 / capacidadMaxima) + "% de capacidad. [" + peces.size() + "/" + capacidadMaxima + "]");
     }
 
-    /** Avanza un día en el tanque, haciendo crecer los peces y ejecutando la reproducción */
+    /** Avanza un día en el tanque, haciendo crecer los peces y ejecutando la reproducción. */
     public void nextDay() {
         for (Pez pez : peces) {
             pez.grow();
@@ -72,7 +72,7 @@ public class Tanque {
         }
     }
 
-    /** Método que maneja la reproducción de los peces en el tanque */
+    /** Método que maneja la reproducción de los peces en el tanque. */
     public void reproduccion() {
         int nuevosMachos = 0, nuevasHembras = 0;
 
@@ -110,7 +110,8 @@ public class Tanque {
             }
             peces.addAll(nuevosPeces);
 
-            System.out.println("Se han creado " + nuevosMachos + " nuevos machos y " + nuevasHembras + " nuevas hembras.");
+            System.out.println(
+                    "Se han creado " + nuevosMachos + " nuevos machos y " + nuevasHembras + " nuevas hembras.");
         } else {
             System.out.println("No hay machos fértiles en el tanque. No se realizará reproducción.");
         }
@@ -132,8 +133,7 @@ public class Tanque {
             tipoPezActual = pez.getClass();
 
         } else if (!tipoPezActual.equals(pez.getClass())) {
-            System.out.printf("Este tanque solo acepta peces del tipo: %s, pero se intentó añadir: %s\n",
-                    tipoPezActual.getSimpleName(), pez.getClass().getSimpleName());
+            System.out.printf("Este tanque solo acepta peces del tipo: %s, pero se intentó añadir: %s\n", tipoPezActual.getSimpleName(), pez.getClass().getSimpleName());
             return false;
         }
 
@@ -153,7 +153,7 @@ public class Tanque {
     /**
      * Devuelve el tipo de pez actual.
      * 
-     * @return la clase del tipo de pez actual.
+     * @return la clase del tipo de pez actual
      */
     public Class<?> getTipoPezActual() {
         return tipoPezActual;
@@ -189,7 +189,7 @@ public class Tanque {
     /**
      * Cuenta y devuelve el número de machos en el tanque.
      *
-     * @return número de machos en el tanque.
+     * @return número de machos en el tanque
      */
     public int getMachos() {
         int machos = 0;
@@ -219,7 +219,7 @@ public class Tanque {
     /**
      * Cuenta y devuelve el número de peces fértiles en el tanque.
      *
-     * @return número de peces fértiles en el tanque.
+     * @return número de peces fértiles en el tanque
      */
     public int getFertiles() {
         int fertiles = 0;
@@ -234,7 +234,7 @@ public class Tanque {
     /**
      * Cuenta y devuelve el número de peces vivos en el tanque.
      *
-     * @return número de peces vivos en el tanque.
+     * @return número de peces vivos en el tanque
      */
     public int getVivos() {
         int pecesVivos = 0;
@@ -249,7 +249,7 @@ public class Tanque {
     /**
      * Cuenta y devuelve el número de peces alimentados en el tanque.
      *
-     * @return número de peces alimentados en el tanque.
+     * @return número de peces alimentados en el tanque
      */
     public int getAlimentados() {
         int pecesAlimentados = 0;
@@ -264,7 +264,7 @@ public class Tanque {
     /**
      * Cuenta y devuelve el número de peces adultos en el tanque.
      *
-     * @return número de peces adultos en el tanque.
+     * @return número de peces adultos en el tanque
      */
     public int getAdultos() {
         int pecesAdultos = 0;
@@ -277,10 +277,8 @@ public class Tanque {
     }
 
     /**
-     * Devuelve una representación en cadena del estado del tanque, incluyendo su
-     * número,
-     * capacidad, número de peces, tipo de pez permitido, y estadísticas de los
-     * peces.
+     * Devuelve una representación en cadena del estado del tanque, incluyendo su número, capacidad, 
+     * número de peces, tipo de pez permitido, y estadísticas de los peces.
      * 
      * @return una cadena que representa el estado del tanque.
      */

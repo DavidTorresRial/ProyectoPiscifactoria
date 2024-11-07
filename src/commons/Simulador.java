@@ -38,7 +38,7 @@ public class Simulador {
     private int dias = 1;
 
     /** Lista de piscifactorías en el sistema */
-    private ArrayList<Piscifactoria> piscifactorias = new ArrayList<>();
+    private List<Piscifactoria> piscifactorias = new ArrayList<>();
 
     /** Nombre de la entidad o partida en la simulación */
     private String nombreEntidad;
@@ -66,7 +66,7 @@ public class Simulador {
     });
 
     /** Sistema de monedas para manejar transacciones */
-    private SistemaMonedas monedas;
+    private SistemaMonedas monedas = SistemaMonedas.getInstancia();
 
     /** Almacén central de comida para abastecer las piscifactorías */
     private AlmacenCentral almacenCentral = new AlmacenCentral();
@@ -82,8 +82,6 @@ public class Simulador {
         nombreEntidad = inputHelper.readString("Ingrese el nombre de la entidad/empresa/partida: ");
         System.out.println();
         nombrePiscifactoria = inputHelper.readString("Ingrese el nombre de la primera Piscifactoria: ");
-
-        monedas = new SistemaMonedas(100);
 
         piscifactorias.add(new PiscifactoriaDeRio(nombrePiscifactoria, monedas));
         piscifactorias.get(0).setComidaAnimalActual(piscifactorias.get(0).getCapacidadTotal());
@@ -1265,7 +1263,6 @@ public class Simulador {
                     break;
                 case 99:
                     simulador.getMonedas().ganarMonedas(1000);
-                    System.out.println("\nSe han añadido 1000 monedas para pruebas.");
                     break;
                 case 14:
                     running = false; // Termina el bucle

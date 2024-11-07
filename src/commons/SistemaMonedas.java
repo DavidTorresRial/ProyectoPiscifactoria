@@ -6,21 +6,32 @@ public class SistemaMonedas {
     /** Cantidad de monedas disponibles en el sistema. */
     private int monedas;
 
+    /** Instancia única de SistemaMonedas (Singleton) */
+    private static SistemaMonedas instanciaUnica;
+
     /**
-     * Constructor que inicializa el saldo de monedas.
-     * 
-     * @param saldoInicial El saldo inicial de monedas. Debe ser un valor nonegativo.
-     * @throws IllegalArgumentException si el saldo inicial es negativo.
+     * Constructor privado que inicializa el saldo de monedas con 100.
+     * El saldo inicial siempre será 100, sin opción a modificarlo desde fuera.
      */
-    public SistemaMonedas(int saldoInicial) {
-        if (saldoInicial < 0) {
-            throw new IllegalArgumentException("\nEl saldo inicial no puede ser negativo.");
-        }
-        this.monedas = saldoInicial;
+    private SistemaMonedas() {
+        this.monedas = 100;  // Siempre empieza con 100 monedas
     }
 
     /**
-     * Devuelve la cantidad de monedas actual.
+     * Obtiene la instancia única del sistema de monedas (Singleton).
+     * Si la instancia aún no ha sido creada, la crea con 100 monedas.
+     * 
+     * @return La instancia única de SistemaMonedas.
+     */
+    public static SistemaMonedas getInstancia() {
+        if (instanciaUnica == null) {
+            instanciaUnica = new SistemaMonedas();
+        }
+        return instanciaUnica;
+    }
+
+    /**
+     * Obtiene la cantidad actual de monedas.
      * 
      * @return El número de monedas disponibles.
      */
