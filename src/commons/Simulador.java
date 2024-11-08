@@ -1,9 +1,11 @@
 package commons;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import helpers.InputHelper;
@@ -81,15 +83,13 @@ public class Simulador {
         nombrePiscifactoria = inputHelper.readString("Ingrese el nombre de la primera Piscifactoria: ");
 
         piscifactorias.add(new Piscifactoria(nombrePiscifactoria, true));
-        piscifactorias.add(new Piscifactoria("Piscifactoria 2", false));
-        piscifactorias.add(new Piscifactoria("Piscifactoria 3", true));
         piscifactorias.get(0).setComidaAnimalActual(piscifactorias.get(0).getCapacidadMaximaComidaPiscifactoria());
         piscifactorias.get(0).setComidaVegetalActual(piscifactorias.get(0).getCapacidadMaximaComidaPiscifactoria());
     }
 
     /** Método que muestra el texto del menú. */
     public void menu() {
-        menuHelper.mostrarMenuSinCancelar(new String[] {
+        menuHelper.mostrarMenu(new String[] {
                 "Estado general",
                 "Estado piscifactoría",
                 "Estado tanque",
@@ -121,7 +121,7 @@ public class Simulador {
             opciones[i] = piscifactoria.getNombre() + " [" + piscifactoria.getTotalVivos() + "/"
                     + piscifactoria.getTotalPeces() + "/" + piscifactoria.getCapacidadTotal() + "]";
         }
-        menuHelper.mostrarMenu(opciones);
+        menuHelper.mostrarMenuCancelar(opciones);
     }
 
     /**
@@ -129,30 +129,61 @@ public class Simulador {
      * 
      * @return La piscifactoría seleccionada.
      */
-    public int selectPisc() {
+    public Piscifactoria selectPisc() {
         menuPisc();
-        return (inputHelper.solicitarNumero(0, piscifactorias.size()) - 1);
-    }
+        int seleccion = inputHelper.solicitarNumero(0, piscifactorias.size()) - 1;
 
-    public int selectTank() {
-        int piscifactoriaIndex = selectPisc();
-        if (piscifactoriaIndex != -1) {
-            List<Tanque> tanques = piscifactorias.get(piscifactoriaIndex).getTanques();
-            System.out.println("\nSeleccione un Tanque:");
-
-            String[] opcionesTanques = new String[tanques.size()];
-            for (int i = 0; i < tanques.size(); i++) {
-                Tanque tanque = tanques.get(i);
-                String tipoPez = tanque.getTipoPezActual() != null ? tanque.getTipoPezActual().getSimpleName()
-                        : "Vacío";
-                opcionesTanques[i] = "Tanque " + (i + 1) + " [" + tipoPez + "]";
-            }
-            menuHelper.mostrarMenu(opcionesTanques);
-            return inputHelper.solicitarNumero(0, tanques.size());
-
+        if (seleccion >= 0 && seleccion < piscifactorias.size()) {
+            return piscifactorias.get(seleccion);
         } else {
             System.out.println("Operación cancelada.");
-            return -1;
+            return null;
+        }
+    }
+
+    /**
+     * Permite seleccionar un tanque y su piscifactoría.
+     * Retorna un Map.Entry con la piscifactoría y el tanque seleccionados, o null si se cancela.
+     */
+    public Map.Entry<Piscifactoria, Tanque> selectTank() { //TODO revisar
+        while (true) {
+            Piscifactoria piscifactoria = selectPisc();
+
+            if (piscifactoria == null) {
+                return null;
+            }
+
+            while (true) {
+                System.out.println("\nSeleccione un Tanque:");
+                List<Tanque> tanques = piscifactoria.getTanques();
+
+                if (tanques.isEmpty()) {
+                    System.out.println("No hay tanques disponibles en esta piscifactoría.");
+                    break;
+                }
+
+                String[] opcionesMenu = new String[tanques.size()];
+                for (int i = 0; i < tanques.size(); i++) {
+                    Tanque tanque = tanques.get(i);
+                    String tipoPez = tanque.getTipoPezActual() != null ? tanque.getTipoPezActual().getSimpleName()
+                            : "Vacío";
+                    opcionesMenu[i] = "Tanque " + (i + 1) + " [" + tipoPez + "]";
+                }
+                menuHelper.mostrarMenuCancelar(opcionesMenu);
+
+                int seleccion = inputHelper.readInt("Ingrese su selección: ");
+                System.out.println();
+
+                if (seleccion == 0) {
+                    break; // Usuario cancela y vuelve al menú de piscifactorías
+                }
+
+                if (seleccion < 1 || seleccion > tanques.size()) {
+                    System.out.println("Selección no válida. Inténtalo de nuevo.");
+                    continue;
+                }
+                return new AbstractMap.SimpleEntry<>(piscifactoria, tanques.get(seleccion - 1));
+            }
         }
     }
 
@@ -173,8 +204,8 @@ public class Simulador {
         while (running) {
 
             // TODO
-            //simulador.menuPisc();
-            //System.out.println(simulador.selectPisc());
+            // simulador.menuPisc();
+            // System.out.println(simulador.selectPisc());
             System.out.println(simulador.selectTank());
             // TODO
 

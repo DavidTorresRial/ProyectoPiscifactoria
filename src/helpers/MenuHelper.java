@@ -1,5 +1,6 @@
 package helpers;
 
+/** MenuHelper facilita creación de menús en el sistema. */
 public class MenuHelper {
 
     /** Constructor de MenuHelper */
@@ -7,28 +8,24 @@ public class MenuHelper {
     }
 
     /**
-     * Muestra un menú y lee la opción seleccionada por el usuario.
+     * Muestra un menú dadas unas opciones + opción 0.Cancelar.
      *
      * @param opciones Array de opciones disponibles (sin incluir la opción de cancelar).
-     * @return La opción seleccionada por el usuario (0 para cancelar).
      */
-    public int mostrarMenu(String[] opciones) {
+    public void mostrarMenuCancelar(String[] opciones) {
         for (int i = 0; i < opciones.length; i++) {
             System.out.println((i + 1) + ". " + opciones[i]);
         }
         System.out.println("0. Cancelar");
-    
-        return opciones.length;
     }
     
 
     /**
-     * Muestra un menú y lee la opción seleccionada por el usuario, sin incluir la opción 0 de cancelar.
+     * Muestra un menú dadas unas opciones.
      *
      * @param opciones Array de opciones disponibles (sin incluir la opción de cancelar).
-     * @return La opción seleccionada por el usuario.
      */
-    public void mostrarMenuSinCancelar(String[] opciones) {
+    public void mostrarMenu(String[] opciones) {
         for (int i = 0; i < opciones.length; i++) {
             System.out.println((i + 1) + ". " + opciones[i]);
         }
