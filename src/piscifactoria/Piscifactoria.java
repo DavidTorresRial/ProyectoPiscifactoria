@@ -1,4 +1,4 @@
-package piscifactorias;
+package piscifactoria;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,7 +72,10 @@ public class Piscifactoria {
         }
     }
 
-    /** Agrega un tanque según el tipo (río o mar), verifica monedas y el límite de tanques. */
+    /**
+     * Agrega un tanque según el tipo (río o mar), verifica monedas y el límite de
+     * tanques.
+     */
     public void addTanque() {
         if (tanques.size() < numeroMaximoTanquesPiscifactoria) {
             if (esDeRio) {
@@ -81,9 +84,11 @@ public class Piscifactoria {
                     tanques.add(new Tanque(tanques.size() + 1, 25));
                     numeroTanquesDeRio++;
                     monedas.gastarMonedas(costoTanque);
-                    System.out.println("\nTanque de río agregado exitosamente. " + costoTanque + " monedas han sido descontadas.");
+                    System.out.println(
+                            "\nTanque de río agregado exitosamente. " + costoTanque + " monedas han sido descontadas.");
                 } else {
-                    System.out.println("\nNo tienes suficientes monedas para agregar un tanque de río. Necesitas " + costoTanque + " monedas.");
+                    System.out.println("\nNo tienes suficientes monedas para agregar un tanque de río. Necesitas "
+                            + costoTanque + " monedas.");
                 }
             } else {
                 int costoTanque = 600 * (tanques.size() + 1);
@@ -91,9 +96,11 @@ public class Piscifactoria {
                     tanques.add(new Tanque(tanques.size() + 1, 100));
                     numeroTanquesDeMar++;
                     monedas.gastarMonedas(costoTanque);
-                    System.out.println("\nTanque de mar agregado exitosamente. " + costoTanque + " monedas han sido descontadas.");
+                    System.out.println(
+                            "\nTanque de mar agregado exitosamente. " + costoTanque + " monedas han sido descontadas.");
                 } else {
-                    System.out.println("\nNo tienes suficientes monedas para agregar un tanque de mar. Necesitas " + costoTanque + " monedas.");
+                    System.out.println("\nNo tienes suficientes monedas para agregar un tanque de mar. Necesitas "
+                            + costoTanque + " monedas.");
                 }
             }
         } else {
@@ -318,15 +325,42 @@ public class Piscifactoria {
     }
 
     /**
-     * Mejora el almacén de comida aumentando su capacidad máxima.
+     * Mejora el almacén de comida aumentando su capacidad máxima según el tipo de
+     * piscifactoría.
      *
-     * @param incremento El incremento de capacidad.
+     * @return true si la mejora fue exitosa, false si no se pudo realizar.
      */
-    public void upgradeFood(int incremento) {
-        capacidadMaximaComidaPiscifactoria += incremento;
-        System.out
-                .println("Almacén de comida de la piscifactoría " + nombre + " mejorado. Su capacidad ha aumentado en "
-                        + incremento + " hasta un total de " + capacidadMaximaComidaPiscifactoria);
+    public boolean upgradeFood() {
+        int costoMejora, incrementoCapacidad, capacidadMaximaPermitida;
+
+        if (esDeRio) {
+            costoMejora = 50;
+            incrementoCapacidad = 25;
+            capacidadMaximaPermitida = 250;
+        } else {
+            costoMejora = 200;
+            incrementoCapacidad = 100;
+            capacidadMaximaPermitida = 1000;
+        }
+
+        if (capacidadMaximaComidaPiscifactoria + incrementoCapacidad <= capacidadMaximaPermitida) {
+            if (monedas.gastarMonedas(costoMejora)) {
+                capacidadMaximaComidaPiscifactoria += incrementoCapacidad;
+                System.out.println("Almacén de comida de la piscifactoría " + nombre
+                        + " mejorado. Su capacidad ha aumentado en " + incrementoCapacidad + " hasta un total de "
+                        + capacidadMaximaComidaPiscifactoria + ".");
+                return true;
+            } else {
+                System.out
+                        .println("No tienes suficientes monedas para mejorar el almacén de comida de la piscifactoría "
+                                + nombre + ".");
+            }
+        } else {
+            System.out.println(
+                    "La capacidad máxima del almacén ya ha sido alcanzada para la piscifactoría " + nombre + ".");
+        }
+
+        return false;
     }
 
     public boolean isEsDeRio() {
