@@ -15,9 +15,7 @@ public class InputHelper {
         }
     }
 
-    /**
-     * Devuelve la instancia única de InputHelper (Singleton).
-     */
+    /** Devuelve la instancia única de InputHelper (Singleton). */
     public static InputHelper getInstance() {
         if (scanner == null) {
             new InputHelper();
@@ -96,10 +94,10 @@ public class InputHelper {
     public int solicitarNumero(int min, int max) {
         boolean entradaValida = false;
         int numero = 0;
-    
+
         while (!entradaValida) {
             numero = readInt("Ingresa un número: ");
-    
+
             if (numero >= min && numero <= max) {
                 entradaValida = true;
             } else {
@@ -108,7 +106,6 @@ public class InputHelper {
         }
         return numero;
     }
-    
 
     /** Cierra el Scanner y libera los recursos */
     public void close() {
