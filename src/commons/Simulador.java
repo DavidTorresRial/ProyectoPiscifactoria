@@ -62,10 +62,10 @@ public class Simulador {
     });
 
     /** Sistema de monedas para manejar transacciones. */
-    private SistemaMonedas monedas = SistemaMonedas.getInstancia();
+    public static SistemaMonedas monedas = SistemaMonedas.getInstancia();
 
     /** Almacén central de comida para abastecer las piscifactorías. */
-    private AlmacenCentral almacenCentral = new AlmacenCentral();
+    public static AlmacenCentral almacenCentral;
 
     /** Utilidad para manejar la entrada de datos del usuario. */
     private InputHelper inputHelper = InputHelper.getInstance();
@@ -181,7 +181,7 @@ public class Simulador {
         }
         System.out.println("\n==================================================");
 
-        if (almacenCentral.isConstruido()) { // TODO mirar la implementacion del Almacén Central
+        if (almacenCentral != null) { // TODO mirar la implementacion del Almacén Central
             almacenCentral.mostrarEstado();
         } else {
             System.out.println("No hay Almacén Central disponible.");
@@ -590,13 +590,12 @@ public class Simulador {
                             }
                         } else if (edificioAComprar == 2) {
                             // Comprar almacén central
-                            if (almacenCentral != null && !almacenCentral.isConstruido()) {
+                            if (almacenCentral == null) {
                                 if (getMonedas().gastarMonedas(2000)) {
-                                    almacenCentral.construir();
+                                    almacenCentral = new AlmacenCentral();
                                     System.out.println("\nAlmacén central construido.");
                                 } else {
-                                    System.out.println(
-                                            "\nNo tienes suficientes monedas para construir el almacén central.");
+                                    System.out.println("\nNo tienes suficientes monedas para construir el almacén central.");
                                 }
                             } else {
                                 System.out.println("\nEl almacén central ya está construido.");
@@ -664,26 +663,17 @@ public class Simulador {
                             }
                         } else if (edificioAMejorar == 2) {
                             // Mejorar almacén central
-                            if (almacenCentral != null && !almacenCentral.isConstruido()) {
+                            if (almacenCentral == null) {
                                 System.out.println("\nEl almacén central no está construido. No se puede mejorar.");
                             } else {
                                 while (true) {
-                                    // Crear opciones para el menú de mejoras del almacén central
                                     String[] opcionesMejorasAlmacenCentral = { "Aumentar capacidad" };
                                     System.out.println();
                                     menuHelper.mostrarMenuCancelar(opcionesMejorasAlmacenCentral); // Mostrar menú de mejoras
                                     int mejoraAlmacenCentral = inputHelper.readInt("Seleccione la mejora: ");
 
                                     if (mejoraAlmacenCentral == 1) {
-                                        int costoMejora = 200; // Costo de mejora
-                                        if (getMonedas().gastarMonedas(costoMejora)) {
-                                            almacenCentral.aumentarCapacidad(50);
-                                            System.out.println("\nCapacidad del almacén central aumentada.");
-                                            break;
-                                        } else {
-                                            System.out.println(
-                                                    "\nNo tienes suficientes monedas para aumentar la capacidad del almacén central.");
-                                        }
+                                        almacenCentral.aumentarCapacidad();
                                     } else if (mejoraAlmacenCentral == 0) {
                                         System.out.println("\nOperación cancelada.");
                                         break;
