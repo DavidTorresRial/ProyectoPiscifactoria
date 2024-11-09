@@ -2,7 +2,7 @@ package helpers;
 
 import java.util.Scanner;
 
-/** InputHelper facilita la lectura validada de cadenas y enteros */
+/** InputHelper facilita la lectura validada de cadenas y enteros. */
 public class InputHelper {
 
     /** Objeto Scanner utilizado para la lectura de entradas del usuario. */
@@ -107,7 +107,7 @@ public class InputHelper {
         return numero;
     }
 
-    /** Cierra el Scanner y libera los recursos */
+    /** Cierra el Scanner y libera los recursos. */
     public void close() {
         if (scanner != null) {
             scanner.close();

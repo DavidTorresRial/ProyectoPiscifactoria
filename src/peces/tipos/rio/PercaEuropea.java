@@ -4,7 +4,7 @@ import peces.Pez;
 import peces.propiedades.Activo;
 import propiedades.AlmacenPropiedades;
 
-/** Pez de río Perca Europea */
+/** Pez de río Perca Europea. */
 public class PercaEuropea extends Pez implements Activo {
 
     /**
