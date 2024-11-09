@@ -4,7 +4,7 @@ import peces.Pez;
 import peces.propiedades.Carnivoro;
 import propiedades.AlmacenPropiedades;
 
-/** Pez de mar Lenguado Europeo */
+/** Pez de mar Lenguado Europeo. */
 public class LenguadoEuropeo extends Pez implements Carnivoro {
 
     /**

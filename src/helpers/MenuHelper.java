@@ -3,7 +3,7 @@ package helpers;
 /** MenuHelper facilita creación de menús en el sistema. */
 public class MenuHelper {
 
-    /** Constructor de MenuHelper */
+    /** Constructor de MenuHelper. */
     public MenuHelper() {
     }
 

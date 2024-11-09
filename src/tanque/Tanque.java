@@ -120,8 +120,8 @@ public class Tanque {
     /**
      * Agrega un pez al tanque.
      *
-     * @param pez pez a añadir
-     * @return true si el pez se añadió correctamente, false en caso contrario
+     * @param pez pez a añadir.
+     * @return true si el pez se añadió correctamente, false en caso contrario.
      */
     public boolean addPez(Pez pez) {
         if (peces.size() >= capacidadMaxima) {
@@ -144,7 +144,7 @@ public class Tanque {
     /**
      * Devuelve la lista de peces en el tanque.
      * 
-     * @return lista de peces en el tanque
+     * @return lista de peces en el tanque.
      */
     public List<Pez> getPeces() {
         return peces;
@@ -153,7 +153,7 @@ public class Tanque {
     /**
      * Devuelve el tipo de pez actual.
      * 
-     * @return la clase del tipo de pez actual
+     * @return la clase del tipo de pez actual.
      */
     public Class<?> getTipoPezActual() {
         return tipoPezActual;
@@ -162,7 +162,7 @@ public class Tanque {
     /**
      * Devuelve el número del tanque.
      *
-     * @return número del tanque
+     * @return número del tanque.
      */
     public int getNumeroTanque() {
         return numeroTanque;
@@ -171,7 +171,7 @@ public class Tanque {
     /**
      * Devuelve la capacidad del tanque.
      * 
-     * @return capacidad máxima del tanque
+     * @return capacidad máxima del tanque.
      */
     public int getCapacidad() {
         return capacidadMaxima;
@@ -180,7 +180,7 @@ public class Tanque {
     /**
      * Devuelve el número de peces del tanque.
      * 
-     * @return número de peces en el tanque
+     * @return número de peces en el tanque.
      */
     public int getNumPeces() {
         return peces.size();
@@ -189,7 +189,7 @@ public class Tanque {
     /**
      * Cuenta y devuelve el número de machos en el tanque.
      *
-     * @return número de machos en el tanque
+     * @return número de machos en el tanque.
      */
     public int getMachos() {
         int machos = 0;
@@ -204,7 +204,7 @@ public class Tanque {
     /**
      * Cuenta y devuelve el número de hembras en el tanque.
      * 
-     * @return número de hembras en el tanque
+     * @return número de hembras en el tanque.
      */
     public int getHembras() {
         int hembras = 0;
@@ -219,7 +219,7 @@ public class Tanque {
     /**
      * Cuenta y devuelve el número de peces fértiles en el tanque.
      *
-     * @return número de peces fértiles en el tanque
+     * @return número de peces fértiles en el tanque.
      */
     public int getFertiles() {
         int fertiles = 0;
@@ -234,7 +234,7 @@ public class Tanque {
     /**
      * Cuenta y devuelve el número de peces vivos en el tanque.
      *
-     * @return número de peces vivos en el tanque
+     * @return número de peces vivos en el tanque.
      */
     public int getVivos() {
         int pecesVivos = 0;
@@ -249,7 +249,7 @@ public class Tanque {
     /**
      * Cuenta y devuelve el número de peces alimentados en el tanque.
      *
-     * @return número de peces alimentados en el tanque
+     * @return número de peces alimentados en el tanque.
      */
     public int getAlimentados() {
         int pecesAlimentados = 0;
@@ -264,7 +264,7 @@ public class Tanque {
     /**
      * Cuenta y devuelve el número de peces adultos en el tanque.
      *
-     * @return número de peces adultos en el tanque
+     * @return número de peces adultos en el tanque.
      */
     public int getAdultos() {
         int pecesAdultos = 0;
@@ -284,7 +284,7 @@ public class Tanque {
      */
     @Override
     public String toString() {
-        return "Tanque " + numeroTanque + ":\n" +
+        return "\nTanque " + numeroTanque + ":\n" +
                 "Capacidad: " + capacidadMaxima + "\n" +
                 "Peces en el tanque: " + peces.size() + "\n" +
                 "Tipo de pez permitido: " + (tipoPezActual != null ? tipoPezActual.getSimpleName() : "Ninguno") + "\n" +

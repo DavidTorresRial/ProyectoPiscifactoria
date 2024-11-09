@@ -4,7 +4,7 @@ import peces.Pez;
 import peces.propiedades.Carnivoro;
 import propiedades.AlmacenPropiedades;
 
-/** Pez doble Salmon Atlántico */
+/** Pez doble Salmon Atlántico. */
 public class SalmonAtlantico extends Pez implements Carnivoro {
 
     /**

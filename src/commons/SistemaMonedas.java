@@ -6,7 +6,7 @@ public class SistemaMonedas {
     /** Cantidad de monedas disponibles en el sistema. */
     private int monedas;
 
-    /** Instancia única de SistemaMonedas (Singleton) */
+    /** Instancia única de SistemaMonedas. */
     private static SistemaMonedas instanciaUnica;
 
     /**

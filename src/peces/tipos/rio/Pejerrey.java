@@ -4,7 +4,7 @@ import peces.Pez;
 import peces.propiedades.Carnivoro;
 import propiedades.AlmacenPropiedades;
 
-/** Pez de río Pejerrey */
+/** Pez de río Pejerrey. */
 public class Pejerrey extends Pez implements Carnivoro {
 
     /**
