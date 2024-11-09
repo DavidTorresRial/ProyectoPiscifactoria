@@ -1,6 +1,11 @@
 package tanque;
 
 import java.util.List;
+
+import commons.Simulador;
+import commons.SistemaMonedas;
+import estadisticas.Estadisticas;
+
 import java.util.ArrayList;
 
 import peces.Pez;
@@ -19,6 +24,8 @@ public class Tanque {
 
     /** Capacidad máxima del tanque. */
     private int capacidadMaxima;
+
+    SistemaMonedas monedas = SistemaMonedas.getInstancia();
 
     /**
      * Crea un tanque con el número y capacidad especificados.
@@ -97,8 +104,10 @@ public class Tanque {
 
                             if (nuevoSexo) {
                                 nuevosMachos++;
+                                Simulador.estadisticas.registrarNacimiento(pez.getDatos().getNombre());
                             } else {
                                 nuevasHembras++;
+                                Simulador.estadisticas.registrarNacimiento(pez.getDatos().getNombre());
                             }
                         } else {
                             System.out.println("No hay espacio para añadir más peces. Capacidad máxima alcanzada.");
@@ -123,22 +132,19 @@ public class Tanque {
      * @param pez pez a añadir.
      * @return true si el pez se añadió correctamente, false en caso contrario.
      */
-    public boolean addPez(Pez pez) {
+    public boolean addFish(Pez pez) {
         if (peces.size() >= capacidadMaxima) {
             System.out.println("El tanque está lleno. Capacidad máxima alcanzada.");
             return false;
         }
-
-        if (tipoPezActual == null) {
-            tipoPezActual = pez.getClass();
-
-        } else if (!tipoPezActual.equals(pez.getClass())) {
-            System.out.printf("Este tanque solo acepta peces del tipo: %s, pero se intentó añadir: %s\n", tipoPezActual.getSimpleName(), pez.getClass().getSimpleName());
-            return false;
+        if (monedas.gastarMonedas(pez.getDatos().getCoste())) {
+            if (tipoPezActual == null) {
+                tipoPezActual = pez.getClass();
+            }
+            peces.add(pez);
+            return true;
         }
-
-        peces.add(pez);
-        return true;
+        return false;
     }
 
     /**

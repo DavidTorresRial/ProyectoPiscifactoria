@@ -46,7 +46,7 @@ public class Simulador {
     private String nombrePiscifactoria;
 
     /** Sistema de estadísticas para registrar la cría, venta y ganancias de los peces. */
-    private Estadisticas estadisticas = new Estadisticas(new String[] {
+    public static Estadisticas estadisticas = new Estadisticas(new String[] {
             AlmacenPropiedades.SALMON_ATLANTICO.getNombre(),
             AlmacenPropiedades.TRUCHA_ARCOIRIS.getNombre(),
             AlmacenPropiedades.ARENQUE_ATLANTICO.getNombre(),
@@ -165,7 +165,6 @@ public class Simulador {
                 System.out.println("\nOperación cancelada.");
                 return selectTank();
             }
-
         } else {
             return new AbstractMap.SimpleEntry<>(null, null);
         }
@@ -212,13 +211,12 @@ public class Simulador {
                 System.out.println("\nEste tanque no contiene peces actualmente.");
                 return;
             } else {
-                System.out.println("\nEstado de los peces en el tanque " + (tanqueSeleccionado.getNumeroTanque() + 1) + ":");
+                System.out.println("\nEstado de los peces en el Tanque " + tanqueSeleccionado.getNumeroTanque() + ":");
 
                 for (Pez pez : tanqueSeleccionado.getPeces()) {
                     pez.showStatus();
                 }
             }
-
         }
     }
 
@@ -320,6 +318,16 @@ public class Simulador {
 
     /** Simula un día en todas las piscifactorías. */
     public void nextDay() { // TODO implementar
+        // int totalPecesVendidos = 0, totalMonedasGanadas = 0;
+
+        dias++;
+
+        for (Piscifactoria piscifactoria : piscifactorias) {
+            piscifactoria.nextDay();
+        }
+        // showGeneralStatus();
+        // System.out.println(totalPecesVendidos + " peces vendidos por un total de " +
+        // totalMonedasGanadas + " monedas.");
     }
 
     /** Añade comida al almacén central o a una piscifactoría seleccionada. */
@@ -328,105 +336,160 @@ public class Simulador {
 
     /** Añade un pez al tanque seleccionado. */
     public void addFish() {
-        var selectedTankPair = selectTank();
-        Tanque tanqueSeleccionado = selectedTankPair.getValue();
+        var selectTank = selectTank();
+        Tanque tanqueSeleccionado = selectTank.getValue();
 
         if (tanqueSeleccionado != null) {
-            boolean esDeRio = selectedTankPair.getKey().esDeRio();
-            Class<?> tipoPezActual = tanqueSeleccionado.getTipoPezActual();
+            int opcion;
+            do {
+                boolean esDeRio = selectTank.getKey().esDeRio();
+                Class<?> tipoPezActual = tanqueSeleccionado.getTipoPezActual();
 
-            String[] opcionesPeces = null;
-            if (tipoPezActual == null) {
-                if (esDeRio) {
-                    opcionesPeces = new String[] {
-                            "Salmón del Atlántico",
-                            "Trucha Arcoíris",
-                            "Carpa Plateada",
-                            "Pejerrey",
-                            "Perca Europea",
-                            "Salmón Chinook",
-                            "Tilapia del Nilo"
-                    };
+                String[] opcionesPeces;
+                if (tipoPezActual == null) {
+                    if (esDeRio) {
+                        opcionesPeces = new String[] {
+                                "Salmón del Atlántico",
+                                "Trucha Arcoíris",
+                                "Carpa Plateada",
+                                "Pejerrey",
+                                "Perca Europea",
+                                "Salmón Chinook",
+                                "Tilapia del Nilo"
+                        };
+                    } else {
+                        opcionesPeces = new String[] {
+                                "Salmon del Atlántico",
+                                "Trucha Arcoíris",
+                                "Arenque del Atlántico",
+                                "Besugo",
+                                "Lenguado Europeo",
+                                "Lubina Rayada",
+                                "Robalo"
+                        };
+                    }
                 } else {
-                    opcionesPeces = new String[] {
-                            "Salmon del Atlántico",
-                            "Trucha Arcoíris",
-                            "Arenque del Atlántico",
-                            "Besugo",
-                            "Lenguado Europeo",
-                            "Lubina Rayada",
-                            "Robalo"
-                    };
+                    opcionesPeces = new String[] { tipoPezActual.getSimpleName() };
                 }
-            } else {
-                opcionesPeces = new String[] { tipoPezActual.getSimpleName() };
-            }
-            menuHelper.mostrarMenuCancelar(opcionesPeces);
 
-            int opcion = inputHelper.solicitarNumero(0, opcionesPeces.length);
+                System.out.println();
+                menuHelper.mostrarMenuCancelar(opcionesPeces);
 
-            boolean sexo = tanqueSeleccionado.getHembras() <= tanqueSeleccionado.getMachos() ? false : true;
+                opcion = inputHelper.solicitarNumero(0, opcionesPeces.length);
 
-            Pez pezSeleccionado = null;
+                boolean sexo = tanqueSeleccionado.getHembras() <= tanqueSeleccionado.getMachos() ? false : true;
 
-            if (tipoPezActual == null) {
-                switch (opcion) {
-                    case 1:
-                        pezSeleccionado = new SalmonAtlantico(sexo);
-                        break;
-                    case 2:
-                        pezSeleccionado = new TruchaArcoiris(sexo);
-                        break;
-                    case 3:
-                        pezSeleccionado = esDeRio ? new CarpaPlateada(sexo) : new ArenqueDelAtlantico(sexo);
-                        break;
-                    case 4:
-                        pezSeleccionado = esDeRio ? new Pejerrey(sexo) : new Besugo(sexo);
-                        break;
-                    case 5:
-                        pezSeleccionado = esDeRio ? new PercaEuropea(sexo) : new LenguadoEuropeo(sexo);
-                        break;
-                    case 6:
-                        pezSeleccionado = esDeRio ? new SalmonChinook(sexo) : new LubinaRayada(sexo);
-                        break;
-                    case 7:
-                        pezSeleccionado = esDeRio ? new TilapiaDelNilo(sexo) : new Robalo(sexo);
-                        break;
-                    case 0:
-                        System.out.println("\nOperación cancelada.");
-                        return;
-                    default:
-                        System.out.println("\nSelección inválida. Por favor, intente de nuevo.");
-                        return;
+                Pez pezSeleccionado = null;
+
+                if (tipoPezActual == null) {
+                    switch (opcion) {
+                        case 1:
+                            pezSeleccionado = new SalmonAtlantico(sexo);
+                            break;
+                        case 2:
+                            pezSeleccionado = new TruchaArcoiris(sexo);
+                            break;
+                        case 3:
+                            pezSeleccionado = esDeRio ? new CarpaPlateada(sexo) : new ArenqueDelAtlantico(sexo);
+                            break;
+                        case 4:
+                            pezSeleccionado = esDeRio ? new Pejerrey(sexo) : new Besugo(sexo);
+                            break;
+                        case 5:
+                            pezSeleccionado = esDeRio ? new PercaEuropea(sexo) : new LenguadoEuropeo(sexo);
+                            break;
+                        case 6:
+                            pezSeleccionado = esDeRio ? new SalmonChinook(sexo) : new LubinaRayada(sexo);
+                            break;
+                        case 7:
+                            pezSeleccionado = esDeRio ? new TilapiaDelNilo(sexo) : new Robalo(sexo);
+                            break;
+                        case 0:
+                            System.out.println("\nOperación cancelada.");
+                            break;
+                        default:
+                            System.out.println("\nSelección inválida. Por favor, intente de nuevo.");
+                            continue;
+                    }
+                } else {
+                    switch (opcion) {
+                        case 1:
+                            try {
+                                pezSeleccionado = (Pez) tipoPezActual.getDeclaredConstructor(boolean.class)
+                                        .newInstance(sexo);
+                            } catch (Exception e) {
+                                System.out.println("\nError al crear el pez: " + e.getMessage());
+                                continue;
+                            }
+                            break;
+                        case 0:
+                            System.out.println("\nOperación cancelada.");
+                            break;
+                        default:
+                            System.out.println("\nSelección inválida. Por favor, intente de nuevo.");
+                            continue;
+                    }
                 }
-            } else {
-                switch (opcion) {
-                    case 1:
-                        try {
-                            pezSeleccionado = (Pez) tipoPezActual.getDeclaredConstructor(boolean.class).newInstance(sexo);
-                        } catch (Exception e) {
-                            System.out.println("\nError al crear el pez: " + e.getMessage());
-                            return;
-                        }
-                        break;
-                    case 0:
-                        System.out.println("\nOperación cancelada.");
-                        return;
-                    default:
-                        System.out.println("\nSelección inválida. Por favor, intente de nuevo.");
-                        return;
-                }
-            }
-            if (monedas.gastarMonedas(pezSeleccionado.getDatos().getCoste())) {
-                if (tanqueSeleccionado.addPez(pezSeleccionado)) {
+                if (opcion != 0 && tanqueSeleccionado.addFish(pezSeleccionado)) {
                     estadisticas.registrarNacimiento(pezSeleccionado.getNombre());
-                    System.out.println(pezSeleccionado.getNombre() + "añadido exitosamente al tanque.");
-                } else {
-                    System.out.println("No se pudo añadir el pez al tanque. Tanque lleno o tipo de pez no permitido.");
+                    System.out.println(pezSeleccionado.getNombre() + " añadido exitosamente al tanque.");
+                }
+            } while (opcion != 0);
+        }
+    }
+
+    /** Vende todos los peces adultos del tanque seleccionado, ganando monedas y registrando la venta. */
+    public void sell() {
+        Tanque tanqueSeleccionado = selectTank().getValue();
+        if (tanqueSeleccionado != null) {
+            int pecesVendidos = 0;
+            int totalDinero = 0;
+
+            Iterator<Pez> iterator = tanqueSeleccionado.getPeces().iterator();
+
+            while (iterator.hasNext()) {
+                Pez pez = iterator.next();
+
+                if (pez.getEdad() >= pez.getDatos().getMadurez() && pez.isVivo()) {
+                    monedas.ganarMonedas(pez.getDatos().getMonedas());
+                    estadisticas.registrarVenta(pez.getNombre(), pez.getDatos().getMonedas());
+
+                    totalDinero += pez.getDatos().getMonedas();
+                    pecesVendidos++;
+
+                    iterator.remove();
                 }
             }
-        } else {
-            return;
+            if (pecesVendidos > 0) {
+                System.out.println(pecesVendidos + " peces vendidos por " + totalDinero + " monedas.");
+            } else {
+                System.out.println("\nNo hay peces adultos para vender.");
+            }
+        }
+    }
+
+    /** Elimina todos los peces muertos del tanque seleccionado. */
+    public void cleanTank() {
+        Tanque tanque = selectTank().getValue();
+        if (tanque != null) {
+            List<Pez> peces = tanque.getPeces();
+
+            for (int i = peces.size() - 1; i >= 0; i--) {
+                Pez pez = peces.get(i);
+                if (!pez.isVivo()) {
+                    peces.remove(i);
+                }
+            }
+            System.out.println("\nTodos los peces muertos han sido eliminados del tanque.");
+        }
+    }
+
+    /** Vacía el tanque seleccionado eliminando todos los peces. */
+    public void emptyTank() {
+        Tanque tanque = selectTank().getValue();
+        if (tanque != null) {
+            tanque.getPeces().clear();
+            System.out.println("\nEl tanque ha sido vaciado.");
         }
     }
 
@@ -467,7 +530,7 @@ public class Simulador {
                     simulador.showIctio();
                     break;
                 case 6:
-                    // simulador.nextDay();
+                    simulador.nextDay();
                     break;
                 case 7:
                     // simulador.addFood();
@@ -476,13 +539,13 @@ public class Simulador {
                     simulador.addFish();
                     break;
                 case 9:
-                    // simulador.sell();
+                    simulador.sell();
                     break;
                 case 10:
-                    // simulador.cleanTank();
+                    simulador.cleanTank();
                     break;
                 case 11:
-                    // simulador.emptyTank();
+                    simulador.emptyTank();
                     break;
                 case 12:
                     // simulador.upgrade();
