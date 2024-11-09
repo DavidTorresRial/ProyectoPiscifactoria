@@ -4,7 +4,6 @@ import java.util.List;
 
 import commons.Simulador;
 import commons.SistemaMonedas;
-import estadisticas.Estadisticas;
 
 import java.util.ArrayList;
 

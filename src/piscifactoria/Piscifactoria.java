@@ -36,7 +36,7 @@ public class Piscifactoria {
     /** Cantidad actual de comida animal. */
     private int comidaAnimalActual;
 
-    private int numeroMaximoTanquesPiscifactoria = 10;
+    private final int numeroMaximoTanquesPiscifactoria = 10;
 
     /** Número de tanques de río. */
     private int numeroTanquesDeRio = 0;
@@ -79,11 +79,9 @@ public class Piscifactoria {
                     tanques.add(new Tanque(tanques.size() + 1, 25));
                     numeroTanquesDeRio++;
                     monedas.gastarMonedas(costoTanque);
-                    System.out.println(
-                            "\nTanque de río agregado exitosamente. " + costoTanque + " monedas han sido descontadas.");
+                    System.out.println("\nTanque de río agregado exitosamente. " + costoTanque + " monedas han sido descontadas.");
                 } else {
-                    System.out.println("\nNo tienes suficientes monedas para agregar un tanque de río. Necesitas "
-                            + costoTanque + " monedas.");
+                    System.out.println("\nNo tienes suficientes monedas para agregar un tanque de río. Necesitas " + costoTanque + " monedas.");
                 }
             } else {
                 int costoTanque = 600 * (tanques.size() + 1);
@@ -91,11 +89,9 @@ public class Piscifactoria {
                     tanques.add(new Tanque(tanques.size() + 1, 100));
                     numeroTanquesDeMar++;
                     monedas.gastarMonedas(costoTanque);
-                    System.out.println(
-                            "\nTanque de mar agregado exitosamente. " + costoTanque + " monedas han sido descontadas.");
+                    System.out.println("\nTanque de mar agregado exitosamente. " + costoTanque + " monedas han sido descontadas.");
                 } else {
-                    System.out.println("\nNo tienes suficientes monedas para agregar un tanque de mar. Necesitas "
-                            + costoTanque + " monedas.");
+                    System.out.println("\nNo tienes suficientes monedas para agregar un tanque de mar. Necesitas " + costoTanque + " monedas.");
                 }
             }
         } else {
@@ -113,7 +109,7 @@ public class Piscifactoria {
     }
 
     /** Muestra toda la información de la piscifactoría. */
-    public void showStatus() {
+    public void showStatus() { // TODO David
         System.out.println("\n=============== " + nombre + " ===============");
         System.out.println("Tanques: " + tanques.size());
 
@@ -185,7 +181,7 @@ public class Piscifactoria {
         for (Tanque tanque : tanques) {
             alimentarPeces(tanque);
             tanque.nextDay();
-            //sellFish();
+            //sellFish(); // TODO revisar 
         }
     }
 
@@ -320,20 +316,22 @@ public class Piscifactoria {
         return false;
     }
 
+    /**
+     * Verifica si la piscifactoría es de río.
+     *
+     * @return true si la piscifactoría es de río, false en caso contrario.
+     */
     public boolean esDeRio() {
         return esDeRio;
     }
 
-    public void setEsDeRio(boolean esDeRio) {
-        this.esDeRio = esDeRio;
-    }
-
+    /**
+     * Obtiene el número máximo de tanques que puede tener la piscifactoría.
+     *
+     * @return El número máximo de tanques permitidos en la piscifactoría.
+     */
     public int getNumeroMaximoTanquesPiscifactoria() {
         return numeroMaximoTanquesPiscifactoria;
-    }
-
-    public void setNumeroMaximoTanquesPiscifactoria(int numeroMaximoTanquesPiscifactoria) {
-        this.numeroMaximoTanquesPiscifactoria = numeroMaximoTanquesPiscifactoria;
     }
 
     /**
@@ -434,7 +432,6 @@ public class Piscifactoria {
      */
     public int getCapacidadTotal() {
         int capacidadTotal = 0;
-        // Calcula la capacidad total sumando las capacidades de todos los tanques
         for (Tanque tanque : tanques) {
             capacidadTotal += tanque.getCapacidad();
         }
@@ -463,33 +460,6 @@ public class Piscifactoria {
      */
     public int setCapacidadMaximaComidaPiscifactoria(int num) {
         return capacidadMaximaComidaPiscifactoria += num;
-    }
-
-    /**
-     * Establece el nombre de la piscifactoría.
-     *
-     * @param nombre El nuevo nombre de la piscifactoría.
-     */
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    /**
-     * Establece el número de tanques de río en la piscifactoría.
-     *
-     * @param numeroTanquesDeRio El nuevo número de tanques de río.
-     */
-    public void setNumeroTanquesDeRio(int numeroTanquesDeRio) {
-        this.numeroTanquesDeRio = numeroTanquesDeRio;
-    }
-
-    /**
-     * Establece el número de tanques de mar en la piscifactoría.
-     *
-     * @param numeroTanquesDeMar El nuevo número de tanques de mar.
-     */
-    public void setNumeroTanquesDeMar(int numeroTanquesDeMar) {
-        this.numeroTanquesDeMar = numeroTanquesDeMar;
     }
 
     /**
@@ -529,21 +499,21 @@ public class Piscifactoria {
     }
 
     /**
-     * Establece la cantidad actual de comida animal en la piscifactoría.
-     *
-     * @param comidaAnimalActual La nueva cantidad de comida animal.
-     */
-    public void setComidaAnimalActual(int comidaAnimalActual) {
-        this.comidaAnimalActual = comidaAnimalActual;
-    }
-
-    /**
      * Devuelve la cantidad actual de comida animal en la piscifactoría.
      *
      * @return La cantidad actual de comida animal.
      */
     public int getComidaAnimalActual() {
         return comidaAnimalActual;
+    }
+
+    /**
+     * Establece la cantidad actual de comida animal en la piscifactoría.
+     *
+     * @param comidaAnimalActual La nueva cantidad de comida animal.
+     */
+    public void setComidaAnimalActual(int comidaAnimalActual) {
+        this.comidaAnimalActual = comidaAnimalActual;
     }
 
     /**
