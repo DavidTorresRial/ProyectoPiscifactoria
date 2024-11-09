@@ -8,7 +8,7 @@ import java.util.Iterator;
 import peces.propiedades.Activo;
 import peces.propiedades.Carnivoro;
 import peces.propiedades.Filtrador;
-import propiedades.CriaTipo;
+
 import peces.Pez;
 import tanque.Tanque;
 
@@ -112,25 +112,6 @@ public class Piscifactoria {
         return this.tanques;
     }
 
-    /**
-     * Agrega un pez a un tanque específico de la piscifactoría, verificando que sea compatible
-     * con su tipo (río, mar o ambos).
-     *
-     * @param pez    El pez a agregar.
-     * @param tanque El tanque donde se intentará agregar el pez.
-     */
-    public void addPez(Pez pez, Tanque tanque) {
-        CriaTipo tipoPiscifactoriaPez = pez.getDatos().getPiscifactoria();
-
-        if ((esDeRio && (tipoPiscifactoriaPez == CriaTipo.RIO || tipoPiscifactoriaPez == CriaTipo.DOBLE)) ||
-                (!esDeRio && (tipoPiscifactoriaPez == CriaTipo.MAR || tipoPiscifactoriaPez == CriaTipo.DOBLE))) {
-
-            tanque.addPez(pez);
-        } else {
-            System.out.printf("No se pudo añadir el pez %s porque no es compatible con una piscifactoría de tipo %s.%n", pez.getDatos().getNombre(), esDeRio ? "río" : "mar");
-        }
-    }
-
     /** Muestra toda la información de la piscifactoría. */
     public void showStatus() {
         System.out.println("\n=============== " + nombre + " ===============");
@@ -204,7 +185,7 @@ public class Piscifactoria {
         for (Tanque tanque : tanques) {
             alimentarPeces(tanque);
             tanque.nextDay();
-            sellFish();
+            //sellFish();
         }
     }
 
