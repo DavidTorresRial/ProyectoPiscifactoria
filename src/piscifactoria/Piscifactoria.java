@@ -13,6 +13,7 @@ import peces.Pez;
 import tanque.Tanque;
 
 import commons.AlmacenCentral;
+import commons.Simulador;
 import commons.SistemaMonedas;
 
 /** Clase abstracta que representa una piscifactoría que gestiona tanques de peces. */
@@ -209,7 +210,7 @@ public class Piscifactoria {
                 if (comidaVegetalActual > 0) {
                     comidaVegetalActual--;
                     alimentado = true;
-                } else if (almacenCentral.isConstruido() && almacenCentral.getCantidadComidaVegetal() > 0) {
+                } else if (Simulador.almacenCentral != null && almacenCentral.getCantidadComidaVegetal() > 0) {
                     // Extraer comida vegetal del almacén
                     if (almacenCentral.getCantidadComidaVegetal() >= 1) {
                         almacenCentral.setCantidadComidaVegetal(almacenCentral.getCantidadComidaVegetal() - 1);
@@ -224,7 +225,7 @@ public class Piscifactoria {
                 if (comidaAnimalActual > 0) {
                     comidaAnimalActual--;
                     alimentado = true;
-                } else if (almacenCentral.isConstruido() && almacenCentral.getCantidadComidaAnimal() > 0) {
+                } else if (Simulador.almacenCentral != null && almacenCentral.getCantidadComidaAnimal() > 0) {
                     // Extraer comida animal del almacén
                     if (almacenCentral.getCantidadComidaAnimal() >= 1) {
                         almacenCentral.setCantidadComidaAnimal(almacenCentral.getCantidadComidaAnimal() - 1);
