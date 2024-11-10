@@ -102,11 +102,8 @@ public class AlmacenCentral {
     public void mostrarEstado() {
         System.out.println("Estado del Almacén Central:");
 
-        double porcentajeComidaAnimal = (cantidadComidaAnimal * 100.0) / capacidadAlmacen;
-        double porcentajeComidaVegetal = (cantidadComidaVegetal * 100.0) / capacidadAlmacen;
-
-        System.out.println("Cantidad de Comida Animal: " + cantidadComidaAnimal + " (" + porcentajeComidaAnimal + "% de la capacidad)");
-        System.out.println("Cantidad de Comida Vegetal: " + cantidadComidaVegetal + " (" + porcentajeComidaVegetal + "% de la capacidad)");
+        System.out.println("Comida vegetal al " + (cantidadComidaVegetal * 100 / capacidadAlmacen) + "% de su capacidad. [" + cantidadComidaVegetal + "/" + capacidadAlmacen + "]");
+        System.out.println("Comida animal al " + (cantidadComidaAnimal * 100 / capacidadAlmacen) + "% de su capacidad. [" + cantidadComidaAnimal + "/" + capacidadAlmacen + "]");
     }
 
     /**
