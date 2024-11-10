@@ -4,7 +4,7 @@ import peces.Pez;
 import peces.propiedades.Carnivoro;
 import propiedades.AlmacenPropiedades;
 
-/** Pez de río Salmon Chinook */
+/** Pez de río Salmon Chinook. */
 public class SalmonChinook extends Pez implements Carnivoro {
 
     /**

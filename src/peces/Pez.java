@@ -4,36 +4,34 @@ import java.util.Random;
 
 import propiedades.PecesDatos;
 
-/**
- * Clase padre de los peces.
- */
+/** Clase padre de los peces. */
 public class Pez {
 
-    /** Nombre común del pez */
+    /** Nombre común del pez. */
     private final String nombre;
 
-    /** Nombre cientifico del pez */
+    /** Nombre cientifico del pez. */
     private final String nombreCientifico;
 
-    /** Edad del pez en días */
+    /** Edad del pez en días. */
     private int edad = 0;
 
-    /** Sexo del pez: true para macho, false para hembra */
+    /** Sexo del pez: true para macho, false para hembra. */
     private final boolean sexo;
 
-    /** Estado de fertilidad del pez: true si es fértil, false si no lo es */
+    /** Estado de fertilidad del pez: true si es fértil, false si no lo es. */
     private boolean fertil = false;
 
-    /** Estado de vida del pez: true si está vivo, false si está muerto */
+    /** Estado de vida del pez: true si está vivo, false si está muerto. */
     private boolean vivo = true;
 
-    /** Estado de alimentación del pez: true si ha sido alimentado, false si no */
+    /** Estado de alimentación del pez: true si ha sido alimentado, false si no. */
     private boolean alimentado = false;
 
-    /** Ciclo reproductivo del pez, decrementa hasta que el pez se vuelve fértil */
+    /** Ciclo reproductivo del pez, decrementa hasta que el pez se vuelve fértil. */
     protected int ciclo;
 
-    /** Datos específicos del pez extraídos de PecesDatos */
+    /** Datos específicos del pez extraídos de PecesDatos. */
     private PecesDatos datos;
 
     /**
@@ -50,9 +48,7 @@ public class Pez {
         this.ciclo = datos.getCiclo();
     }
 
-    /**
-     * Muestra el estado actual del pez.
-     */
+    /** Muestra el estado actual del pez. */
     public void showStatus() {
         System.out.println("--------------- " + nombre + " ---------------");
         System.out.println("Edad: " + edad + " días");
@@ -63,7 +59,7 @@ public class Pez {
         System.out.println("Fértil: " + (fertil ? "Si" : "No"));
     }
 
-    /** Hace crecer un día el pez, realizando toda la lógica */
+    /** Hace crecer un día el pez, realizando toda la lógica. */
     public void grow() {
         if (vivo) {
             Random rand = new Random();
@@ -121,63 +117,63 @@ public class Pez {
     // Getters
 
     /**
-     * @return el nombre común del pez
+     * @return el nombre común del pez.
      */
     public String getNombre() {
         return nombre;
     }
 
     /**
-     * @return el nombre científico del pez
+     * @return el nombre científico del pez.
      */
     public String getNombreCientifico() {
         return nombreCientifico;
     }
 
     /**
-     * @return la edad actual del pez en días
+     * @return la edad actual del pez en días.
      */
     public int getEdad() {
         return edad;
     }
 
     /**
-     * @return true si el pez es macho, false si es hembra
+     * @return true si el pez es macho, false si es hembra.
      */
     public boolean isSexo() {
         return sexo;
     }
 
     /**
-     * @return true si el pez es fértil, false si no lo es
+     * @return true si el pez es fértil, false si no lo es.
      */
     public boolean isFertil() {
         return fertil;
     }
 
     /**
-     * @return true si el pez está vivo, false si está muerto
+     * @return true si el pez está vivo, false si está muerto.
      */
     public boolean isVivo() {
         return vivo;
     }
 
     /**
-     * @return true si el pez ha sido alimentado, false si no
+     * @return true si el pez ha sido alimentado, false si no.
      */
     public boolean isAlimentado() {
         return alimentado;
     }
 
     /**
-     * @return el ciclo reproductivo del pez
+     * @return el ciclo reproductivo del pez.
      */
     public int getCiclo() {
         return ciclo;
     }
 
     /**
-     * @return el objeto PecesDatos asociado con este pez
+     * @return el objeto PecesDatos asociado con este pez.
      */
     public PecesDatos getDatos() {
         return datos;
@@ -188,7 +184,7 @@ public class Pez {
     /**
      * Establece la edad del pez.
      * 
-     * @param edad la nueva edad del pez
+     * @param edad la nueva edad del pez.
      */
     public void setEdad(int edad) {
         this.edad = edad;
@@ -197,7 +193,7 @@ public class Pez {
     /**
      * Establece si el pez está vivo.
      * 
-     * @param vivo true si el pez está vivo, false si está muerto
+     * @param vivo true si el pez está vivo, false si está muerto.
      */
     public void setVivo(boolean vivo) {
         this.vivo = vivo;
@@ -206,7 +202,7 @@ public class Pez {
     /**
      * Establece el estado de alimentación del pez.
      * 
-     * @param alimentado true si el pez ha sido alimentado, false si no
+     * @param alimentado true si el pez ha sido alimentado, false si no.
      */
     public void setAlimentado(boolean alimentado) {
         this.alimentado = alimentado;
@@ -215,7 +211,7 @@ public class Pez {
     /**
      * Establece el ciclo reproductivo del pez.
      * 
-     * @param ciclo el nuevo ciclo reproductivo
+     * @param ciclo el nuevo ciclo reproductivo.
      */
     public void setCiclo(int ciclo) {
         this.ciclo = ciclo;
@@ -224,7 +220,7 @@ public class Pez {
     /**
      * Establece los datos específicos del pez.
      * 
-     * @param datos el objeto PecesDatos asociado
+     * @param datos el objeto PecesDatos asociado.
      */
     public void setDatos(PecesDatos datos) {
         this.datos = datos;
@@ -233,7 +229,7 @@ public class Pez {
     /**
      * Establece si el pez es fértil.
      *
-     * @param fertil true si el pez es fértil, false si no lo es
+     * @param fertil true si el pez es fértil, false si no lo es.
      */
     public void setFertil(boolean fertil) {
         this.fertil = fertil;
@@ -242,7 +238,7 @@ public class Pez {
     /**
      * Representa el estado del pez en formato de cadena.
      *
-     * @return una cadena con la información detallada del pez
+     * @return una cadena con la información detallada del pez.
      */
     @Override
     public String toString() {
