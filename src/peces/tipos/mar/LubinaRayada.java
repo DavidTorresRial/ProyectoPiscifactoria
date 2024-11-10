@@ -4,7 +4,7 @@ import peces.Pez;
 import peces.propiedades.Carnivoro;
 import propiedades.AlmacenPropiedades;
 
-/** Pez de mar Lubina Rayada */
+/** Pez de mar Lubina Rayada. */
 public class LubinaRayada extends Pez implements Carnivoro {
 
     /**

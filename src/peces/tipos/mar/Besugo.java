@@ -4,7 +4,7 @@ import peces.Pez;
 import peces.propiedades.Carnivoro;
 import propiedades.AlmacenPropiedades;
 
-/** Pez de mar Besugo */
+/** Pez de mar Besugo. */
 public class Besugo extends Pez implements Carnivoro {
 
     /**
