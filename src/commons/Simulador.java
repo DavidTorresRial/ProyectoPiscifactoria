@@ -182,7 +182,7 @@ public class Simulador {
         System.out.println("Monedas disponibles: " + monedas.getMonedas());
 
         for (Piscifactoria piscifactoria : piscifactorias) {
-            piscifactoria.showStatus();
+            piscifactoria.showStatus(); 
         }
         System.out.println("\n============================================================");
 
@@ -580,18 +580,19 @@ public class Simulador {
                 }
                 if (opcion != 0 && tanqueSeleccionado.addFish(pezSeleccionado)) {
                     estadisticas.registrarNacimiento(pezSeleccionado.getNombre());
-                    System.out.println(pezSeleccionado.getNombre() + " añadido exitosamente al tanque.");
+                    System.out.println("\n" + pezSeleccionado.getNombre() + (pezSeleccionado.isSexo() ? " (M)" : " (H)") + " comprado por " + 
+                   pezSeleccionado.getDatos().getCoste() + " monedas. Añadido al tanque " + 
+                   tanqueSeleccionado.getNumeroTanque() + " de la piscifactoría " + 
+                   selectTank.getKey().getNombre() + ".");
                 }
             } while (opcion != 0);
         }
     }
 
-    /**
-     * Vende todos los peces adultos del tanque seleccionado, ganando monedas y
-     * registrando la venta.
-     */
+    /** Vende todos los peces adultos del tanque seleccionado, ganando monedas y registrando la venta. */
     public void sell() {
-        Tanque tanqueSeleccionado = selectTank().getValue();
+        var selectTank = selectTank();
+        Tanque tanqueSeleccionado = selectTank.getValue();
         if (tanqueSeleccionado != null) {
             int pecesVendidos = 0;
             int totalDinero = 0;
@@ -612,7 +613,7 @@ public class Simulador {
                 }
             }
             if (pecesVendidos > 0) {
-                System.out.println(pecesVendidos + " peces vendidos por " + totalDinero + " monedas.");
+                System.out.println("Vendidos " + pecesVendidos + " peces de la piscifactoría " + selectTank.getKey().getNombre() + " de forma manual por " + totalDinero + " monedas.");
             } else {
                 System.out.println("\nNo hay peces adultos para vender.");
             }
@@ -621,7 +622,8 @@ public class Simulador {
 
     /** Elimina todos los peces muertos del tanque seleccionado. */
     public void cleanTank() {
-        Tanque tanque = selectTank().getValue();
+        var selectTank = selectTank();
+        Tanque tanque = selectTank.getValue();
         if (tanque != null) {
             List<Pez> peces = tanque.getPeces();
 
@@ -631,16 +633,17 @@ public class Simulador {
                     peces.remove(i);
                 }
             }
-            System.out.println("\nTodos los peces muertos han sido eliminados del tanque.");
+            System.out.println("\nLimpiado el tanque " + tanque.getNumeroTanque() + " de la piscifactoría "+ selectTank.getKey().getNombre()+".");
         }
     }
 
     /** Vacía el tanque seleccionado eliminando todos los peces. */
     public void emptyTank() {
-        Tanque tanque = selectTank().getValue();
+        var selectTank = selectTank();
+        Tanque tanque = selectTank.getValue();
         if (tanque != null) {
-            tanque.getPeces().clear();
-            System.out.println("\nEl tanque ha sido vaciado.");
+            tanque.emptyTank();
+            System.out.println("\nVaciado el tanque " + tanque.getNumeroTanque() + " de la piscifactoría "+ selectTank.getKey().getNombre()+".");
         }
     }
 

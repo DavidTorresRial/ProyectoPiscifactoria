@@ -164,6 +164,11 @@ public class Tanque {
         return tipoPezActual;
     }
 
+    public void emptyTank() {
+        peces.clear();
+        this.tipoPezActual = null;
+    }
+
     /**
      * Devuelve el número del tanque.
      *
