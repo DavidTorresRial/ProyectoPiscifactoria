@@ -45,10 +45,7 @@ public class Simulador {
     /** Nombre de la piscifactoría. */
     private String nombrePiscifactoria;
 
-    /**
-     * Sistema de estadísticas para registrar la cría, venta y ganancias de los
-     * peces.
-     */
+    /** Sistema de estadísticas para registrar la cría, venta y ganancias de los peces. */
     public static Estadisticas estadisticas = new Estadisticas(new String[] {
             AlmacenPropiedades.SALMON_ATLANTICO.getNombre(),
             AlmacenPropiedades.TRUCHA_ARCOIRIS.getNombre(),
@@ -79,8 +76,7 @@ public class Simulador {
     /** Metodo que inicializa todo el sistema. */
     public void init() {
         nombreEntidad = inputHelper.readString("Ingrese el nombre de la entidad/empresa/partida: ");
-        System.out.println();
-        nombrePiscifactoria = inputHelper.readString("Ingrese el nombre de la primera Piscifactoria: ");
+        nombrePiscifactoria = inputHelper.readString("\nIngrese el nombre de la primera Piscifactoria: ");
 
         piscifactorias.add(new Piscifactoria(nombrePiscifactoria, true));
         piscifactorias.get(0).setComidaAnimalActual(piscifactorias.get(0).getCapacidadMaximaComidaPiscifactoria());
@@ -143,8 +139,7 @@ public class Simulador {
     /**
      * Permite seleccionar un tanque y su piscifactoría.
      * 
-     * @return Un Map.Entry con la piscifactoría y el tanque seleccionados, o null
-     *         si se cancela.
+     * @return Un Map.Entry con la piscifactoría y el tanque seleccionados, o null si se cancela.
      */
     public Map.Entry<Piscifactoria, Tanque> selectTank() {
         Piscifactoria piscifactoria = selectPisc();
@@ -156,8 +151,7 @@ public class Simulador {
             String[] opcionesMenu = new String[tanques.size()];
             for (int i = 0; i < tanques.size(); i++) {
                 Tanque tanque = tanques.get(i);
-                String tipoPez = tanque.getTipoPezActual() != null ? tanque.getTipoPezActual().getSimpleName()
-                        : "Vacío";
+                String tipoPez = tanque.getTipoPezActual() != null ? tanque.getTipoPezActual().getSimpleName() : "Vacío";
                 opcionesMenu[i] = "Tanque " + (i + 1) + " [" + tipoPez + "]";
             }
             menuHelper.mostrarMenuCancelar(opcionesMenu);
@@ -205,10 +199,7 @@ public class Simulador {
         }
     }
 
-    /**
-     * Muestra el estado de los peces en un tanque seleccionado de una
-     * piscifactoría.
-     */
+    /** Muestra el estado de los peces en un tanque seleccionado de una piscifactoría. */
     public void showTankStatus() {
         Tanque tanqueSeleccionado = selectTank().getValue();
 
@@ -386,7 +377,7 @@ public class Simulador {
 
             int totalCost = cantidadComida >= 25 ? cantidadComida - (cantidadComida / 25) * 5 : cantidadComida;
 
-            if (!getMonedas().gastarMonedas(totalCost)) {
+            if (!monedas.gastarMonedas(totalCost)) {
                 System.out.println("\nNo tienes suficientes monedas para añadir esta comida.");
                 System.out.println("============================================================");
                 return;
@@ -458,7 +449,7 @@ public class Simulador {
 
             int totalCost = cantidadComida >= 25 ? cantidadComida - (cantidadComida / 25) * 5 : cantidadComida;
 
-            if (!getMonedas().gastarMonedas(totalCost)) {
+            if (!monedas.gastarMonedas(totalCost)) {
                 System.out.println("\nNo tienes suficientes monedas para añadir esta comida.");
                 System.out.println("============================================================");
                 return;
@@ -488,8 +479,8 @@ public class Simulador {
         Tanque tanqueSeleccionado = selectTank.getValue();
 
         if (tanqueSeleccionado != null) {
-            int opcion;
-            do {
+            int opcion = -1;
+            while (opcion != 0) {
                 boolean esDeRio = selectTank.getKey().esDeRio();
                 Class<?> tipoPezActual = tanqueSeleccionado.getTipoPezActual();
 
@@ -585,7 +576,7 @@ public class Simulador {
                    tanqueSeleccionado.getNumeroTanque() + " de la piscifactoría " + 
                    selectTank.getKey().getNombre() + ".");
                 }
-            } while (opcion != 0);
+            } 
         }
     }
 
@@ -719,7 +710,7 @@ public class Simulador {
 
                             Piscifactoria nuevaPiscifactoria = null;
                             if (tipoSeleccionado == 1) {
-                                if (getMonedas().gastarMonedas(costoPiscifactoríaRio)) {
+                                if (monedas.gastarMonedas(costoPiscifactoríaRio)) {
                                     nuevaPiscifactoria = new Piscifactoria(nombrePiscifactoria, true);
                                     System.out.println(
                                             "\nPiscifactoría de Río '" + nombrePiscifactoria + "' comprada.");
@@ -728,7 +719,7 @@ public class Simulador {
                                             "\nNo tienes suficientes monedas para comprar la piscifactoría de río.");
                                 }
                             } else if (tipoSeleccionado == 2) {
-                                if (getMonedas().gastarMonedas(costoPiscifactoríaMar)) {
+                                if (monedas.gastarMonedas(costoPiscifactoríaMar)) {
                                     nuevaPiscifactoria = new Piscifactoria(nombrePiscifactoria, false);
                                     System.out.println(
                                             "\nPiscifactoría de Mar '" + nombrePiscifactoria + "' comprada.");
@@ -748,7 +739,7 @@ public class Simulador {
                         } else if (edificioAComprar == 2) {
                             // Comprar almacén central
                             if (almacenCentral == null) {
-                                if (getMonedas().gastarMonedas(2000)) {
+                                if (monedas.gastarMonedas(2000)) {
                                     almacenCentral = new AlmacenCentral();
                                     System.out.println("\nAlmacén central construido.");
                                 } else {
@@ -792,7 +783,7 @@ public class Simulador {
                                     Piscifactoria piscifactoriaSeleccionada = selectPisc();
                                     if (piscifactoriaSeleccionada != null) {
                                         int costoAumento = 50; // Costo para aumentar la capacidad
-                                        if (getMonedas().gastarMonedas(costoAumento)) {
+                                        if (monedas.gastarMonedas(costoAumento)) {
                                             int nuevaCapacidad = piscifactoriaSeleccionada
                                                     .setCapacidadMaximaComidaPiscifactoria(25);
                                             piscifactoriaSeleccionada
@@ -915,7 +906,7 @@ public class Simulador {
                     // simulador.agregarPecesAleatorios();
                     break;
                 case 99:
-                    simulador.getMonedas().ganarMonedas(1000);
+                    Simulador.monedas.ganarMonedas(1000);
                     break;
                 case 14:
                     running = false;
@@ -927,23 +918,5 @@ public class Simulador {
             }
         }
         inputHelper.close();
-    }
-
-    /**
-     * Retorna las piscifactorías.
-     *
-     * @return Lista de piscifactorías.
-     */
-    public List<Piscifactoria> getPiscifactorias() {
-        return piscifactorias;
-    }
-
-    /**
-     * Retorna el sistema de monedas.
-     *
-     * @return Sistema de monedas.
-     */
-    public SistemaMonedas getMonedas() {
-        return monedas;
     }
 }
