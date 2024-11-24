@@ -33,7 +33,7 @@ public class Piscifactoria {
 
     /** Cantidad actual de comida animal. */
     private int cantidadComidaAnimal;
-    
+
     /** Cantidad actual de comida vegetal. */
     private int cantidadComidaVegetal;
 
@@ -76,17 +76,17 @@ public class Piscifactoria {
     public void showStatus() {
         System.out.println("\n=============== " + nombre + " ===============");
         System.out.println("Tanques: " + tanques.size());
-    
+
         System.out.println("Ocupación: " + getTotalPeces() + " / " + getCapacidadTotal() + " (" + ((getCapacidadTotal() > 0) ? (getTotalPeces() * 100) / getCapacidadTotal() : 0) + "%)");
         System.out.println("Peces vivos: " + getTotalVivos() + " / " + getTotalPeces() + " (" + ((getTotalPeces() > 0) ? (getTotalVivos() * 100) / getTotalPeces() : 0) + "%)");
         System.out.println("Peces alimentados: " + getTotalAlimentados() + " / " + getTotalVivos() + " (" + ((getTotalVivos() > 0) ? (getTotalAlimentados() * 100) / getTotalVivos() : 0) + "%)");
         System.out.println("Peces adultos: " + getTotalAdultos() + " / " + getTotalVivos() + " (" + ((getTotalVivos() > 0) ? (getTotalAdultos() * 100) / getTotalVivos() : 0) + "%)");
         System.out.println("Hembras / Machos: " + getTotalHembras() + " / " + (getTotalVivos() - getTotalHembras()));
         System.out.println("Fértiles: " + getTotalFertiles() + " / " + getTotalVivos());
-    
+
         showFood();
     }
-    
+
     /** Muestra el estado de cada tanque en la piscifactoría. */
     public void showTankStatus() {
         tanques.forEach(Tanque::showStatus);
@@ -116,8 +116,10 @@ public class Piscifactoria {
     public void showFood() {
         System.out.println("Depósito de comida de la piscifactoría " + nombre + ":");
 
-        System.out.println("Comida vegetal al " + (cantidadComidaVegetal * 100 / capacidadMaximaComida) + "% de su capacidad. [" + cantidadComidaVegetal + "/" + capacidadMaximaComida + "]");
-        System.out.println("Comida animal al " + (cantidadComidaAnimal * 100 / capacidadMaximaComida) + "% de su capacidad. [" + cantidadComidaAnimal + "/" + capacidadMaximaComida + "]");
+        System.out.println("Comida vegetal al " + (cantidadComidaVegetal * 100 / capacidadMaximaComida)
+                + "% de su capacidad. [" + cantidadComidaVegetal + "/" + capacidadMaximaComida + "]");
+        System.out.println("Comida animal al " + (cantidadComidaAnimal * 100 / capacidadMaximaComida)
+                + "% de su capacidad. [" + cantidadComidaAnimal + "/" + capacidadMaximaComida + "]");
     }
 
     /** Hace avanzar el ciclo de vida en la piscifactoría, alimentando a los peces y actualizando sus estados. */
@@ -125,7 +127,7 @@ public class Piscifactoria {
         for (Tanque tanque : tanques) {
             alimentarPeces(tanque);
             tanque.nextDay();
-            //sellFish(); // TODO revisar 
+            // sellFish(); // TODO revisar
         }
     }
 
@@ -526,15 +528,15 @@ public class Piscifactoria {
     @Override
     public String toString() {
         return "Información de la Piscifactoría: " + nombre +
-           "\n  Número de Tanques    : " + tanques.size() +
-           "\n  Total de Peces       : " + getTotalPeces() + " (Ocupación: " + ((getCapacidadTotal() > 0) ? (getTotalPeces() * 100) / getCapacidadTotal() : 0) +
-           "\n  Peces Vivos          : " + getTotalVivos() +
-           "\n  Peces Alimentados    : " + getTotalAlimentados() +
-           "\n  Peces Adultos        : " + getTotalAdultos() +
-           "\n  Hembras              : " + getTotalHembras() +
-           "\n  Machos               : " + (getTotalVivos() - getTotalHembras()) +
-           "\n  Peces Fértiles       : " + getTotalFertiles() +
-           "\n  Comida Vegetal       : " + getComidaVegetalActual() + " / " + getCapacidadTotal() +
-           "\n  Comida Animal        : " + getComidaAnimalActual() + " / " + getCapacidadTotal();
+                "\n  Número de Tanques    : " + tanques.size() +
+                "\n  Total de Peces       : " + getTotalPeces() + " (Ocupación: " + ((getCapacidadTotal() > 0) ? (getTotalPeces() * 100) / getCapacidadTotal() : 0) +
+                "\n  Peces Vivos          : " + getTotalVivos() +
+                "\n  Peces Alimentados    : " + getTotalAlimentados() +
+                "\n  Peces Adultos        : " + getTotalAdultos() +
+                "\n  Hembras              : " + getTotalHembras() +
+                "\n  Machos               : " + (getTotalVivos() - getTotalHembras()) +
+                "\n  Peces Fértiles       : " + getTotalFertiles() +
+                "\n  Comida Vegetal       : " + getComidaVegetalActual() + " / " + getCapacidadTotal() +
+                "\n  Comida Animal        : " + getComidaAnimalActual() + " / " + getCapacidadTotal();
     }
 }
