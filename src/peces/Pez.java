@@ -238,14 +238,14 @@ public class Pez {
     @Override
     public String toString() {
         return "Información del Pez:" +
-           "\n  Nombre Común       : " + nombre +
-           "\n  Nombre Científico  : " + nombreCientifico +
-           "\n  Edad               : " + edad + " días" +
-           "\n  Sexo               : " + (sexo ? "Macho" : "Hembra") +
-           "\n  Vivo               : " + (vivo ? "Sí" : "No") +
-           "\n  Alimentado         : " + (alimentado ? "Sí" : "No") +
-           "\n  Adulto             : " + (edad >= datos.getMadurez() ? "Sí" : "No") +
-           "\n  Fértil             : " + (fertil ? "Sí" : "No") +
-           "\n  Ciclo              : " + ciclo;
+                "\n  Nombre Común       : " + nombre +
+                "\n  Nombre Científico  : " + nombreCientifico +
+                "\n  Edad               : " + edad + " días" +
+                "\n  Sexo               : " + (sexo ? "Macho" : "Hembra") +
+                "\n  Vivo               : " + (vivo ? "Sí" : "No") +
+                "\n  Alimentado         : " + (alimentado ? "Sí" : "No") +
+                "\n  Adulto             : " + (edad >= datos.getMadurez() ? "Sí" : "No") +
+                "\n  Fértil             : " + (fertil ? "Sí" : "No") +
+                "\n  Ciclo              : " + ciclo;
     }
 }
