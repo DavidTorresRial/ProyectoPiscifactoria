@@ -176,7 +176,7 @@ public class Simulador {
         System.out.println("Monedas disponibles: " + monedas.getMonedas());
 
         for (Piscifactoria piscifactoria : piscifactorias) {
-            piscifactoria.showStatus(); 
+            piscifactoria.showStatus();
         }
         System.out.println("\n============================================================");
 
@@ -199,7 +199,10 @@ public class Simulador {
         }
     }
 
-    /** Muestra el estado de los peces en un tanque seleccionado de una piscifactoría. */
+    /**
+     * Muestra el estado de los peces en un tanque seleccionado de una
+     * piscifactoría.
+     */
     public void showTankStatus() {
         Tanque tanqueSeleccionado = selectTank().getValue();
 
@@ -331,146 +334,97 @@ public class Simulador {
     }
 
     /** Añade comida al almacén central si está construido, o a una piscifactoría seleccionada. */
-    public void addFood() {
+    public void addFood() { // TODO arreglar bucle infinito del al llamarse a si mismo 
+        Object destino = null;
+        int capacidadTotal = 0;
+        int comidaActual = 0;
+    
         if (almacenCentral != null) {
-            System.out.println("\n============= Añadir Comida al Almacén Central =============");
-
-            menuHelper.mostrarMenuCancelar(new String[] {
-                    "Comida Animal",
-                    "Comida Vegetal"
-            });
-            int opcionComida = inputHelper.solicitarNumero(0, 2);
-
-            if (opcionComida == 0) {
-                System.out.println("\nOperación cancelada.");
-                System.out.println("============================================================");
-                return;
-            }
-
-            System.out.println();
-            menuHelper.mostrarMenuCancelar(new String[] {
-                    "5",
-                    "10",
-                    "25",
-                    "Llenar"
-            });
-            int opcion = inputHelper.solicitarNumero(0, 4);
-
-            if (opcion == 0) {
-                System.out.println("\nOperación cancelada.");
-                System.out.println("============================================================");
-                return;
-            }
-
-            int cantidadComida;
-            if (opcion == 4) { 
-                cantidadComida = almacenCentral.getCapacidadAlmacen()
-                        - (almacenCentral.getCantidadComidaAnimal() + almacenCentral.getCantidadComidaVegetal());
-                if (cantidadComida <= 0) {
-                    System.out.println("\nNo hay suficiente espacio en el almacén central para añadir más comida.");
-                    System.out.println("============================================================");
-                    return;
-                }
-            } else {
-                cantidadComida = opcion == 1 ? 5 : opcion == 2 ? 10 : 25;
-            }
-
-            int totalCost = cantidadComida >= 25 ? cantidadComida - (cantidadComida / 25) * 5 : cantidadComida;
-
-            if (!monedas.gastarMonedas(totalCost)) {
-                System.out.println("\nNo tienes suficientes monedas para añadir esta comida.");
-                System.out.println("============================================================");
-                return;
-            }
-
-            if (opcionComida == 1) {
-                almacenCentral.setCantidadComidaAnimal(almacenCentral.getCantidadComidaAnimal() + cantidadComida);
-                System.out.println("\nSe añadieron " + cantidadComida + " unidades de comida animal.");
-            } else if (opcionComida == 2) {
-                almacenCentral.setCantidadComidaVegetal(almacenCentral.getCantidadComidaVegetal() + cantidadComida);
-                System.out.println("\nSe añadieron " + cantidadComida + " unidades de comida vegetal.");
-            }
-
-            System.out.println("Estado del almacén central:");
-            System.out.println("Comida animal: " + almacenCentral.getCantidadComidaAnimal() + "/"
-                    + almacenCentral.getCapacidadAlmacen());
-            System.out.println("Comida vegetal: " + almacenCentral.getCantidadComidaVegetal() + "/"
-                    + almacenCentral.getCapacidadAlmacen());
-
-        } else { // Si no está construido, seleccionar una piscifactoría
+            destino = almacenCentral;
+            capacidadTotal = almacenCentral.getCapacidadAlmacen();
+        } else {
             Piscifactoria piscifactoriaSeleccionada = selectPisc();
-            if (piscifactoriaSeleccionada == null) {
-                System.out.println("\nOperación cancelada.");
-                return;
+            if (piscifactoriaSeleccionada != null) {
+                destino = piscifactoriaSeleccionada;
+                capacidadTotal = piscifactoriaSeleccionada.getCapacidadMaximaComidaPiscifactoria();
             }
+        }
+    
+        if (destino != null) {
+            int opcionComida;
+            do {
+                if (destino instanceof AlmacenCentral) {
+                    System.out.println("\n============= Añadir Comida al Almacén Central =============");
+                } else {
+                    System.out.println("\n============= Añadir Comida a la Piscifactoría =============");
 
-            System.out.println("\n============= Añadir Comida a la Piscifactoría =============");
-
-            menuHelper.mostrarMenuCancelar(new String[] {
+                }
+                menuHelper.mostrarMenuCancelar(new String[]{
                     "Comida Animal",
                     "Comida Vegetal"
-            });
-            int opcionComida = inputHelper.solicitarNumero(0, 2);
-
-            if (opcionComida == 0) {
-                System.out.println("\nOperación cancelada.");
-                System.out.println("============================================================");
-                return;
-            }
-
-            System.out.println();
-            menuHelper.mostrarMenuCancelar(new String[] {
-                    "5",
-                    "10",
-                    "25",
-                    "Llenar"
-            });
-            int opcion = inputHelper.solicitarNumero(0, 4);
-
-            if (opcion == 0) {
-                System.out.println("\nOperación cancelada.");
-                System.out.println("============================================================");
-                return;
-            }
-
-            int cantidadComida;
-            if (opcion == 4) {
-                cantidadComida = piscifactoriaSeleccionada.getCapacidadTotal()
-                        - (piscifactoriaSeleccionada.getComidaAnimalActual()
-                                + piscifactoriaSeleccionada.getComidaVegetalActual());
-                if (cantidadComida <= 0) {
-                    System.out.println("\nNo hay suficiente espacio en la piscifactoría para añadir más comida.");
-                    System.out.println("============================================================");
-                    return;
+                });
+                opcionComida = inputHelper.solicitarNumero(0, 2);
+    
+                if (opcionComida != 0) {
+                    boolean animal = opcionComida == 1;
+    
+                    if (animal) {
+                        comidaActual = (destino instanceof AlmacenCentral)
+                            ? almacenCentral.getCantidadComidaAnimal()
+                            : ((Piscifactoria) destino).getComidaAnimalActual();
+                    } else {
+                        comidaActual = (destino instanceof AlmacenCentral)
+                            ? almacenCentral.getCantidadComidaVegetal()
+                            : ((Piscifactoria) destino).getComidaVegetalActual();
+                    }
+    
+                    int opcionCantidad;
+                    do {
+                        System.out.println("\n==================== Cantidad de Comida ====================");
+                        menuHelper.mostrarMenuCancelar(new String[]{
+                            "5",
+                            "10",
+                            "25",
+                            "Llenar"
+                        });
+                        opcionCantidad = inputHelper.solicitarNumero(0, 4);
+    
+                        if (opcionCantidad != 0) {
+                            int cantidadComida = 0;
+                            if (opcionCantidad == 4) {
+                                cantidadComida = capacidadTotal - comidaActual;
+                            } else {
+                                cantidadComida = (opcionCantidad == 1) ? 5 : (opcionCantidad == 2) ? 10 : 25;
+                            }
+    
+                            if (!(comidaActual + cantidadComida > capacidadTotal) && !(comidaActual == capacidadTotal)) {
+                                int totalCost = cantidadComida >= 25 ? cantidadComida - (cantidadComida / 25) * 5 : cantidadComida;
+                                if (monedas.gastarMonedas(totalCost)) {
+                                    if (animal) {
+                                        if (destino instanceof AlmacenCentral) {
+                                            almacenCentral.setCantidadComidaAnimal(comidaActual + cantidadComida);
+                                        } else {
+                                            ((Piscifactoria) destino).setComidaAnimalActual(comidaActual + cantidadComida);
+                                        }
+                                        System.out.println("\nAñadida " + cantidadComida + " de comida animal.");
+                                    } else {
+                                        if (destino instanceof AlmacenCentral) {
+                                            almacenCentral.setCantidadComidaVegetal(comidaActual + cantidadComida);
+                                        } else {
+                                            ((Piscifactoria) destino).setComidaVegetalActual(comidaActual + cantidadComida);
+                                        }
+                                        System.out.println("\nAñadida " + cantidadComida + " de comida vegetal.");
+                                    }
+                                }
+                            } else {
+                                System.out.println("\nNo hay suficiente espacio para añadir esa cantidad de comida.");
+                            }
+                        }
+                    } while (opcionCantidad != 0);
                 }
-            } else {
-                cantidadComida = opcion == 1 ? 5 : opcion == 2 ? 10 : 25;
-            }
-
-            int totalCost = cantidadComida >= 25 ? cantidadComida - (cantidadComida / 25) * 5 : cantidadComida;
-
-            if (!monedas.gastarMonedas(totalCost)) {
-                System.out.println("\nNo tienes suficientes monedas para añadir esta comida.");
-                System.out.println("============================================================");
-                return;
-            }
-
-            if (opcionComida == 1) {
-                piscifactoriaSeleccionada
-                        .setComidaAnimalActual(piscifactoriaSeleccionada.getComidaAnimalActual() + cantidadComida);
-                System.out.println("\nSe añadieron " + cantidadComida + " unidades de comida animal.");
-            } else if (opcionComida == 2) {
-                piscifactoriaSeleccionada
-                        .setComidaVegetalActual(piscifactoriaSeleccionada.getComidaVegetalActual() + cantidadComida);
-                System.out.println("\nSe añadieron " + cantidadComida + " unidades de comida vegetal.");
-            }
-
-            System.out.println("Estado de la piscifactoría:");
-            System.out.println("Comida animal: " + piscifactoriaSeleccionada.getComidaAnimalActual() + "/"
-                    + piscifactoriaSeleccionada.getCapacidadTotal());
-            System.out.println("Comida vegetal: " + piscifactoriaSeleccionada.getComidaVegetalActual() + "/"
-                    + piscifactoriaSeleccionada.getCapacidadTotal());
+            } while (opcionComida != 0);
         }
+        addFood();
     }
 
     /** Añade un pez al tanque seleccionado. */
@@ -571,12 +525,12 @@ public class Simulador {
                 }
                 if (opcion != 0 && tanqueSeleccionado.addFish(pezSeleccionado)) {
                     estadisticas.registrarNacimiento(pezSeleccionado.getNombre());
-                    System.out.println("\n" + pezSeleccionado.getNombre() + (pezSeleccionado.isSexo() ? " (M)" : " (H)") + " comprado por " + 
-                   pezSeleccionado.getDatos().getCoste() + " monedas. Añadido al tanque " + 
-                   tanqueSeleccionado.getNumeroTanque() + " de la piscifactoría " + 
-                   selectTank.getKey().getNombre() + ".");
+                    System.out.println("\n" + pezSeleccionado.getNombre() + (pezSeleccionado.isSexo() ? " (M)" : " (H)")
+                            + " comprado por " + pezSeleccionado.getDatos().getCoste() + " monedas. Añadido al tanque "
+                            + tanqueSeleccionado.getNumeroTanque() + " de la piscifactoría "
+                            + selectTank.getKey().getNombre() + ".");
                 }
-            } 
+            }
         }
     }
 
@@ -624,7 +578,7 @@ public class Simulador {
                     peces.remove(i);
                 }
             }
-            System.out.println("\nLimpiado el tanque " + tanque.getNumeroTanque() + " de la piscifactoría "+ selectTank.getKey().getNombre()+".");
+            System.out.println("\nLimpiado el tanque " + tanque.getNumeroTanque() + " de la piscifactoría " + selectTank.getKey().getNombre() + ".");
         }
     }
 
@@ -634,7 +588,7 @@ public class Simulador {
         Tanque tanque = selectTank.getValue();
         if (tanque != null) {
             tanque.emptyTank();
-            System.out.println("\nVaciado el tanque " + tanque.getNumeroTanque() + " de la piscifactoría "+ selectTank.getKey().getNombre()+".");
+            System.out.println("\nVaciado el tanque " + tanque.getNumeroTanque() + " de la piscifactoría " + selectTank.getKey().getNombre() + ".");
         }
     }
 
