@@ -79,8 +79,8 @@ public class Simulador {
         nombrePiscifactoria = inputHelper.readString("\nIngrese el nombre de la primera Piscifactoria: ");
 
         piscifactorias.add(new Piscifactoria(nombrePiscifactoria, true));
-        piscifactorias.get(0).añadirComidaAnimal(piscifactorias.get(0).getCapacidadMaximaComidaPiscifactoria());
-        piscifactorias.get(0).añadirComidaVegetal(piscifactorias.get(0).getCapacidadMaximaComidaPiscifactoria());
+        piscifactorias.get(0).añadirComidaAnimal(piscifactorias.get(0).getCapacidadMaximaComida());
+        piscifactorias.get(0).añadirComidaVegetal(piscifactorias.get(0).getCapacidadMaximaComida());
     }
 
     /** Método que muestra el texto del menú. */
@@ -344,7 +344,7 @@ public class Simulador {
         if (almacenCentral == null) {
             Piscifactoria piscifactoria = selectPisc();
             if (piscifactoria != null) {
-                capacidadTotal = piscifactoria.getCapacidadMaximaComidaPiscifactoria();
+                capacidadTotal = piscifactoria.getCapacidadMaximaComida();
 
                 int opcionComida;
                 do {
@@ -377,13 +377,16 @@ public class Simulador {
                                 };
 
                                 if (!(comidaActual + cantidadComida > capacidadTotal) && !(comidaActual == capacidadTotal)) {
-                                    if (monedas.gastarMonedas(monedas.calcularDescuento(cantidadComida))) {
+                                    int costo = monedas.calcularDescuento(cantidadComida);
+                                    if (monedas.gastarMonedas(costo)) {
                                         if (animal) {
                                             piscifactoria.añadirComidaAnimal(cantidadComida);
-                                            System.out.println("\nAñadida " + cantidadComida + " de comida animal.");
+                                            comidaActual += cantidadComida;
+                                            System.out.println("\n" + cantidadComida  + " de comida de tipo Animal comprada por " + costo + " monedas. Se almacena en la piscifactoría " + piscifactoria.getNombre() + ".");
                                         } else {
                                             piscifactoria.añadirComidaVegetal(cantidadComida);
-                                            System.out.println("\nAñadida " + cantidadComida + " de comida vegetal.");
+                                            comidaActual += cantidadComida;
+                                            System.out.println("\n" + cantidadComida  + " de comida de tipo Vegetal comprada por " + costo + " monedas. Se almacena en la piscifactoría " + piscifactoria.getNombre() + ".");
                                         }
                                     }
                                 } else {
@@ -428,13 +431,16 @@ public class Simulador {
                             };
 
                             if (!(comidaActual + cantidadComida > capacidadTotal) && !(comidaActual == capacidadTotal)) {
-                                if (monedas.gastarMonedas(monedas.calcularDescuento(cantidadComida))) {
+                                int costo = monedas.calcularDescuento(cantidadComida);
+                                if (monedas.gastarMonedas(costo)) {
                                     if (animal) {
                                         almacenCentral.añadirComidaAnimal(cantidadComida);
-                                        System.out.println("\nAñadida " + cantidadComida + " de comida animal.");
+                                        comidaActual += cantidadComida;
+                                        System.out.println("\n" + cantidadComida  + " de comida de tipo Animal comprada por " + costo + " monedas. Se almacena en el almacén central.\r");
                                     } else {
                                         almacenCentral.añadirComidaVegetal(cantidadComida);
-                                        System.out.println("\nAñadida " + cantidadComida + " de comida vegetal.");
+                                        comidaActual += cantidadComida;
+                                        System.out.println("\n" + cantidadComida  + " de comida de tipo Vegetal comprada por " + costo + " monedas. Se almacena en el almacén central.\r");
                                     }
                                 }
                             } else {
@@ -760,9 +766,9 @@ public class Simulador {
                                         int costoAumento = 50; // Costo para aumentar la capacidad
                                         if (monedas.gastarMonedas(costoAumento)) {
                                             int nuevaCapacidad = piscifactoriaSeleccionada
-                                                    .setCapacidadMaximaComidaPiscifactoria(25);
+                                                    .setCapacidadMaximaComida(25);
                                             piscifactoriaSeleccionada
-                                                    .setCapacidadMaximaComidaPiscifactoria(nuevaCapacidad);
+                                                    .setCapacidadMaximaComida(nuevaCapacidad);
                                             System.out
                                                     .println("\nCapacidad de comida aumentada en la piscifactoría.");
                                             break;
@@ -882,6 +888,7 @@ public class Simulador {
                     break;
                 case 99:
                     Simulador.monedas.ganarMonedas(1000);
+                    System.out.println("\nAñadidas 1000 monedas mediante la opción oculta. Monedas actuales, " + monedas.getMonedas());
                     break;
                 case 14:
                     running = false;
