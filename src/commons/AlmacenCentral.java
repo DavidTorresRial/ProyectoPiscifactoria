@@ -138,11 +138,9 @@ public class AlmacenCentral {
      */
     @Override
     public String toString() {
-        return "Almacen Central:\n" +
-                "Capacidad Total: " + capacidadAlmacen + "\n" +
-                "Cantidad de Comida Animal: " + cantidadComidaAnimal + " (" +
-                ((cantidadComidaAnimal * 100.0) / capacidadAlmacen) + "% de la capacidad)\n" +
-                "Cantidad de Comida Vegetal: " + cantidadComidaVegetal + " (" +
-                ((cantidadComidaVegetal * 100.0) / capacidadAlmacen) + "% de la capacidad)";
+        return "Información del Almacén Central:" +
+                "\n  Capacidad Total          : " + capacidadAlmacen +
+                "\n  Comida Animal            : " + cantidadComidaAnimal + " (" + ((cantidadComidaAnimal * 100.0) / capacidadAlmacen) + "% de la capacidad)" +
+                "\n  Comida Vegetal           : " + cantidadComidaVegetal + " (" + ((cantidadComidaVegetal * 100.0) / capacidadAlmacen) + "% de la capacidad)";
     }
 }
