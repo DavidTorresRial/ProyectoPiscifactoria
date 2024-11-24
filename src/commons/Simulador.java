@@ -177,7 +177,7 @@ public class Simulador {
         }
         System.out.println("\n============================================================");
 
-        if (almacenCentral != null) { // TODO mirar la implementacion del Almacén Central
+        if (almacenCentral != null) {
             almacenCentral.mostrarEstado();
         } else {
             System.out.println("No hay Almacén Central disponible.");
@@ -826,7 +826,6 @@ public class Simulador {
      */
     public static void main(String[] args) {
         Simulador simulador = new Simulador();
-
         simulador.init();
 
         boolean running = true;
