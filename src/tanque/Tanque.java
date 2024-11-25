@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.ArrayList;
 
 import commons.Simulador;
-import commons.SistemaMonedas;
 
 import peces.Pez;
 
@@ -22,9 +21,6 @@ public class Tanque {
 
     /** Capacidad máxima del tanque. */
     private final int capacidadMaxima;
-
-    /** Sistema de monedas para manejar transacciones. */
-    SistemaMonedas monedas = SistemaMonedas.getInstancia();
 
     /**
      * Crea un tanque con el número y capacidad especificados.
@@ -136,7 +132,7 @@ public class Tanque {
             System.out.println("El tanque está lleno. Capacidad máxima alcanzada.");
             return false;
         }
-        if (monedas.gastarMonedas(pez.getDatos().getCoste())) {
+        if (Simulador.monedas.gastarMonedas(pez.getDatos().getCoste())) {
             if (tipoPezActual == null) {
                 tipoPezActual = pez.getClass();
             }
