@@ -5,7 +5,7 @@ import java.util.Random;
 import propiedades.PecesDatos;
 
 /** Clase padre de los peces. */
-public class Pez {
+public abstract class Pez {
 
     /** Nombre común del pez. */
     private final String nombre;
@@ -33,6 +33,8 @@ public class Pez {
 
     /** Datos específicos del pez extraídos de PecesDatos. */
     private PecesDatos datos;
+
+    private boolean primeraVez = true; // TODO revisar si es completamente necesario este atributo
 
     /**
      * Constructor que inicializa un Pez con su sexo y datos asociados.
@@ -74,15 +76,24 @@ public class Pez {
 
             edad++;
 
-            if (edad >= datos.getMadurez()) {
-                if (!fertil) {
-                    ciclo--;
-                    if (ciclo <= 0) {
-                        fertil = true; // Se vuelve fértil después de completar el ciclo
-                    }
+            if (sexo) {
+                if (edad >= datos.getMadurez()) {
+                    fertil = true;
                 }
             } else {
-                fertil = false;
+                if (edad >= datos.getMadurez() && primeraVez) {
+                    fertil = true;
+                    primeraVez = false;
+                } else if (edad >= datos.getMadurez()) {
+                    fertil = false;
+                    ciclo--;
+                    if (ciclo <= 0) {
+                        fertil = true;
+                        ciclo = datos.getCiclo(); // TODO revisar
+                    }
+                } else {
+                    fertil = false;
+                }
             }
 
             if (edad < datos.getMadurez() && edad % 2 == 0) {
@@ -104,14 +115,12 @@ public class Pez {
     }
 
     /**
-     * Crea una copia del pez con un nuevo sexo.
+     * Método abstracto para clonar el pez con un nuevo sexo.
      *
      * @param nuevoSexo true para macho, false para hembra.
-     * @return una nueva instancia de Pez con el mismo tipo pero con el sexo especificado.
+     * @return una nueva instancia de la subclase correspondiente.
      */
-    public Pez clonar(boolean nuevoSexo) {
-        return new Pez(nuevoSexo, datos);
-    }
+    public abstract Pez clonar(boolean nuevoSexo);
 
     /**
      * @return el nombre común del pez.

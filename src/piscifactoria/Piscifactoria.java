@@ -3,7 +3,6 @@ package piscifactoria;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.Iterator;
 
 import peces.propiedades.Activo;
 import peces.propiedades.Carnivoro;
@@ -73,7 +72,7 @@ public class Piscifactoria {
         System.out.println("Peces vivos: " + getTotalVivos() + " / " + getTotalPeces() + " (" + ((getTotalPeces() > 0) ? (getTotalVivos() * 100) / getTotalPeces() : 0) + "%)");
         System.out.println("Peces alimentados: " + getTotalAlimentados() + " / " + getTotalVivos() + " (" + ((getTotalVivos() > 0) ? (getTotalAlimentados() * 100) / getTotalVivos() : 0) + "%)");
         System.out.println("Peces adultos: " + getTotalAdultos() + " / " + getTotalVivos() + " (" + ((getTotalVivos() > 0) ? (getTotalAdultos() * 100) / getTotalVivos() : 0) + "%)");
-        System.out.println("Hembras / Machos: " + getTotalHembras() + " / " + (getTotalVivos() - getTotalHembras()));
+        System.out.println("Hembras / Machos: " + getTotalHembras() + " / " + getTotalMachos());
         System.out.println("Fértiles: " + getTotalFertiles() + " / " + getTotalVivos());
 
         showFood();
@@ -119,31 +118,7 @@ public class Piscifactoria {
         for (Tanque tanque : tanques) {
             alimentarPeces(tanque);
             tanque.nextDay();
-            // sellFish(); // TODO revisar
         }
-    }
-
-    /** Vende los peces maduros y actualiza el sistema de monedas. */
-    public void sellFish() {
-        int totalPecesVendidos = 0, totalMonedasGanadas = 0;
-
-        String nombrePiscifactoria = this.getNombre();
-
-        for (Tanque tanque : tanques) {
-            Iterator<? extends Pez> iterator = tanque.getPeces().iterator();
-            while (iterator.hasNext()) {
-                Pez pez = iterator.next();
-                if (pez.getEdad() >= pez.getDatos().getMadurez() && pez.isVivo()) {
-                    int monedasPez = pez.getDatos().getMonedas();
-                    Simulador.monedas.ganarMonedas(monedasPez);
-                    totalMonedasGanadas += monedasPez;
-                    iterator.remove();
-                    totalPecesVendidos++;
-                }
-            }
-        }
-        System.out.println("Piscifactoría " + nombrePiscifactoria + ": " + totalPecesVendidos + " peces vendidos por "
-                + totalMonedasGanadas + " monedas.");
     }
 
     /**
@@ -215,7 +190,7 @@ public class Piscifactoria {
      *
      * @param tanque El tanque del que se alimentarán los peces.
      */
-    private void alimentarPeces(Tanque tanque) {
+    private void alimentarPeces(Tanque tanque) { // TODO revisar alimentacion de los nuevos hijos creados 
         Random rand = new Random();
 
         for (Pez pez : tanque.getPeces()) {
@@ -223,23 +198,22 @@ public class Piscifactoria {
                 continue;
             }
 
-            boolean alimentado = false;
-
             if (pez instanceof Filtrador) {
                 // Filtrador: 50% de probabilidad de no consumir comida
                 if (rand.nextDouble() < 0.5) {
+                    pez.setAlimentado(true);
                     continue; // No consume comida
                 }
                 // Intentar alimentar al filtrador
                 if (cantidadComidaVegetal > 0) {
                     cantidadComidaVegetal--;
-                    alimentado = true;
+                    pez.setAlimentado(true);
                 } else if (Simulador.almacenCentral != null && Simulador.almacenCentral.getCantidadComidaVegetal() > 0) {
                     // Extraer comida vegetal del almacén
                     if (Simulador.almacenCentral.getCantidadComidaVegetal() >= 1) {
                         Simulador.almacenCentral.setCantidadComidaVegetal(Simulador.almacenCentral.getCantidadComidaVegetal() - 1);
                         cantidadComidaVegetal++;
-                        alimentado = true;
+                        pez.setAlimentado(true);
                     } else {
                         System.out.println("No hay suficiente comida vegetal.");
                     }
@@ -248,13 +222,13 @@ public class Piscifactoria {
                 // Carnívoro: Consume comida animal
                 if (cantidadComidaAnimal > 0) {
                     cantidadComidaAnimal--;
-                    alimentado = true;
+                    pez.setAlimentado(true);
                 } else if (Simulador.almacenCentral != null && Simulador.almacenCentral.getCantidadComidaAnimal() > 0) {
                     // Extraer comida animal del almacén
                     if (Simulador.almacenCentral.getCantidadComidaAnimal() >= 1) {
                         Simulador.almacenCentral.setCantidadComidaAnimal(Simulador.almacenCentral.getCantidadComidaAnimal() - 1);
                         cantidadComidaAnimal++;
-                        alimentado = true;
+                        pez.setAlimentado(true);
                     } else {
                         System.out.println("No hay suficiente comida animal.");
                     }
@@ -263,7 +237,7 @@ public class Piscifactoria {
 
             // Activo: 50% de probabilidad de consumir el doble de comida
             if (pez instanceof Activo) {
-                if (alimentado) {
+                if (pez.isAlimentado()) {
                     // Verificar si puede consumir el doble
                     if (rand.nextDouble() < 0.5) {
                         if (pez instanceof Carnivoro && cantidadComidaAnimal > 0) {
@@ -273,10 +247,6 @@ public class Piscifactoria {
                         }
                     }
                 }
-            }
-
-            if (alimentado) {
-                pez.setAlimentado(true);
             }
         }
         System.out.println("Comida vegetal restante: " + cantidadComidaVegetal);
@@ -481,7 +451,7 @@ public class Piscifactoria {
     public int getTotalMachos() {
         int totalMachos = 0;
         for (Tanque tanque : tanques) {
-            totalMachos += tanque.getHembras();
+            totalMachos += tanque.getMachos();
         }
         return totalMachos;
     }

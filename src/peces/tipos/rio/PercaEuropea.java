@@ -15,4 +15,15 @@ public class PercaEuropea extends Pez implements Activo {
     public PercaEuropea(boolean sexo) {
         super(sexo, AlmacenPropiedades.PERCA_EUROPEA);
     }
+
+    /**
+     * Crea una copia del PercaEuropea con un nuevo sexo.
+     *
+     * @param nuevoSexo true para macho, false para hembra.
+     * @return una nueva instancia de PercaEuropea con el sexo especificado.
+     */
+    @Override
+    public PercaEuropea clonar(boolean nuevoSexo) {
+        return new PercaEuropea(nuevoSexo);
+    }
 }
