@@ -2,48 +2,51 @@ package helpers;
 
 import java.util.Scanner;
 
-/** InputHelper facilita la lectura validada de cadenas y enteros */
+/** InputHelper facilita la lectura validada de cadenas y enteros. */
 public class InputHelper {
 
     /** Objeto Scanner utilizado para la lectura de entradas del usuario. */
-    private Scanner scanner;
-
-    /** Inicializa el Scanner para la lectura de datos */
-    public InputHelper() {
-        this.scanner = new Scanner(System.in);
-    }
+    private static final Scanner scanner = new Scanner(System.in);
 
     /**
      * Lee una cadena que no esté vacía y sin caracteres especiales.
      *
      * @param prompt Mensaje mostrado al usuario.
-     * @return Cadena ingresada valida.
+     * @return Cadena ingresada válida.
      */
-    public String readString(String prompt) {
-        while (true) {
-            System.out.print(prompt);
-            String input = scanner.nextLine();
+    public static String readString(String prompt) {
+        boolean entradaValida = false;
+        String string = "";
 
-            if (input.isEmpty()) {
+        while (!entradaValida) {
+            System.out.print(prompt);
+            string = scanner.nextLine();
+
+            if (string.isEmpty()) {
                 System.out.println("\nLa entrada no puede estar vacía. Intente nuevamente.");
-            } else if (!input.matches("[a-zA-Z0-9\\s]*")) {
-                System.out.println("\nEntrada no válida. Por favor, no ingrese caracteres especiales.");
-            } else {
-                return input;
+                continue;
             }
+
+            if (!string.matches("[a-zA-Z0-9\\s]*")) {
+                System.out.println("\nEntrada no válida. Por favor, no ingrese caracteres especiales.");
+                continue;
+            }
+            entradaValida = true;
         }
+        return string;
     }
 
     /**
      * Lee un número entero que no esté vacío y sea válido.
      *
      * @param prompt Mensaje mostrado al usuario.
-     * @return Número ingresado valido.
+     * @return Número ingresado válido.
      */
-    public int readInt(String prompt) {
-        int number = -1;
-        boolean valid = false;
-        while (!valid) {
+    public static int readInt(String prompt) {
+        boolean entradaValida = false;
+        int numero = -1;
+
+        while (!entradaValida) {
             System.out.print(prompt);
             String input = scanner.nextLine();
 
@@ -53,19 +56,47 @@ public class InputHelper {
             }
 
             try {
-                number = Integer.parseInt(input);
-                valid = true;
+                numero = Integer.parseInt(input);
+                entradaValida = true;
             } catch (NumberFormatException e) {
                 System.out.println("\nEntrada no válida. Por favor, ingrese un número entero.");
             }
         }
-        return number;
+        return numero;
     }
 
-    /** Cierra el Scanner y libera los recursos */
-    public void close() {
-        if (scanner != null) {
-            scanner.close();
+    /**
+     * Solicita un número al usuario dentro de un rango específico.
+     *
+     * @param prompt Mensaje mostrado al usuario.
+     * @param min    Valor mínimo permitido (incluido).
+     * @param max    Valor máximo permitido (incluido).
+     * @return Un número dentro del rango especificado.
+     */
+    public static int solicitarNumero(int min, int max) {
+        boolean entradaValida = false;
+        int numero = 0;
+
+        while (!entradaValida) {
+            numero = readInt("Ingresa un número: ");
+
+            if (numero >= min && numero <= max) {
+                entradaValida = true;
+            } else {
+                System.out.println("\nEl número debe estar entre " + min + " y " + max + ". Intente nuevamente.");
+            }
+        }
+        return numero;
+    }
+
+    /** Cierra el Scanner y libera los recursos. */
+    public static void close() {
+        try {
+            if (scanner != null) {
+                scanner.close();
+            }
+        } catch (IllegalStateException e) {
+            System.err.println("El Scanner ya fue cerrado previamente.");
         }
     }
 }

@@ -6,21 +6,29 @@ public class SistemaMonedas {
     /** Cantidad de monedas disponibles en el sistema. */
     private int monedas;
 
-    /**
-     * Constructor que inicializa el saldo de monedas.
-     * 
-     * @param saldoInicial El saldo inicial de monedas. Debe ser un valor nonegativo.
-     * @throws IllegalArgumentException si el saldo inicial es negativo.
-     */
-    public SistemaMonedas(int saldoInicial) {
-        if (saldoInicial < 0) {
-            throw new IllegalArgumentException("\nEl saldo inicial no puede ser negativo.");
-        }
-        this.monedas = saldoInicial;
+    /** Instancia única de SistemaMonedas. */
+    private static SistemaMonedas instanciaUnica;
+
+    /** Constructor privado que inicializa el saldo con 100 monedas. */
+    private SistemaMonedas() {
+        this.monedas = 100;
     }
 
     /**
-     * Devuelve la cantidad de monedas actual.
+     * Obtiene la instancia única del sistema de monedas (Singleton).
+     * Si la instancia aún no ha sido creada, la crea con 100 monedas.
+     * 
+     * @return La instancia única de SistemaMonedas.
+     */
+    public static SistemaMonedas getInstancia() {
+        if (instanciaUnica == null) {
+            instanciaUnica = new SistemaMonedas();
+        }
+        return instanciaUnica;
+    }
+
+    /**
+     * Obtiene la cantidad actual de monedas.
      * 
      * @return El número de monedas disponibles.
      */
@@ -58,5 +66,20 @@ public class SistemaMonedas {
         }
         System.out.println("\nNo hay suficientes monedas para realizar esta acción.");
         return false;
+    }
+
+    /**
+     * Calcula el costo con descuento. Si la cantidad de comida es 25 o más, aplica
+     * un descuento de 5 monedas por cada 25 unidades.
+     * 
+     * @param cantidadComida La cantidad de comida.
+     * @return El costo con descuento.
+     */
+    public int calcularDescuento(int cantidadComida) {
+        if (cantidadComida >= 25) {
+            return cantidadComida - (cantidadComida / 25) * 5;
+        } else {
+            return cantidadComida;
+        }
     }
 }
