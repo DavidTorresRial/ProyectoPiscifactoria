@@ -2,6 +2,7 @@ package tanque;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import commons.Simulador;
 
@@ -68,6 +69,7 @@ public class Tanque {
         }
 
         reproduccion();
+        sellFish();
 
         if (peces.isEmpty()) {
             tipoPezActual = null;
@@ -75,47 +77,52 @@ public class Tanque {
     }
 
     /** Método que maneja la reproducción de los peces en el tanque. */
-    public void reproduccion() {
+    public void reproduccion() { // TODO david (revisar como se alimentan los nuevos peces porque no se resa su comida y se mueren muchos de manera rara no se)
         int nuevosMachos = 0, nuevasHembras = 0;
-
+    
         boolean hayMachoFertil = false;
         for (Pez pez : peces) {
             if (pez.isSexo() && pez.isFertil()) {
                 hayMachoFertil = true;
-                break;
             }
         }
-
+    
         if (hayMachoFertil) {
-            List<Pez> nuevosPeces = new ArrayList<>();
+            List<Pez> hembrasFertiles = new ArrayList<>();
+    
             for (Pez pez : peces) {
-                if (pez.isFertil() && !pez.isSexo()) {
-                    for (int i = 0; i < pez.getDatos().getHuevos(); i++) {
+                if (pez.isFertil()) {
+                    if (!pez.isSexo()) {
+                        hembrasFertiles.add(pez);
+                    }
+                }
+            }
+    
+            if (!hembrasFertiles.isEmpty()) {
+                for (Pez hembra : hembrasFertiles) {
+                    for (int i = 0; i < hembra.getDatos().getHuevos(); i++) {
                         if (peces.size() < capacidadMaxima) {
                             boolean nuevoSexo = (getHembras() <= getMachos()) ? false : true;
-
-                            Pez nuevoPez = (Pez) pez.clonar(nuevoSexo);
-                            nuevosPeces.add(nuevoPez);
-
+    
+                            Pez nuevoPez = (Pez) hembra.clonar(nuevoSexo);
+                            peces.add(nuevoPez);
+    
                             if (nuevoSexo) {
                                 nuevosMachos++;
-                                Simulador.estadisticas.registrarNacimiento(pez.getDatos().getNombre());
+                                Simulador.estadisticas.registrarNacimiento(hembra.getDatos().getNombre());
                             } else {
                                 nuevasHembras++;
-                                Simulador.estadisticas.registrarNacimiento(pez.getDatos().getNombre());
+                                Simulador.estadisticas.registrarNacimiento(hembra.getDatos().getNombre());
                             }
                         } else {
                             System.out.println("No hay espacio para añadir más peces. Capacidad máxima alcanzada.");
                             break;
                         }
                     }
-                    pez.setFertil(false);
+                    hembra.setFertil(false);
                 }
             }
-            peces.addAll(nuevosPeces);
-
-            System.out.println(
-                    "Se han creado " + nuevosMachos + " nuevos machos y " + nuevasHembras + " nuevas hembras.");
+            System.out.println("Se han creado " + nuevosMachos + " nuevos machos y " + nuevasHembras + " nuevas hembras.");
         } else {
             System.out.println("No hay machos fértiles en el tanque. No se realizará reproducción.");
         }
@@ -142,7 +149,28 @@ public class Tanque {
         return false;
     }
 
-    /** Vacía el tanque eliminando todos los peces y reseteando el tipo de pez permitido. */
+    /** Vende los peces maduros y actualiza el sistema de monedas. */
+    public void sellFish() {
+        int totalPecesVendidos = 0, totalMonedasGanadas = 0;
+
+        Iterator<Pez> iterator = peces.iterator(); 
+        while (iterator.hasNext()) {
+            Pez pez = iterator.next(); 
+            if (pez.getEdad() >= pez.getDatos().getOptimo() && pez.isVivo()) {
+                int monedasPez = pez.getDatos().getMonedas();
+                Simulador.monedas.ganarMonedas(monedasPez); 
+                totalMonedasGanadas += monedasPez;
+                iterator.remove(); 
+                totalPecesVendidos++;
+            }
+        }
+        System.out.println(totalPecesVendidos + " peces vendidos por " + totalMonedasGanadas + " monedas.");
+    }
+
+    /**
+     * Vacía el tanque eliminando todos los peces y reseteando el tipo de pez
+     * permitido.
+     */
     public void emptyTank() {
         peces.clear();
         this.tipoPezActual = null;
