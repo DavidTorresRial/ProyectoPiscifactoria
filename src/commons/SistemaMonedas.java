@@ -20,7 +20,7 @@ public class SistemaMonedas {
      * 
      * @return La instancia única de SistemaMonedas.
      */
-    public static SistemaMonedas getInstancia() {
+    static SistemaMonedas getInstancia() {
         if (instanciaUnica == null) {
             instanciaUnica = new SistemaMonedas();
         }
