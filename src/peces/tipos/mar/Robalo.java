@@ -15,4 +15,15 @@ public class Robalo extends Pez implements Carnivoro {
     public Robalo(boolean sexo) {
         super(sexo, AlmacenPropiedades.ROBALO);
     }
+
+    /**
+     * Crea una copia del Robalo con un nuevo sexo.
+     *
+     * @param nuevoSexo true para macho, false para hembra.
+     * @return una nueva instancia de Robalo con el sexo especificado.
+     */
+    @Override
+    public Robalo clonar(boolean nuevoSexo) {
+        return new Robalo(nuevoSexo);
+    }
 }

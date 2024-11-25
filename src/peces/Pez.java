@@ -5,7 +5,7 @@ import java.util.Random;
 import propiedades.PecesDatos;
 
 /** Clase padre de los peces. */
-public class Pez {
+public abstract class Pez {
 
     /** Nombre común del pez. */
     private final String nombre;
@@ -34,7 +34,7 @@ public class Pez {
     /** Datos específicos del pez extraídos de PecesDatos. */
     private PecesDatos datos;
 
-    private boolean primeraVez = true; // TODO revisar si es completamente necesario este atributo 
+    private boolean primeraVez = true; // TODO revisar si es completamente necesario este atributo
 
     /**
      * Constructor que inicializa un Pez con su sexo y datos asociados.
@@ -66,22 +66,22 @@ public class Pez {
         if (vivo) {
             Random rand = new Random();
 
-            // if (!alimentado) { // TODO definitivamente no se estan alimentando bien porque si comento esto no se mueren 
-            //     if (rand.nextDouble() < 0.5) {
-            //         vivo = false;
-            //         fertil = false;
-            //         return;
-            //     }
-            // }
+            if (!alimentado) {
+                if (rand.nextDouble() < 0.5) {
+                    vivo = false;
+                    fertil = false;
+                    return;
+                }
+            }
 
             edad++;
 
             if (sexo) {
-                if (edad >= datos.getMadurez()){
-                    fertil = true; // TODO los machos son fertiles por primera vez y se quedan fertiles hasta la muerte o hasta que se venden
+                if (edad >= datos.getMadurez()) {
+                    fertil = true;
                 }
             } else {
-                if (edad >= datos.getMadurez() && primeraVez) { // TODO añadir que los machos nunca dejen de ser fertiles 
+                if (edad >= datos.getMadurez() && primeraVez) {
                     fertil = true;
                     primeraVez = false;
                 } else if (edad >= datos.getMadurez()) {
@@ -89,19 +89,19 @@ public class Pez {
                     ciclo--;
                     if (ciclo <= 0) {
                         fertil = true;
-                        ciclo = datos.getCiclo(); // TODO 
+                        ciclo = datos.getCiclo(); // TODO revisar
                     }
                 } else {
                     fertil = false;
                 }
             }
 
-            // if (edad < datos.getMadurez() && edad % 2 == 0) { // TODO definitivamente estan muriendo porque no se alimentan porque comente esta linea y siguen muriendo 
-            //     if (rand.nextDouble() < 0.05) {
-            //         vivo = false;
-            //         return;
-            //     }
-            // }
+            if (edad < datos.getMadurez() && edad % 2 == 0) {
+                if (rand.nextDouble() < 0.05) {
+                    vivo = false;
+                    return;
+                }
+            }
         }
     }
 
@@ -115,14 +115,12 @@ public class Pez {
     }
 
     /**
-     * Crea una copia del pez con un nuevo sexo.
+     * Método abstracto para clonar el pez con un nuevo sexo.
      *
      * @param nuevoSexo true para macho, false para hembra.
-     * @return una nueva instancia de Pez con el mismo tipo pero con el sexo especificado.
+     * @return una nueva instancia de la subclase correspondiente.
      */
-    public Pez clonar(boolean nuevoSexo) {
-        return new Pez(nuevoSexo, datos);
-    }
+    public abstract Pez clonar(boolean nuevoSexo);
 
     /**
      * @return el nombre común del pez.
