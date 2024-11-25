@@ -34,6 +34,8 @@ public class Pez {
     /** Datos específicos del pez extraídos de PecesDatos. */
     private PecesDatos datos;
 
+    private boolean primeraVez = true; // TODO revisar si es completamente necesario este atributo 
+
     /**
      * Constructor que inicializa un Pez con su sexo y datos asociados.
      *
@@ -64,33 +66,42 @@ public class Pez {
         if (vivo) {
             Random rand = new Random();
 
-            if (!alimentado) {
-                if (rand.nextDouble() < 0.5) {
-                    vivo = false;
-                    fertil = false;
-                    return;
-                }
-            }
+            // if (!alimentado) { // TODO definitivamente no se estan alimentando bien porque si comento esto no se mueren 
+            //     if (rand.nextDouble() < 0.5) {
+            //         vivo = false;
+            //         fertil = false;
+            //         return;
+            //     }
+            // }
 
             edad++;
 
-            if (edad >= datos.getMadurez()) {
-                if (!fertil) {
-                    ciclo--;
-                    if (ciclo <= 0) {
-                        fertil = true; // Se vuelve fértil después de completar el ciclo
-                    }
+            if (sexo) {
+                if (edad >= datos.getMadurez()){
+                    fertil = true; // TODO los machos son fertiles por primera vez y se quedan fertiles hasta la muerte o hasta que se venden
                 }
             } else {
-                fertil = false;
-            }
-
-            if (edad < datos.getMadurez() && edad % 2 == 0) {
-                if (rand.nextDouble() < 0.05) {
-                    vivo = false;
-                    return;
+                if (edad >= datos.getMadurez() && primeraVez) { // TODO añadir que los machos nunca dejen de ser fertiles 
+                    fertil = true;
+                    primeraVez = false;
+                } else if (edad >= datos.getMadurez()) {
+                    fertil = false;
+                    ciclo--;
+                    if (ciclo <= 0) {
+                        fertil = true;
+                        ciclo = datos.getCiclo(); // TODO 
+                    }
+                } else {
+                    fertil = false;
                 }
             }
+
+            // if (edad < datos.getMadurez() && edad % 2 == 0) { // TODO definitivamente estan muriendo porque no se alimentan porque comente esta linea y siguen muriendo 
+            //     if (rand.nextDouble() < 0.05) {
+            //         vivo = false;
+            //         return;
+            //     }
+            // }
         }
     }
 
