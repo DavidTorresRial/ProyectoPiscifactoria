@@ -15,4 +15,15 @@ public class LubinaRayada extends Pez implements Carnivoro {
     public LubinaRayada(boolean sexo) {
         super(sexo, AlmacenPropiedades.LUBINA_RAYADA);
     }
+
+    /**
+     * Crea una copia del LubinaRayada con un nuevo sexo.
+     *
+     * @param nuevoSexo true para macho, false para hembra.
+     * @return una nueva instancia de LubinaRayada con el sexo especificado.
+     */
+    @Override
+    public LubinaRayada clonar(boolean nuevoSexo) {
+        return new LubinaRayada(nuevoSexo);
+    }
 }

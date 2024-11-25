@@ -15,4 +15,15 @@ public class ArenqueDelAtlantico extends Pez implements Filtrador {
     public ArenqueDelAtlantico(boolean sexo) {
         super(sexo, AlmacenPropiedades.ARENQUE_ATLANTICO);
     }
+
+    /**
+     * Crea una copia del ArenqueDelAtlantico con un nuevo sexo.
+     *
+     * @param nuevoSexo true para macho, false para hembra.
+     * @return una nueva instancia de ArenqueDelAtlantico con el sexo especificado.
+     */
+    @Override
+    public ArenqueDelAtlantico clonar(boolean nuevoSexo) {
+        return new ArenqueDelAtlantico(nuevoSexo);
+    }
 }

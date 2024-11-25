@@ -15,4 +15,15 @@ public class Pejerrey extends Pez implements Carnivoro {
     public Pejerrey(boolean sexo) {
         super(sexo, AlmacenPropiedades.PEJERREY);
     }
+
+    /**
+     * Crea una copia del Pejerrey con un nuevo sexo.
+     *
+     * @param nuevoSexo true para macho, false para hembra.
+     * @return una nueva instancia de Pejerrey con el sexo especificado.
+     */
+    @Override
+    public Pejerrey clonar(boolean nuevoSexo) {
+        return new Pejerrey(nuevoSexo);
+    }
 }
