@@ -142,9 +142,7 @@ public class Piscifactoria {
         if (capacidadMaximaComida + incrementoCapacidad <= capacidadMaximaPermitida) {
             if (Simulador.monedas.gastarMonedas(costoMejora)) {
                 capacidadMaximaComida += incrementoCapacidad;
-                System.out.println("Almacén de comida de la piscifactoría " + nombre
-                        + " mejorado. Su capacidad ha aumentado en " + incrementoCapacidad + " hasta un total de "
-                        + capacidadMaximaComida + ".");
+                System.out.println("\nMejorada la piscifactoría " + nombre + " aumentando su capacidad de comida hasta un total de " + capacidadMaximaComida + " por " + costoMejora + " monedas.");
                 return true;
             } else {
                 System.out.println("No tienes suficientes monedas para mejorar el almacén de comida de la piscifactoría " + nombre + ".");
@@ -161,21 +159,19 @@ public class Piscifactoria {
         if (tanques.size() < numeroMaximoTanques) {
             if (esDeRio) {
                 int costoTanque = 150 * (tanques.size() + 1);
-                if (Simulador.monedas.getMonedas() >= costoTanque) {
+                if (Simulador.monedas.gastarMonedas(costoTanque)) {
                     tanques.add(new Tanque(tanques.size() + 1, 25));
                     numeroTanquesDeRio++;
-                    Simulador.monedas.gastarMonedas(costoTanque);
-                    System.out.println("\nTanque de río agregado exitosamente. " + costoTanque + " monedas han sido descontadas.");
+                    System.out.println("\nComprado un tanque número " + numeroTanquesDeRio + " de la piscifactoría " + nombre + ".");
                 } else {
                     System.out.println("\nNo tienes suficientes monedas para agregar un tanque de río. Necesitas " + costoTanque + " monedas.");
                 }
             } else {
                 int costoTanque = 600 * (tanques.size() + 1);
-                if (Simulador.monedas.getMonedas() >= costoTanque) {
+                if (Simulador.monedas.gastarMonedas(costoTanque)) {
                     tanques.add(new Tanque(tanques.size() + 1, 100));
                     numeroTanquesDeMar++;
-                    Simulador.monedas.gastarMonedas(costoTanque);
-                    System.out.println("\nTanque de mar agregado exitosamente. " + costoTanque + " monedas han sido descontadas.");
+                    System.out.println("\nComprado un tanque número " + numeroTanquesDeRio + " de la piscifactoría " + nombre + ".");
                 } else {
                     System.out.println("\nNo tienes suficientes monedas para agregar un tanque de mar. Necesitas " + costoTanque + " monedas.");
                 }

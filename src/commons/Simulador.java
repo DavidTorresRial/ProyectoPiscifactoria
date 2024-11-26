@@ -146,7 +146,7 @@ public class Simulador {
             String[] opcionesMenu = new String[tanques.size()];
             for (int i = 0; i < tanques.size(); i++) {
                 Tanque tanque = tanques.get(i);
-                String tipoPez = tanque.getPeces().isEmpty() ? "Vacío" : tanque.getPeces().get(0).getNombre(); // TODO
+                String tipoPez = tanque.getPeces().isEmpty() ? "Vacío" : tanque.getPeces().get(0).getNombre();
                 opcionesMenu[i] = "Tanque " + (i + 1) + " [" + tipoPez + "]";
             }
             MenuHelper.mostrarMenuCancelar(opcionesMenu);
@@ -649,7 +649,7 @@ public class Simulador {
                 case 2:
                     if (monedas.gastarMonedas(2000)) {
                         almacenCentral = new AlmacenCentral();
-                        System.out.println("\nAlmacén central construido.");
+                        System.out.println("\nComprado el almacén central.");
                     } else {
                         System.out.println("\nNecesitas 2000 monedas para construir el almacén central.");
                     }
@@ -765,7 +765,7 @@ public class Simulador {
         if (tipoSeleccionado == 1) {
             if (monedas.gastarMonedas(costoPiscifactoríaRio)) {
                 nuevaPiscifactoria = new Piscifactoria(nombrePiscifactoria, true);
-                System.out.println("\nPiscifactoría de Río '" + nombrePiscifactoria + "' comprada.");
+                System.out.println("\nComprada la piscifactoría de rio " + nombrePiscifactoria + " por " + costoPiscifactoríaRio + " monedas.");
                 piscifactorias.add(nuevaPiscifactoria);
             } else {
                 System.out.println("\nNo tienes suficientes monedas para comprar la piscifactoría de río.");
@@ -773,7 +773,7 @@ public class Simulador {
         } else if (tipoSeleccionado == 2) {
             if (monedas.gastarMonedas(costoPiscifactoríaMar)) {
                 nuevaPiscifactoria = new Piscifactoria(nombrePiscifactoria, false);
-                System.out.println("\nPiscifactoría de Mar '" + nombrePiscifactoria + "' comprada.");
+                System.out.println("\nComprada la piscifactoría de mar " + nombrePiscifactoria + " por " + costoPiscifactoríaMar + " monedas.");
                 piscifactorias.add(nuevaPiscifactoria);
             } else {
                 System.out.println("\nNo tienes suficientes monedas para comprar la piscifactoría de mar.");

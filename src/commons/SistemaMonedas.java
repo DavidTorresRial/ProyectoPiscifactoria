@@ -45,10 +45,8 @@ public class SistemaMonedas {
     public boolean ganarMonedas(int cantidad) {
         if (cantidad > 0) {
             monedas += cantidad;
-            System.out.println("\n(Has ganado " + cantidad + " monedas. Saldo actual: " + monedas + " monedas.)");
             return true;
         }
-        System.out.println("\n(No se pueden ganar monedas negativas o cero.)");
         return false;
     }
 
@@ -61,10 +59,8 @@ public class SistemaMonedas {
     public boolean gastarMonedas(int costo) {
         if (costo > 0 && costo <= monedas) {
             monedas -= costo;
-            System.out.println("\n(Se han gastado " + costo + " monedas. Saldo restante: " + monedas + " monedas.)");
             return true;
         }
-        System.out.println("\n(No tienes suficientes monedas para realizar esta acción.)");
         return false;
     }
 
