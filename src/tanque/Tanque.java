@@ -14,9 +14,6 @@ public class Tanque {
     /** Lista para almacenar los peces en el tanque. */
     private List<Pez> peces = new ArrayList<>();
 
-    /** Tipo de pez actual permitido en el tanque. */
-    private Class<?> tipoPezActual;
-
     /** Número del tanque. */
     private final int numeroTanque;
 
@@ -32,7 +29,6 @@ public class Tanque {
     public Tanque(int numeroTanque, int capacidadMaxima) {
         this.numeroTanque = numeroTanque;
         this.capacidadMaxima = capacidadMaxima;
-        this.tipoPezActual = null;
     }
 
     /** Muestra el estado actual del tanque. */
@@ -67,13 +63,8 @@ public class Tanque {
         for (Pez pez : peces) {
             pez.grow();
         }
-
         reproduccion();
         sellFish();
-
-        if (peces.isEmpty()) {
-            tipoPezActual = null;
-        }
     }
 
     /** Método que maneja la reproducción de los peces en el tanque. */
@@ -140,11 +131,10 @@ public class Tanque {
             return false;
         }
         if (Simulador.monedas.gastarMonedas(pez.getDatos().getCoste())) {
-            if (tipoPezActual == null) {
-                tipoPezActual = pez.getClass();
+            if (peces.isEmpty() || peces.get(0).getNombre().equals(pez.getNombre())) {
+                peces.add(pez);
+                return true;
             }
-            peces.add(pez);
-            return true;
         }
         return false;
     }
@@ -175,7 +165,6 @@ public class Tanque {
     /** Vacía el tanque eliminando todos los peces y reseteando el tipo de pez permitido. */
     public void emptyTank() {
         peces.clear();
-        this.tipoPezActual = null;
     }
 
     /**
@@ -185,15 +174,6 @@ public class Tanque {
      */
     public List<Pez> getPeces() {
         return peces;
-    }
-
-    /**
-     * Devuelve el tipo de pez actual.
-     * 
-     * @return la clase del tipo de pez actual.
-     */
-    public Class<?> getTipoPezActual() {
-        return tipoPezActual;
     }
 
     /**
@@ -314,7 +294,7 @@ public class Tanque {
         return "Información del Tanque: " + numeroTanque +
                 "\n  Capacidad Máxima    : " + capacidadMaxima +
                 "\n  Peces en el Tanque  : " + peces.size() +
-                "\n  Tipo de Pez         : " + (tipoPezActual != null ? tipoPezActual.getSimpleName() : "Ninguno") +
+                "\n  Tipo de Pez         : " + (!peces.isEmpty() ? peces.get(0).getNombre() : "Ninguno") +
                 "\n  Peces Vivos         : " + getVivos() +
                 "\n  Peces Alimentados   : " + getAlimentados() +
                 "\n  Peces Adultos       : " + getAdultos() +
