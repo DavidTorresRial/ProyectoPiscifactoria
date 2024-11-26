@@ -190,10 +190,10 @@ public class Piscifactoria {
      *
      * @param tanque El tanque del que se alimentarán los peces.
      */
-    private void alimentarPeces(Tanque tanque) { // TODO revisar alimentacion de los nuevos hijos creados 
+    private void alimentarPeces(Tanque tanque) { // TODO alimentar en la clase pez haciendo una jerarquia de clases que extiendan de sus propiedades
         Random rand = new Random();
 
-        for (Pez pez : tanque.getPeces()) { // TODO revisar por si hay que hacer en almacenCentral un metodo para que distribulla la comida 
+        for (Pez pez : tanque.getPeces()) {
             if (!pez.isVivo()) {
                 continue;
             }
@@ -496,7 +496,7 @@ public class Piscifactoria {
                 "\n  Peces Alimentados    : " + getTotalAlimentados() +
                 "\n  Peces Adultos        : " + getTotalAdultos() +
                 "\n  Hembras              : " + getTotalHembras() +
-                "\n  Machos               : " + (getTotalVivos() - getTotalHembras()) +
+                "\n  Machos               : " + getTotalMachos() +
                 "\n  Peces Fértiles       : " + getTotalFertiles() +
                 "\n  Comida Vegetal       : " + getComidaVegetalActual() + " / " + getCapacidadTotal() +
                 "\n  Comida Animal        : " + getComidaAnimalActual() + " / " + getCapacidadTotal();
