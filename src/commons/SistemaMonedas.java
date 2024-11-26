@@ -64,7 +64,7 @@ public class SistemaMonedas {
             System.out.println("\nSe han gastado " + costo + " monedas. Saldo restante: " + monedas + " monedas.");
             return true;
         }
-        System.out.println("\nNo hay suficientes monedas para realizar esta acción.");
+        System.out.println("\nNo tienes suficientes monedas para realizar esta acción.");
         return false;
     }
 
