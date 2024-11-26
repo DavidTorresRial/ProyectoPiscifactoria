@@ -69,7 +69,6 @@ public abstract class Pez {
             if (!alimentado) {
                 if (rand.nextDouble() < 0.5) {
                     vivo = false;
-                    fertil = false;
                     return;
                 }
             }

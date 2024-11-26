@@ -193,7 +193,7 @@ public class Piscifactoria {
     private void alimentarPeces(Tanque tanque) { // TODO revisar alimentacion de los nuevos hijos creados 
         Random rand = new Random();
 
-        for (Pez pez : tanque.getPeces()) {
+        for (Pez pez : tanque.getPeces()) { // TODO revisar por si hay que hacer en almacenCentral un metodo para que distribulla la comida 
             if (!pez.isVivo()) {
                 continue;
             }
