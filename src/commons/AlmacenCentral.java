@@ -32,8 +32,10 @@ public class AlmacenCentral {
             capacidadAlmacen += 50;
             System.out.println("\nCapacidad del almacén central mejorada en 50 unidades hasta " + capacidadAlmacen);
             return true;
+        } else {
+            System.out.println("Necesitas " + costoMejora + " monedas para aumentar la capacidad.");
+            return false;
         }
-        return false;
     }
 
     /**
