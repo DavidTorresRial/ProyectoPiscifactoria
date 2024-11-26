@@ -186,9 +186,7 @@ public class Simulador {
     public void showSpecificStatus() {
         Piscifactoria piscifactoria = selectPisc();
 
-        if (piscifactoria == null) {
-            return;
-        } else {
+        if (piscifactoria != null) {
             piscifactoria.showTankStatus();
         }
     }
@@ -282,8 +280,6 @@ public class Simulador {
                 System.out.println("\nOperación cancelada.");
                 System.out.println("============================================================");
                 break;
-            default:
-                System.out.println("\nSelección inválida. Por favor, intente de nuevo.");
         }
 
         if (opcion != 0) {
@@ -532,9 +528,6 @@ public class Simulador {
                         case 0:
                             System.out.println("\nOperación cancelada.");
                             break;
-                        default:
-                            System.out.println("\nSelección inválida. Por favor, intente de nuevo.");
-                            continue;
                     }
                 } else {
                     switch (opcion) {
@@ -545,9 +538,6 @@ public class Simulador {
                         case 0:
                             System.out.println("\nOperación cancelada.");
                             break;
-                        default:
-                            System.out.println("\nSelección inválida. Por favor, intente de nuevo.");
-                            continue;
                     }
                 }
                 if (opcion != 0 && tanqueSeleccionado.addFish(pezSeleccionado)) {
@@ -631,18 +621,16 @@ public class Simulador {
             int opcionPrincipal = InputHelper.solicitarNumero(0, opcionesMenuPrincipal.length);
 
             switch (opcionPrincipal) {
-                case 1: // Comprar edificios
+                case 1:
                     gestionarCompraEdificios();
                     break;
-                case 2: // Mejorar edificios
+                case 2:
                     gestionarMejoraEdificios();
                     break;
-                case 0: // Cancelar
+                case 0:
                     System.out.println("\nOperación cancelada.");
                     salir = true;
                     break;
-                default:
-                    System.out.println("Opción no válida. Intente nuevamente.");
             }
         }
     }
@@ -674,8 +662,6 @@ public class Simulador {
                     System.out.println("\nOperación cancelada.");
                     salir = true;
                     break;
-                default:
-                    System.out.println("Opción no válida. Intente nuevamente.");
             }
         }
     }
@@ -703,8 +689,6 @@ public class Simulador {
                     System.out.println("\nOperación cancelada.");
                     salir = true;
                     break;
-                default:
-                    System.out.println("Opción no válida. Intente nuevamente.");
             }
         }
     }
@@ -846,7 +830,6 @@ public class Simulador {
                     break;
                 default:
                     System.out.println("\nOpción no válida. Por favor, intente de nuevo.");
-                    break;
             }
         }
         InputHelper.close();
