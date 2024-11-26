@@ -312,16 +312,25 @@ public class Simulador {
 
     /** Simula un día en todas las piscifactorías. */
     public void nextDay() { // TODO implementar
-        // int totalPecesVendidos = 0, totalMonedasGanadas = 0;
+        int pecesVendidos = 0, monedasGanadas = 0;
+        int totalPecesVendidos = 0, totalMonedasGanadas = 0;
 
         dias++;
 
         for (Piscifactoria piscifactoria : piscifactorias) {
             piscifactoria.nextDay();
+            System.out.println("\nPiscifactoría " + piscifactoria.getNombre() + ": " + pecesVendidos + " peces vendidos por " + monedasGanadas + " monedas");
+            //totalPecesVendidos += piscifactoria.getPecesVendidos();
+            //totalMonedasGanadas += piscifactoria.getMonedasGanadas();
         }
-        // showGeneralStatus();
-        // System.out.println(totalPecesVendidos + " peces vendidos por un total de " +
-        // totalMonedasGanadas + " monedas.");
+        System.out.println("\n" + totalPecesVendidos + " peces vendidos por un total de " + totalMonedasGanadas + " monedas.");
+    }
+
+    /** Simula varios días consecutivos en todas las piscifactorías. */
+    public void nextDay(int dias) {
+        for (int i = 0; i < dias; i++) {
+            nextDay();
+        }
     }
 
     /** Añade comida al almacén central si está construido, o a una piscifactoría seleccionada. */
@@ -821,9 +830,8 @@ public class Simulador {
                     simulador.upgrade();
                     break;
                 case 13:
-                    // int dias = inputHelper.readInt("Ingrese los dias para avanzar en el
-                    // simulador: ");
-                    // simulador.avanzarDias(dias);
+                    int dias = InputHelper.readInt("\nIngrese los dias para avanzar en el simulador: ");
+                    simulador.nextDay(dias);
                     break;
                 case 98:
                     // simulador.agregarPecesAleatorios();
