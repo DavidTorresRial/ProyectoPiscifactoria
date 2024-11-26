@@ -74,7 +74,7 @@ public class AlmacenCentral {
 
     /** Muestra el estado actual del almacén. */
     public void mostrarEstado() {
-        System.out.println("Estado del Almacén Central:");
+        System.out.println("\nEstado del Almacén Central:");
 
         System.out.println("Comida vegetal al " + (cantidadComidaVegetal * 100 / capacidadAlmacen) + "% de su capacidad. [" + cantidadComidaVegetal + "/" + capacidadAlmacen + "]");
         System.out.println("Comida animal al " + (cantidadComidaAnimal * 100 / capacidadAlmacen) + "% de su capacidad. [" + cantidadComidaAnimal + "/" + capacidadAlmacen + "]");

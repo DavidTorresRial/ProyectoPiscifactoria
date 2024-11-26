@@ -66,39 +66,32 @@ public abstract class Pez {
         if (vivo) {
             Random rand = new Random();
 
-            if (!alimentado) {
-                if (rand.nextDouble() < 0.5) {
-                    vivo = false;
-                    return;
-                }
-            }
-
-            edad++;
-
-            if (sexo) {
-                if (edad >= datos.getMadurez()) {
-                    fertil = true;
-                }
+            if (!alimentado && rand.nextBoolean() == true) {
+                vivo = false;
             } else {
-                if (edad >= datos.getMadurez() && primeraVez) {
-                    fertil = true;
-                    primeraVez = false;
-                } else if (edad >= datos.getMadurez()) {
-                    fertil = false;
-                    ciclo--;
-                    if (ciclo <= 0) {
-                        fertil = true;
-                        ciclo = datos.getCiclo(); // TODO revisar
-                    }
-                } else {
-                    fertil = false;
-                }
-            }
+                edad++;
 
-            if (edad < datos.getMadurez() && edad % 2 == 0) {
-                if (rand.nextDouble() < 0.05) {
-                    vivo = false;
-                    return;
+                if (!sexo) {
+                    if (edad >= datos.getMadurez() && primeraVez) {
+                        fertil = true;
+                        primeraVez = false;
+                    } else if (edad >= datos.getMadurez()) {
+                        ciclo--;
+                        if (ciclo <= 0) {
+                            fertil = true;
+                            ciclo = datos.getCiclo();
+                        }
+                    } else {
+                        fertil = false;
+                    }
+                } else if (edad >= datos.getMadurez()) {
+                    fertil = true;
+                }
+
+                if (edad < datos.getMadurez() && edad % 2 == 0) {
+                    if (rand.nextDouble() < 0.05) {
+                        vivo = false;
+                    }
                 }
             }
         }
