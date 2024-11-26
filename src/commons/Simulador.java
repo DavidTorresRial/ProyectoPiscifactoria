@@ -6,22 +6,26 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import estadisticas.Estadisticas;
 import helpers.InputHelper;
 import helpers.MenuHelper;
-
+import peces.Pez;
+import peces.tipos.doble.SalmonAtlantico;
+import peces.tipos.doble.TruchaArcoiris;
+import peces.tipos.mar.ArenqueDelAtlantico;
+import peces.tipos.mar.Besugo;
+import peces.tipos.mar.LenguadoEuropeo;
+import peces.tipos.mar.LubinaRayada;
+import peces.tipos.mar.Robalo;
+import peces.tipos.rio.CarpaPlateada;
+import peces.tipos.rio.Pejerrey;
+import peces.tipos.rio.PercaEuropea;
+import peces.tipos.rio.SalmonChinook;
+import peces.tipos.rio.TilapiaDelNilo;
+import piscifactoria.Piscifactoria;
 import propiedades.AlmacenPropiedades;
 import propiedades.PecesProps;
-
-import estadisticas.Estadisticas;
-
-import piscifactoria.Piscifactoria;
-
 import tanque.Tanque;
-
-import peces.Pez;
-import peces.tipos.doble.*;
-import peces.tipos.mar.*;
-import peces.tipos.rio.*;
 
 /**
  * La clase Simulador gestiona la simulación de una piscifactoría,
@@ -790,9 +794,10 @@ public class Simulador {
                     simulador.upgrade();
                     break;
                 case 13:
-                    // int dias = inputHelper.readInt("Ingrese los dias para avanzar en el
-                    // simulador: ");
-                    // simulador.avanzarDias(dias);
+                    int dias = InputHelper.readInt("Ingrese los dias para avanzar en el simulador: ");
+                    for (int i = 0; i < dias; i++) {
+                    simulador.nextDay();
+                    }
                     break;
                 case 98:
                     // simulador.agregarPecesAleatorios();
