@@ -114,8 +114,6 @@ public class Tanque {
                 }
             }
             System.out.println("\nSe han creado " + nuevosMachos + " nuevos machos y " + nuevasHembras + " nuevas hembras.");
-        } else {
-            System.out.println("\nNo hay machos fértiles en el tanque. No se realizará reproducción.");
         }
     }
 

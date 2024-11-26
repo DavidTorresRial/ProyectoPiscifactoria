@@ -249,8 +249,8 @@ public class Piscifactoria {
                 }
             }
         }
-        System.out.println("Comida vegetal restante: " + cantidadComidaVegetal);
-        System.out.println("Comida animal restante: " + cantidadComidaAnimal);
+        System.out.println("\n(Comida vegetal restante: " + cantidadComidaVegetal + ")");
+        System.out.println("(Comida animal restante: " + cantidadComidaAnimal + ")");
     }
 
     /**
