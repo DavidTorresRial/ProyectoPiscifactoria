@@ -67,22 +67,19 @@ public class Simulador {
     /** Almacén central de comida para abastecer las piscifactorías. */
     public static AlmacenCentral almacenCentral;
 
-    /** Utilidad para gestionar los menús de la simulación. */
-    private MenuHelper menuHelper = new MenuHelper();
-
     /** Metodo que inicializa todo el sistema. */
     public void init() {
         nombreEntidad = InputHelper.readString("Ingrese el nombre de la entidad/empresa/partida: ");
         nombrePiscifactoria = InputHelper.readString("\nIngrese el nombre de la primera Piscifactoria: ");
 
         piscifactorias.add(new Piscifactoria(nombrePiscifactoria, true));
-        piscifactorias.get(0).añadirComidaAnimal(piscifactorias.get(0).getCapacidadMaximaComida());
-        piscifactorias.get(0).añadirComidaVegetal(piscifactorias.get(0).getCapacidadMaximaComida());
+        //piscifactorias.get(0).añadirComidaAnimal(piscifactorias.get(0).getCapacidadMaximaComida());
+        //piscifactorias.get(0).añadirComidaVegetal(piscifactorias.get(0).getCapacidadMaximaComida());
     }
 
     /** Método que muestra el texto del menú. */
     public void menu() {
-        menuHelper.mostrarMenu(new String[] {
+        MenuHelper.mostrarMenu(new String[] {
                 "Estado general",
                 "Estado piscifactoría",
                 "Estado tanque",
@@ -113,7 +110,7 @@ public class Simulador {
             opciones[i] = piscifactoria.getNombre() + " [" + piscifactoria.getTotalVivos() + "/"
                     + piscifactoria.getTotalPeces() + "/" + piscifactoria.getCapacidadTotal() + "]";
         }
-        menuHelper.mostrarMenuCancelar(opciones);
+        MenuHelper.mostrarMenuCancelar(opciones);
     }
 
     /**
@@ -151,7 +148,7 @@ public class Simulador {
                 String tipoPez = tanque.getTipoPezActual() != null ? tanque.getTipoPezActual().getSimpleName() : "Vacío";
                 opcionesMenu[i] = "Tanque " + (i + 1) + " [" + tipoPez + "]";
             }
-            menuHelper.mostrarMenuCancelar(opcionesMenu);
+            MenuHelper.mostrarMenuCancelar(opcionesMenu);
 
             int seleccion = InputHelper.solicitarNumero(0, tanques.size()) - 1;
 
@@ -229,7 +226,7 @@ public class Simulador {
     /** Muestra el estado de un pez seleccionado por el usuario. */
     public void showIctio() {
         System.out.println("\n======================== Ictiopedia ========================");
-        menuHelper.mostrarMenuCancelar(new String[] {
+        MenuHelper.mostrarMenuCancelar(new String[] {
                 "Salmon del Atlántico",
                 "Trucha Arcoíris",
                 "Arenque del Atlántico",
@@ -346,7 +343,7 @@ public class Simulador {
                 int opcionComida;
                 do {
                     System.out.println("\n============= Añadir Comida a la Piscifactoría =============");
-                    menuHelper.mostrarMenuCancelar(menuComida);
+                    MenuHelper.mostrarMenuCancelar(menuComida);
                     opcionComida = InputHelper.solicitarNumero(0, menuComida.length);
 
                     if (opcionComida != 0) {
@@ -361,7 +358,7 @@ public class Simulador {
                         int opcionCantidad;
                         do {
                             System.out.println("\n==================== Cantidad de Comida ====================");
-                            menuHelper.mostrarMenuCancelar(menuCantidad);
+                            MenuHelper.mostrarMenuCancelar(menuCantidad);
                             opcionCantidad = InputHelper.solicitarNumero(0, menuCantidad.length);
 
                             if (opcionCantidad != 0) {
@@ -400,7 +397,7 @@ public class Simulador {
             int opcionComida;
             do {
                 System.out.println("\n============= Añadir Comida al Almacén Central =============");
-                menuHelper.mostrarMenuCancelar(menuComida);
+                MenuHelper.mostrarMenuCancelar(menuComida);
                 opcionComida = InputHelper.solicitarNumero(0, menuComida.length);
 
                 if (opcionComida != 0) {
@@ -415,7 +412,7 @@ public class Simulador {
                     int opcionCantidad;
                     do {
                         System.out.println("\n==================== Cantidad de Comida ====================");
-                        menuHelper.mostrarMenuCancelar(menuCantidad);
+                        MenuHelper.mostrarMenuCancelar(menuCantidad);
                         opcionCantidad = InputHelper.solicitarNumero(0, menuCantidad.length);
 
                         if (opcionCantidad != 0) {
@@ -490,7 +487,7 @@ public class Simulador {
                 }
 
                 System.out.println();
-                menuHelper.mostrarMenuCancelar(opcionesPeces);
+                MenuHelper.mostrarMenuCancelar(opcionesPeces);
 
                 opcion = InputHelper.solicitarNumero(0, opcionesPeces.length);
 
@@ -655,7 +652,7 @@ public class Simulador {
             // Crear las opciones para el menú principal
             String[] opcionesUpgrade = { "Comprar edificios", "Mejorar edificios" };
             System.out.println();
-            menuHelper.mostrarMenuCancelar(opcionesUpgrade);
+            MenuHelper.mostrarMenuCancelar(opcionesUpgrade);
             int opcion = InputHelper.readInt("Ingrese su opción: ");
 
             switch (opcion) {
@@ -665,7 +662,7 @@ public class Simulador {
                         // Crear opciones para el menú de compra de edificios
                         String[] opcionesCompra = { "Piscifactoría", "Almacén central" };
                         System.out.println();
-                        menuHelper.mostrarMenuCancelar(opcionesCompra); // Mostrar el menú de compra
+                        MenuHelper.mostrarMenuCancelar(opcionesCompra); // Mostrar el menú de compra
                         int edificioAComprar = InputHelper.readInt("Seleccione el edificio a comprar: ");
 
                         if (edificioAComprar == 1) {
@@ -682,7 +679,7 @@ public class Simulador {
                                     "Piscifactoría de mar (" + costoPiscifactoríaMar + " monedas)",
                             };
                             System.out.println();
-                            menuHelper.mostrarMenuCancelar(opcionesPiscifactoria); // Mostrar opciones de piscifactoría
+                            MenuHelper.mostrarMenuCancelar(opcionesPiscifactoria); // Mostrar opciones de piscifactoría
                             int tipoSeleccionado = InputHelper.readInt("Seleccione el tipo de piscifactoría: ");
 
                             Piscifactoria nuevaPiscifactoria = null;
@@ -739,7 +736,7 @@ public class Simulador {
                         // Crear opciones para el menú de mejora de edificios
                         String[] opcionesMejorar = { "Piscifactoría", "Almacén central" };
                         System.out.println();
-                        menuHelper.mostrarMenuCancelar(opcionesMejorar); // Mostrar el menú de mejora
+                        MenuHelper.mostrarMenuCancelar(opcionesMejorar); // Mostrar el menú de mejora
                         int edificioAMejorar = InputHelper.readInt("Seleccione el edificio a mejorar: ");
 
                         if (edificioAMejorar == 1) {
@@ -749,7 +746,7 @@ public class Simulador {
                                 String[] opcionesMejorasPiscifactoria = { "Comprar tanque",
                                         "Aumentar almacén de comida" };
                                 System.out.println();
-                                menuHelper.mostrarMenuCancelar(opcionesMejorasPiscifactoria); // Mostrar menú de mejoras
+                                MenuHelper.mostrarMenuCancelar(opcionesMejorasPiscifactoria); // Mostrar menú de mejoras
                                 int mejoraPiscifactoria = InputHelper.readInt("Seleccione la mejora: ");
 
                                 if (mejoraPiscifactoria == 1) {
@@ -788,7 +785,7 @@ public class Simulador {
                                 while (true) {
                                     String[] opcionesMejorasAlmacenCentral = { "Aumentar capacidad" };
                                     System.out.println();
-                                    menuHelper.mostrarMenuCancelar(opcionesMejorasAlmacenCentral);
+                                    MenuHelper.mostrarMenuCancelar(opcionesMejorasAlmacenCentral);
                                     int mejoraAlmacenCentral = InputHelper.readInt("Seleccione la mejora: ");
 
                                     if (mejoraAlmacenCentral == 1) {
@@ -889,7 +886,7 @@ public class Simulador {
                     System.out.println("\nSaliendo del simulador.");
                     break;
                 default:
-                    System.out.println("Opción no válida. Por favor, intente de nuevo.");
+                    System.out.println("\nOpción no válida. Por favor, intente de nuevo.");
                     break;
             }
         }

@@ -91,7 +91,7 @@ public class Tanque {
             List<Pez> hembrasFertiles = new ArrayList<>();
 
             for (Pez pez : peces) {
-                if (pez.isFertil()) {
+                if (pez.isFertil() && pez.isVivo()) {
                     if (!pez.isSexo()) {
                         hembrasFertiles.add(pez);
                     }
