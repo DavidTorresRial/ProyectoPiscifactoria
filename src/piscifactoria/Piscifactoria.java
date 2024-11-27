@@ -21,19 +21,18 @@ public abstract class Piscifactoria {
 
     /** Lista de tanques con distintos tipos de peces. */
     protected List<Tanque> tanques = new ArrayList<>();
-
-    /** Capacidad máxima para ambos tipos de comida. */
-    protected int capacidadMaximaComida;
-
+    
+    /** Número máximo de tanques permitidos en la piscifactoría. */
+    protected final int numeroMaximoTanques = 10;
+    
     /** Cantidad actual de comida animal. */
     private int cantidadComidaAnimal;
 
     /** Cantidad actual de comida vegetal. */
     private int cantidadComidaVegetal;
 
-    /** Número máximo de tanques permitidos en la piscifactoría. */
-    protected final int numeroMaximoTanques = 10;
-
+    /** Capacidad máxima para ambos tipos de comida. */
+    protected int capacidadMaximaComida;
 
     /**
      * Constructor para crear una nueva piscifactoría.
