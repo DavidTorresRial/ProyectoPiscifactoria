@@ -15,7 +15,8 @@ import propiedades.PecesProps;
 import estadisticas.Estadisticas;
 
 import piscifactoria.Piscifactoria;
-
+import piscifactoria.PiscifactoriaDeMar;
+import piscifactoria.PiscifactoriaDeRio;
 import tanque.Tanque;
 
 import peces.Pez;
@@ -72,7 +73,7 @@ public class Simulador {
         nombreEntidad = InputHelper.readString("Ingrese el nombre de la entidad/empresa/partida: ");
         nombrePiscifactoria = InputHelper.readString("\nIngrese el nombre de la primera Piscifactoria: ");
 
-        piscifactorias.add(new Piscifactoria(nombrePiscifactoria, true));
+        piscifactorias.add(new PiscifactoriaDeRio(nombrePiscifactoria));
         piscifactorias.get(0).añadirComidaAnimal(piscifactorias.get(0).getCapacidadMaximaComida());
         piscifactorias.get(0).añadirComidaVegetal(piscifactorias.get(0).getCapacidadMaximaComida());
     }
@@ -455,7 +456,7 @@ public class Simulador {
         if (tanqueSeleccionado != null) {
             int opcion = -1;
             while (opcion != 0) {
-                boolean esDeRio = selectTank.getKey().esDeRio();
+                boolean esDeRio = selectTank.getKey() instanceof PiscifactoriaDeRio;
 
                 String[] opcionesPeces;
                 if (tanqueSeleccionado.getPeces().isEmpty()) {
@@ -710,7 +711,7 @@ public class Simulador {
     public int contarPiscifactoriasDeRio() {
         int contador = 0;
         for (Piscifactoria p : piscifactorias) {
-            if (p.esDeRio()) {
+            if (p instanceof PiscifactoriaDeRio) {
                 contador++;
             }
         }
@@ -725,7 +726,7 @@ public class Simulador {
     public int contarPiscifactoriasDeMar() {
         int contador = 0;
         for (Piscifactoria p : piscifactorias) {
-            if (!p.esDeRio()) {
+            if (p instanceof PiscifactoriaDeMar) {
                 contador++;
             }
         }
@@ -750,7 +751,7 @@ public class Simulador {
         Piscifactoria nuevaPiscifactoria = null;
         if (tipoSeleccionado == 1) {
             if (monedas.gastarMonedas(costoPiscifactoríaRio)) {
-                nuevaPiscifactoria = new Piscifactoria(nombrePiscifactoria, true);
+                nuevaPiscifactoria = new PiscifactoriaDeRio(nombrePiscifactoria);
                 System.out.println("\nComprada la piscifactoría de rio " + nombrePiscifactoria + " por " + costoPiscifactoríaRio + " monedas.");
                 piscifactorias.add(nuevaPiscifactoria);
             } else {
@@ -758,7 +759,7 @@ public class Simulador {
             }
         } else if (tipoSeleccionado == 2) {
             if (monedas.gastarMonedas(costoPiscifactoríaMar)) {
-                nuevaPiscifactoria = new Piscifactoria(nombrePiscifactoria, false);
+                nuevaPiscifactoria = new PiscifactoriaDeMar(nombrePiscifactoria);
                 System.out.println("\nComprada la piscifactoría de mar " + nombrePiscifactoria + " por " + costoPiscifactoríaMar + " monedas.");
                 piscifactorias.add(nuevaPiscifactoria);
             } else {
