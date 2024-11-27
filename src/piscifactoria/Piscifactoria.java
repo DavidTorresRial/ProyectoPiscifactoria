@@ -39,9 +39,9 @@ public abstract class Piscifactoria {
      * Constructor para crear una nueva piscifactoría.
      *
      * @param nombre  El nombre de la piscifactoría.
-
      */
-    public Piscifactoria(String nombre) {        this.nombre = nombre;
+    public Piscifactoria(String nombre) {        
+        this.nombre = nombre;
     }
 
     /** Muestra toda la información de la piscifactoría. */
