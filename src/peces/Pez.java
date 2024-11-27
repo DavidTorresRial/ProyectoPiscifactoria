@@ -68,6 +68,8 @@ public abstract class Pez {
 
             if (!alimentado && rand.nextBoolean() == true) {
                 vivo = false;
+                alimentado = false;
+                fertil = false;
             } else {
                 edad++;
 
@@ -91,6 +93,8 @@ public abstract class Pez {
                 if (edad < datos.getMadurez() && edad % 2 == 0) {
                     if (rand.nextDouble() < 0.05) {
                         vivo = false;
+                        alimentado = false;
+                        fertil = false;
                     }
                 }
             }

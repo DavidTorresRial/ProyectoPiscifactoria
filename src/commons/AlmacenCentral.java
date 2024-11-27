@@ -117,9 +117,9 @@ public class AlmacenCentral {
                     necesitanComidaVegetal++;
                 }
             }
-
-            int comidaAnimalPorPiscifactoria = cantidadComidaAnimal / necesitanComidaAnimal;
-            int comidaVegetalPorPiscifactoria = cantidadComidaVegetal / necesitanComidaVegetal;
+    
+            int comidaAnimalPorPiscifactoria = (necesitanComidaAnimal > 0) ? cantidadComidaAnimal / necesitanComidaAnimal : 0;
+            int comidaVegetalPorPiscifactoria = (necesitanComidaVegetal > 0) ? cantidadComidaVegetal / necesitanComidaVegetal : 0;
     
             for (Piscifactoria piscifactoria : piscifactorias) {
                 if (piscifactoria.getComidaAnimalActual() < piscifactoria.getCapacidadMaximaComida()) {
@@ -127,22 +127,24 @@ public class AlmacenCentral {
                     int comidaMaxima = Math.min(espacioDisponibleAnimal, comidaAnimalPorPiscifactoria);
                     piscifactoria.añadirComidaAnimal(comidaMaxima);
                     cantidadComidaAnimal -= comidaMaxima;
-                    necesitanComidaAnimal --;
+                    necesitanComidaAnimal--;
                 }
-
+    
                 if (piscifactoria.getComidaVegetalActual() < piscifactoria.getCapacidadMaximaComida()) {
                     int espacioDisponibleVegetal = piscifactoria.getCapacidadMaximaComida() - piscifactoria.getComidaVegetalActual();
                     int comidaMaxima = Math.min(espacioDisponibleVegetal, comidaVegetalPorPiscifactoria);
                     piscifactoria.añadirComidaVegetal(comidaMaxima);
                     cantidadComidaVegetal -= comidaMaxima;
-                    necesitanComidaVegetal --;
+                    necesitanComidaVegetal--;
                 }
             }
+    
             if (necesitanComidaAnimal == 0 && necesitanComidaVegetal == 0) {
                 salir = true;
             }
         }
     }
+    
 
     /**
      * Devuelve la capacidad total del almacén.
