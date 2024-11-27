@@ -10,6 +10,7 @@ public class PiscifactoriaDeRio extends Piscifactoria {
     public PiscifactoriaDeRio(String nombre) {
         super(nombre);
         tanques.add(new Tanque(tanques.size() + 1, 25));
+        capacidadMaximaComida = 25;
     }
 
     @Override
