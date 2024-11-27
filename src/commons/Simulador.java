@@ -126,7 +126,6 @@ public class Simulador {
         if (seleccion >= 0) {
             return piscifactorias.get(seleccion);
         } else {
-            System.out.println("\nOperación cancelada.");
             return null;
         }
     }
@@ -156,7 +155,6 @@ public class Simulador {
             if (seleccion >= 0) {
                 return new AbstractMap.SimpleEntry<>(piscifactoria, tanques.get(seleccion));
             } else {
-                System.out.println("\nOperación cancelada.");
                 return selectTank();
             }
         } else {
@@ -275,8 +273,6 @@ public class Simulador {
                 pezSeleccionado = new TilapiaDelNilo(true);
                 break;
             case 0:
-                System.out.println("\nOperación cancelada.");
-                break;
         }
 
         if (opcion != 0) {
@@ -391,7 +387,6 @@ public class Simulador {
                             }
                         } while (opcionCantidad != 0);
                     }
-                    System.out.println("\nOperación cancelada.");
                 } while (opcionComida != 0);
                 addFood();
             }
@@ -449,7 +444,6 @@ public class Simulador {
                     } while (opcionCantidad != 0);
                 }
             } while (opcionComida != 0);
-            System.out.println("\nOperación cancelada.");
         }
     }
 
@@ -523,8 +517,6 @@ public class Simulador {
                             pezSeleccionado = esDeRio ? new TilapiaDelNilo(sexo) : new Robalo(sexo);
                             break;
                         case 0:
-                            System.out.println("\nOperación cancelada.");
-                            break;
                     }
                 } else {
                     switch (opcion) {
@@ -533,8 +525,6 @@ public class Simulador {
                             pezSeleccionado = pez.clonar(sexo);
                             break;
                         case 0:
-                            System.out.println("\nOperación cancelada.");
-                            break;
                     }
                 }
                 if (opcion != 0 && tanqueSeleccionado.addFish(pezSeleccionado)) {
@@ -625,7 +615,6 @@ public class Simulador {
                     gestionarMejoraEdificios();
                     break;
                 case 0:
-                    System.out.println("\nOperación cancelada.");
                     salir = true;
             }
         }
@@ -655,7 +644,6 @@ public class Simulador {
                     }
                     break;
                 case 0:
-                    System.out.println("\nOperación cancelada.");
                     salir = true;
             }
         }
@@ -681,7 +669,6 @@ public class Simulador {
                     almacenCentral.aumentarCapacidad();
                     break;
                 case 0:
-                    System.out.println("\nOperación cancelada.");
                     salir = true;
             }
         }
@@ -708,7 +695,6 @@ public class Simulador {
                         piscifactoriaSeleccionada.upgradeFood();
                         break;
                     case 0:
-                        System.out.println("\nOperación cancelada.");
                         salir = true;
                 }
             }
