@@ -803,9 +803,15 @@ public class Simulador {
                     break;
                 case 6:
                     simulador.nextDay();
+                    if (almacenCentral != null) {
+                        almacenCentral.distribuirComida(simulador.piscifactorias); 
+                    }
                     break;
                 case 7:
                     simulador.addFood();
+                    if (almacenCentral != null) {
+                        almacenCentral.distribuirComida(simulador.piscifactorias); 
+                    }
                     break;
                 case 8:
                     simulador.addFish();

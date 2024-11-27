@@ -1,5 +1,9 @@
 package commons;
 
+import java.util.List;
+
+import piscifactoria.Piscifactoria;
+
 /** Representa un almacén central con capacidad para almacenar comida animal y vegetal. */
 public class AlmacenCentral {
 
@@ -78,6 +82,66 @@ public class AlmacenCentral {
 
         System.out.println("Comida vegetal al " + (cantidadComidaVegetal * 100 / capacidadAlmacen) + "% de su capacidad. [" + cantidadComidaVegetal + "/" + capacidadAlmacen + "]");
         System.out.println("Comida animal al " + (cantidadComidaAnimal * 100 / capacidadAlmacen) + "% de su capacidad. [" + cantidadComidaAnimal + "/" + capacidadAlmacen + "]");
+    }
+
+    /** TODO preguntar al señor profesor que significa distribuir equitativamente 
+     * (30)
+     * 
+     * 10 / 25 --> 15
+     * 15 / 25 --> 10
+     * 20 / 25 --> 5
+     * 
+     * (30)
+     * 
+     * 10 / 25 --> 10
+     * 15 / 25 --> 10
+     * 20 / 25 --> 10
+     */
+    /**
+     * Distribuye equitativamente la comida animal y vegetal entre las piscifactorías disponibles.
+     * 
+     * @param piscifactorias la lista de piscifactorías a las que se les distribuirá comida.
+     */
+    public void distribuirComida(List<Piscifactoria> piscifactorias) {
+        boolean salir = false;
+    
+        while (!salir) {
+            int necesitanComidaAnimal = 0;
+            int necesitanComidaVegetal = 0;
+    
+            for (Piscifactoria piscifactoria : piscifactorias) {
+                if (piscifactoria.getComidaAnimalActual() < piscifactoria.getCapacidadMaximaComida()) {
+                    necesitanComidaAnimal++;
+                }
+                if (piscifactoria.getComidaVegetalActual() < piscifactoria.getCapacidadMaximaComida()) {
+                    necesitanComidaVegetal++;
+                }
+            }
+
+            int comidaAnimalPorPiscifactoria = cantidadComidaAnimal / necesitanComidaAnimal;
+            int comidaVegetalPorPiscifactoria = cantidadComidaVegetal / necesitanComidaVegetal;
+    
+            for (Piscifactoria piscifactoria : piscifactorias) {
+                if (piscifactoria.getComidaAnimalActual() < piscifactoria.getCapacidadMaximaComida()) {
+                    int espacioDisponibleAnimal = piscifactoria.getCapacidadMaximaComida() - piscifactoria.getComidaAnimalActual();
+                    int comidaMaxima = Math.min(espacioDisponibleAnimal, comidaAnimalPorPiscifactoria);
+                    piscifactoria.añadirComidaAnimal(comidaMaxima);
+                    cantidadComidaAnimal -= comidaMaxima;
+                    necesitanComidaAnimal --;
+                }
+
+                if (piscifactoria.getComidaVegetalActual() < piscifactoria.getCapacidadMaximaComida()) {
+                    int espacioDisponibleVegetal = piscifactoria.getCapacidadMaximaComida() - piscifactoria.getComidaVegetalActual();
+                    int comidaMaxima = Math.min(espacioDisponibleVegetal, comidaVegetalPorPiscifactoria);
+                    piscifactoria.añadirComidaVegetal(comidaMaxima);
+                    cantidadComidaVegetal -= comidaMaxima;
+                    necesitanComidaVegetal --;
+                }
+            }
+            if (necesitanComidaAnimal == 0 && necesitanComidaVegetal == 0) {
+                salir = true;
+            }
+        }
     }
 
     /**
