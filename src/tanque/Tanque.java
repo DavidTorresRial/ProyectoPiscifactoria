@@ -35,6 +35,10 @@ public class Tanque {
         this.tipoPezActual = null;
     }
 
+    public void setTipoPezActual(Class<?> tipoPezActual) {
+        this.tipoPezActual = tipoPezActual;
+    }
+
     /** Muestra el estado actual del tanque. */
     public void showStatus() {
         System.out.println("\n=============== Tanque " + numeroTanque + " ===============");

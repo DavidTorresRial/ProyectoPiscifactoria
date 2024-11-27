@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import estadisticas.Estadisticas;
 import helpers.InputHelper;
@@ -800,7 +801,7 @@ public class Simulador {
                     }
                     break;
                 case 98:
-                    // simulador.agregarPecesAleatorios();
+                    simulador.pecesRandom();
                     break;
                 case 99:
                     Simulador.monedas.ganarMonedas(1000);
@@ -817,4 +818,84 @@ public class Simulador {
         }
         InputHelper.close();
     }
+
+    public void pecesRandom() {
+        Piscifactoria piscifactoriaSeleccionada = selectPisc();
+    
+        while (piscifactoriaSeleccionada != null) {
+            List<Tanque> tanques = piscifactoriaSeleccionada.getTanques();
+    
+            if (tanques.isEmpty()) {
+                System.out.println("\nLa piscifactoría no tiene tanques disponibles. Selecciona otra piscifactoría.");
+                piscifactoriaSeleccionada = selectPisc();
+            } else {
+                // Seleccionar un tanque aleatorio
+                Random random = new Random();
+                Tanque tanqueSeleccionado = tanques.get(random.nextInt(tanques.size()));
+    
+                // Determinar si la piscifactoría es de río
+                boolean esDeRio = piscifactoriaSeleccionada.esDeRio();
+    
+                // Determinar el tipo de pez permitido en el tanque
+                Class<?> tipoPezActual = tanqueSeleccionado.getTipoPezActual();
+                String tipoPezSeleccionado = (tipoPezActual != null)
+                        ? tipoPezActual.getSimpleName()
+                        : (esDeRio
+                                ? new String[]{"SalmonAtlantico", "TruchaArcoiris", "CarpaPlateada", "Pejerrey", "PercaEuropea", "SalmonChinook", "TilapiaDelNilo"}
+                                : new String[]{"SalmonAtlantico", "TruchaArcoiris", "ArenqueDelAtlantico", "Besugo", "LenguadoEuropeo", "LubinaRayada", "Robalo"}
+                          )[random.nextInt(7)];
+    
+                boolean tipoCompatible = true;
+                boolean espacioDisponible = true;
+    
+                // Agregar 4 peces del mismo tipo al tanque seleccionado.
+                for (int i = 0; i < 4 && tipoCompatible && espacioDisponible; i++) {
+                    boolean sexo = tanqueSeleccionado.getHembras() <= tanqueSeleccionado.getMachos();
+                    Pez pezSeleccionado = switch (tipoPezSeleccionado) {
+                        case "SalmonAtlantico" -> new SalmonAtlantico(sexo);
+                        case "TruchaArcoiris" -> new TruchaArcoiris(sexo);
+                        case "CarpaPlateada" -> esDeRio ? new CarpaPlateada(sexo) : new ArenqueDelAtlantico(sexo);
+                        case "Pejerrey" -> esDeRio ? new Pejerrey(sexo) : new Besugo(sexo);
+                        case "PercaEuropea" -> esDeRio ? new PercaEuropea(sexo) : new LenguadoEuropeo(sexo);
+                        case "SalmonChinook" -> esDeRio ? new SalmonChinook(sexo) : new LubinaRayada(sexo);
+                        case "TilapiaDelNilo" -> esDeRio ? new TilapiaDelNilo(sexo) : new Robalo(sexo);
+                        case "ArenqueDelAtlantico" -> new ArenqueDelAtlantico(sexo);
+                        case "Besugo" -> new Besugo(sexo);
+                        case "LenguadoEuropeo" -> new LenguadoEuropeo(sexo);
+                        case "LubinaRayada" -> new LubinaRayada(sexo);
+                        case "Robalo" -> new Robalo(sexo);
+                        default -> null;
+                    };
+    
+                    if (pezSeleccionado == null) {
+                        System.out.println("\nTipo de pez desconocido: " + tipoPezSeleccionado);
+                        tipoCompatible = false;
+                    } else if (tipoPezActual != null && !tipoPezActual.equals(pezSeleccionado.getClass())) {
+                        System.out.println("\nEl tanque ya tiene un tipo de pez diferente: " + tipoPezActual.getSimpleName());
+                        tipoCompatible = false;
+                    } else if (tanqueSeleccionado.getPeces().size() >= tanqueSeleccionado.getCapacidad()) {
+                        System.out.println("\nNo hay espacio suficiente en el tanque seleccionado para más peces.");
+                        espacioDisponible = false;
+                    } else {
+                        tanqueSeleccionado.getPeces().add(pezSeleccionado);
+                        if (tipoPezActual == null) {
+                            tanqueSeleccionado.setTipoPezActual(pezSeleccionado.getClass());
+                        }
+                    }
+                }
+    
+                if (tipoCompatible && espacioDisponible) {
+                    System.out.println("\nSe han agregado 4 peces de tipo " + tipoPezSeleccionado + " al tanque " + tanqueSeleccionado.getNumeroTanque() + " de la piscifactoría " + piscifactoriaSeleccionada.getNombre() + ".");
+                }
+                piscifactoriaSeleccionada = null; // Salimos del bucle.
+            }
+        }
+    }
+    
+    
+    
+    
+    
+
+
 }
