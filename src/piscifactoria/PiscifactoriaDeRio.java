@@ -5,7 +5,9 @@ import tanque.Tanque;
 
 public class PiscifactoriaDeRio extends Piscifactoria {
 
-    private int numTanques = 0;
+    private final int costoMejora = 50;
+    private final int incrementoCapacidad = 25;
+    private final int capacidadMaximaPermitida = 250;
 
     public PiscifactoriaDeRio(String nombre) {
         super(nombre);
@@ -15,9 +17,6 @@ public class PiscifactoriaDeRio extends Piscifactoria {
 
     @Override
     public boolean upgradeFood() {
-        int costoMejora = 50;
-        int incrementoCapacidad = 25;
-        int capacidadMaximaPermitida = 250;
 
         if (capacidadMaximaComida + incrementoCapacidad <= capacidadMaximaPermitida) {
             if (Simulador.monedas.gastarMonedas(costoMejora)) {
@@ -39,8 +38,7 @@ public class PiscifactoriaDeRio extends Piscifactoria {
         int costoTanque = 150 * (tanques.size() + 1);
         if (Simulador.monedas.gastarMonedas(costoTanque)) {
             tanques.add(new Tanque(tanques.size() + 1, 25));
-            numTanques++;
-            System.out.println("\nComprado un tanque número " + numTanques + " de la piscifactoría " + nombre + ".");
+            System.out.println("\nComprado un tanque número " + tanques.size() + " de la piscifactoría " + nombre + ".");
         } else {
             System.out.println("\nNo tienes suficientes monedas para agregar un tanque de río. Necesitas " + costoTanque + " monedas.");
         }
