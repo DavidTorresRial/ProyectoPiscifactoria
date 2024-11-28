@@ -31,14 +31,12 @@ public class AlmacenCentral {
      * 
      * @return true si se aumentó la capacidad exitosamente, false en caso contrario.
      */
-    public boolean aumentarCapacidad() {
+    public void aumentarCapacidad() {
         if (Simulador.monedas.gastarMonedas(costoMejora)) {
             capacidadAlmacen += 50;
             System.out.println("\nCapacidad del almacén central mejorada en 50 unidades hasta " + capacidadAlmacen);
-            return true;
         } else {
             System.out.println("Necesitas " + costoMejora + " monedas para aumentar la capacidad.");
-            return false;
         }
     }
 
@@ -48,14 +46,12 @@ public class AlmacenCentral {
      * @param cantidad La cantidad de comida animal a añadir. Debe ser positiva.
      * @return true si se añadió la comida, false si no se pudo añadir.
      */
-    public boolean añadirComidaAnimal(int cantidad) {
+    public void añadirComidaAnimal(int cantidad) {
         int nuevaCantidad = cantidadComidaAnimal + cantidad;
         if (cantidad >= 0 && nuevaCantidad <= capacidadAlmacen) {
             cantidadComidaAnimal = nuevaCantidad;
-            return true;
         } else {
             System.out.println("No se puede añadir la cantidad de comida animal: excede la capacidad.");
-            return false;
         }
     }
 
@@ -65,14 +61,12 @@ public class AlmacenCentral {
      * @param cantidad La cantidad de comida vegetal a añadir. Debe ser positiva.
      * @return true si se añadió la comida, false si no se pudo añadir.
      */
-    public boolean añadirComidaVegetal(int cantidad) {
+    public void añadirComidaVegetal(int cantidad) {
         int nuevaCantidad = cantidadComidaVegetal + cantidad;
         if (cantidad >= 0 && nuevaCantidad <= capacidadAlmacen) {
             cantidadComidaVegetal = nuevaCantidad;
-            return true;
         } else {
             System.out.println("No se puede añadir la cantidad de comida vegetal: excede la capacidad.");
-            return false;
         }
     }
 

@@ -101,12 +101,8 @@ public abstract class Piscifactoria {
         }
     }
 
-    /**
-     * Mejora el almacén de comida aumentando su capacidad máxima.
-     *
-     * @return true si la mejora fue exitosa, false si no se pudo realizar.
-     */
-    public abstract boolean upgradeFood();
+    /** Mejora el almacén de comida aumentando su capacidad máxima. */
+    public abstract void upgradeFood();
 
     /** Agrega un tanque, verifica monedas y el límite de tanques. */
     public abstract void addTanque();
@@ -388,7 +384,7 @@ public abstract class Piscifactoria {
      */
     @Override
     public String toString() {
-        return "Información de la Piscifactoría: " + nombre +
+        return "\nInformación de la Piscifactoría: " + nombre +
                 "\n  Número de Tanques    : " + tanques.size() +
                 "\n  Total de Peces       : " + getTotalPeces() + " (Ocupación: " + ((getCapacidadTotal() > 0) ? (getTotalPeces() * 100) / getCapacidadTotal() : 0) +
                 "\n  Peces Vivos          : " + getTotalVivos() +

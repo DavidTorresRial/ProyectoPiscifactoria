@@ -242,7 +242,7 @@ public abstract class Pez {
      */
     @Override
     public String toString() {
-        return "Información del Pez:" +
+        return "\nInformación del Pez:" +
                 "\n  Nombre Común       : " + nombre +
                 "\n  Nombre Científico  : " + nombreCientifico +
                 "\n  Edad               : " + edad + " días" +
