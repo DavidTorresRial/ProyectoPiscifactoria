@@ -11,6 +11,7 @@ import helpers.InputHelper;
 import helpers.MenuHelper;
 
 import propiedades.AlmacenPropiedades;
+import propiedades.PecesDatos;
 import propiedades.PecesProps;
 
 import estadisticas.Estadisticas;
@@ -219,76 +220,40 @@ public class Simulador {
     /** Muestra el estado de un pez seleccionado por el usuario. */
     public void showIctio() {
         System.out.println("\n======================== Ictiopedia ========================");
-        MenuHelper.mostrarMenuCancelar(new String[] {
-                "Salmon del Atlántico",
-                "Trucha Arcoíris",
-                "Arenque del Atlántico",
-                "Besugo",
-                "Lenguado Europeo",
-                "Lubina Rayada",
-                "Robalo",
-                "Carpa Plateada",
-                "Pejerrey",
-                "Perca Europea",
-                "Salmón Chinook",
-                "Tilapia del Nilo",
-        });
+        String[] pecesNombres = {
+                AlmacenPropiedades.SALMON_ATLANTICO.getNombre(), 
+                AlmacenPropiedades.TRUCHA_ARCOIRIS.getNombre(), 
+                AlmacenPropiedades.ARENQUE_ATLANTICO.getNombre(),
+                AlmacenPropiedades.BESUGO.getNombre(),
+                AlmacenPropiedades.LENGUADO_EUROPEO.getNombre(),
+                AlmacenPropiedades.LUBINA_RAYADA.getNombre(),
+                AlmacenPropiedades.ROBALO.getNombre(),
+                AlmacenPropiedades.CARPA_PLATEADA.getNombre(),
+                AlmacenPropiedades.PEJERREY.getNombre(),
+                AlmacenPropiedades.PERCA_EUROPEA.getNombre(),
+                AlmacenPropiedades.SALMON_CHINOOK.getNombre(),
+                AlmacenPropiedades.TILAPIA_NILO.getNombre()
+        };
+        MenuHelper.mostrarMenuCancelar(pecesNombres);
 
-        int opcion = InputHelper.solicitarNumero(0, 12);
-        Pez pezSeleccionado = null;
-
-        switch (opcion) {
-            case 1:
-                pezSeleccionado = new SalmonAtlantico(true);
-                break;
-            case 2:
-                pezSeleccionado = new TruchaArcoiris(true);
-                break;
-            case 3:
-                pezSeleccionado = new ArenqueDelAtlantico(true);
-                break;
-            case 4:
-                pezSeleccionado = new Besugo(true);
-                break;
-            case 5:
-                pezSeleccionado = new LenguadoEuropeo(true);
-                break;
-            case 6:
-                pezSeleccionado = new LubinaRayada(true);
-                break;
-            case 7:
-                pezSeleccionado = new Robalo(true);
-                break;
-            case 8:
-                pezSeleccionado = new CarpaPlateada(true);
-                break;
-            case 9:
-                pezSeleccionado = new Pejerrey(true);
-                break;
-            case 10:
-                pezSeleccionado = new PercaEuropea(true);
-                break;
-            case 11:
-                pezSeleccionado = new SalmonChinook(true);
-                break;
-            case 12:
-                pezSeleccionado = new TilapiaDelNilo(true);
-                break;
-            case 0:
-        }
+        int opcion = InputHelper.solicitarNumero(0, pecesNombres.length);
 
         if (opcion != 0) {
-            System.out.println("\nNombre: " + pezSeleccionado.getDatos().getNombre());
-            System.out.println("Nombre científico: " + pezSeleccionado.getDatos().getCientifico());
-            System.out.println("Tipo: " + pezSeleccionado.getDatos().getTipo());
-            System.out.println("Coste: " + pezSeleccionado.getDatos().getCoste());
-            System.out.println("Monedas: " + pezSeleccionado.getDatos().getMonedas());
-            System.out.println("Huevos: " + pezSeleccionado.getDatos().getHuevos());
-            System.out.println("Ciclo: " + pezSeleccionado.getDatos().getCiclo());
-            System.out.println("Madurez: " + pezSeleccionado.getDatos().getMadurez());
-            System.out.println("Óptimo: " + pezSeleccionado.getDatos().getOptimo());
+            String pezNombreSeleccionado = pecesNombres[opcion - 1];
 
-            PecesProps[] propiedades = pezSeleccionado.getDatos().getPropiedades();
+            PecesDatos pezSeleccionado = AlmacenPropiedades.getPropByName(pezNombreSeleccionado);
+
+            System.out.println("\nNombre: " + pezSeleccionado.getNombre());
+            System.out.println("Nombre científico: " + pezSeleccionado.getCientifico());
+            System.out.println("Tipo: " + pezSeleccionado.getTipo());
+            System.out.println("Coste: " + pezSeleccionado.getCoste());
+            System.out.println("Monedas: " + pezSeleccionado.getMonedas());
+            System.out.println("Huevos: " + pezSeleccionado.getHuevos());
+            System.out.println("Ciclo: " + pezSeleccionado.getCiclo());
+            System.out.println("Madurez: " + pezSeleccionado.getMadurez());
+            System.out.println("Óptimo: " + pezSeleccionado.getOptimo());
+
+            PecesProps[] propiedades = pezSeleccionado.getPropiedades();
             System.out.print("Propiedades: ");
             for (int i = 0; i < propiedades.length; i++) {
                 System.out.print(propiedades[i]);
@@ -296,7 +261,7 @@ public class Simulador {
                     System.out.print(", ");
                 }
             }
-            System.out.println("\nTipo de cría: " + pezSeleccionado.getDatos().getPiscifactoria());
+            System.out.println("\nTipo de cría: " + pezSeleccionado.getPiscifactoria());
         }
     }
 
@@ -772,7 +737,7 @@ public class Simulador {
             }
         }
     }
-    
+
     /** Añade 4 peces al primer tanque de la piscifactoría seleccionada que tenga espacio suficiente. */
     public void pecesRandom() {
         Piscifactoria piscifactoriaSeleccionada = selectPisc();
@@ -895,7 +860,8 @@ public class Simulador {
                     break;
                 case 99:
                     Simulador.monedas.ganarMonedas(1000);
-                    System.out.println("\nAñadidas 1000 monedas mediante la opción oculta. Monedas actuales, " + monedas.getMonedas());
+                    System.out.println("\nAñadidas 1000 monedas mediante la opción oculta. Monedas actuales, "
+                            + monedas.getMonedas());
                     break;
                 case 14:
                     running = false;
