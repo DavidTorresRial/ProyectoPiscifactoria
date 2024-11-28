@@ -289,7 +289,7 @@ public class Tanque {
      */
     @Override
     public String toString() {
-        return "Información del Tanque: " + numeroTanque +
+        return "\nInformación del Tanque: " + numeroTanque +
                 "\n  Capacidad Máxima    : " + capacidadMaxima +
                 "\n  Peces en el Tanque  : " + peces.size() +
                 "\n  Tipo de Pez         : " + (!peces.isEmpty() ? peces.get(0).getNombre() : "Ninguno") +

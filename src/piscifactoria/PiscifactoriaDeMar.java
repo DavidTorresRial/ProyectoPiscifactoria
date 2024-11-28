@@ -16,20 +16,16 @@ public class PiscifactoriaDeMar extends Piscifactoria {
     }
 
     @Override
-    public boolean upgradeFood() {
-
+    public void upgradeFood() {
         if (capacidadMaximaComida + incrementoCapacidad <= capacidadMaximaPermitida) {
             if (Simulador.monedas.gastarMonedas(costoMejora)) {
                 capacidadMaximaComida += incrementoCapacidad;
                 System.out.println("\nMejorada la piscifactoría " + nombre + " aumentando su capacidad de comida hasta un total de " + capacidadMaximaComida + " por " + costoMejora + " monedas.");
-                return true;
             } else {
                 System.out.println("No tienes suficientes monedas para mejorar el almacén de comida de la piscifactoría " + nombre + ".");
-                return false;
             }
         } else {
             System.out.println("La capacidad máxima del almacén ya ha sido alcanzada para la piscifactoría " + nombre + ".");
-            return false;
         } 
     }
 
