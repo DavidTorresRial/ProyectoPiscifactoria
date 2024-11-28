@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import helpers.InputHelper;
 import helpers.MenuHelper;
@@ -371,13 +372,15 @@ public class Simulador {
                                         if (animal) {
                                             piscifactoria.añadirComidaAnimal(cantidadComida);
                                             comidaActual += cantidadComida;
-                                            System.out.println("\n" + cantidadComida + " de comida de tipo Animal comprada por "
+                                            System.out.println(
+                                                    "\n" + cantidadComida + " de comida de tipo Animal comprada por "
                                                             + costo + " monedas. Se almacena en la piscifactoría "
                                                             + piscifactoria.getNombre() + ".");
                                         } else {
                                             piscifactoria.añadirComidaVegetal(cantidadComida);
                                             comidaActual += cantidadComida;
-                                            System.out.println("\n" + cantidadComida + " de comida de tipo Vegetal comprada por "
+                                            System.out.println(
+                                                    "\n" + cantidadComida + " de comida de tipo Vegetal comprada por "
                                                             + costo + " monedas. Se almacena en la piscifactoría "
                                                             + piscifactoria.getNombre() + ".");
                                         }
@@ -429,12 +432,14 @@ public class Simulador {
                                     if (animal) {
                                         almacenCentral.añadirComidaAnimal(cantidadComida);
                                         comidaActual += cantidadComida;
-                                        System.out.println("\n" + cantidadComida + " de comida de tipo Animal comprada por "
+                                        System.out.println(
+                                                "\n" + cantidadComida + " de comida de tipo Animal comprada por "
                                                         + costo + " monedas. Se almacena en el almacén central.\r");
                                     } else {
                                         almacenCentral.añadirComidaVegetal(cantidadComida);
                                         comidaActual += cantidadComida;
-                                        System.out.println("\n" + cantidadComida + " de comida de tipo Vegetal comprada por "
+                                        System.out.println(
+                                                "\n" + cantidadComida + " de comida de tipo Vegetal comprada por "
                                                         + costo + " monedas. Se almacena en el almacén central.\r");
                                     }
                                 }
@@ -767,6 +772,59 @@ public class Simulador {
             }
         }
     }
+    
+    /** Añade 4 peces al primer tanque de la piscifactoría seleccionada que tenga espacio suficiente. */
+    public void pecesRandom() {
+        Piscifactoria piscifactoriaSeleccionada = selectPisc();
+        Random random = new Random();
+
+        if (piscifactoriaSeleccionada != null) {
+            List<Tanque> tanques = piscifactoriaSeleccionada.getTanques();
+            Tanque tanqueSeleccionado = null;
+            Pez pezSeleccionado = null;
+
+            for (int i = 0; i < tanques.size(); i++) {
+                if ((tanques.get(i).getCapacidad() - tanques.get(i).getPeces().size()) >= 4) {
+                    tanqueSeleccionado = tanques.get(i);
+                    break;
+                }
+            }
+
+            if (tanqueSeleccionado != null) {
+                boolean esDeRio = piscifactoriaSeleccionada instanceof PiscifactoriaDeRio;
+
+                for (int i = 0; i < 4; i++) {
+                    boolean sexo = tanqueSeleccionado.getHembras() <= tanqueSeleccionado.getMachos() ? false : true;
+
+                    pezSeleccionado = (!tanqueSeleccionado.getPeces().isEmpty())
+                            ? tanqueSeleccionado.getPeces().get(0).clonar(sexo)
+                            : (esDeRio
+                                    ? new Pez[] {
+                                            new SalmonAtlantico(sexo),
+                                            new ArenqueDelAtlantico(sexo),
+                                            new CarpaPlateada(sexo),
+                                            new Pejerrey(sexo),
+                                            new PercaEuropea(sexo),
+                                            new SalmonChinook(sexo),
+                                            new TilapiaDelNilo(sexo)
+                                    }
+                                    : new Pez[] {
+                                            new SalmonAtlantico(sexo),
+                                            new TruchaArcoiris(sexo),
+                                            new ArenqueDelAtlantico(sexo),
+                                            new Besugo(sexo),
+                                            new LenguadoEuropeo(sexo),
+                                            new LubinaRayada(sexo),
+                                            new Robalo(sexo)
+                                    })[random.nextInt(6)];
+                    tanqueSeleccionado.getPeces().add(pezSeleccionado);
+                }
+                System.out.println("\nSe han añadido 4 " + pezSeleccionado.getNombre() + " al tanque "
+                        + tanqueSeleccionado.getNumeroTanque() + " de la piscifactoría "
+                        + piscifactoriaSeleccionada.getNombre() + ".");
+            }
+        }
+    }
 
     /**
      * Punto de entrada principal del simulador. Inicializa la simulación y
@@ -804,13 +862,13 @@ public class Simulador {
                 case 6:
                     simulador.nextDay();
                     if (almacenCentral != null) {
-                        almacenCentral.distribuirComida(simulador.piscifactorias); 
+                        almacenCentral.distribuirComida(simulador.piscifactorias);
                     }
                     break;
                 case 7:
                     simulador.addFood();
                     if (almacenCentral != null) {
-                        almacenCentral.distribuirComida(simulador.piscifactorias); 
+                        almacenCentral.distribuirComida(simulador.piscifactorias);
                     }
                     break;
                 case 8:
@@ -833,7 +891,7 @@ public class Simulador {
                     simulador.nextDay(dias);
                     break;
                 case 98:
-                    // simulador.agregarPecesAleatorios();
+                    simulador.pecesRandom();
                     break;
                 case 99:
                     Simulador.monedas.ganarMonedas(1000);
