@@ -4,7 +4,6 @@ import java.util.Random;
 
 import commons.Simulador;
 import peces.Pez;
-import piscifactoria.Piscifactoria;
 import propiedades.PecesDatos;
 
 /** Clase que indica que un pez es un filtrador. */
@@ -17,18 +16,18 @@ public abstract class Filtrador extends Pez {
     }
 
     @Override
-    public void alimentar() {
+    public void alimentar(int cantidadComidaAnimal, int cantidadComidaVegetal) {
         if (rand.nextDouble() < 0.5) {
-            if (Piscifactoria.cantidadComidaVegetal > 0) {
-                Piscifactoria.cantidadComidaVegetal--;
+            if (cantidadComidaVegetal > 0) {
+                cantidadComidaVegetal--;
                 alimentado = true;
             } else if (Simulador.almacenCentral != null && Simulador.almacenCentral.getCantidadComidaVegetal() > 0) {
                 if (Simulador.almacenCentral.getCantidadComidaVegetal() >= 1) {
                     Simulador.almacenCentral.setCantidadComidaVegetal(Simulador.almacenCentral.getCantidadComidaVegetal() - 1);
-                    Piscifactoria.cantidadComidaVegetal++;
                     alimentado = true;
                 } else {
                     System.out.println("No hay suficiente comida vegetal.");
+                    alimentado = false;
                 }
             }
         } else {
