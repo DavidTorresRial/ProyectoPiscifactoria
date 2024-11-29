@@ -20,19 +20,19 @@ public abstract class Pez {
     private final boolean sexo;
 
     /** Estado de fertilidad del pez: true si es fértil, false si no lo es. */
-    private boolean fertil = false;
+    protected boolean fertil = false;
 
     /** Estado de vida del pez: true si está vivo, false si está muerto. */
-    private boolean vivo = true;
+    protected boolean vivo = true;
 
     /** Estado de alimentación del pez: true si ha sido alimentado, false si no. */
-    private boolean alimentado = false;
+    protected boolean alimentado = false;
 
     /** Ciclo reproductivo del pez, decrementa hasta que el pez se vuelve fértil. */
     protected int ciclo;
 
     /** Datos específicos del pez extraídos de PecesDatos. */
-    private PecesDatos datos;
+    protected PecesDatos datos;
 
     private boolean primeraVez = true; // TODO revisar si es completamente necesario este atributo
 
@@ -117,6 +117,9 @@ public abstract class Pez {
      * @return una nueva instancia de la subclase correspondiente.
      */
     public abstract Pez clonar(boolean nuevoSexo);
+
+    /** Método que alimenta a los peces. */
+    public abstract void alimentar();
 
     /**
      * @return el nombre común del pez.
