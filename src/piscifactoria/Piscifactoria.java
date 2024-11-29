@@ -18,10 +18,10 @@ public abstract class Piscifactoria {
     protected final int numeroMaximoTanques = 10;
     
     /** Cantidad actual de comida animal. */
-    public static int cantidadComidaAnimal; // TODO Preguntar si esto esta bien así en plan si se puede hacer public static este atributo o hay que hacerselo al getter o como
-
+    protected int cantidadComidaAnimal; 
+    
     /** Cantidad actual de comida vegetal. */
-    public static int cantidadComidaVegetal; // TODO Preguntar si esto esta bien así en plan si se puede hacer public static este atributo o hay que hacerselo al getter o como
+    protected int cantidadComidaVegetal; 
 
     /** Capacidad máxima para ambos tipos de comida. */
     protected int capacidadMaximaComida;
@@ -102,6 +102,7 @@ public abstract class Piscifactoria {
     /** Hace avanzar el ciclo de vida en la piscifactoría, alimentando a los peces y actualizando sus estados. */
     public void nextDay() {
         for (Tanque tanque : tanques) {
+            tanque.alimentar(cantidadComidaAnimal, cantidadComidaVegetal);
             tanque.nextDay();
         }
     }

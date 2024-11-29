@@ -5,9 +5,9 @@ import tanque.Tanque;
 
 public class PiscifactoriaDeMar extends Piscifactoria {
 
-        private final int costoMejora = 200;
-        private final int incrementoCapacidad = 100;
-        private final int capacidadMaximaPermitida = 1000;
+    private final int costoMejora = 200;
+    private final int incrementoCapacidad = 100;
+    private final int capacidadMaximaPermitida = 1000;
 
     public PiscifactoriaDeMar(String nombre) {
         super(nombre);

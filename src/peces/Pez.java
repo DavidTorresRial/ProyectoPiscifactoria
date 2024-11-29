@@ -119,7 +119,7 @@ public abstract class Pez {
     public abstract Pez clonar(boolean nuevoSexo);
 
     /** Método que alimenta a los peces. */
-    public abstract void alimentar();
+    public abstract void alimentar(int cantidadComidaAnimal, int cantidadComidaVegetal);
 
     /**
      * @return el nombre común del pez.
