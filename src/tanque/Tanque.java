@@ -61,6 +61,7 @@ public class Tanque {
     /** Avanza un día en el tanque, haciendo crecer los peces y ejecutando la reproducción. */
     public void nextDay() {
         for (Pez pez : peces) {
+            pez.alimentar();
             pez.grow();
         }
         reproduccion();
