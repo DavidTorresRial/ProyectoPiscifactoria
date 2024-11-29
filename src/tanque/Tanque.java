@@ -35,13 +35,26 @@ public class Tanque {
     public void showStatus() {
         System.out.println("\n=============== Tanque " + numeroTanque + " ===============");
 
-        System.out.println("Ocupación: " + peces.size() + " / " + capacidadMaxima + " (" + (peces.size() * 100 / capacidadMaxima) + "%)");
-        System.out.println("Peces vivos: " + getVivos() + " / " + peces.size() + " (" + (getVivos() > 0 ? (getVivos() * 100 / peces.size()) : 0) + "%)");
-        System.out.println("Peces alimentados: " + getAlimentados() + " / " + getVivos() + " (" + (getVivos() > 0 ? (getAlimentados() * 100 / getVivos()) : 0) + "%)");
-        System.out.println("Peces adultos: " + getAdultos() + " / " + getVivos() + " (" + (getVivos() > 0 ? (getAdultos() * 100 / getVivos()) : 0) + "%)");
-        System.out.println("Hembras / Machos: " + getHembras() + " / " + getMachos());
-        System.out.println("Fértiles: " + getFertiles() + " / " + getVivos());
+        int vivos = getVivos();
+        int alimentados = getAlimentados();
+        int adultos = getAdultos();
+        int hembras = getHembras();
+        int machos = getMachos();
+        int fertiles = getFertiles();
+        int ocupacion = peces.size();
+        int porcentajeOcupacion = (ocupacion * 100 / capacidadMaxima);
+        int porcentajeVivos = (ocupacion > 0 ? (vivos * 100 / ocupacion) : 0);
+        int porcentajeAlimentados = (vivos > 0 ? (alimentados * 100 / vivos) : 0);
+        int porcentajeAdultos = (vivos > 0 ? (adultos * 100 / vivos) : 0);
+
+        System.out.println("Ocupación: " + ocupacion + " / " + capacidadMaxima + " (" + porcentajeOcupacion + "%)");
+        System.out.println("Peces vivos: " + vivos + " / " + ocupacion + " (" + porcentajeVivos + "%)");
+        System.out.println("Peces alimentados: " + alimentados + " / " + vivos + " (" + porcentajeAlimentados + "%)");
+        System.out.println("Peces adultos: " + adultos + " / " + vivos + " (" + porcentajeAdultos + "%)");
+        System.out.println("Hembras / Machos: " + hembras + " / " + machos);
+        System.out.println("Fértiles: " + fertiles + " / " + vivos);
     }
+
 
     /** Muestra el estado de todos los peces del tanque. */
     public void showFishStatus() {
@@ -49,7 +62,7 @@ public class Tanque {
         if (peces.isEmpty()) {
             System.out.println("El tanque está vacío.");
         } else {
-            peces.forEach(Pez::showStatus);
+            peces.forEach(Pez::showStatus); // TODO preguntar diferencia entre foreach y un for normal 
         }
     }
 
@@ -163,7 +176,7 @@ public class Tanque {
 
     /** Vacía el tanque eliminando todos los peces y reseteando el tipo de pez permitido. */
     public void emptyTank() {
-        peces.clear();
+        peces.clear(); // TODO preguntar si hace falta este metodo o simplemnte donde sea acceder al array con getPeces() y hacerle un .clear()
     }
 
     /**
@@ -191,36 +204,6 @@ public class Tanque {
      */
     public int getCapacidad() {
         return capacidadMaxima;
-    }
-
-    /**
-     * Cuenta y devuelve el número de peces vivos en el tanque.
-     *
-     * @return número de peces vivos en el tanque.
-     */
-    public int getVivos() {
-        int pecesVivos = 0;
-        for (Pez pez : peces) {
-            if (pez.isVivo()) {
-                pecesVivos++;
-            }
-        }
-        return pecesVivos;
-    }
-
-    /**
-     * Cuenta y devuelve el número de peces alimentados en el tanque.
-     *
-     * @return número de peces alimentados en el tanque.
-     */
-    public int getAlimentados() {
-        int pecesAlimentados = 0;
-        for (Pez pez : peces) {
-            if (pez.isAlimentado()) {
-                pecesAlimentados++;
-            }
-        }
-        return pecesAlimentados;
     }
 
     /**
@@ -281,6 +264,36 @@ public class Tanque {
             }
         }
         return fertiles;
+    }
+
+    /**
+     * Cuenta y devuelve el número de peces vivos en el tanque.
+     *
+     * @return número de peces vivos en el tanque.
+     */
+    public int getVivos() {
+        int pecesVivos = 0;
+        for (Pez pez : peces) {
+            if (pez.isVivo()) {
+                pecesVivos++;
+            }
+        }
+        return pecesVivos;
+    }
+
+    /**
+     * Cuenta y devuelve el número de peces alimentados en el tanque.
+     *
+     * @return número de peces alimentados en el tanque.
+     */
+    public int getAlimentados() {
+        int pecesAlimentados = 0;
+        for (Pez pez : peces) {
+            if (pez.isAlimentado()) {
+                pecesAlimentados++;
+            }
+        }
+        return pecesAlimentados;
     }
 
     /**

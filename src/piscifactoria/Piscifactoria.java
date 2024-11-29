@@ -38,17 +38,31 @@ public abstract class Piscifactoria {
     /** Muestra toda la información de la piscifactoría. */
     public void showStatus() {
         System.out.println("\n=============== " + nombre + " ===============");
+        
+        int totalPeces = getTotalPeces();
+        int capacidadTotal = getCapacidadTotal();
+        int totalVivos = getTotalVivos();
+        int totalAlimentados = getTotalAlimentados();
+        int totalAdultos = getTotalAdultos();
+        int totalHembras = getTotalHembras();
+        int totalMachos = getTotalMachos();
+        int totalFertiles = getTotalFertiles();
+        int porcentajeOcupacion = (capacidadTotal > 0) ? (totalPeces * 100) / capacidadTotal : 0;
+        int porcentajeVivos = (totalPeces > 0) ? (totalVivos * 100) / totalPeces : 0;
+        int porcentajeAlimentados = (totalVivos > 0) ? (totalAlimentados * 100) / totalVivos : 0;
+        int porcentajeAdultos = (totalVivos > 0) ? (totalAdultos * 100) / totalVivos : 0;
+    
         System.out.println("Tanques: " + tanques.size());
-
-        System.out.println("Ocupación: " + getTotalPeces() + " / " + getCapacidadTotal() + " (" + ((getCapacidadTotal() > 0) ? (getTotalPeces() * 100) / getCapacidadTotal() : 0) + "%)");
-        System.out.println("Peces vivos: " + getTotalVivos() + " / " + getTotalPeces() + " (" + ((getTotalPeces() > 0) ? (getTotalVivos() * 100) / getTotalPeces() : 0) + "%)");
-        System.out.println("Peces alimentados: " + getTotalAlimentados() + " / " + getTotalVivos() + " (" + ((getTotalVivos() > 0) ? (getTotalAlimentados() * 100) / getTotalVivos() : 0) + "%)");
-        System.out.println("Peces adultos: " + getTotalAdultos() + " / " + getTotalVivos() + " (" + ((getTotalVivos() > 0) ? (getTotalAdultos() * 100) / getTotalVivos() : 0) + "%)");
-        System.out.println("Hembras / Machos: " + getTotalHembras() + " / " + getTotalMachos());
-        System.out.println("Fértiles: " + getTotalFertiles() + " / " + getTotalVivos());
-
+        System.out.println("Ocupación: " + totalPeces + " / " + capacidadTotal + " (" + porcentajeOcupacion + "%)");
+        System.out.println("Peces vivos: " + totalVivos + " / " + totalPeces + " (" + porcentajeVivos + "%)");
+        System.out.println("Peces alimentados: " + totalAlimentados + " / " + totalVivos + " (" + porcentajeAlimentados + "%)");
+        System.out.println("Peces adultos: " + totalAdultos + " / " + totalVivos + " (" + porcentajeAdultos + "%)");
+        System.out.println("Hembras / Machos: " + totalHembras + " / " + totalMachos);
+        System.out.println("Fértiles: " + totalFertiles + " / " + totalVivos);
+    
         showFood();
     }
+    
 
     /** Muestra el estado de cada tanque en la piscifactoría. */
     public void showTankStatus() {
@@ -104,7 +118,7 @@ public abstract class Piscifactoria {
      * @param cantidad La cantidad de comida animal a añadir. Debe ser positiva.
      * @return true si se añadió la comida, false si no se pudo añadir.
      */
-    public boolean añadirComidaAnimal(int cantidad) {
+    public boolean añadirComidaAnimal(int cantidad) { // TODO Tambien preguntar si juntar estos dos métodos 
         int nuevaCantidad = cantidadComidaAnimal + cantidad;
         if (cantidad >= 0 && nuevaCantidad <= capacidadMaximaComida) {
             cantidadComidaAnimal = nuevaCantidad;
@@ -151,31 +165,12 @@ public abstract class Piscifactoria {
     }
 
     /**
-     * Obtiene el número máximo de tanques que puede tener la piscifactoría.
-     *
-     * @return El número máximo de tanques permitidos en la piscifactoría.
-     */
-    public int getNumeroMaximoTanques() {
-        return numeroMaximoTanques;
-    }
-
-    /**
      * Obtiene la capacidad máxima de comida.
      * 
      * @return La capacidad máxima de comida.
      */
     public int getCapacidadMaximaComida() {
         return capacidadMaximaComida;
-    }
-
-    /**
-     * Establece un incremento a la capacidad máxima de comida del depósito.
-     * 
-     * @param num El valor que se sumará a la capacidad máxima de comida.
-     * @return La nueva capacidad máxima de comida después de la suma.
-     */
-    public int setCapacidadMaximaComida(int num) {
-        return capacidadMaximaComida += num;
     }
 
     /**

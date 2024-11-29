@@ -171,28 +171,12 @@ public abstract class Pez {
     }
 
     /**
-     * @return el ciclo reproductivo del pez.
-     */
-    public int getCiclo() {
-        return ciclo;
-    }
-
-    /**
      * @return el objeto PecesDatos asociado con este pez.
      */
     public PecesDatos getDatos() {
         return datos;
     }
-
-    /**
-     * Establece la edad del pez.
-     * 
-     * @param edad la nueva edad del pez.
-     */
-    public void setEdad(int edad) {
-        this.edad = edad;
-    }
-
+   
     /**
      * Establece si el pez es fértil.
      *
@@ -200,42 +184,6 @@ public abstract class Pez {
      */
     public void setFertil(boolean fertil) {
         this.fertil = fertil;
-    }
-
-    /**
-     * Establece si el pez está vivo.
-     * 
-     * @param vivo true si el pez está vivo, false si está muerto.
-     */
-    public void setVivo(boolean vivo) {
-        this.vivo = vivo;
-    }
-
-    /**
-     * Establece el estado de alimentación del pez.
-     * 
-     * @param alimentado true si el pez ha sido alimentado, false si no.
-     */
-    public void setAlimentado(boolean alimentado) {
-        this.alimentado = alimentado;
-    }
-
-    /**
-     * Establece el ciclo reproductivo del pez.
-     * 
-     * @param ciclo el nuevo ciclo reproductivo.
-     */
-    public void setCiclo(int ciclo) {
-        this.ciclo = ciclo;
-    }
-
-    /**
-     * Establece los datos específicos del pez.
-     * 
-     * @param datos el objeto PecesDatos asociado.
-     */
-    public void setDatos(PecesDatos datos) {
-        this.datos = datos;
     }
 
     /**

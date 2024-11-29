@@ -21,7 +21,7 @@ public class AlmacenCentral {
 
     /** Constructor del almacén central. */
     public AlmacenCentral() {
-        this.capacidadAlmacen = 200;
+        this.capacidadAlmacen = 200; // TODO preguntar si se puede dejar el constructor vacio y inicializar los valores en los atributos ya que van a ser siempre los mismos o es mejor dejarlos en el cosntructor
         this.cantidadComidaAnimal = 0;
         this.cantidadComidaVegetal = 0;
     }
@@ -46,7 +46,7 @@ public class AlmacenCentral {
      * @param cantidad La cantidad de comida animal a añadir. Debe ser positiva.
      * @return true si se añadió la comida, false si no se pudo añadir.
      */
-    public void añadirComidaAnimal(int cantidad) {
+    public void añadirComidaAnimal(int cantidad) { // TODO Tambien preguntar si juntar estos dos métodos 
         int nuevaCantidad = cantidadComidaAnimal + cantidad;
         if (cantidad >= 0 && nuevaCantidad <= capacidadAlmacen) {
             cantidadComidaAnimal = nuevaCantidad;
@@ -140,6 +140,15 @@ public class AlmacenCentral {
     }
 
     /**
+     * Devuelve la cantidad de comida vegetal actualmente almacenada.
+     * 
+     * @return La cantidad de comida vegetal.
+     */
+    public int getCantidadComidaVegetal() {
+        return cantidadComidaVegetal;
+    }
+
+    /**
      * Establece la cantidad de comida animal en el almacén.
      * 
      * @param cantidadComidaAnimal Nueva cantidad de comida animal.
@@ -150,15 +159,6 @@ public class AlmacenCentral {
         } else {
             System.out.println("No se puede establecer la cantidad de comida animal: excede la capacidad.");
         }
-    }
-
-    /**
-     * Devuelve la cantidad de comida vegetal actualmente almacenada.
-     * 
-     * @return La cantidad de comida vegetal.
-     */
-    public int getCantidadComidaVegetal() {
-        return cantidadComidaVegetal;
     }
 
     /**
