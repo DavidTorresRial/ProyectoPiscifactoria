@@ -1,0 +1,48 @@
+{
+  "implementados": [
+    "Salmón atlántico",
+    "Trucha arcoíris",
+    "Arenque del Atlántico",
+    "Besugo",
+    "Lenguado europeo",
+    "Lubina rayada",
+    "Róbalo",
+    "Carpa plateada",
+    "Pejerrey",
+    "Perca europea",
+    "Salmón chinook",
+    "Tilapia del Nilo"
+  ],
+  "empresa": "sl",
+  "dia": 0,
+  "monedas": 100,
+  "orca": "0:0,0,0;0:0,0,0",
+  "edificios": {
+    "almacen": {
+      "disponible": false,
+      "capacidad": 200,
+      "comida": {
+        "animal": 0,
+        "vegetal": 0
+      }
+    }
+  },
+  "piscifactorias": [
+    {
+      "nombre": "p1",
+      "tipo": 0,
+      "capacidad": 25,
+      "comida": {
+        "animal": 25,
+        "vegetal": 25
+      },
+      "tanques": [
+        {
+          "pez": "Sin peces",
+          "num": 1,
+          "datos": "No disponible"
+        }
+      ]
+    }
+  ]
+}
