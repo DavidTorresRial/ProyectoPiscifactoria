@@ -286,11 +286,11 @@ public class Simulador {
     }
 
     /** Simula un día en todas las piscifactorías. */
-    public void nextDay() { // TODO implementar
+    public void nextDay() {
         int pecesVendidos = 0, monedasGanadas = 0;
         int totalPecesVendidos = 0, totalMonedasGanadas = 0;
 
-        dias++;
+        dias++; // Incrementa el número de días
 
         for (Piscifactoria piscifactoria : piscifactorias) {
             piscifactoria.nextDay();
@@ -299,7 +299,11 @@ public class Simulador {
             // totalMonedasGanadas += piscifactoria.getMonedasGanadas();
         }
         System.out.println("\n" + totalPecesVendidos + " peces vendidos por un total de " + totalMonedasGanadas + " monedas.");
+    
+        // Registrar el fin del día en el log
+        logger.log("Fin del día " + dias + ".");
     }
+
 
     /** Simula varios días consecutivos en todas las piscifactorías. */
     public void nextDay(int dias) {
@@ -529,6 +533,9 @@ public class Simulador {
                             + " comprado por " + pezSeleccionado.getDatos().getCoste() + " monedas. Añadido al tanque "
                             + tanqueSeleccionado.getNumeroTanque() + " de la piscifactoría "
                             + selectTank.getKey().getNombre() + ".");
+                    logger.log(pezSeleccionado.getNombre() + (pezSeleccionado.isSexo() ? " (M)" : " (H)" + "comprado. Añadido al tanque" 
+                    + tanqueSeleccionado.getNumeroTanque() + " de la piscifactoría" 
+                    + selectTank.getKey().getNombre() + "."));
                 }
             }
         }
@@ -559,6 +566,7 @@ public class Simulador {
             }
             if (pecesVendidos > 0) {
                 System.out.println("Vendidos " + pecesVendidos + " peces de la piscifactoría " + selectTank.getKey().getNombre() + " de forma manual por " + totalDinero + " monedas.");
+                logger.log("Vendidos " + pecesVendidos + " peces de la piscifactoría " + selectTank.getKey().getNombre() + " de forma manual.");
             } else {
                 System.out.println("\nNo hay peces adultos para vender.");
             }
@@ -579,6 +587,7 @@ public class Simulador {
                 }
             }
             System.out.println("\nLimpiado el tanque " + tanque.getNumeroTanque() + " de la piscifactoría " + selectTank.getKey().getNombre() + ".");
+            logger.log("Limpiado el tanque " + tanque.getNumeroTanque() + " de la piscifactoría " + selectTank.getKey().getNombre() + ".");
         }
     }
 
@@ -589,6 +598,7 @@ public class Simulador {
         if (tanque != null) {
             tanque.emptyTank();
             System.out.println("\nVaciado el tanque " + tanque.getNumeroTanque() + " de la piscifactoría " + selectTank.getKey().getNombre() + ".");
+            logger.log("Vaciado el tanque " + tanque.getNumeroTanque() + " de la piscifactoría " + selectTank.getKey().getNombre() +".");
         }
     }
 
@@ -635,6 +645,7 @@ public class Simulador {
                     if (monedas.gastarMonedas(2000)) {
                         almacenCentral = new AlmacenCentral();
                         System.out.println("\nComprado el almacén central.");
+                        logger.log("Comprado el almacén central.");
                     } else {
                         System.out.println("\nNecesitas 2000 monedas para construir el almacén central.");
                     }
@@ -749,6 +760,7 @@ public class Simulador {
                 nuevaPiscifactoria = new PiscifactoriaDeRio(nombrePiscifactoria);
                 System.out.println("\nComprada la piscifactoría de rio " + nombrePiscifactoria + " por " + costoPiscifactoríaRio + " monedas.");
                 piscifactorias.add(nuevaPiscifactoria);
+                logger.log("Comprada la piscifactoria de rio " + nombrePiscifactoria);
             } else {
                 System.out.println("\nNo tienes suficientes monedas para comprar la piscifactoría de río.");
             }
@@ -757,6 +769,7 @@ public class Simulador {
                 nuevaPiscifactoria = new PiscifactoriaDeMar(nombrePiscifactoria);
                 System.out.println("\nComprada la piscifactoría de mar " + nombrePiscifactoria + " por " + costoPiscifactoríaMar + " monedas.");
                 piscifactorias.add(nuevaPiscifactoria);
+                logger.log("Comprada la piscifactoria de mar " + nombrePiscifactoria);
             } else {
                 System.out.println("\nNo tienes suficientes monedas para comprar la piscifactoría de mar.");
             }
@@ -895,6 +908,7 @@ public class Simulador {
                         break;
                     case 14:
                         running = false;
+                        logger.log("Cierre de la partida");
                         System.out.println("\nSaliendo del simulador.");
                         break;
                     default:

@@ -36,6 +36,7 @@ public class PiscifactoriaDeRio extends Piscifactoria {
         if (Simulador.monedas.gastarMonedas(costoTanque)) {
             tanques.add(new Tanque(tanques.size() + 1, 25));
             System.out.println("\nComprado un tanque número " + tanques.size() + " de la piscifactoría " + nombre + ".");
+            Simulador.logger.log("Añadiendo un tanque a la piscifactoría " + nombre);
         } else {
             System.out.println("\nNo tienes suficientes monedas para agregar un tanque de río. Necesitas " + costoTanque + " monedas.");
         }
