@@ -1,5 +1,9 @@
 package commons;
 
+import java.util.List;
+
+import piscifactoria.Piscifactoria;
+
 /** Representa un almacén central con capacidad para almacenar comida animal y vegetal. */
 public class AlmacenCentral {
 
@@ -27,13 +31,14 @@ public class AlmacenCentral {
      * 
      * @return true si se aumentó la capacidad exitosamente, false en caso contrario.
      */
-    public boolean aumentarCapacidad() {
+    public void aumentarCapacidad() {
         if (Simulador.monedas.gastarMonedas(costoMejora)) {
             capacidadAlmacen += 50;
             System.out.println("\nCapacidad del almacén central mejorada en 50 unidades hasta " + capacidadAlmacen);
-            return true;
+            Simulador.logger.log("Mejorando el almacen central, aumentando su capacidad de comida en 50 unidades hasta " + capacidadAlmacen);
+        } else {
+            System.out.println("Necesitas " + costoMejora + " monedas para aumentar la capacidad.");
         }
-        return false;
     }
 
     /**
@@ -42,20 +47,12 @@ public class AlmacenCentral {
      * @param cantidad La cantidad de comida animal a añadir. Debe ser positiva.
      * @return true si se añadió la comida, false si no se pudo añadir.
      */
-    public boolean añadirComidaAnimal(int cantidad) {
-        if (cantidad <= 0) {
-            System.out.println("La cantidad a añadir debe ser positiva.");
-            return false;
-        }
+    public void añadirComidaAnimal(int cantidad) {
         int nuevaCantidad = cantidadComidaAnimal + cantidad;
-        if (nuevaCantidad <= capacidadAlmacen) {
+        if (cantidad >= 0 && nuevaCantidad <= capacidadAlmacen) {
             cantidadComidaAnimal = nuevaCantidad;
-            return true;
         } else {
             System.out.println("No se puede añadir la cantidad de comida animal: excede la capacidad.");
-            int espacioLibre = capacidadAlmacen - cantidadComidaAnimal;
-            cantidadComidaAnimal = capacidadAlmacen;
-            return espacioLibre > 0;
         }
     }
 
@@ -65,45 +62,64 @@ public class AlmacenCentral {
      * @param cantidad La cantidad de comida vegetal a añadir. Debe ser positiva.
      * @return true si se añadió la comida, false si no se pudo añadir.
      */
-    public boolean añadirComidaVegetal(int cantidad) {
-        if (cantidad <= 0) {
-            System.out.println("La cantidad a añadir debe ser positiva.");
-            return false;
-        }
+    public void añadirComidaVegetal(int cantidad) {
         int nuevaCantidad = cantidadComidaVegetal + cantidad;
-        if (nuevaCantidad <= capacidadAlmacen) {
+        if (cantidad >= 0 && nuevaCantidad <= capacidadAlmacen) {
             cantidadComidaVegetal = nuevaCantidad;
-            return true;
         } else {
             System.out.println("No se puede añadir la cantidad de comida vegetal: excede la capacidad.");
-            // Añadir solo lo que quepa
-            int espacioLibre = capacidadAlmacen - cantidadComidaVegetal;
-            cantidadComidaVegetal = capacidadAlmacen;
-            return espacioLibre > 0;
         }
-    }
-
-    /**
-     * Método para calcular el costo de añadir una cantidad de comida.
-     * 
-     * @param cantidad La cantidad de comida a añadir. Debe ser positiva.
-     * @return El costo total de añadir esa cantidad de comida.
-     */
-    public int calcularCosto(int cantidad) {
-        int costo = cantidad;
-        if (cantidad >= 25) {
-            int descuentos = cantidad / 25;
-            costo -= descuentos * 5;
-        }
-        return costo;
     }
 
     /** Muestra el estado actual del almacén. */
     public void mostrarEstado() {
-        System.out.println("Estado del Almacén Central:");
+        System.out.println("\nEstado del Almacén Central:");
 
-        System.out.println("Comida vegetal al " + (cantidadComidaVegetal * 100 / capacidadAlmacen) + "% de su capacidad. [" + cantidadComidaVegetal + "/" + capacidadAlmacen + "]");
-        System.out.println("Comida animal al " + (cantidadComidaAnimal * 100 / capacidadAlmacen) + "% de su capacidad. [" + cantidadComidaAnimal + "/" + capacidadAlmacen + "]");
+        System.out.println("Comida vegetal al " + (cantidadComidaVegetal * 100 / capacidadAlmacen) + 
+                "% de su capacidad. [" + cantidadComidaVegetal + "/" + capacidadAlmacen + "]");
+        System.out.println("Comida animal al " + (cantidadComidaAnimal * 100 / capacidadAlmacen)+ 
+                "% de su capacidad. [" + cantidadComidaAnimal + "/" + capacidadAlmacen + "]");
+    }
+
+    /**
+     * Distribuye equitativamente la comida animal y vegetal entre las piscifactorías disponibles.
+     * 
+     * @param piscifactorias la lista de piscifactorías a las que se les distribuirá comida.
+     */
+    public void distribuirComida(List<Piscifactoria> piscifactorias) {
+        int necesitanComidaAnimal = 0, necesitanComidaVegetal = 0;
+
+        do {
+            for (Piscifactoria piscifactoria : piscifactorias) {
+                if (piscifactoria.getComidaAnimalActual() < piscifactoria.getCapacidadMaximaComida()) {
+                    necesitanComidaAnimal++;
+                }
+                if (piscifactoria.getComidaVegetalActual() < piscifactoria.getCapacidadMaximaComida()) {
+                    necesitanComidaVegetal++;
+                }
+            }
+
+            int comidaAnimalPorPiscifactoria = (necesitanComidaAnimal > 0) ? cantidadComidaAnimal / necesitanComidaAnimal : 0;
+            int comidaVegetalPorPiscifactoria = (necesitanComidaVegetal > 0) ? cantidadComidaVegetal / necesitanComidaVegetal : 0;
+
+            for (Piscifactoria piscifactoria : piscifactorias) {
+                if (piscifactoria.getComidaAnimalActual() < piscifactoria.getCapacidadMaximaComida()) {
+                    int espacioDisponibleAnimal = piscifactoria.getCapacidadMaximaComida() - piscifactoria.getComidaAnimalActual();
+                    int comidaMaxima = Math.min(espacioDisponibleAnimal, comidaAnimalPorPiscifactoria);
+                    piscifactoria.añadirComidaAnimal(comidaMaxima);
+                    cantidadComidaAnimal -= comidaMaxima;
+                    necesitanComidaAnimal--;
+                }
+
+                if (piscifactoria.getComidaVegetalActual() < piscifactoria.getCapacidadMaximaComida()) {
+                    int espacioDisponibleVegetal = piscifactoria.getCapacidadMaximaComida() - piscifactoria.getComidaVegetalActual();
+                    int comidaMaxima = Math.min(espacioDisponibleVegetal, comidaVegetalPorPiscifactoria);
+                    piscifactoria.añadirComidaVegetal(comidaMaxima);
+                    cantidadComidaVegetal -= comidaMaxima;
+                    necesitanComidaVegetal--;
+                }
+            }
+        } while (necesitanComidaAnimal != 0 && necesitanComidaVegetal != 0);
     }
 
     /**
@@ -166,11 +182,9 @@ public class AlmacenCentral {
      */
     @Override
     public String toString() {
-        return "Almacen Central:\n" +
-                "Capacidad Total: " + capacidadAlmacen + "\n" +
-                "Cantidad de Comida Animal: " + cantidadComidaAnimal + " (" +
-                ((cantidadComidaAnimal * 100.0) / capacidadAlmacen) + "% de la capacidad)\n" +
-                "Cantidad de Comida Vegetal: " + cantidadComidaVegetal + " (" +
-                ((cantidadComidaVegetal * 100.0) / capacidadAlmacen) + "% de la capacidad)";
+        return "Información del Almacén Central:" +
+                "\n  Capacidad Total          : " + capacidadAlmacen +
+                "\n  Comida Animal            : " + cantidadComidaAnimal + " (" + ((cantidadComidaAnimal * 100.0) / capacidadAlmacen) + "% de la capacidad)" +
+                "\n  Comida Vegetal           : " + cantidadComidaVegetal + " (" + ((cantidadComidaVegetal * 100.0) / capacidadAlmacen) + "% de la capacidad)";
     }
 }

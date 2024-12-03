@@ -9,12 +9,9 @@ public class SistemaMonedas {
     /** Instancia única de SistemaMonedas. */
     private static SistemaMonedas instanciaUnica;
 
-    /**
-     * Constructor privado que inicializa el saldo de monedas con 100.
-     * El saldo inicial siempre será 100, sin opción a modificarlo desde fuera.
-     */
+    /** Constructor privado que inicializa el saldo con 100 monedas. */
     private SistemaMonedas() {
-        this.monedas = 100;  // Siempre empieza con 100 monedas
+        this.monedas = 100;
     }
 
     /**
@@ -23,7 +20,7 @@ public class SistemaMonedas {
      * 
      * @return La instancia única de SistemaMonedas.
      */
-    public static SistemaMonedas getInstancia() {
+    static SistemaMonedas getInstancia() {
         if (instanciaUnica == null) {
             instanciaUnica = new SistemaMonedas();
         }
@@ -48,10 +45,8 @@ public class SistemaMonedas {
     public boolean ganarMonedas(int cantidad) {
         if (cantidad > 0) {
             monedas += cantidad;
-            System.out.println("\nHas ganado " + cantidad + " monedas. Saldo actual: " + monedas + " monedas.");
             return true;
         }
-        System.out.println("\nNo se pueden ganar monedas negativas o cero.");
         return false;
     }
 
@@ -64,10 +59,23 @@ public class SistemaMonedas {
     public boolean gastarMonedas(int costo) {
         if (costo > 0 && costo <= monedas) {
             monedas -= costo;
-            System.out.println("\nSe han gastado " + costo + " monedas. Saldo restante: " + monedas + " monedas.");
             return true;
         }
-        System.out.println("\nNo hay suficientes monedas para realizar esta acción.");
         return false;
+    }
+
+    /**
+     * Calcula el costo con descuento. Si la cantidad de comida es 25 o más, aplica
+     * un descuento de 5 monedas por cada 25 unidades.
+     * 
+     * @param cantidadComida La cantidad de comida.
+     * @return El costo con descuento.
+     */
+    public int calcularDescuento(int cantidadComida) {
+        if (cantidadComida >= 25) {
+            return cantidadComida - (cantidadComida / 25) * 5;
+        } else {
+            return cantidadComida;
+        }
     }
 }

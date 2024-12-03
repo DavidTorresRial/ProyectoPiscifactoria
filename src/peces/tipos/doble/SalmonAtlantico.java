@@ -15,4 +15,15 @@ public class SalmonAtlantico extends Pez implements Carnivoro {
     public SalmonAtlantico(boolean sexo) {
         super(sexo, AlmacenPropiedades.SALMON_ATLANTICO);
     }
+
+    /**
+     * Crea una copia del SalmonAtlantico con un nuevo sexo.
+     *
+     * @param nuevoSexo true para macho, false para hembra.
+     * @return una nueva instancia de SalmonAtlantico con el sexo especificado.
+     */
+    @Override
+    public SalmonAtlantico clonar(boolean nuevoSexo) {
+        return new SalmonAtlantico(nuevoSexo);
+    }
 }
