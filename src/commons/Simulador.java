@@ -2,17 +2,14 @@ package commons;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import java.util.*;
 
 import helpers.InputHelper;
 import helpers.MenuHelper;
@@ -86,114 +83,107 @@ public class Simulador {
         piscifactorias.get(0).añadirComidaAnimal(piscifactorias.get(0).getCapacidadMaximaComida());
         piscifactorias.get(0).añadirComidaVegetal(piscifactorias.get(0).getCapacidadMaximaComida());
     }
+    
 
-        public void guardarEstado() { // TODO hacer componente
-        // Usar GsonBuilder con formato bonito
+
+    public void guardarEstado() {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-        // Crear un mapa o estructura para almacenar el JSON
-        Map<String, Object> estado = new HashMap<>();
-        
-        // Información de la empresa y monedas
+        // Crear estructura principal con LinkedHashMap para preservar el orden
+        Map<String, Object> estado = new LinkedHashMap<>();
+
+        // Añadir los campos en el orden deseado
+        estado.put("implementados", Arrays.asList(
+                AlmacenPropiedades.SALMON_ATLANTICO.getNombre(),
+                AlmacenPropiedades.TRUCHA_ARCOIRIS.getNombre(),
+                AlmacenPropiedades.ARENQUE_ATLANTICO.getNombre(),
+                AlmacenPropiedades.BESUGO.getNombre(),
+                AlmacenPropiedades.LENGUADO_EUROPEO.getNombre(),
+                AlmacenPropiedades.LUBINA_RAYADA.getNombre(),
+                AlmacenPropiedades.ROBALO.getNombre(),
+                AlmacenPropiedades.CARPA_PLATEADA.getNombre(),
+                AlmacenPropiedades.PEJERREY.getNombre(),
+                AlmacenPropiedades.PERCA_EUROPEA.getNombre(),
+                AlmacenPropiedades.SALMON_CHINOOK.getNombre(),
+                AlmacenPropiedades.TILAPIA_NILO.getNombre()
+        ));
         estado.put("empresa", nombreEntidad);
         estado.put("dia", dia);
         estado.put("monedas", monedas.getMonedas());
+        estado.put("orca", "0:0,0,0;0:0,0,0");
 
-        // Definir la lista de implementados (asumo que lo tienes en tu estructura)
-        List<String> implementados = Arrays.asList("nombre1", "nombre2");
-        estado.put("implementados", implementados);
-
-        // Definir la orca (si no la tienes, la pongo como ejemplo)
-        String orca = "0:0,0,0;0:0,0,0";
-        estado.put("orca", orca);
-
-        // Crear el objeto 'edificios' con el 'almacen'
-        Map<String, Object> edificios = new HashMap<>();
-        Map<String, Object> almacenMap = new HashMap<>();
-        
-        // Almacen
-        almacenMap.put("disponible", almacenCentral != null && almacenCentral.getCapacidadAlmacen() > 0 ? true : false);
+        // Edificios - Almacén
+        Map<String, Object> almacenMap = new LinkedHashMap<>();
+        almacenMap.put("disponible", almacenCentral != null && almacenCentral.getCapacidadAlmacen() > 0);
         almacenMap.put("capacidad", almacenCentral != null ? almacenCentral.getCapacidadAlmacen() : 200);
-        Map<String, Object> comidaMap = new HashMap<>();
-        comidaMap.put("vegetal", almacenCentral != null ? almacenCentral.getCantidadComidaVegetal() : 0);
-        comidaMap.put("animal", almacenCentral != null ? almacenCentral.getCantidadComidaAnimal() : 0);
-        almacenMap.put("comida", comidaMap);
-        
-        edificios.put("almacen", almacenMap);
-        estado.put("edificios", edificios);
+        almacenMap.put("comida", Map.of(
+                "vegetal", almacenCentral != null ? almacenCentral.getCantidadComidaVegetal() : 0,
+                "animal", almacenCentral != null ? almacenCentral.getCantidadComidaAnimal() : 0
+        ));
+        estado.put("edificios", Map.of("almacen", almacenMap));
 
-        // Crear la lista de piscifactorias
-        List<Map<String, Object>> piscifactoriasMap = new ArrayList<>();
-        for (Piscifactoria p : piscifactorias) {
-            Map<String, Object> piscifactoriaMap = new HashMap<>();
-            piscifactoriaMap.put("nombre", p.getNombre());
-            
-            // Asumir que tipo 0 es Río y 1 es Mar
-            piscifactoriaMap.put("tipo", p instanceof PiscifactoriaDeRio ? 0 : 1);
-            //piscifactoriaMap.put("capacidad", p.getCapacidad());  // Aquí usas la capacidad real
-            Map<String, Object> comida = new HashMap<>();
-            comida.put("vegetal", p.getComidaVegetalActual());
-            comida.put("animal", p.getComidaAnimalActual());
-            piscifactoriaMap.put("comida", comida);
-            
-            // Serializamos los tanques dentro de la piscifactoria
-            List<Map<String, Object>> tanquesMap = new ArrayList<>();
-            for (Tanque t : p.getTanques()) {
-                Map<String, Object> tanqueMap = new HashMap<>();
-                
-                // Aquí si hay peces, accedemos a su información
-                if (!t.getPeces().isEmpty()) {
-                    tanqueMap.put("pez", t.getPeces().get(0).getNombre()); // El nombre del pez
-                    tanqueMap.put("num", t.getNumeroTanque());
+        // Piscifactorías
+        List<Map<String, Object>> piscifactoriasList = new ArrayList<>();
+        for (Piscifactoria piscifactoria : piscifactorias) {
+            Map<String, Object> piscifactoriaMap = new LinkedHashMap<>();
+            piscifactoriaMap.put("nombre", piscifactoria.getNombre());
+            piscifactoriaMap.put("tipo", piscifactoria instanceof PiscifactoriaDeRio ? 0 : 1);
+            piscifactoriaMap.put("capacidad", piscifactoria.getCapacidadMaximaComida());
+            piscifactoriaMap.put("comida", Map.of(
+                    "vegetal", piscifactoria.getComidaVegetalActual(),
+                    "animal", piscifactoria.getComidaAnimalActual()
+            ));
 
-                    // Datos del pez (vivos, maduros, fértiles)
-                    Map<String, Object> datos = new HashMap<>();
-                    datos.put("vivos", t.getPeces().size()); // Puedes agregar la lógica para contar los vivos
-                    datos.put("maduros", 0); // Aquí necesitarías agregar la lógica de los peces maduros
-                    datos.put("fertiles", 0); // Y lo mismo con los fértiles
-                    tanqueMap.put("datos", datos);
-                    
-                    // Serializamos los peces dentro del tanque
-                    List<Map<String, Object>> pecesMap = new ArrayList<>();
-                    for (Pez pez : t.getPeces()) {
-                        Map<String, Object> pezMap = new HashMap<>();
+            // Tanques
+            List<Map<String, Object>> tanquesList = new ArrayList<>();
+            for (Tanque tanque : piscifactoria.getTanques()) {
+                Map<String, Object> tanqueMap = new LinkedHashMap<>();
+                if (!tanque.getPeces().isEmpty()) {
+                    tanqueMap.put("pez", tanque.getPeces().get(0).getNombre());
+                    tanqueMap.put("num", tanque.getNumeroTanque());
+                    tanqueMap.put("datos", Map.of(
+                            "vivos", tanque.getPeces().size(),
+                            "maduros", 0, // Agregar lógica real si es necesaria
+                            "fertiles", tanque.getFertiles() // Agregar lógica real si es necesaria
+                    ));
+
+                    // Peces
+                    List<Map<String, Object>> pecesList = new ArrayList<>();
+                    for (Pez pez : tanque.getPeces()) {
+                        Map<String, Object> pezMap = new LinkedHashMap<>();
                         pezMap.put("edad", pez.getEdad());
-                        pezMap.put("sexo", pez.isSexo()); // true para macho, false para hembra
+                        pezMap.put("sexo", pez.isSexo());
                         pezMap.put("vivo", pez.isVivo());
                         //pezMap.put("maduro", pez.isMaduro());
                         pezMap.put("fertil", pez.isFertil());
                         pezMap.put("ciclo", pez.getDatos().getCiclo());
                         pezMap.put("alimentado", pez.isAlimentado());
-                        
-                        Map<String, Object> extra = new HashMap<>();
-                        extra.put("k", "v"); // Agrega los datos extra si tienes algo aquí
-                        pezMap.put("extra", extra);
-                        
-                        pecesMap.add(pezMap);
+                        pezMap.put("extra", Map.of("k", "v"));
+                        pecesList.add(pezMap);
                     }
-                    tanqueMap.put("peces", pecesMap);
+                    tanqueMap.put("peces", pecesList);
                 } else {
-                    // Si el tanque no tiene peces, ponemos un valor predeterminado
                     tanqueMap.put("pez", "Sin peces");
-                    tanqueMap.put("num", t.getNumeroTanque());
+                    tanqueMap.put("num", tanque.getNumeroTanque());
                     tanqueMap.put("datos", "No disponible");
                 }
-                
-                tanquesMap.add(tanqueMap);
+                tanquesList.add(tanqueMap);
             }
-            piscifactoriaMap.put("tanques", tanquesMap);
-            piscifactoriasMap.add(piscifactoriaMap);
+            piscifactoriaMap.put("tanques", tanquesList);
+            piscifactoriasList.add(piscifactoriaMap);
         }
-        estado.put("piscifactorias", piscifactoriasMap);
+        estado.put("piscifactorias", piscifactoriasList);
 
-        // Guardamos el estado en un archivo JSON
+        // Guardar el JSON en un archivo
         try (FileWriter writer = new FileWriter("saves/estado.json")) {
-            gson.toJson(estado, writer); // Aquí se utiliza el gson con formato bonito
+            gson.toJson(estado, writer);
             System.out.println("Estado guardado correctamente.");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+    
 
 
     
