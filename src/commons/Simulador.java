@@ -82,17 +82,16 @@ public class Simulador {
     public void init() {
         // Pedir los datos iniciales al usuario
         nombreEntidad = InputHelper.readString("Ingrese el nombre de la entidad/empresa/partida: ");
-
-        // Inicializar el logger para esta partida
-        Logger logger = Logger.getInstance("logs/" + nombreEntidad + ".log");
+    
+        // Inicializar el logger para esta partida (usa la variable estática)
+        logger = Logger.getInstance(nombreEntidad + ".log");
         logger.log("Inicio de la simulación: " + nombreEntidad);
         
         nombrePiscifactoria = InputHelper.readString("\nIngrese el nombre de la primera Piscifactoria: ");
         logger.log("Piscifactoría inicial: " + nombrePiscifactoria);
-    
+        
         // Crear la piscifactoría inicial
         piscifactorias.add(new PiscifactoriaDeRio(nombrePiscifactoria));
-
     
         // Configurar la comida inicial
         Piscifactoria inicial = piscifactorias.get(0);
@@ -313,36 +312,36 @@ public class Simulador {
     public void addFood() {
         String[] menuComida = { "Comida Animal", "Comida Vegetal" };
         String[] menuCantidad = { "5", "10", "25", "Llenar" };
-
+    
         int capacidadTotal = 0;
         int comidaActual = 0;
-
+    
         if (almacenCentral == null) {
             Piscifactoria piscifactoria = selectPisc();
             if (piscifactoria != null) {
                 capacidadTotal = piscifactoria.getCapacidadMaximaComida();
-
+    
                 int opcionComida;
                 do {
                     System.out.println("\n============= Añadir Comida a la Piscifactoría =============");
                     MenuHelper.mostrarMenuCancelar(menuComida);
                     opcionComida = InputHelper.solicitarNumero(0, menuComida.length);
-
+    
                     if (opcionComida != 0) {
                         boolean animal = opcionComida == 1;
-
+    
                         if (animal) {
                             comidaActual = piscifactoria.getComidaAnimalActual();
                         } else {
                             comidaActual = piscifactoria.getComidaVegetalActual();
                         }
-
+    
                         int opcionCantidad;
                         do {
                             System.out.println("\n==================== Cantidad de Comida ====================");
                             MenuHelper.mostrarMenuCancelar(menuCantidad);
                             opcionCantidad = InputHelper.solicitarNumero(0, menuCantidad.length);
-
+    
                             if (opcionCantidad != 0) {
                                 int cantidadComida = switch (opcionCantidad) {
                                     case 1 -> 5;
@@ -351,7 +350,7 @@ public class Simulador {
                                     case 4 -> capacidadTotal - comidaActual;
                                     default -> 0;
                                 };
-
+    
                                 if (!(comidaActual + cantidadComida > capacidadTotal) && !(comidaActual == capacidadTotal)) {
                                     int costo = monedas.calcularDescuento(cantidadComida);
                                     if (monedas.gastarMonedas(costo)) {
@@ -362,6 +361,7 @@ public class Simulador {
                                                     "\n" + cantidadComida + " de comida de tipo Animal comprada por "
                                                             + costo + " monedas. Se almacena en la piscifactoría "
                                                             + piscifactoria.getNombre() + ".");
+                                            logger.log("[" + cantidadComida + "] de comida de tipo Animal comprada. Se almacena en la piscifactoría " + piscifactoria.getNombre() + ".");
                                         } else {
                                             piscifactoria.añadirComidaVegetal(cantidadComida);
                                             comidaActual += cantidadComida;
@@ -369,6 +369,7 @@ public class Simulador {
                                                     "\n" + cantidadComida + " de comida de tipo Vegetal comprada por "
                                                             + costo + " monedas. Se almacena en la piscifactoría "
                                                             + piscifactoria.getNombre() + ".");
+                                            logger.log(cantidadComida + " de comida de tipo Vegetal comprada. Se almacena en la piscifactoría " + piscifactoria.getNombre());
                                         }
                                     }
                                 } else {
@@ -387,22 +388,22 @@ public class Simulador {
                 System.out.println("\n============= Añadir Comida al Almacén Central =============");
                 MenuHelper.mostrarMenuCancelar(menuComida);
                 opcionComida = InputHelper.solicitarNumero(0, menuComida.length);
-
+    
                 if (opcionComida != 0) {
                     boolean animal = opcionComida == 1;
-
+    
                     if (animal) {
                         comidaActual = almacenCentral.getCantidadComidaAnimal();
                     } else {
                         comidaActual = almacenCentral.getCantidadComidaVegetal();
                     }
-
+    
                     int opcionCantidad;
                     do {
                         System.out.println("\n==================== Cantidad de Comida ====================");
                         MenuHelper.mostrarMenuCancelar(menuCantidad);
                         opcionCantidad = InputHelper.solicitarNumero(0, menuCantidad.length);
-
+    
                         if (opcionCantidad != 0) {
                             int cantidadComida = switch (opcionCantidad) {
                                 case 1 -> 5;
@@ -411,7 +412,7 @@ public class Simulador {
                                 case 4 -> capacidadTotal - comidaActual;
                                 default -> 0;
                             };
-
+    
                             if (!(comidaActual + cantidadComida > capacidadTotal) && !(comidaActual == capacidadTotal)) {
                                 int costo = monedas.calcularDescuento(cantidadComida);
                                 if (monedas.gastarMonedas(costo)) {
@@ -420,13 +421,15 @@ public class Simulador {
                                         comidaActual += cantidadComida;
                                         System.out.println(
                                                 "\n" + cantidadComida + " de comida de tipo Animal comprada por "
-                                                        + costo + " monedas. Se almacena en el almacén central.\r");
+                                                        + costo + " monedas. Se almacena en el almacén central.");
+                                        logger.log(cantidadComida + " de comida de tipo Animal comprada. Se almacena en el almacén central.");
                                     } else {
                                         almacenCentral.añadirComidaVegetal(cantidadComida);
                                         comidaActual += cantidadComida;
                                         System.out.println(
                                                 "\n" + cantidadComida + " de comida de tipo Vegetal comprada por "
-                                                        + costo + " monedas. Se almacena en el almacén central.\r");
+                                                        + costo + " monedas. Se almacena en el almacén central.");
+                                        logger.log(cantidadComida + " de comida de tipo Vegetal comprada. Se almacena en el almacén central.");
                                     }
                                 }
                             } else {
@@ -438,6 +441,7 @@ public class Simulador {
             } while (opcionComida != 0);
         }
     }
+    
 
     /** Añade un pez al tanque seleccionado. */
     public void addFish() {
