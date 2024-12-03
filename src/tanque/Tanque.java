@@ -1,12 +1,10 @@
 package tanque;
 
-
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import commons.Simulador;
-import helpers.Logger;
 import peces.Pez;
 
 /** Representa un tanque para almacenar peces con capacidades de gestión y reproducción. */
@@ -30,13 +28,10 @@ public class Tanque {
     public Tanque(int numeroTanque, int capacidadMaxima) {
         this.numeroTanque = numeroTanque;
         this.capacidadMaxima = capacidadMaxima;
-        Logger.getInstance("tanque.log").log("Creado tanque " + numeroTanque + " con capacidad máxima: " + capacidadMaxima);
     }
 
-
-     /** Muestra el estado actual del tanque. */
-     public void showStatus() {
-        Logger.getInstance("tanque.log").log("Estado solicitado para el tanque " + numeroTanque);
+    /** Muestra el estado actual del tanque. */
+    public void showStatus() {
         System.out.println("\n=============== Tanque " + numeroTanque + " ===============");
 
         System.out.println("Ocupación: " + peces.size() + " / " + capacidadMaxima + " (" + (peces.size() * 100 / capacidadMaxima) + "%)");
@@ -46,7 +41,6 @@ public class Tanque {
         System.out.println("Hembras / Machos: " + getHembras() + " / " + getMachos());
         System.out.println("Fértiles: " + getFertiles() + " / " + getVivos());
     }
-
 
     /** Muestra el estado de todos los peces del tanque. */
     public void showFishStatus() {
@@ -63,9 +57,8 @@ public class Tanque {
         System.out.println("Tanque " + numeroTanque + " de la piscifactoría al " + (peces.size() * 100 / capacidadMaxima) + "% de capacidad. [" + peces.size() + "/" + capacidadMaxima + "]");
     }
 
-     /** Avanza un día en el tanque, haciendo crecer los peces y ejecutando la reproducción. */
-     public void nextDay() {
-        Logger.getInstance("tanque.log").log("Avance al siguiente día en tanque " + numeroTanque);
+    /** Avanza un día en el tanque, haciendo crecer los peces y ejecutando la reproducción. */
+    public void nextDay() {
         for (Pez pez : peces) {
             pez.grow();
         }
@@ -75,41 +68,51 @@ public class Tanque {
 
     /** Método que maneja la reproducción de los peces en el tanque. */
     public void reproduccion() {
-        Logger.getInstance("tanque.log").log("Inicio del proceso de reproducción en tanque " + numeroTanque);
         int nuevosMachos = 0, nuevasHembras = 0;
 
-        boolean hayMachoFertil = peces.stream().anyMatch(pez -> pez.isSexo() && pez.isFertil());
+        boolean hayMachoFertil = false;
+        for (Pez pez : peces) {
+            if (pez.isSexo() && pez.isFertil()) {
+                hayMachoFertil = true;
+            }
+        }
 
         if (hayMachoFertil) {
             List<Pez> hembrasFertiles = new ArrayList<>();
+
             for (Pez pez : peces) {
-                if (pez.isFertil() && pez.isVivo() && !pez.isSexo()) {
-                    hembrasFertiles.add(pez);
-                }
-            }
-
-            for (Pez hembra : hembrasFertiles) {
-                for (int i = 0; i < hembra.getDatos().getHuevos(); i++) {
-                    if (peces.size() < capacidadMaxima) {
-                        boolean nuevoSexo = (getHembras() <= getMachos()) ? false : true;
-
-                        Pez nuevoPez = (Pez) hembra.clonar(nuevoSexo);
-                        peces.add(nuevoPez);
-
-                        if (nuevoSexo) {
-                            nuevosMachos++;
-                        } else {
-                            nuevasHembras++;
-                        }
-                        Simulador.estadisticas.registrarNacimiento(hembra.getDatos().getNombre());
-                    } else {
-                        Logger.getErrorLogger().logError("Capacidad máxima alcanzada en tanque " + numeroTanque + " durante la reproducción.");
-                        break;
+                if (pez.isFertil() && pez.isVivo()) {
+                    if (!pez.isSexo()) {
+                        hembrasFertiles.add(pez);
                     }
                 }
-                hembra.setFertil(false);
             }
-            Logger.getInstance("tanque.log").log("Reproducción completada en tanque " + numeroTanque + ": " + nuevosMachos + " machos y " + nuevasHembras + " hembras creados.");
+
+            if (!hembrasFertiles.isEmpty()) {
+                for (Pez hembra : hembrasFertiles) {
+                    for (int i = 0; i < hembra.getDatos().getHuevos(); i++) {
+                        if (peces.size() < capacidadMaxima) {
+                            boolean nuevoSexo = (getHembras() <= getMachos()) ? false : true;
+
+                            Pez nuevoPez = (Pez) hembra.clonar(nuevoSexo);
+                            peces.add(nuevoPez);
+
+                            if (nuevoSexo) {
+                                nuevosMachos++;
+                                Simulador.estadisticas.registrarNacimiento(hembra.getDatos().getNombre());
+                            } else {
+                                nuevasHembras++;
+                                Simulador.estadisticas.registrarNacimiento(hembra.getDatos().getNombre());
+                            }
+                        } else {
+                            System.out.println("No hay espacio para añadir más peces. Capacidad máxima alcanzada.");
+                            break;
+                        }
+                    }
+                    hembra.setFertil(false);
+                }
+            }
+            System.out.println("\nSe han creado " + nuevosMachos + " nuevos machos y " + nuevasHembras + " nuevas hembras.");
         }
     }
 
@@ -121,18 +124,15 @@ public class Tanque {
      */
     public boolean addFish(Pez pez) {
         if (peces.size() >= capacidadMaxima) {
-            Logger.getErrorLogger().logError("Intento de añadir pez fallido: tanque " + numeroTanque + " lleno.");
             System.out.println("El tanque está lleno. Capacidad máxima alcanzada.");
             return false;
         }
         if (Simulador.monedas.gastarMonedas(pez.getDatos().getCoste())) {
             if (peces.isEmpty() || peces.get(0).getNombre().equals(pez.getNombre())) {
                 peces.add(pez);
-                Logger.getInstance("tanque.log").log("Pez añadido al tanque " + numeroTanque + ": " + pez.getNombre());
                 return true;
             }
         }
-        Logger.getErrorLogger().logError("Intento de añadir pez fallido en tanque " + numeroTanque);
         return false;
     }
 
@@ -153,18 +153,14 @@ public class Tanque {
             }
         }
         if (pecesVendidos > 0) {
-            Logger.getInstance("tanque.log").log(pecesVendidos + " peces vendidos por " + monedasGanadas + " monedas en tanque " + numeroTanque);
             System.out.println(pecesVendidos + " peces vendidos por " + monedasGanadas + " monedas.");
         } else {
-            Logger.getInstance("tanque.log").log("No hay peces adultos para vender en tanque " + numeroTanque);
             System.out.println("\nNo hay peces adultos para vender.");
         }
     }
 
-
     /** Vacía el tanque eliminando todos los peces y reseteando el tipo de pez permitido. */
     public void emptyTank() {
-        Logger.getInstance("tanque.log").log("Tanque " + numeroTanque + " vaciado.");
         peces.clear();
     }
 

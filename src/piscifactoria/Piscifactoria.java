@@ -1,17 +1,15 @@
-package piscifactorias;
+package piscifactoria;
 
-import helpers.Logger;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
+import commons.Simulador;
+import peces.Pez;
 import peces.propiedades.Activo;
 import peces.propiedades.Carnivoro;
 import peces.propiedades.Filtrador;
-
-import peces.Pez;
 import tanque.Tanque;
-
 
 /** Clase abstracta que representa una piscifactoría que gestiona tanques de peces. */
 public abstract class Piscifactoria {
@@ -41,20 +39,20 @@ public abstract class Piscifactoria {
      */
     public Piscifactoria(String nombre) {        
         this.nombre = nombre;
-        Logger.getInstance("piscifactoria.log").log("Piscifactoría creada: " + nombre);
     }
 
     /** Muestra toda la información de la piscifactoría. */
     public void showStatus() {
-        Logger.getInstance("piscifactoria.log").log("Estado solicitado para la piscifactoría: " + nombre);
         System.out.println("\n=============== " + nombre + " ===============");
         System.out.println("Tanques: " + tanques.size());
+
         System.out.println("Ocupación: " + getTotalPeces() + " / " + getCapacidadTotal() + " (" + ((getCapacidadTotal() > 0) ? (getTotalPeces() * 100) / getCapacidadTotal() : 0) + "%)");
         System.out.println("Peces vivos: " + getTotalVivos() + " / " + getTotalPeces() + " (" + ((getTotalPeces() > 0) ? (getTotalVivos() * 100) / getTotalPeces() : 0) + "%)");
         System.out.println("Peces alimentados: " + getTotalAlimentados() + " / " + getTotalVivos() + " (" + ((getTotalVivos() > 0) ? (getTotalAlimentados() * 100) / getTotalVivos() : 0) + "%)");
         System.out.println("Peces adultos: " + getTotalAdultos() + " / " + getTotalVivos() + " (" + ((getTotalVivos() > 0) ? (getTotalAdultos() * 100) / getTotalVivos() : 0) + "%)");
         System.out.println("Hembras / Machos: " + getTotalHembras() + " / " + getTotalMachos());
         System.out.println("Fértiles: " + getTotalFertiles() + " / " + getTotalVivos());
+
         showFood();
     }
 
@@ -84,10 +82,9 @@ public abstract class Piscifactoria {
     }
 
     /** Muestra el estado actual del depósito de comida de la piscifactoría. */
-     /** Muestra el estado actual del depósito de comida de la piscifactoría. */
-     public void showFood() {
-        Logger.getInstance("piscifactoria.log").log("Estado del depósito de comida solicitado para la piscifactoría: " + nombre);
+    public void showFood() {
         System.out.println("Depósito de comida de la piscifactoría " + nombre + ":");
+
         System.out.println("Comida vegetal al " + (cantidadComidaVegetal * 100 / capacidadMaximaComida)
                 + "% de su capacidad. [" + cantidadComidaVegetal + "/" + capacidadMaximaComida + "]");
         System.out.println("Comida animal al " + (cantidadComidaAnimal * 100 / capacidadMaximaComida)
@@ -96,14 +93,9 @@ public abstract class Piscifactoria {
 
     /** Hace avanzar el ciclo de vida en la piscifactoría, alimentando a los peces y actualizando sus estados. */
     public void nextDay() {
-        Logger.getInstance("piscifactoria.log").log("Avance al siguiente día en piscifactoría: " + nombre);
         for (Tanque tanque : tanques) {
-            try {
-                alimentarPeces(tanque);
-                tanque.nextDay();
-            } catch (Exception e) {
-                Logger.getErrorLogger().logError("Error al avanzar el día en tanque " + tanque.getNumeroTanque() + " de la piscifactoría " + nombre + ": " + e.getMessage());
-            }
+            alimentarPeces(tanque);
+            tanque.nextDay();
         }
     }
 
@@ -118,79 +110,99 @@ public abstract class Piscifactoria {
      *
      * @param tanque El tanque del que se alimentarán los peces.
      */
-    /**
-     * Alimenta a los peces en un tanque específico.
-     *
-     * @param tanque El tanque del que se alimentarán los peces.
-     */
-    private void alimentarPeces(Tanque tanque) {
+    private void alimentarPeces(Tanque tanque) { // TODO alimentar en la clase pez haciendo una jerarquia de clases que extiendan de sus propiedades
         Random rand = new Random();
-        Logger.getInstance("piscifactoria.log").log("Inicio del proceso de alimentación en tanque: " + tanque.getNumeroTanque() + " de la piscifactoría: " + nombre);
 
         for (Pez pez : tanque.getPeces()) {
-            if (!pez.isVivo()) continue;
+            if (!pez.isVivo()) {
+                continue;
+            }
 
-            try {
-                if (pez instanceof Filtrador) {
+            if (pez instanceof Filtrador) {
+                // Filtrador: 50% de probabilidad de no consumir comida
+                if (rand.nextDouble() < 0.5) {
+                    pez.setAlimentado(true);
+                    continue; // No consume comida
+                }
+                // Intentar alimentar al filtrador
+                if (cantidadComidaVegetal > 0) {
+                    cantidadComidaVegetal--;
+                    pez.setAlimentado(true);
+                } else if (Simulador.almacenCentral != null && Simulador.almacenCentral.getCantidadComidaVegetal() > 0) {
+                    // Extraer comida vegetal del almacén
+                    if (Simulador.almacenCentral.getCantidadComidaVegetal() >= 1) {
+                        Simulador.almacenCentral.setCantidadComidaVegetal(Simulador.almacenCentral.getCantidadComidaVegetal() - 1);
+                        cantidadComidaVegetal++;
+                        pez.setAlimentado(true);
+                    } else {
+                        System.out.println("No hay suficiente comida vegetal.");
+                    }
+                }
+            } else if (pez instanceof Carnivoro) {
+                // Carnívoro: Consume comida animal
+                if (cantidadComidaAnimal > 0) {
+                    cantidadComidaAnimal--;
+                    pez.setAlimentado(true);
+                } else if (Simulador.almacenCentral != null && Simulador.almacenCentral.getCantidadComidaAnimal() > 0) {
+                    // Extraer comida animal del almacén
+                    if (Simulador.almacenCentral.getCantidadComidaAnimal() >= 1) {
+                        Simulador.almacenCentral.setCantidadComidaAnimal(Simulador.almacenCentral.getCantidadComidaAnimal() - 1);
+                        cantidadComidaAnimal++;
+                        pez.setAlimentado(true);
+                    } else {
+                        System.out.println("No hay suficiente comida animal.");
+                    }
+                }
+            }
+
+            // Activo: 50% de probabilidad de consumir el doble de comida
+            if (pez instanceof Activo) {
+                if (pez.isAlimentado()) {
+                    // Verificar si puede consumir el doble
                     if (rand.nextDouble() < 0.5) {
-                        pez.setAlimentado(true);
-                        continue; // No consume comida
-                    }
-                    if (cantidadComidaVegetal > 0) {
-                        cantidadComidaVegetal--;
-                        pez.setAlimentado(true);
-                    } else {
-                        Logger.getErrorLogger().logError("Fallo al alimentar pez filtrador: no hay suficiente comida vegetal en piscifactoría " + nombre);
-                    }
-                } else if (pez instanceof Carnivoro) {
-                    if (cantidadComidaAnimal > 0) {
-                        cantidadComidaAnimal--;
-                        pez.setAlimentado(true);
-                    } else {
-                        Logger.getErrorLogger().logError("Fallo al alimentar pez carnívoro: no hay suficiente comida animal en piscifactoría " + nombre);
+                        if (pez instanceof Carnivoro && cantidadComidaAnimal > 0) {
+                            cantidadComidaAnimal--; // Consume una unidad adicional si es posible
+                        } else if (pez instanceof Filtrador && cantidadComidaVegetal > 0) {
+                            cantidadComidaVegetal--; // Consume una unidad adicional si es posible
+                        }
                     }
                 }
-                if (pez instanceof Activo && pez.isAlimentado() && rand.nextDouble() < 0.5) {
-                    if (pez instanceof Carnivoro && cantidadComidaAnimal > 0) {
-                        cantidadComidaAnimal--; // Consume una unidad adicional
-                    } else if (pez instanceof Filtrador && cantidadComidaVegetal > 0) {
-                        cantidadComidaVegetal--; // Consume una unidad adicional
-                    }
-                }
-            } catch (Exception e) {
-                Logger.getErrorLogger().logError("Error al alimentar pez en tanque " + tanque.getNumeroTanque() + " de la piscifactoría " + nombre + ": " + e.getMessage());
             }
         }
-
-        Logger.getInstance("piscifactoria.log").log("Alimentación completada en tanque: " + tanque.getNumeroTanque() + " de la piscifactoría: " + nombre);
+        System.out.println("\n(Comida vegetal restante: " + cantidadComidaVegetal + ")");
+        System.out.println("(Comida animal restante: " + cantidadComidaAnimal + ")");
     }
 
     /**
      * Método para añadir comida animal al almacén.
+     * 
+     * @param cantidad La cantidad de comida animal a añadir. Debe ser positiva.
+     * @return true si se añadió la comida, false si no se pudo añadir.
      */
     public boolean añadirComidaAnimal(int cantidad) {
         int nuevaCantidad = cantidadComidaAnimal + cantidad;
         if (cantidad >= 0 && nuevaCantidad <= capacidadMaximaComida) {
             cantidadComidaAnimal = nuevaCantidad;
-            Logger.getInstance("piscifactoria.log").log("Añadidas " + cantidad + " unidades de comida animal a piscifactoría: " + nombre);
             return true;
         } else {
-            Logger.getErrorLogger().logError("No se pudo añadir comida animal en piscifactoría " + nombre + ": excede la capacidad.");
+            System.out.println("No se puede añadir la cantidad de comida animal: excede la capacidad.");
             return false;
         }
     }
 
     /**
      * Método para añadir comida vegetal al almacén.
+     * 
+     * @param cantidad La cantidad de comida vegetal a añadir. Debe ser positiva.
+     * @return true si se añadió la comida, false si no se pudo añadir.
      */
     public boolean añadirComidaVegetal(int cantidad) {
         int nuevaCantidad = cantidadComidaVegetal + cantidad;
         if (cantidad >= 0 && nuevaCantidad <= capacidadMaximaComida) {
-            cantidadComidaVegetal = nuevaCantidad;
-            Logger.getInstance("piscifactoria.log").log("Añadidas " + cantidad + " unidades de comida vegetal a piscifactoría: " + nombre);
+            cantidadComidaVegetal = nuevaCantidad;          
             return true;
         } else {
-            Logger.getErrorLogger().logError("No se pudo añadir comida vegetal en piscifactoría " + nombre + ": excede la capacidad.");
+            System.out.println("No se puede añadir la cantidad de comida vegetal: excede la capacidad.");
             return false;
         }
     }

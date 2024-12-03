@@ -1,18 +1,18 @@
-package piscifactorias;
+package piscifactoria;
 
 import commons.Simulador;
 import tanque.Tanque;
 
-public class PiscifactoriaDeRio extends Piscifactoria {
+public class PiscifactoriaDeMar extends Piscifactoria {
 
-    private final int costoMejora = 50;
-    private final int incrementoCapacidad = 25;
-    private final int capacidadMaximaPermitida = 250;
+        private final int costoMejora = 200;
+        private final int incrementoCapacidad = 100;
+        private final int capacidadMaximaPermitida = 1000;
 
-    public PiscifactoriaDeRio(String nombre) {
+    public PiscifactoriaDeMar(String nombre) {
         super(nombre);
-        tanques.add(new Tanque(tanques.size() + 1, 25));
-        capacidadMaximaComida = 25;
+        tanques.add(new Tanque(tanques.size() + 1, 100));
+        capacidadMaximaComida = 100;
     }
 
     @Override
@@ -26,17 +26,18 @@ public class PiscifactoriaDeRio extends Piscifactoria {
             }
         } else {
             System.out.println("La capacidad máxima del almacén ya ha sido alcanzada para la piscifactoría " + nombre + ".");
-        }    
+        } 
     }
 
     @Override
     public void addTanque() {
         int costoTanque = 150 * (tanques.size() + 1);
         if (Simulador.monedas.gastarMonedas(costoTanque)) {
-            tanques.add(new Tanque(tanques.size() + 1, 25));
+            tanques.add(new Tanque(tanques.size() + 1, 100));
             System.out.println("\nComprado un tanque número " + tanques.size() + " de la piscifactoría " + nombre + ".");
         } else {
             System.out.println("\nNo tienes suficientes monedas para agregar un tanque de río. Necesitas " + costoTanque + " monedas.");
         }
-    }    
+    }
+
 }

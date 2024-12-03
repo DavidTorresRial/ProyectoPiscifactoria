@@ -1,7 +1,5 @@
 package commons;
 
-import helpers.Logger; // Importar el Logger
-
 /** Representa un sistema de gestión de monedas. */
 public class SistemaMonedas {
 
@@ -47,12 +45,9 @@ public class SistemaMonedas {
     public boolean ganarMonedas(int cantidad) {
         if (cantidad > 0) {
             monedas += cantidad;
-            Logger.getInstance("0_errors.log").log("Ganadas " + cantidad + " monedas. Total actual: " + monedas);
             return true;
-        } else {
-            Logger.getErrorLogger().logError("Intento fallido de ganar monedas: cantidad inválida (" + cantidad + ").");
-            return false;
         }
+        return false;
     }
 
     /**
@@ -64,12 +59,9 @@ public class SistemaMonedas {
     public boolean gastarMonedas(int costo) {
         if (costo > 0 && costo <= monedas) {
             monedas -= costo;
-            Logger.getInstance("0_errors.log").log("Gastadas " + costo + " monedas. Total actual: " + monedas);
             return true;
-        } else {
-            Logger.getErrorLogger().logError("Intento fallido de gastar monedas: costo inválido (" + costo + ") o saldo insuficiente.");
-            return false;
         }
+        return false;
     }
 
     /**
@@ -80,11 +72,10 @@ public class SistemaMonedas {
      * @return El costo con descuento.
      */
     public int calcularDescuento(int cantidadComida) {
-        int costo = (cantidadComida >= 25)
-                ? cantidadComida - (cantidadComida / 25) * 5
-                : cantidadComida;
-
-        Logger.getInstance("0_errors.log").log("Costo calculado con descuento: " + costo + " monedas para " + cantidadComida + " unidades de comida.");
-        return costo;
+        if (cantidadComida >= 25) {
+            return cantidadComida - (cantidadComida / 25) * 5;
+        } else {
+            return cantidadComida;
+        }
     }
 }

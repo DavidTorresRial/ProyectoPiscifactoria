@@ -7,26 +7,30 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import estadisticas.Estadisticas;
 import helpers.InputHelper;
 import helpers.Logger;
 import helpers.MenuHelper;
-
+import peces.Pez;
+import peces.tipos.doble.SalmonAtlantico;
+import peces.tipos.doble.TruchaArcoiris;
+import peces.tipos.mar.ArenqueDelAtlantico;
+import peces.tipos.mar.Besugo;
+import peces.tipos.mar.LenguadoEuropeo;
+import peces.tipos.mar.LubinaRayada;
+import peces.tipos.mar.Robalo;
+import peces.tipos.rio.CarpaPlateada;
+import peces.tipos.rio.Pejerrey;
+import peces.tipos.rio.PercaEuropea;
+import peces.tipos.rio.SalmonChinook;
+import peces.tipos.rio.TilapiaDelNilo;
+import piscifactoria.Piscifactoria;
+import piscifactoria.PiscifactoriaDeMar;
+import piscifactoria.PiscifactoriaDeRio;
 import propiedades.AlmacenPropiedades;
 import propiedades.PecesDatos;
 import propiedades.PecesProps;
-
-import estadisticas.Estadisticas;
-
-
 import tanque.Tanque;
-
-import peces.Pez;
-import peces.tipos.doble.*;
-import peces.tipos.mar.*;
-import peces.tipos.rio.*;
-import piscifactorias.Piscifactoria;
-import piscifactorias.PiscifactoriaDeMar;
-import piscifactorias.PiscifactoriaDeRio;
 
 /**
  * La clase Simulador gestiona la simulación de una piscifactoría,
@@ -49,6 +53,8 @@ public class Simulador {
 
     /** Nombre de la piscifactoría. */
     private String nombrePiscifactoria;
+
+    public static Logger logger;
 
     /** Sistema de estadísticas para registrar la cría, venta y ganancias de los peces. */
     public static Estadisticas estadisticas = new Estadisticas(new String[] {
@@ -80,21 +86,18 @@ public class Simulador {
         // Inicializar el logger para esta partida
         Logger logger = Logger.getInstance("logs/" + nombreEntidad + ".log");
         logger.log("Inicio de la simulación: " + nombreEntidad);
-    
-        logger.log("Entidad creada: " + nombreEntidad);
         
         nombrePiscifactoria = InputHelper.readString("\nIngrese el nombre de la primera Piscifactoria: ");
-        logger.log("Primera piscifactoría creada: " + nombrePiscifactoria);
+        logger.log("Piscifactoría inicial: " + nombrePiscifactoria);
     
         // Crear la piscifactoría inicial
         piscifactorias.add(new PiscifactoriaDeRio(nombrePiscifactoria));
-        logger.log("Piscifactoría de río añadida: " + nombrePiscifactoria);
+
     
         // Configurar la comida inicial
         Piscifactoria inicial = piscifactorias.get(0);
         inicial.añadirComidaAnimal(inicial.getCapacidadMaximaComida());
         inicial.añadirComidaVegetal(inicial.getCapacidadMaximaComida());
-        logger.log("Comida añadida a la capacidad máxima en la piscifactoría: " + nombrePiscifactoria);
     }
     
 
@@ -760,25 +763,25 @@ public class Simulador {
     public void pecesRandom() {
         Piscifactoria piscifactoriaSeleccionada = selectPisc();
         Random random = new Random();
-
+    
         if (piscifactoriaSeleccionada != null) {
             List<Tanque> tanques = piscifactoriaSeleccionada.getTanques();
             Tanque tanqueSeleccionado = null;
             Pez pezSeleccionado = null;
-
+    
             for (int i = 0; i < tanques.size(); i++) {
                 if ((tanques.get(i).getCapacidad() - tanques.get(i).getPeces().size()) >= 4) {
                     tanqueSeleccionado = tanques.get(i);
                     break;
                 }
             }
-
+    
             if (tanqueSeleccionado != null) {
                 boolean esDeRio = piscifactoriaSeleccionada instanceof PiscifactoriaDeRio;
-
+    
                 for (int i = 0; i < 4; i++) {
                     boolean sexo = tanqueSeleccionado.getHembras() <= tanqueSeleccionado.getMachos() ? false : true;
-
+    
                     pezSeleccionado = (!tanqueSeleccionado.getPeces().isEmpty())
                             ? tanqueSeleccionado.getPeces().get(0).clonar(sexo)
                             : (esDeRio
@@ -808,6 +811,7 @@ public class Simulador {
             }
         }
     }
+    
 
     /**
      * Punto de entrada principal del simulador. Inicializa la simulación y
@@ -877,9 +881,11 @@ public class Simulador {
                         break;
                     case 98:
                         simulador.pecesRandom();
+                        logger.log("Añadidos peces mediante la opción oculta a la piscifactoría X");
                         break;
                     case 99:
                         Simulador.monedas.ganarMonedas(1000);
+                        logger.log("Añadidas monedas mediante la opción oculta");
                         System.out.println("\nAñadidas 1000 monedas mediante la opción oculta. Monedas actuales, "
                                 + monedas.getMonedas());
                         break;
