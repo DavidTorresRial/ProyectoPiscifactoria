@@ -1,8 +1,10 @@
 package tanque;
 
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
+
+import commons.Simulador;
 
 import commons.Simulador;
 import peces.Pez;
@@ -229,7 +231,7 @@ public class Tanque {
     public int getAdultos() {
         int pecesAdultos = 0;
         for (Pez pez : peces) {
-            if (pez.getEdad() >= pez.getDatos().getMadurez()) {
+            if (pez.isMaduro()) {
                 pecesAdultos++;
             }
         }

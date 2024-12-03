@@ -1,16 +1,17 @@
 package piscifactoria;
 
-
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Random;
 
-import commons.Simulador;
-import peces.Pez;
 import peces.propiedades.Activo;
 import peces.propiedades.Carnivoro;
 import peces.propiedades.Filtrador;
+
+import peces.Pez;
 import tanque.Tanque;
+
+import commons.Simulador;
 
 /** Clase abstracta que representa una piscifactoría que gestiona tanques de peces. */
 public abstract class Piscifactoria {
