@@ -5,7 +5,7 @@ import java.util.Random;
 import propiedades.PecesDatos;
 
 /** Clase padre de los peces. */
-public class Pez {
+public abstract class Pez {
 
     /** Nombre común del pez. */
     private final String nombre;
@@ -33,6 +33,8 @@ public class Pez {
 
     /** Datos específicos del pez extraídos de PecesDatos. */
     private PecesDatos datos;
+
+    private boolean primeraVez = true; // TODO revisar si es completamente necesario este atributo
 
     /**
      * Constructor que inicializa un Pez con su sexo y datos asociados.
@@ -64,31 +66,36 @@ public class Pez {
         if (vivo) {
             Random rand = new Random();
 
-            if (!alimentado) {
-                if (rand.nextDouble() < 0.5) {
-                    vivo = false;
-                    fertil = false;
-                    return;
-                }
-            }
-
-            edad++;
-
-            if (edad >= datos.getMadurez()) {
-                if (!fertil) {
-                    ciclo--;
-                    if (ciclo <= 0) {
-                        fertil = true; // Se vuelve fértil después de completar el ciclo
-                    }
-                }
-            } else {
+            if (!alimentado && rand.nextBoolean() == true) {
+                vivo = false;
+                alimentado = false;
                 fertil = false;
-            }
+            } else {
+                edad++;
 
-            if (edad < datos.getMadurez() && edad % 2 == 0) {
-                if (rand.nextDouble() < 0.05) {
-                    vivo = false;
-                    return;
+                if (!sexo) {
+                    if (edad >= datos.getMadurez() && primeraVez) {
+                        fertil = true;
+                        primeraVez = false;
+                    } else if (edad >= datos.getMadurez()) {
+                        ciclo--;
+                        if (ciclo <= 0) {
+                            fertil = true;
+                            ciclo = datos.getCiclo();
+                        }
+                    } else {
+                        fertil = false;
+                    }
+                } else if (edad >= datos.getMadurez()) {
+                    fertil = true;
+                }
+
+                if (edad < datos.getMadurez() && edad % 2 == 0) {
+                    if (rand.nextDouble() < 0.05) {
+                        vivo = false;
+                        alimentado = false;
+                        fertil = false;
+                    }
                 }
             }
         }
@@ -104,17 +111,12 @@ public class Pez {
     }
 
     /**
-     * Crea una copia del pez con un nuevo sexo.
+     * Método abstracto para clonar el pez con un nuevo sexo.
      *
-     * @param nuevoSexo true para macho, false para hembra
-     * @return una nueva instancia de Pez con el mismo tipo pero con el sexo
-     *         especificado
+     * @param nuevoSexo true para macho, false para hembra.
+     * @return una nueva instancia de la subclase correspondiente.
      */
-    public Pez clonar(boolean nuevoSexo) {
-        return new Pez(nuevoSexo, datos);
-    }
-
-    // Getters
+    public abstract Pez clonar(boolean nuevoSexo);
 
     /**
      * @return el nombre común del pez.
@@ -166,6 +168,17 @@ public class Pez {
     }
 
     /**
+     * @return true si el pez es maduro, false si no.
+     */
+    public boolean isMaduro() {
+        if (edad >= datos.getMadurez()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * @return el ciclo reproductivo del pez.
      */
     public int getCiclo() {
@@ -179,8 +192,6 @@ public class Pez {
         return datos;
     }
 
-    // Setters
-
     /**
      * Establece la edad del pez.
      * 
@@ -188,6 +199,15 @@ public class Pez {
      */
     public void setEdad(int edad) {
         this.edad = edad;
+    }
+
+    /**
+     * Establece si el pez es fértil.
+     *
+     * @param fertil true si el pez es fértil, false si no lo es.
+     */
+    public void setFertil(boolean fertil) {
+        this.fertil = fertil;
     }
 
     /**
@@ -227,30 +247,21 @@ public class Pez {
     }
 
     /**
-     * Establece si el pez es fértil.
-     *
-     * @param fertil true si el pez es fértil, false si no lo es.
-     */
-    public void setFertil(boolean fertil) {
-        this.fertil = fertil;
-    }
-
-    /**
-     * Representa el estado del pez en formato de cadena.
+     * Devuelve una representación en cadena del estado de un pez.
      *
      * @return una cadena con la información detallada del pez.
      */
     @Override
     public String toString() {
-        return "Pez{" +
-                "nombre='" + nombre + '\'' +
-                ", nombreCientifico='" + nombreCientifico + '\'' +
-                ", edad=" + edad +
-                ", sexo=" + (sexo ? "Macho" : "Hembra") +
-                ", fertil=" + (fertil ? "Si" : "No") +
-                ", vivo=" + (vivo ? "Si" : "No") +
-                ", alimentado=" + (alimentado ? "Si" : "No") +
-                ", ciclo=" + ciclo +
-                '}';
+        return "\nInformación del Pez:" +
+                "\n  Nombre Común       : " + nombre +
+                "\n  Nombre Científico  : " + nombreCientifico +
+                "\n  Edad               : " + edad + " días" +
+                "\n  Sexo               : " + (sexo ? "Macho" : "Hembra") +
+                "\n  Vivo               : " + (vivo ? "Sí" : "No") +
+                "\n  Alimentado         : " + (alimentado ? "Sí" : "No") +
+                "\n  Adulto             : " + (edad >= datos.getMadurez() ? "Sí" : "No") +
+                "\n  Fértil             : " + (fertil ? "Sí" : "No") +
+                "\n  Ciclo              : " + ciclo;
     }
 }

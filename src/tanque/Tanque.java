@@ -1,11 +1,10 @@
 package tanque;
 
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import commons.Simulador;
-import commons.SistemaMonedas;
-
-import java.util.ArrayList;
 
 import peces.Pez;
 
@@ -15,16 +14,11 @@ public class Tanque {
     /** Lista para almacenar los peces en el tanque. */
     private List<Pez> peces = new ArrayList<>();
 
-    /** Tipo de pez actual permitido en el tanque. */
-    private Class<?> tipoPezActual;
-
     /** Número del tanque. */
-    private int numeroTanque;
+    private final int numeroTanque;
 
     /** Capacidad máxima del tanque. */
-    private int capacidadMaxima;
-
-    SistemaMonedas monedas = SistemaMonedas.getInstancia();
+    private final int capacidadMaxima;
 
     /**
      * Crea un tanque con el número y capacidad especificados.
@@ -35,7 +29,6 @@ public class Tanque {
     public Tanque(int numeroTanque, int capacidadMaxima) {
         this.numeroTanque = numeroTanque;
         this.capacidadMaxima = capacidadMaxima;
-        this.tipoPezActual = null;
     }
 
     /** Muestra el estado actual del tanque. */
@@ -70,12 +63,8 @@ public class Tanque {
         for (Pez pez : peces) {
             pez.grow();
         }
-
         reproduccion();
-
-        if (peces.isEmpty()) {
-            tipoPezActual = null;
-        }
+        sellFish();
     }
 
     /** Método que maneja la reproducción de los peces en el tanque. */
@@ -86,42 +75,45 @@ public class Tanque {
         for (Pez pez : peces) {
             if (pez.isSexo() && pez.isFertil()) {
                 hayMachoFertil = true;
-                break;
             }
         }
 
         if (hayMachoFertil) {
-            List<Pez> nuevosPeces = new ArrayList<>();
+            List<Pez> hembrasFertiles = new ArrayList<>();
+
             for (Pez pez : peces) {
-                if (pez.isFertil() && !pez.isSexo()) {
-                    for (int i = 0; i < pez.getDatos().getHuevos(); i++) {
+                if (pez.isFertil() && pez.isVivo()) {
+                    if (!pez.isSexo()) {
+                        hembrasFertiles.add(pez);
+                    }
+                }
+            }
+
+            if (!hembrasFertiles.isEmpty()) {
+                for (Pez hembra : hembrasFertiles) {
+                    for (int i = 0; i < hembra.getDatos().getHuevos(); i++) {
                         if (peces.size() < capacidadMaxima) {
                             boolean nuevoSexo = (getHembras() <= getMachos()) ? false : true;
 
-                            Pez nuevoPez = (Pez) pez.clonar(nuevoSexo);
-                            nuevosPeces.add(nuevoPez);
+                            Pez nuevoPez = (Pez) hembra.clonar(nuevoSexo);
+                            peces.add(nuevoPez);
 
                             if (nuevoSexo) {
                                 nuevosMachos++;
-                                Simulador.estadisticas.registrarNacimiento(pez.getDatos().getNombre());
+                                Simulador.estadisticas.registrarNacimiento(hembra.getDatos().getNombre());
                             } else {
                                 nuevasHembras++;
-                                Simulador.estadisticas.registrarNacimiento(pez.getDatos().getNombre());
+                                Simulador.estadisticas.registrarNacimiento(hembra.getDatos().getNombre());
                             }
                         } else {
                             System.out.println("No hay espacio para añadir más peces. Capacidad máxima alcanzada.");
                             break;
                         }
                     }
-                    pez.setFertil(false);
+                    hembra.setFertil(false);
                 }
             }
-            peces.addAll(nuevosPeces);
-
-            System.out.println(
-                    "Se han creado " + nuevosMachos + " nuevos machos y " + nuevasHembras + " nuevas hembras.");
-        } else {
-            System.out.println("No hay machos fértiles en el tanque. No se realizará reproducción.");
+            System.out.println("\nSe han creado " + nuevosMachos + " nuevos machos y " + nuevasHembras + " nuevas hembras.");
         }
     }
 
@@ -136,14 +128,41 @@ public class Tanque {
             System.out.println("El tanque está lleno. Capacidad máxima alcanzada.");
             return false;
         }
-        if (monedas.gastarMonedas(pez.getDatos().getCoste())) {
-            if (tipoPezActual == null) {
-                tipoPezActual = pez.getClass();
+        if (Simulador.monedas.gastarMonedas(pez.getDatos().getCoste())) {
+            if (peces.isEmpty() || peces.get(0).getNombre().equals(pez.getNombre())) {
+                peces.add(pez);
+                return true;
             }
-            peces.add(pez);
-            return true;
         }
         return false;
+    }
+
+    /** Vende los peces maduros y actualiza el sistema de monedas. */
+    public void sellFish() {
+        int pecesVendidos = 0, monedasGanadas = 0;
+
+        Iterator<Pez> iterator = peces.iterator();
+        while (iterator.hasNext()) {
+            Pez pez = iterator.next();
+            if (pez.getEdad() >= pez.getDatos().getOptimo() && pez.isVivo()) {
+                Simulador.monedas.ganarMonedas(pez.getDatos().getMonedas());
+                Simulador.estadisticas.registrarVenta(pez.getNombre(), pez.getDatos().getMonedas());
+
+                monedasGanadas += pez.getDatos().getMonedas();
+                pecesVendidos++;
+                iterator.remove();
+            }
+        }
+        if (pecesVendidos > 0) {
+            System.out.println(pecesVendidos + " peces vendidos por " + monedasGanadas + " monedas.");
+        } else {
+            System.out.println("\nNo hay peces adultos para vender.");
+        }
+    }
+
+    /** Vacía el tanque eliminando todos los peces y reseteando el tipo de pez permitido. */
+    public void emptyTank() {
+        peces.clear();
     }
 
     /**
@@ -153,15 +172,6 @@ public class Tanque {
      */
     public List<Pez> getPeces() {
         return peces;
-    }
-
-    /**
-     * Devuelve el tipo de pez actual.
-     * 
-     * @return la clase del tipo de pez actual.
-     */
-    public Class<?> getTipoPezActual() {
-        return tipoPezActual;
     }
 
     /**
@@ -183,12 +193,48 @@ public class Tanque {
     }
 
     /**
-     * Devuelve el número de peces del tanque.
-     * 
-     * @return número de peces en el tanque.
+     * Cuenta y devuelve el número de peces vivos en el tanque.
+     *
+     * @return número de peces vivos en el tanque.
      */
-    public int getNumPeces() {
-        return peces.size();
+    public int getVivos() {
+        int pecesVivos = 0;
+        for (Pez pez : peces) {
+            if (pez.isVivo()) {
+                pecesVivos++;
+            }
+        }
+        return pecesVivos;
+    }
+
+    /**
+     * Cuenta y devuelve el número de peces alimentados en el tanque.
+     *
+     * @return número de peces alimentados en el tanque.
+     */
+    public int getAlimentados() {
+        int pecesAlimentados = 0;
+        for (Pez pez : peces) {
+            if (pez.isAlimentado()) {
+                pecesAlimentados++;
+            }
+        }
+        return pecesAlimentados;
+    }
+
+    /**
+     * Cuenta y devuelve el número de peces adultos en el tanque.
+     *
+     * @return número de peces adultos en el tanque.
+     */
+    public int getAdultos() {
+        int pecesAdultos = 0;
+        for (Pez pez : peces) {
+            if (pez.isMaduro()) {
+                pecesAdultos++;
+            }
+        }
+        return pecesAdultos;
     }
 
     /**
@@ -237,66 +283,21 @@ public class Tanque {
     }
 
     /**
-     * Cuenta y devuelve el número de peces vivos en el tanque.
-     *
-     * @return número de peces vivos en el tanque.
-     */
-    public int getVivos() {
-        int pecesVivos = 0;
-        for (Pez pez : peces) {
-            if (pez.isVivo()) {
-                pecesVivos++;
-            }
-        }
-        return pecesVivos;
-    }
-
-    /**
-     * Cuenta y devuelve el número de peces alimentados en el tanque.
-     *
-     * @return número de peces alimentados en el tanque.
-     */
-    public int getAlimentados() {
-        int pecesAlimentados = 0;
-        for (Pez pez : peces) {
-            if (pez.isAlimentado()) {
-                pecesAlimentados++;
-            }
-        }
-        return pecesAlimentados;
-    }
-
-    /**
-     * Cuenta y devuelve el número de peces adultos en el tanque.
-     *
-     * @return número de peces adultos en el tanque.
-     */
-    public int getAdultos() {
-        int pecesAdultos = 0;
-        for (Pez pez : peces) {
-            if (pez.getEdad() >= pez.getDatos().getMadurez()) {
-                pecesAdultos++;
-            }
-        }
-        return pecesAdultos;
-    }
-
-    /**
-     * Devuelve una representación en cadena del estado del tanque, incluyendo su número, capacidad, 
-     * número de peces, tipo de pez permitido, y estadísticas de los peces.
+     * Devuelve una representación en cadena del estado del tanque.
      * 
      * @return una cadena que representa el estado del tanque.
      */
     @Override
     public String toString() {
-        return "\nTanque " + numeroTanque + ":\n" +
-                "Capacidad: " + capacidadMaxima + "\n" +
-                "Peces en el tanque: " + peces.size() + "\n" +
-                "Tipo de pez permitido: " + (tipoPezActual != null ? tipoPezActual.getSimpleName() : "Ninguno") + "\n" +
-                "Peces vivos: " + getVivos() + "\n" +
-                "Peces alimentados: " + getAlimentados() + "\n" +
-                "Peces adultos: " + getAdultos() + "\n" +
-                "Hembras: " + getHembras() + ", Machos: " + getMachos() + "\n" +
-                "Peces fértiles: " + getFertiles() + "\n";
+        return "\nInformación del Tanque: " + numeroTanque +
+                "\n  Capacidad Máxima    : " + capacidadMaxima +
+                "\n  Peces en el Tanque  : " + peces.size() +
+                "\n  Tipo de Pez         : " + (!peces.isEmpty() ? peces.get(0).getNombre() : "Ninguno") +
+                "\n  Peces Vivos         : " + getVivos() +
+                "\n  Peces Alimentados   : " + getAlimentados() +
+                "\n  Peces Adultos       : " + getAdultos() +
+                "\n  Hembras             : " + getHembras() +
+                "\n  Machos              : " + getMachos() +
+                "\n  Peces Fértiles      : " + getFertiles();
     }
 }
