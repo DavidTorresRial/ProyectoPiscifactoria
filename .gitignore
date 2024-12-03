@@ -5,3 +5,6 @@ bin/*
 # Ignora todos los archivos de la carpeta .vscode
 
 .vscode/*
+
+
+*.xml
