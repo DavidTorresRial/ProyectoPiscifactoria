@@ -74,12 +74,13 @@ public class Simulador {
 
     /** Metodo que inicializa todo el sistema. */
     public void init() {
+        // Pedir los datos iniciales al usuario
+        nombreEntidad = InputHelper.readString("Ingrese el nombre de la entidad/empresa/partida: ");
+
         // Inicializar el logger para esta partida
         Logger logger = Logger.getInstance("logs/" + nombreEntidad + ".log");
         logger.log("Inicio de la simulación: " + nombreEntidad);
     
-        // Pedir los datos iniciales al usuario
-        nombreEntidad = InputHelper.readString("Ingrese el nombre de la entidad/empresa/partida: ");
         logger.log("Entidad creada: " + nombreEntidad);
         
         nombrePiscifactoria = InputHelper.readString("\nIngrese el nombre de la primera Piscifactoria: ");
