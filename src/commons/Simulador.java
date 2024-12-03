@@ -1,11 +1,18 @@
 package commons;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import helpers.InputHelper;
 import helpers.MenuHelper;
@@ -37,7 +44,7 @@ import peces.tipos.rio.*;
 public class Simulador {
 
     /** Días transcurridos en la simulación. */
-    private int dias = 0;
+    private int dia = 0;
 
     /** Lista de piscifactorías en el sistema. */
     private List<Piscifactoria> piscifactorias = new ArrayList<>();
@@ -71,7 +78,7 @@ public class Simulador {
     public static AlmacenCentral almacenCentral;
 
     /** Metodo que inicializa todo el sistema. */
-    public void init() {
+    public void init() { // TODO meter un helper que cree carpetas si no existen 
         nombreEntidad = InputHelper.readString("Ingrese el nombre de la entidad/empresa/partida: ");
         nombrePiscifactoria = InputHelper.readString("\nIngrese el nombre de la primera Piscifactoria: ");
 
@@ -79,6 +86,117 @@ public class Simulador {
         piscifactorias.get(0).añadirComidaAnimal(piscifactorias.get(0).getCapacidadMaximaComida());
         piscifactorias.get(0).añadirComidaVegetal(piscifactorias.get(0).getCapacidadMaximaComida());
     }
+
+        public void guardarEstado() { // TODO hacer componente
+        // Usar GsonBuilder con formato bonito
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+        // Crear un mapa o estructura para almacenar el JSON
+        Map<String, Object> estado = new HashMap<>();
+        
+        // Información de la empresa y monedas
+        estado.put("empresa", nombreEntidad);
+        estado.put("dia", dia);
+        estado.put("monedas", monedas.getMonedas());
+
+        // Definir la lista de implementados (asumo que lo tienes en tu estructura)
+        List<String> implementados = Arrays.asList("nombre1", "nombre2");
+        estado.put("implementados", implementados);
+
+        // Definir la orca (si no la tienes, la pongo como ejemplo)
+        String orca = "0:0,0,0;0:0,0,0";
+        estado.put("orca", orca);
+
+        // Crear el objeto 'edificios' con el 'almacen'
+        Map<String, Object> edificios = new HashMap<>();
+        Map<String, Object> almacenMap = new HashMap<>();
+        
+        // Almacen
+        almacenMap.put("disponible", almacenCentral != null && almacenCentral.getCapacidadAlmacen() > 0 ? true : false);
+        almacenMap.put("capacidad", almacenCentral != null ? almacenCentral.getCapacidadAlmacen() : 200);
+        Map<String, Object> comidaMap = new HashMap<>();
+        comidaMap.put("vegetal", almacenCentral != null ? almacenCentral.getCantidadComidaVegetal() : 0);
+        comidaMap.put("animal", almacenCentral != null ? almacenCentral.getCantidadComidaAnimal() : 0);
+        almacenMap.put("comida", comidaMap);
+        
+        edificios.put("almacen", almacenMap);
+        estado.put("edificios", edificios);
+
+        // Crear la lista de piscifactorias
+        List<Map<String, Object>> piscifactoriasMap = new ArrayList<>();
+        for (Piscifactoria p : piscifactorias) {
+            Map<String, Object> piscifactoriaMap = new HashMap<>();
+            piscifactoriaMap.put("nombre", p.getNombre());
+            
+            // Asumir que tipo 0 es Río y 1 es Mar
+            piscifactoriaMap.put("tipo", p instanceof PiscifactoriaDeRio ? 0 : 1);
+            //piscifactoriaMap.put("capacidad", p.getCapacidad());  // Aquí usas la capacidad real
+            Map<String, Object> comida = new HashMap<>();
+            comida.put("vegetal", p.getComidaVegetalActual());
+            comida.put("animal", p.getComidaAnimalActual());
+            piscifactoriaMap.put("comida", comida);
+            
+            // Serializamos los tanques dentro de la piscifactoria
+            List<Map<String, Object>> tanquesMap = new ArrayList<>();
+            for (Tanque t : p.getTanques()) {
+                Map<String, Object> tanqueMap = new HashMap<>();
+                
+                // Aquí si hay peces, accedemos a su información
+                if (!t.getPeces().isEmpty()) {
+                    tanqueMap.put("pez", t.getPeces().get(0).getNombre()); // El nombre del pez
+                    tanqueMap.put("num", t.getNumeroTanque());
+
+                    // Datos del pez (vivos, maduros, fértiles)
+                    Map<String, Object> datos = new HashMap<>();
+                    datos.put("vivos", t.getPeces().size()); // Puedes agregar la lógica para contar los vivos
+                    datos.put("maduros", 0); // Aquí necesitarías agregar la lógica de los peces maduros
+                    datos.put("fertiles", 0); // Y lo mismo con los fértiles
+                    tanqueMap.put("datos", datos);
+                    
+                    // Serializamos los peces dentro del tanque
+                    List<Map<String, Object>> pecesMap = new ArrayList<>();
+                    for (Pez pez : t.getPeces()) {
+                        Map<String, Object> pezMap = new HashMap<>();
+                        pezMap.put("edad", pez.getEdad());
+                        pezMap.put("sexo", pez.isSexo()); // true para macho, false para hembra
+                        pezMap.put("vivo", pez.isVivo());
+                        //pezMap.put("maduro", pez.isMaduro());
+                        pezMap.put("fertil", pez.isFertil());
+                        pezMap.put("ciclo", pez.getDatos().getCiclo());
+                        pezMap.put("alimentado", pez.isAlimentado());
+                        
+                        Map<String, Object> extra = new HashMap<>();
+                        extra.put("k", "v"); // Agrega los datos extra si tienes algo aquí
+                        pezMap.put("extra", extra);
+                        
+                        pecesMap.add(pezMap);
+                    }
+                    tanqueMap.put("peces", pecesMap);
+                } else {
+                    // Si el tanque no tiene peces, ponemos un valor predeterminado
+                    tanqueMap.put("pez", "Sin peces");
+                    tanqueMap.put("num", t.getNumeroTanque());
+                    tanqueMap.put("datos", "No disponible");
+                }
+                
+                tanquesMap.add(tanqueMap);
+            }
+            piscifactoriaMap.put("tanques", tanquesMap);
+            piscifactoriasMap.add(piscifactoriaMap);
+        }
+        estado.put("piscifactorias", piscifactoriasMap);
+
+        // Guardamos el estado en un archivo JSON
+        try (FileWriter writer = new FileWriter("saves/estado.json")) {
+            gson.toJson(estado, writer); // Aquí se utiliza el gson con formato bonito
+            System.out.println("Estado guardado correctamente.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    
 
     /** Método que muestra el texto del menú. */
     public void menu() {
@@ -168,7 +286,7 @@ public class Simulador {
     /** Método que muestra el estado de las piscifactorías. */
     public void showGeneralStatus() {
         System.out.println("\n============================= " + nombreEntidad + " =============================");
-        System.out.println("Día actual: " + dias);
+        System.out.println("Día actual: " + dia);
         System.out.println("Monedas disponibles: " + monedas.getMonedas());
 
         for (Piscifactoria piscifactoria : piscifactorias) {
@@ -270,7 +388,7 @@ public class Simulador {
         int pecesVendidos = 0, monedasGanadas = 0;
         int totalPecesVendidos = 0, totalMonedasGanadas = 0;
 
-        dias++;
+        dia++;
 
         for (Piscifactoria piscifactoria : piscifactorias) {
             piscifactoria.nextDay();
@@ -806,6 +924,9 @@ public class Simulador {
         while (running) {
 
             simulador.menu();
+
+            simulador.guardarEstado();
+
             int option = InputHelper.readInt("Ingrese su opción: ");
 
             switch (option) {
