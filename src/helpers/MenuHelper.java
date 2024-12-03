@@ -1,53 +1,28 @@
 package helpers;
 
-import java.util.HashMap;
-import java.util.Map;
-
+/** MenuHelper facilita creación de menús en el sistema. */
 public class MenuHelper {
-    private Map<Integer, String> menuOptions;
 
-    public MenuHelper() {
-        this.menuOptions = new HashMap<>();
-    }
-
-    // Método para agregar opciones al menú
-    public void addOption(int optionNumber, String description) {
-        menuOptions.put(optionNumber, description);
-    }
-
-    // Método para mostrar el menú
-    public void showMenu() {
-        // Mostrar todas las opciones excepto la 0
-        for (Map.Entry<Integer, String> entry : menuOptions.entrySet()) {
-            if (entry.getKey() != 0) {  // Excluir la opción 0 en esta iteración
-                System.out.println(entry.getKey() + ". " + entry.getValue());
-            }
+    /**
+     * Muestra un menú dadas unas opciones + opción 0.Cancelar.
+     *
+     * @param opciones Array de opciones disponibles.
+     */
+    public static void mostrarMenuCancelar(String[] opciones) {
+        for (int i = 0; i < opciones.length; i++) {
+            System.out.println((i + 1) + ". " + opciones[i]);
         }
-        // Mostrar la opción 0 al final
-        if (menuOptions.containsKey(0)) {
-            System.out.println("0. " + menuOptions.get(0));
-        }
-    }
-
-    public void clearOptions() {
-        menuOptions.clear();
-    }
-
-    // Método para ejecutar una acción basada en la selección
-    public void executeOption(int optionNumber) {
-        System.out.println("Ejecutando la opción: " + optionNumber);
+        System.out.println("0. Cancelar");
     }
 
     /**
-     * Método toString para representar el estado del MenuHelper.
-     * @return Una cadena que describe las opciones del menú.
+     * Muestra un menú dadas unas opciones.
+     *
+     * @param opciones Array de opciones disponibles.
      */
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder("Opciones del Menú:\n");
-        for (Map.Entry<Integer, String> entry : menuOptions.entrySet()) {
-            sb.append(entry.getKey()).append(". ").append(entry.getValue()).append("\n");
+    public static void mostrarMenu(String[] opciones) {
+        for (int i = 0; i < opciones.length; i++) {
+            System.out.println((i + 1) + ". " + opciones[i]);
         }
-        return sb.toString();
     }
 }

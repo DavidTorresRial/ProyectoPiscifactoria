@@ -1,0 +1,22 @@
+[2024-12-03 02:10:25] Inicio de la simulación: null
+[2024-12-03 02:10:36] Entidad creada: test1
+[2024-12-03 02:10:38] Primera piscifactoría creada: p1
+[2024-12-03 02:10:38] Piscifactoría creada: p1
+[2024-12-03 02:10:38] Creado tanque 1 con capacidad máxima: 25
+[2024-12-03 02:10:38] Piscifactoría de río añadida: p1
+[2024-12-03 02:10:38] Añadidas 25 unidades de comida animal a piscifactoría: p1
+[2024-12-03 02:10:38] Añadidas 25 unidades de comida vegetal a piscifactoría: p1
+[2024-12-03 02:10:38] Comida añadida a la capacidad máxima en la piscifactoría: p1
+[2024-12-03 02:10:42] Estado solicitado para la piscifactoría: p1
+[2024-12-03 02:10:42] Estado del depósito de comida solicitado para la piscifactoría: p1
+[2024-12-03 02:10:46] Estado solicitado para el tanque 1
+[2024-12-03 02:10:56] Avance al siguiente día en piscifactoría: p1
+[2024-12-03 02:10:56] Inicio del proceso de alimentación en tanque: 1 de la piscifactoría: p1
+[2024-12-03 02:10:56] Alimentación completada en tanque: 1 de la piscifactoría: p1
+[2024-12-03 02:10:56] Avance al siguiente día en tanque 1
+[2024-12-03 02:10:56] Inicio del proceso de reproducción en tanque 1
+[2024-12-03 02:10:56] No hay peces adultos para vender en tanque 1
+[2024-12-03 02:11:17] Ganadas 1000 monedas. Total actual: 1100
+[2024-12-03 02:11:31] Gastadas 1000 monedas. Total actual: 100
+[2024-12-03 02:11:31] Piscifactoría creada: test2
+[2024-12-03 02:11:31] Creado tanque 1 con capacidad máxima: 25
