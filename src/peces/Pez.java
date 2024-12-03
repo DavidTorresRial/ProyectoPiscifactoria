@@ -2,10 +2,13 @@ package peces;
 
 import java.util.Random;
 
+import helpers.Logger;
 import propiedades.PecesDatos;
 
 /** Clase padre de los peces. */
 public abstract class Pez {
+
+    private static final Logger logger = Logger.getInstance("logs/pez.log");
 
     /** Nombre común del pez. */
     private final String nombre;
@@ -48,6 +51,7 @@ public abstract class Pez {
         this.sexo = sexo;
         this.datos = datos;
         this.ciclo = datos.getCiclo();
+        logger.log("Pez creado: " + nombre + " (" + (sexo ? "Macho" : "Hembra") + ")");
     }
 
     /** Muestra el estado actual del pez. */
@@ -65,41 +69,48 @@ public abstract class Pez {
     public void grow() {
         if (vivo) {
             Random rand = new Random();
-
+    
             if (!alimentado && rand.nextBoolean() == true) {
                 vivo = false;
                 alimentado = false;
                 fertil = false;
+                logger.logError("El pez " + nombre + " ha muerto por falta de alimento.");
             } else {
                 edad++;
-
+                logger.log("El pez " + nombre + " ha crecido. Edad actual: " + edad + " días.");
+    
                 if (!sexo) {
                     if (edad >= datos.getMadurez() && primeraVez) {
                         fertil = true;
                         primeraVez = false;
+                        logger.log("La hembra " + nombre + " es fértil por primera vez.");
                     } else if (edad >= datos.getMadurez()) {
                         ciclo--;
                         if (ciclo <= 0) {
                             fertil = true;
                             ciclo = datos.getCiclo();
+                            logger.log("La hembra " + nombre + " ha completado un ciclo y es fértil nuevamente.");
                         }
                     } else {
                         fertil = false;
                     }
                 } else if (edad >= datos.getMadurez()) {
                     fertil = true;
+                    logger.log("El macho " + nombre + " ha alcanzado la madurez.");
                 }
-
+    
                 if (edad < datos.getMadurez() && edad % 2 == 0) {
                     if (rand.nextDouble() < 0.05) {
                         vivo = false;
                         alimentado = false;
                         fertil = false;
+                        logger.logError("El pez " + nombre + " ha muerto por causas naturales.");
                     }
                 }
             }
         }
     }
+    
 
     /** Reinicia el estado del pez a su condición inicial. */
     public void reset() {
@@ -108,6 +119,7 @@ public abstract class Pez {
         vivo = true;
         alimentado = false;
         ciclo = datos.getCiclo();
+        logger.log("El pez " + nombre + " ha sido reiniciado a su estado inicial.");
     }
 
     /**
