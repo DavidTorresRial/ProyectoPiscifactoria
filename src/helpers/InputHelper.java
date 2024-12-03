@@ -2,6 +2,8 @@ package helpers;
 
 import java.util.Scanner;
 
+import commons.Simulador;
+
 /** InputHelper facilita la lectura validada de cadenas y enteros. */
 public class InputHelper {
 
@@ -96,7 +98,7 @@ public class InputHelper {
                 scanner.close();
             }
         } catch (IllegalStateException e) {
-            System.err.println("El Scanner ya fue cerrado previamente.");
+            Simulador.logger.logError("El Scanner ya fue cerrado previamente: \n" + e);
         }
     }
 }
