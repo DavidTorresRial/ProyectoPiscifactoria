@@ -119,7 +119,7 @@ public class AlmacenCentral {
                     necesitanComidaVegetal--;
                 }
             }
-        } while (necesitanComidaAnimal == 0 && necesitanComidaVegetal == 0);
+        } while (necesitanComidaAnimal != 0 && necesitanComidaVegetal != 0);
     }
 
     /**

@@ -359,6 +359,8 @@ public class Simulador {
                                                     "\n" + cantidadComida + " de comida de tipo Animal comprada por "
                                                             + costo + " monedas. Se almacena en la piscifactoría "
                                                             + piscifactoria.getNombre() + ".");
+
+                                            logger.log(cantidadComida + " de comida de tipo animal comprada. Se almacena en la piscifactoría " + piscifactoria.getNombre() + ".");
                                         } else {
                                             piscifactoria.añadirComidaVegetal(cantidadComida);
                                             comidaActual += cantidadComida;
@@ -366,6 +368,8 @@ public class Simulador {
                                                     "\n" + cantidadComida + " de comida de tipo Vegetal comprada por "
                                                             + costo + " monedas. Se almacena en la piscifactoría "
                                                             + piscifactoria.getNombre() + ".");
+
+                                            logger.log(cantidadComida + " de comida de tipo vegetal comprada. Se almacena en la piscifactoría " + piscifactoria.getNombre() + ".");
                                         }
                                     }
                                 } else {
@@ -418,12 +422,16 @@ public class Simulador {
                                         System.out.println(
                                                 "\n" + cantidadComida + " de comida de tipo Animal comprada por "
                                                         + costo + " monedas. Se almacena en el almacén central.\r");
+
+                                        logger.log(cantidadComida + " de comida de tipo animal comprada. Se almacena en el almacén central.");
                                     } else {
                                         almacenCentral.añadirComidaVegetal(cantidadComida);
                                         comidaActual += cantidadComida;
                                         System.out.println(
                                                 "\n" + cantidadComida + " de comida de tipo Vegetal comprada por "
                                                         + costo + " monedas. Se almacena en el almacén central.\r");
+                                        
+                                        logger.log(cantidadComida + " de comida de tipo vegetal comprada. Se almacena en el almacén central.");
                                     }
                                 }
                             } else {
@@ -523,10 +531,9 @@ public class Simulador {
                             + tanqueSeleccionado.getNumeroTanque() + " de la piscifactoría "
                             + selectTank.getKey().getNombre() + ".");
                     
-                    logger.log(pezSeleccionado.getNombre() + (pezSeleccionado.isSexo() ? " (M)" : " (H)" + "comprado. Añadido al tanque" 
-                            + tanqueSeleccionado.getNumeroTanque() + " de la piscifactoría" 
+                    logger.log(pezSeleccionado.getNombre() + (pezSeleccionado.isSexo() ? " (M)" : " (H)" + " comprado. Añadido al tanque" 
+                            + tanqueSeleccionado.getNumeroTanque() + " de la piscifactoría " 
                             + selectTank.getKey().getNombre() + "."));
-        
                 }
             }
         }
@@ -818,6 +825,8 @@ public class Simulador {
                 System.out.println("\nSe han añadido 4 " + pezSeleccionado.getNombre() + " al tanque "
                         + tanqueSeleccionado.getNumeroTanque() + " de la piscifactoría "
                         + piscifactoriaSeleccionada.getNombre() + ".");
+
+                logger.log("Añadidos peces mediante la opción oculta a la piscifactoría " + piscifactoriaSeleccionada.getNombre() + ".");
             }
         }
     }
@@ -989,6 +998,7 @@ public class Simulador {
                     Simulador.monedas.ganarMonedas(1000);
                     System.out.println("\nAñadidas 1000 monedas mediante la opción oculta. Monedas actuales, "
                             + monedas.getMonedas());
+                    Simulador.logger.log("Añadidas monedas mediante la opción oculta.");
                     break;
                 case 14:
                     running = false;
