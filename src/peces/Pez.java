@@ -168,6 +168,17 @@ public abstract class Pez {
     }
 
     /**
+     * @return true si el pez es maduro, false si no.
+     */
+    public boolean isMaduro() {
+        if (edad >= datos.getMadurez()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * @return el ciclo reproductivo del pez.
      */
     public int getCiclo() {
