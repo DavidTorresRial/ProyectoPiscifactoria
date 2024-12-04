@@ -38,8 +38,6 @@ public class CrearRecompensa {
                     root.addElement("quantity").addText("1");
                 }
 
-                System.out.println("El archivo " + fileName + " existe. Se aumentó el valor de <quantity>.");
-
             } else {
                 document = DocumentHelper.createDocument();
                 Element root = document.addElement("reward");
@@ -252,11 +250,11 @@ public class CrearRecompensa {
                 root.addElement("name").addText(name);
                 root.addElement("origin").addText(Simulador.getNombreEntidad());
                 root.addElement("desc").addText(description);
-                root.addElement("rarity").addText("3");
+                root.addElement("rarity").addText(getTypeAmount(type) == 'r' ? "2" : "3");
 
                 Element give = root.addElement("give");
                 give.addElement("building")
-                    .addAttribute("code", "3")
+                    .addAttribute("code", getTypeAmount(type) == 'r' ? "2" : "3")
                     .addText("Tanque de " + tipo);
                 give.addElement("part")
                     .addText(part);
@@ -279,9 +277,63 @@ public class CrearRecompensa {
 
     public static void createPiscifactoriaReward(int type, String part) {
         String tipo = getTypeAmount(type) == 'r' ? "rio" : "mar";
-        String fileName = "tanque_" + getTypeAmount(type) + ".xml";
-        String name = "Tanuque de" + tipo;
-        String description = "Materiales para la construcción, de forma gratuita, de un tanque de una piscifactoría de" + tipo + ".";
+        String fileName = "piscifactoria_" + getTypeAmount(type) + "_" +  part.toLowerCase() + ".xml";
+        String name = "Piscifactoria de " + tipo + " [" + part + "]";
+        String description = "Materiales para la construcción de una piscifactoría de " + tipo + ". Con la parte A y B, puedes obtenerla de forma gratuita.";
+
+        try {
+            File file = new File(fileName);
+            Document document;
+
+            if (file.exists()) {
+                SAXReader reader = new SAXReader();
+                document = reader.read(file);
+
+                Element root = document.getRootElement();
+                Element quantityElement = root.element("quantity");
+                if (quantityElement != null) {
+                    int currentQuantity = Integer.parseInt(quantityElement.getText());
+                    quantityElement.setText(String.valueOf(currentQuantity + 1));
+                } else {
+                    root.addElement("quantity").addText("1");
+                }
+
+            } else {
+                document = DocumentHelper.createDocument();
+                Element root = document.addElement("reward");
+
+                root.addElement("name").addText(name);
+                root.addElement("origin").addText(Simulador.getNombreEntidad());
+                root.addElement("desc").addText(description);
+                root.addElement("rarity").addText(getTypeAmount(type) == 'r' ? "3" : "4");
+
+                Element give = root.addElement("give");
+                give.addElement("building")
+                    .addAttribute("code", getTypeAmount(type) == 'r' ? "0" : "1")
+                    .addText("Piscifactoria de " + tipo);
+                give.addElement("part")
+                    .addText(part);
+                give.addElement("total")
+                    .addText("AB");
+
+                root.addElement("quantity").addText("1");
+            }
+
+            // Guardar el documento actualizado o nuevo
+            OutputFormat format = OutputFormat.createPrettyPrint();
+            XMLWriter writer = new XMLWriter(new FileWriter(file), format);
+            writer.write(document);
+            writer.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void createAlmacenReward(String part) {
+        String fileName = "almacen_" +  part.toLowerCase() + ".xml";
+        String name = "Almacen central " + " [" + part + "]";
+        String description = "Materiales para la construcción de un almacén central. Con la parte A, B, C y D, puedes obtenerlo de forma gratuita.";
 
         try {
             File file = new File(fileName);
@@ -311,12 +363,12 @@ public class CrearRecompensa {
 
                 Element give = root.addElement("give");
                 give.addElement("building")
-                    .addAttribute("code", "3")
-                    .addText("Tanque de " + tipo);
+                    .addAttribute("code", "4")
+                    .addText("Almacen central");
                 give.addElement("part")
                     .addText(part);
                 give.addElement("total")
-                    .addText("A");
+                    .addText("ABCD");
 
                 root.addElement("quantity").addText("1");
             }
