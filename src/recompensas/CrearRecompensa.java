@@ -221,6 +221,116 @@ public class CrearRecompensa {
             e.printStackTrace();
         }
     }
+    
+    public static void createTanqueReward(int type, String part) {
+        String tipo = getTypeAmount(type) == 'r' ? "rio" : "mar";
+        String fileName = "tanque_" + getTypeAmount(type) + ".xml";
+        String name = "Tanuque de " + tipo;
+        String description = "Materiales para la construcción, de forma gratuita, de un tanque de una piscifactoría de " + tipo + ".";
+
+        try {
+            File file = new File(fileName);
+            Document document;
+
+            if (file.exists()) {
+                SAXReader reader = new SAXReader();
+                document = reader.read(file);
+
+                Element root = document.getRootElement();
+                Element quantityElement = root.element("quantity");
+                if (quantityElement != null) {
+                    int currentQuantity = Integer.parseInt(quantityElement.getText());
+                    quantityElement.setText(String.valueOf(currentQuantity + 1));
+                } else {
+                    root.addElement("quantity").addText("1");
+                }
+
+            } else {
+                document = DocumentHelper.createDocument();
+                Element root = document.addElement("reward");
+
+                root.addElement("name").addText(name);
+                root.addElement("origin").addText(Simulador.getNombreEntidad());
+                root.addElement("desc").addText(description);
+                root.addElement("rarity").addText("3");
+
+                Element give = root.addElement("give");
+                give.addElement("building")
+                    .addAttribute("code", "3")
+                    .addText("Tanque de " + tipo);
+                give.addElement("part")
+                    .addText(part);
+                give.addElement("total")
+                    .addText("A");
+
+                root.addElement("quantity").addText("1");
+            }
+
+            // Guardar el documento actualizado o nuevo
+            OutputFormat format = OutputFormat.createPrettyPrint();
+            XMLWriter writer = new XMLWriter(new FileWriter(file), format);
+            writer.write(document);
+            writer.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void createPiscifactoriaReward(int type, String part) {
+        String tipo = getTypeAmount(type) == 'r' ? "rio" : "mar";
+        String fileName = "tanque_" + getTypeAmount(type) + ".xml";
+        String name = "Tanuque de" + tipo;
+        String description = "Materiales para la construcción, de forma gratuita, de un tanque de una piscifactoría de" + tipo + ".";
+
+        try {
+            File file = new File(fileName);
+            Document document;
+
+            if (file.exists()) {
+                SAXReader reader = new SAXReader();
+                document = reader.read(file);
+
+                Element root = document.getRootElement();
+                Element quantityElement = root.element("quantity");
+                if (quantityElement != null) {
+                    int currentQuantity = Integer.parseInt(quantityElement.getText());
+                    quantityElement.setText(String.valueOf(currentQuantity + 1));
+                } else {
+                    root.addElement("quantity").addText("1");
+                }
+
+            } else {
+                document = DocumentHelper.createDocument();
+                Element root = document.addElement("reward");
+
+                root.addElement("name").addText(name);
+                root.addElement("origin").addText(Simulador.getNombreEntidad());
+                root.addElement("desc").addText(description);
+                root.addElement("rarity").addText("3");
+
+                Element give = root.addElement("give");
+                give.addElement("building")
+                    .addAttribute("code", "3")
+                    .addText("Tanque de " + tipo);
+                give.addElement("part")
+                    .addText(part);
+                give.addElement("total")
+                    .addText("A");
+
+                root.addElement("quantity").addText("1");
+            }
+
+            // Guardar el documento actualizado o nuevo
+            OutputFormat format = OutputFormat.createPrettyPrint();
+            XMLWriter writer = new XMLWriter(new FileWriter(file), format);
+            writer.write(document);
+            writer.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     // Método auxiliar para convertir números a números romanos
     private static String romanize(int number) {
@@ -260,5 +370,13 @@ public class CrearRecompensa {
             case 5: return 1000;
             default: throw new IllegalArgumentException("Tipo inválido: " + type);
         }
-    }   
+    }  
+    
+    private static char getTypeAmount(int type) {
+        switch (type) {
+            case 1: return 'r';
+            case 2: return 'm';
+            default: throw new IllegalArgumentException("Tipo inválido: " + type);
+        }
+    }
 }

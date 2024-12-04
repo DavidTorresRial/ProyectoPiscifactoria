@@ -80,7 +80,9 @@ public class Simulador {
             CrearRecompensa.createMonedasReward(1);            
             CrearRecompensa.createAlgasReward(1);            
             CrearRecompensa.createPiensoReward(1);          
-            CrearRecompensa.createComidaReward(1);          
+            CrearRecompensa.createComidaReward(1);   
+            CrearRecompensa.createTanqueReward(1, "A");
+            CrearRecompensa.createTanqueReward(2, "A");
         }
     
         /** Método que muestra el texto del menú. */
