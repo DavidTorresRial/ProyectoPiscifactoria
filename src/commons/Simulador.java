@@ -17,6 +17,7 @@ import com.google.gson.GsonBuilder;
 import helpers.FileHelper;
 import helpers.InputHelper;
 import helpers.Logger;
+import helpers.Transcriptor;
 import helpers.MenuHelper;
 
 import propiedades.AlmacenPropiedades;
@@ -80,14 +81,20 @@ public class Simulador {
     public static AlmacenCentral almacenCentral;
 
     public static Logger logger;
+    public static Transcriptor transcriptor;
 
     /** Metodo que inicializa todo el sistema. */
     public void init() {
-        FileHelper.crearCarpetas(new String[] {"logs", "saves", "rewards"});
+        FileHelper.crearCarpetas(new String[] {"logs", "saves", "rewards", "transcripciones"});
 
         nombreEntidad = InputHelper.readString("Ingrese el nombre de la entidad/empresa/partida: ");
+        
         logger = Logger.getInstance(nombreEntidad);
+        Transcriptor transcriptor = Transcriptor.getInstance(nombreEntidad);
+
         logger.log("Inicio de la simulación: " + nombreEntidad);
+        transcriptor.transcribir("Inicio de la simulación: " + nombreEntidad);
+        transcriptor.transcribir("Dinero inicial: " + monedas.getMonedas() + " monedas.");
 
         nombrePiscifactoria = InputHelper.readString("\nIngrese el nombre de la primera Piscifactoria: ");
         logger.log("Piscifactoría inicial: " + nombrePiscifactoria);
@@ -95,6 +102,10 @@ public class Simulador {
         piscifactorias.add(new PiscifactoriaDeRio(nombrePiscifactoria));
         piscifactorias.get(0).añadirComidaAnimal(piscifactorias.get(0).getCapacidadMaximaComida());
         piscifactorias.get(0).añadirComidaVegetal(piscifactorias.get(0).getCapacidadMaximaComida());
+
+        // Listar peces por tipo
+        transcriptor.transcribir("\n========= Peces =========");
+       // TODO Preguntar a Adrian si ten que mostrar todos os peixes posibles a meter, e como funciona o dos extras
     }
     
 
@@ -298,6 +309,14 @@ public class Simulador {
         }
         System.out.println("\n" + totalPecesVendidos + " peces vendidos por un total de " + totalMonedasGanadas + " monedas.");
         logger.log("Fin del día " + dia + ".");
+        transcriptor.transcribir("Fin del dia " + dia + ".");
+       // transcriptor.transcribir("Peces actuales, " + /**  TODO nose que poner aqui */ + " de río "+ /**  TODO nose que poner aqui */ + "de mar.");
+        transcriptor.transcribir(monedasGanadas + " monedas ganadas por un total de " + totalMonedasGanadas ); // TODO nose si esto es correcto el total monedas ganadas no entendi bien el pdf
+        
+        transcriptor.transcribir("Fin del día " + dia + ".");
+        transcriptor.transcribir("-------------------------");
+        transcriptor.transcribir(">>> Inicio del día " + (dia + 1) + ".");
+
     }
 
     /** Simula varios días consecutivos en todas las piscifactorías. */
@@ -362,6 +381,7 @@ public class Simulador {
                                                             + piscifactoria.getNombre() + ".");
 
                                             logger.log(cantidadComida + " de comida de tipo animal comprada. Se almacena en la piscifactoría " + piscifactoria.getNombre() + ".");
+                                            transcriptor.transcribir(cantidadComida + " de comida de tipo animal comprada por " + costo + " monedas. Se almacena en la piscifactoria " + piscifactoria.getNombre() + ".");       
                                         } else {
                                             piscifactoria.añadirComidaVegetal(cantidadComida);
                                             comidaActual += cantidadComida;
@@ -371,6 +391,7 @@ public class Simulador {
                                                             + piscifactoria.getNombre() + ".");
 
                                             logger.log(cantidadComida + " de comida de tipo vegetal comprada. Se almacena en la piscifactoría " + piscifactoria.getNombre() + ".");
+                                            transcriptor.transcribir(cantidadComida + " de comida de tipo vegetal comprada por " + costo + " monedas. Se almacena en la piscifactoria " + piscifactoria.getNombre() + ".");
                                         }
                                     }
                                 } else {
@@ -425,6 +446,7 @@ public class Simulador {
                                                         + costo + " monedas. Se almacena en el almacén central.\r");
 
                                         logger.log(cantidadComida + " de comida de tipo animal comprada. Se almacena en el almacén central.");
+                                        transcriptor.transcribir(cantidadComida + " de comida de tipo animal comprada por " + costo + " monedas. Se almacena en el almacén central.");
                                     } else {
                                         almacenCentral.añadirComidaVegetal(cantidadComida);
                                         comidaActual += cantidadComida;
@@ -433,6 +455,7 @@ public class Simulador {
                                                         + costo + " monedas. Se almacena en el almacén central.\r");
                                         
                                         logger.log(cantidadComida + " de comida de tipo vegetal comprada. Se almacena en el almacén central.");
+                                        transcriptor.transcribir(cantidadComida + " de comida de tipo vegetal comprada por " + costo + " monedas. Se almacena en el almacén central.");
                                     }
                                 }
                             } else {
@@ -535,6 +558,10 @@ public class Simulador {
                     logger.log(pezSeleccionado.getNombre() + (pezSeleccionado.isSexo() ? " (M)" : " (H)" + " comprado. Añadido al tanque" 
                             + tanqueSeleccionado.getNumeroTanque() + " de la piscifactoría " 
                             + selectTank.getKey().getNombre() + "."));
+
+                    transcriptor.transcribir(pezSeleccionado.getNombre() + (pezSeleccionado.isSexo() ? " (M)" : " (H)" + " comprado por " 
+                    + pezSeleccionado.getDatos().getCoste() + " monedas. Añadido al tanque " + tanqueSeleccionado.getNumeroTanque() 
+                    + " de la piscifactoria " + selectTank.getKey().getNombre()));
                 }
             }
         }
@@ -566,6 +593,7 @@ public class Simulador {
             if (pecesVendidos > 0) {
                 System.out.println("Vendidos " + pecesVendidos + " peces de la piscifactoría " + selectTank.getKey().getNombre() + " de forma manual por " + totalDinero + " monedas.");
                 logger.log("Vendidos " + pecesVendidos + " peces de la piscifactoría " + selectTank.getKey().getNombre() + " de forma manual.");
+                transcriptor.transcribir("Vendidos " + pecesVendidos + " peces de la piscifactoría " + selectTank.getKey().getNombre() + " de forma manual por " + totalDinero + " monedas.");
             } else {
                 System.out.println("\nNo hay peces adultos para vender.");
             }
@@ -587,6 +615,7 @@ public class Simulador {
             }
             System.out.println("\nLimpiado el tanque " + tanque.getNumeroTanque() + " de la piscifactoría " + selectTank.getKey().getNombre() + ".");
             logger.log("Limpiado el tanque " + tanque.getNumeroTanque() + " de la piscifactoría " + selectTank.getKey().getNombre() + ".");
+            transcriptor.transcribir(("Limpiado el tanque " + tanque.getNumeroTanque() + " de la piscifactoría " + selectTank.getKey().getNombre() + "."));
         }
     }
 
@@ -598,6 +627,7 @@ public class Simulador {
             tanque.emptyTank();
             System.out.println("\nVaciado el tanque " + tanque.getNumeroTanque() + " de la piscifactoría " + selectTank.getKey().getNombre() + ".");
             logger.log("Vaciado el tanque " + tanque.getNumeroTanque() + " de la piscifactoría " + selectTank.getKey().getNombre() +".");
+            transcriptor.transcribir("Vaciado el tanque " + tanque.getNumeroTanque() + " de la piscifactoría " + selectTank.getKey().getNombre() +".");
         }
     }
 
@@ -645,6 +675,7 @@ public class Simulador {
                         almacenCentral = new AlmacenCentral();
                         System.out.println("\nComprado el almacén central.");
                         logger.log("Comprado el almacén central.");
+                        transcriptor.transcribir("Comprado el almacén central.");
                     } else {
                         System.out.println("\nNecesitas 2000 monedas para construir el almacén central.");
                     }
@@ -761,6 +792,7 @@ public class Simulador {
                 piscifactorias.add(nuevaPiscifactoria);
 
                 logger.log("Comprada la piscifactoria de rio " + nombrePiscifactoria + ".");
+                transcriptor.transcribir("Comprada la piscifactoria de rio "  + nombrePiscifactoria + " por " + costoPiscifactoríaRio + " monedas.");
             } else {
                 System.out.println("\nNo tienes suficientes monedas para comprar la piscifactoría de río.");
             }
@@ -771,6 +803,7 @@ public class Simulador {
                 piscifactorias.add(nuevaPiscifactoria);
 
                 logger.log("Comprada la piscifactoria de mar " + nombrePiscifactoria + ".");
+                transcriptor.transcribir("Comprada la piscifactoria de mar "  + nombrePiscifactoria + " por " + costoPiscifactoríaMar + " monedas.");
             } else {
                 System.out.println("\nNo tienes suficientes monedas para comprar la piscifactoría de mar.");
             }
@@ -828,6 +861,7 @@ public class Simulador {
                         + piscifactoriaSeleccionada.getNombre() + ".");
 
                 logger.log("Añadidos peces mediante la opción oculta a la piscifactoría " + piscifactoriaSeleccionada.getNombre() + ".");
+                transcriptor.transcribir("Añadidos peces mediante la opción oculta a la piscifactoría " + piscifactoriaSeleccionada.getNombre() + ".");
             }
         }
     }
@@ -999,7 +1033,8 @@ public class Simulador {
                     Simulador.monedas.ganarMonedas(1000);
                     System.out.println("\nAñadidas 1000 monedas mediante la opción oculta. Monedas actuales, "
                             + monedas.getMonedas());
-                    Simulador.logger.log("Añadidas monedas mediante la opción oculta.");
+                    logger.log("Añadidas monedas mediante la opción oculta.");
+                    transcriptor.transcribir("Añadidas 1000 monedas mediante la opción oculta. Monedas actuales, " + monedas.getMonedas() + ".");
                     break;
                 case 14:
                     running = false;

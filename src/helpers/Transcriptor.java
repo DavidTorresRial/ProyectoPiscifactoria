@@ -47,4 +47,5 @@ public class Transcriptor {
             System.err.println("Error al cerrar el archivo de transcripción: " + e.getMessage());
         }
     }
+
 }

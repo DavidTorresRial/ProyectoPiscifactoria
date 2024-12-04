@@ -22,7 +22,7 @@ public class PiscifactoriaDeMar extends Piscifactoria {
                 capacidadMaximaComida += incrementoCapacidad;
                 System.out.println("\nMejorada la piscifactoría " + nombre + " aumentando su capacidad de comida hasta un total de " + capacidadMaximaComida + " por " + costoMejora + " monedas.");
                 Simulador.logger.log("Mejorado la piscifactoría " + nombre + " aumentando su capacidad de comida.");
-            } else {
+                Simulador.transcriptor.transcribir("Mejorado la piscifactoría " + nombre + " aumentando su capacidad de comida hasta un total de" + capacidadMaximaComida + " por " + costoMejora + " monedas.");
                 System.out.println("No tienes suficientes monedas para mejorar el almacén de comida de la piscifactoría " + nombre + ".");
             }
         } else {
@@ -37,6 +37,7 @@ public class PiscifactoriaDeMar extends Piscifactoria {
             tanques.add(new Tanque(tanques.size() + 1, 100));
             System.out.println("\nComprado un tanque número " + tanques.size() + " de la piscifactoría " + nombre + ".");
             Simulador.logger.log("Añadiendo un tanque a la piscifactoría " + nombre + ".");
+            Simulador.transcriptor.transcribir("Añadiendo un tanque a la piscifactoria " + nombre + " por un total de " + costoTanque + " monedas.");
         } else {
             System.out.println("\nNo tienes suficientes monedas para agregar un tanque de río. Necesitas " + costoTanque + " monedas.");
         }
