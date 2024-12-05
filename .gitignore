@@ -9,3 +9,6 @@ saves/
 
 # Ignora la carpeta logs
 logs/
+
+# Ignora la carpeta Transcripciones
+transcripciones/

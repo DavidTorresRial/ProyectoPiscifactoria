@@ -46,15 +46,28 @@ public abstract class Piscifactoria {
     /** Muestra toda la información de la piscifactoría. */
     public void showStatus() {
         System.out.println("\n=============== " + nombre + " ===============");
+        
+        int totalPeces = getTotalPeces();
+        int capacidadTotal = getCapacidadTotal();
+        int totalVivos = getTotalVivos();
+        int totalAlimentados = getTotalAlimentados();
+        int totalAdultos = getTotalAdultos();
+        int totalHembras = getTotalHembras();
+        int totalMachos = getTotalMachos();
+        int totalFertiles = getTotalFertiles();
+        int porcentajeOcupacion = (capacidadTotal > 0) ? (totalPeces * 100) / capacidadTotal : 0;
+        int porcentajeVivos = (totalPeces > 0) ? (totalVivos * 100) / totalPeces : 0;
+        int porcentajeAlimentados = (totalVivos > 0) ? (totalAlimentados * 100) / totalVivos : 0;
+        int porcentajeAdultos = (totalVivos > 0) ? (totalAdultos * 100) / totalVivos : 0;
+    
         System.out.println("Tanques: " + tanques.size());
-
-        System.out.println("Ocupación: " + getTotalPeces() + " / " + getCapacidadTotal() + " (" + ((getCapacidadTotal() > 0) ? (getTotalPeces() * 100) / getCapacidadTotal() : 0) + "%)");
-        System.out.println("Peces vivos: " + getTotalVivos() + " / " + getTotalPeces() + " (" + ((getTotalPeces() > 0) ? (getTotalVivos() * 100) / getTotalPeces() : 0) + "%)");
-        System.out.println("Peces alimentados: " + getTotalAlimentados() + " / " + getTotalVivos() + " (" + ((getTotalVivos() > 0) ? (getTotalAlimentados() * 100) / getTotalVivos() : 0) + "%)");
-        System.out.println("Peces adultos: " + getTotalAdultos() + " / " + getTotalVivos() + " (" + ((getTotalVivos() > 0) ? (getTotalAdultos() * 100) / getTotalVivos() : 0) + "%)");
-        System.out.println("Hembras / Machos: " + getTotalHembras() + " / " + getTotalMachos());
-        System.out.println("Fértiles: " + getTotalFertiles() + " / " + getTotalVivos());
-
+        System.out.println("Ocupación: " + totalPeces + " / " + capacidadTotal + " (" + porcentajeOcupacion + "%)");
+        System.out.println("Peces vivos: " + totalVivos + " / " + totalPeces + " (" + porcentajeVivos + "%)");
+        System.out.println("Peces alimentados: " + totalAlimentados + " / " + totalVivos + " (" + porcentajeAlimentados + "%)");
+        System.out.println("Peces adultos: " + totalAdultos + " / " + totalVivos + " (" + porcentajeAdultos + "%)");
+        System.out.println("Hembras / Machos: " + totalHembras + " / " + totalMachos);
+        System.out.println("Fértiles: " + totalFertiles + " / " + totalVivos);
+    
         showFood();
     }
 
@@ -209,6 +222,14 @@ public abstract class Piscifactoria {
         }
     }
 
+    public void setCantidadComidaAnimal(int cantidadComidaAnimal) {
+        this.cantidadComidaAnimal = cantidadComidaAnimal;
+    }
+
+    public void setCantidadComidaVegetal(int cantidadComidaVegetal) {
+        this.cantidadComidaVegetal = cantidadComidaVegetal;
+    }
+
     /**
      * Devuelve el nombre de la piscifactoría.
      *
@@ -252,7 +273,7 @@ public abstract class Piscifactoria {
      * @return La nueva capacidad máxima de comida después de la suma.
      */
     public int setCapacidadMaximaComida(int num) {
-        return capacidadMaximaComida += num;
+        return capacidadMaximaComida = num;
     }
 
     /**
