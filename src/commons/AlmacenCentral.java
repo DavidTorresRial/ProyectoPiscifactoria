@@ -26,6 +26,12 @@ public class AlmacenCentral {
         this.cantidadComidaVegetal = 0;
     }
 
+    public AlmacenCentral(int capacidadAlmacen, int comidaVegetal, int comidaAnimal) {
+        this.capacidadAlmacen = capacidadAlmacen;
+        this.cantidadComidaAnimal = comidaVegetal;
+        this.cantidadComidaVegetal = comidaAnimal;
+    }
+
     /**
      * Aumenta la capacidad del almacén central en 50 unidades si hay monedas suficientes.
      * 
