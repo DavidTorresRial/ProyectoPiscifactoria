@@ -90,7 +90,7 @@ public class Simulador {
         nombreEntidad = InputHelper.readString("Ingrese el nombre de la entidad/empresa/partida: ");
         
         logger = Logger.getInstance(nombreEntidad);
-        Transcriptor transcriptor = Transcriptor.getInstance(nombreEntidad);
+        transcriptor = Transcriptor.getInstance(nombreEntidad);
 
         logger.log("Inicio de la simulación: " + nombreEntidad);
         transcriptor.transcribir("Inicio de la simulación: " + nombreEntidad);
@@ -309,7 +309,6 @@ public class Simulador {
         }
         System.out.println("\n" + totalPecesVendidos + " peces vendidos por un total de " + totalMonedasGanadas + " monedas.");
         logger.log("Fin del día " + dia + ".");
-        transcriptor.transcribir("Fin del dia " + dia + ".");
        // transcriptor.transcribir("Peces actuales, " + /**  TODO nose que poner aqui */ + " de río "+ /**  TODO nose que poner aqui */ + "de mar.");
         transcriptor.transcribir(monedasGanadas + " monedas ganadas por un total de " + totalMonedasGanadas ); // TODO nose si esto es correcto el total monedas ganadas no entendi bien el pdf
         
