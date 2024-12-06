@@ -1,7 +1,14 @@
 # Ignora todos los archivos de la carpeta bin
-
 bin/*
 
 # Ignora todos los archivos de la carpeta .vscode
-
 .vscode/*
+
+# Ignora la carpeta saves
+saves/
+
+# Ignora la carpeta logs
+logs/
+
+# Ignora la carpeta Transcripciones
+transcripciones/
