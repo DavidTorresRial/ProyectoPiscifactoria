@@ -63,6 +63,7 @@ public class Simulador {
     /** Nombre de la piscifactoría. */
     private String nombrePiscifactoria;
 
+    /** Lista de nombres de peces implementados. */
     private final static String[] pecesImplementados = {
         AlmacenPropiedades.SALMON_ATLANTICO.getNombre(),
         AlmacenPropiedades.TRUCHA_ARCOIRIS.getNombre(),
@@ -77,13 +78,12 @@ public class Simulador {
         AlmacenPropiedades.SALMON_CHINOOK.getNombre(),
         AlmacenPropiedades.TILAPIA_NILO.getNombre()
     };
-    
-
-    /** Sistema de estadísticas para registrar la cría, venta y ganancias de los peces. */
-    public static Estadisticas estadisticas = new Estadisticas(pecesImplementados);
 
     /** Sistema de monedas para manejar transacciones. */
     public static SistemaMonedas monedas = SistemaMonedas.getInstancia();
+
+    /** Sistema de estadísticas para registrar la cría, venta y ganancias de los peces. */
+    public static Estadisticas estadisticas;
 
     /** Almacén central de comida para abastecer las piscifactorías. */
     public static AlmacenCentral almacenCentral;
@@ -108,58 +108,21 @@ public class Simulador {
             }
         } 
 
+        String respuesta = "N";
+
         if (FileHelper.hayContenidoEnDirectorio("saves")) {
-            String respuesta;
             do {
                 respuesta = InputHelper.readString("¿Desea cargar una partida existente? (S/N): ").toUpperCase();
-                switch (respuesta) {
-                    case "S":
-                        String partida = FileHelper.mostrarMenuConArchivos("saves");
-                        logger = Logger.getInstance(partida);
-                        transcriptor = Transcriptor.getInstance(partida);
-                        load(partida);
-                        break;
-                    case "N":
-                        nombreEntidad = InputHelper.readString("Ingrese el nombre de la entidad/empresa/partida: ");
-                        logger = Logger.getInstance(nombreEntidad);
-                        transcriptor = Transcriptor.getInstance(nombreEntidad);
-
-                        logger.log("Inicio de la simulación: " + nombreEntidad);
-                        transcriptor.transcribir("Inicio de la simulación: " + nombreEntidad);
-                        transcriptor.transcribir("Dinero inicial: " + monedas.getMonedas() + " monedas.");
-                        transcriptor.transcribir("\n========= Peces =========\n" +
-                            "Rio:\n" +
-                            "  - " + AlmacenPropiedades.CARPA_PLATEADA.getNombre() + "\n" +
-                            "  - " + AlmacenPropiedades.PEJERREY.getNombre() + "\n" +
-                            "  - " + AlmacenPropiedades.PERCA_EUROPEA.getNombre() + "\n" +
-                            "  - " + AlmacenPropiedades.SALMON_CHINOOK.getNombre() + "\n" +
-                            "  - " + AlmacenPropiedades.TILAPIA_NILO.getNombre() + "\n" +
-                            "\nMar:\n" +
-                            "  - " + AlmacenPropiedades.ARENQUE_ATLANTICO.getNombre() + "\n" +
-                            "  - " + AlmacenPropiedades.BESUGO.getNombre() + "\n" +
-                            "  - " + AlmacenPropiedades.LENGUADO_EUROPEO.getNombre() + "\n" +
-                            "  - " + AlmacenPropiedades.LUBINA_RAYADA.getNombre() + "\n" +
-                            "  - " + AlmacenPropiedades.ROBALO.getNombre() + "\n" +
-                            "\nDoble:\n" +
-                            "  - " + AlmacenPropiedades.SALMON_ATLANTICO.getNombre() + "\n" +
-                            "  - " + AlmacenPropiedades.TRUCHA_ARCOIRIS.getNombre()
-                        );
-
-
-                        transcriptor.transcribir("-------------------------" + "\n>>> Inicio del día " + (dia + 1) + ".");
-
-                        nombrePiscifactoria = InputHelper.readString("\nIngrese el nombre de la primera Piscifactoria: ");
-                        logger.log("Piscifactoría inicial: " + nombrePiscifactoria + ".");
-                        transcriptor.transcribir("Piscifactoría inicial: " + nombrePiscifactoria + ".");
-
-                        piscifactorias.add(new PiscifactoriaDeRio(nombrePiscifactoria));
-                        piscifactorias.get(0).añadirComidaAnimal(piscifactorias.get(0).getCapacidadMaximaComida());
-                        piscifactorias.get(0).añadirComidaVegetal(piscifactorias.get(0).getCapacidadMaximaComida());
-                        guardarEstado();
-                        break;
+                if (respuesta.equals("S")) {
+                    String partida = FileHelper.mostrarMenuConArchivos("saves");
+                    logger = Logger.getInstance(partida);
+                    transcriptor = Transcriptor.getInstance(partida);
+                    load(partida);
                 }
             } while (!respuesta.equals("S") && !respuesta.equals("N"));
-        } else {
+        }
+
+        if (respuesta.equals("N")) {
             nombreEntidad = InputHelper.readString("Ingrese el nombre de la entidad/empresa/partida: ");
             logger = Logger.getInstance(nombreEntidad);
             transcriptor = Transcriptor.getInstance(nombreEntidad);
@@ -167,7 +130,24 @@ public class Simulador {
             logger.log("Inicio de la simulación: " + nombreEntidad);
             transcriptor.transcribir("Inicio de la simulación: " + nombreEntidad);
             transcriptor.transcribir("Dinero inicial: " + monedas.getMonedas() + " monedas.");
-
+            transcriptor.transcribir("\n========= Peces =========\n" +
+                "Rio:\n" +
+                "  - " + AlmacenPropiedades.CARPA_PLATEADA.getNombre() + "\n" +
+                "  - " + AlmacenPropiedades.PEJERREY.getNombre() + "\n" +
+                "  - " + AlmacenPropiedades.PERCA_EUROPEA.getNombre() + "\n" +
+                "  - " + AlmacenPropiedades.SALMON_CHINOOK.getNombre() + "\n" +
+                "  - " + AlmacenPropiedades.TILAPIA_NILO.getNombre() + "\n" +
+                "\nMar:\n" +
+                "  - " + AlmacenPropiedades.ARENQUE_ATLANTICO.getNombre() + "\n" +
+                "  - " + AlmacenPropiedades.BESUGO.getNombre() + "\n" +
+                "  - " + AlmacenPropiedades.LENGUADO_EUROPEO.getNombre() + "\n" +
+                "  - " + AlmacenPropiedades.LUBINA_RAYADA.getNombre() + "\n" +
+                "  - " + AlmacenPropiedades.ROBALO.getNombre() + "\n" +
+                "\nDoble:\n" +
+                "  - " + AlmacenPropiedades.SALMON_ATLANTICO.getNombre() + "\n" +
+                "  - " + AlmacenPropiedades.TRUCHA_ARCOIRIS.getNombre()
+            );
+            estadisticas = new Estadisticas(pecesImplementados);
             transcriptor.transcribir("-------------------------" + "\n>>> Inicio del día " + (dia + 1) + ".");
 
             nombrePiscifactoria = InputHelper.readString("\nIngrese el nombre de la primera Piscifactoria: ");
@@ -1087,6 +1067,12 @@ public class Simulador {
                         almacenCentral = null; // No crear almacén si no está disponible
                     }
                 }
+            }
+            
+            // Procesar 'orca' y crear el objeto Estadisticas
+            if (jsonObject.has("orca") && !jsonObject.get("orca").isJsonNull()) {
+                String orcaData = jsonObject.get("orca").getAsString();
+                estadisticas = new Estadisticas(pecesImplementados, orcaData);
             }
     
             // Cargar piscifactorías
