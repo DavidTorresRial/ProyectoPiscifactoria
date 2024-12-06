@@ -36,10 +36,6 @@ public class SistemaMonedas {
         return monedas;
     }
 
-    public void setMonedas(int monedas) {
-        this.monedas = monedas;
-    }
-
     /**
      * Método para incrementar la cantidad de monedas.
      * 

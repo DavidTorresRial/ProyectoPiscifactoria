@@ -1,5 +1,6 @@
 package commons;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -86,9 +87,21 @@ public class Simulador {
 
     public static Logger logger;
 
+    public static File errorLog = new File("logs/0_errors.log");
+
     /** Metodo que inicializa todo el sistema. */
     public void init() {
-        FileHelper.crearCarpetas(new String[] {"logs", "saves", "rewards"});
+        FileHelper.crearCarpetas(new String[] {"logs", "saves"});
+
+        if (!errorLog.exists()) {
+            try {
+                if (!errorLog.createNewFile()) {
+                    System.out.println("No se pudo crear el archivo 0_errors.log.");
+                }
+            } catch (IOException e) {
+                System.out.println("Ocurrió un error al crear el archivo: " + e.getMessage());
+            }
+        } 
 
         if (FileHelper.hayContenidoEnDirectorio("saves")) {
             String respuesta;
@@ -111,6 +124,7 @@ public class Simulador {
                         piscifactorias.add(new PiscifactoriaDeRio(nombrePiscifactoria));
                         piscifactorias.get(0).añadirComidaAnimal(piscifactorias.get(0).getCapacidadMaximaComida());
                         piscifactorias.get(0).añadirComidaVegetal(piscifactorias.get(0).getCapacidadMaximaComida());
+                        guardarEstado();
                         break;
                 }
             } while (!respuesta.equals("S") && !respuesta.equals("N"));
@@ -125,6 +139,7 @@ public class Simulador {
             piscifactorias.add(new PiscifactoriaDeRio(nombrePiscifactoria));
             piscifactorias.get(0).añadirComidaAnimal(piscifactorias.get(0).getCapacidadMaximaComida());
             piscifactorias.get(0).añadirComidaVegetal(piscifactorias.get(0).getCapacidadMaximaComida());
+            guardarEstado();
         }
     }
 
@@ -224,7 +239,7 @@ public class Simulador {
         }
 
         if (almacenCentral != null) {
-            almacenCentral.mostrarEstado();
+            System.out.println(almacenCentral.toString());
         } else {
             System.out.println("\nNo hay Almacén Central disponible.");
         }
@@ -980,6 +995,7 @@ public class Simulador {
         // Guardar el JSON en un archivo
         try (FileWriter writer = new FileWriter("saves/" + nombreEntidad + ".save")) {
             gson.toJson(estado, writer);
+            logger.log("Sistema guardado.");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -1001,7 +1017,7 @@ public class Simulador {
             dia = jsonObject.has("dia") && !jsonObject.get("dia").isJsonNull()
                     ? jsonObject.get("dia").getAsInt()
                     : 0;
-            monedas.setMonedas(jsonObject.has("monedas") && !jsonObject.get("monedas").isJsonNull()
+            monedas.ganarMonedas(jsonObject.has("monedas") && !jsonObject.get("monedas").isJsonNull()
                     ? jsonObject.get("monedas").getAsInt()
                     : 0);
     
@@ -1010,7 +1026,7 @@ public class Simulador {
                 JsonObject edificios = jsonObject.getAsJsonObject("edificios");
                 if (edificios.has("almacen") && !edificios.get("almacen").isJsonNull()) {
                     JsonObject almacen = edificios.getAsJsonObject("almacen");
-
+    
                     // Verificar si el almacén está disponible
                     boolean disponible = almacen.get("disponible").getAsBoolean();
                     if (disponible) {
@@ -1018,61 +1034,78 @@ public class Simulador {
                         JsonObject comida = almacen.getAsJsonObject("comida");
                         int comidaVegetal = comida.get("vegetal").getAsInt();
                         int comidaAnimal = comida.get("animal").getAsInt();
-                        almacenCentral = new AlmacenCentral(capacidadAlmacen, comidaVegetal, comidaAnimal);
+                        almacenCentral = new AlmacenCentral();
+                        almacenCentral.setCantidadComidaVegetal(comidaVegetal);
+                        almacenCentral.setCantidadComidaAnimal(comidaAnimal);
+                        almacenCentral.setCapacidadAlmacen(capacidadAlmacen);
                     } else {
                         almacenCentral = null; // No crear almacén si no está disponible
                     }
                 }
             }
-
+    
             // Cargar piscifactorías
             if (jsonObject.has("piscifactorias") && !jsonObject.get("piscifactorias").isJsonNull()) {
                 piscifactorias.clear(); // Limpia la lista antes de cargar
                 JsonArray piscifactoriasArray = jsonObject.getAsJsonArray("piscifactorias");
-            
+    
                 for (JsonElement piscifactoriaElement : piscifactoriasArray) {
                     JsonObject piscifactoriaJson = piscifactoriaElement.getAsJsonObject();
-            
+    
                     // Crear piscifactoría
                     String nombre = piscifactoriaJson.get("nombre").getAsString();
                     int tipo = piscifactoriaJson.get("tipo").getAsInt();
                     Piscifactoria piscifactoria = (tipo == 0)
                             ? new PiscifactoriaDeRio(nombre)
                             : new PiscifactoriaDeMar(nombre);
-            
+    
                     // Configurar capacidades
                     int capacidadMaxima = piscifactoriaJson.get("capacidad").getAsInt();
                     piscifactoria.setCapacidadMaximaComida(capacidadMaxima);
-            
+    
                     // Configurar cantidades de comida
                     JsonObject comida = piscifactoriaJson.getAsJsonObject("comida");
                     int comidaVegetal = comida.get("vegetal").getAsInt();
                     int comidaAnimal = comida.get("animal").getAsInt();
                     piscifactoria.setCantidadComidaVegetal(comidaVegetal);
                     piscifactoria.setCantidadComidaAnimal(comidaAnimal);
-            
-                    // Cargar tanques
+    
+                    // Cargar tanques y peces
                     piscifactoria.getTanques().clear(); // Limpia tanques existentes para evitar duplicados
                     JsonArray tanquesArray = piscifactoriaJson.getAsJsonArray("tanques");
-            
+    
                     for (JsonElement tanqueElement : tanquesArray) {
                         JsonObject tanqueJson = tanqueElement.getAsJsonObject();
                         Tanque tanque = new Tanque(
                                 tanqueJson.get("num").getAsInt(),
                                 25 // O ajustar capacidad si es dinámico
                         );
-            
-                        // Cargar peces
+    
+                        // Cargar peces directamente aquí
                         if (tanqueJson.has("peces") && !tanqueJson.get("peces").isJsonNull()) {
                             JsonArray pecesArray = tanqueJson.getAsJsonArray("peces");
                             for (JsonElement pezElement : pecesArray) {
                                 JsonObject pezJson = pezElement.getAsJsonObject();
-            
-                                // Crear pez y configurar atributos
+    
+                                // Crear pez según el tipo y sexo
                                 String tipoPez = tanqueJson.has("pez") ? tanqueJson.get("pez").getAsString() : "Desconocido";
                                 boolean sexo = pezJson.get("sexo").getAsBoolean();
-                                Pez pez = crearPez(tipoPez, sexo);
-            
+                                Pez pez = switch (tipoPez) {
+                                    case "Salm\u00f3n atl\u00e1ntico" -> new SalmonAtlantico(sexo);
+                                    case "Trucha arco\u00edris" -> new TruchaArcoiris(sexo);
+                                    case "Carpa plateada" -> new CarpaPlateada(sexo);
+                                    case "Pejerrey" -> new Pejerrey(sexo);
+                                    case "Perca europea" -> new PercaEuropea(sexo);
+                                    case "Salm\u00f3n chinook" -> new SalmonChinook(sexo);
+                                    case "Tilapia del Nilo" -> new TilapiaDelNilo(sexo);
+                                    case "Arenque del Atl\u00e1ntico" -> new ArenqueDelAtlantico(sexo);
+                                    case "Besugo" -> new Besugo(sexo);
+                                    case "Lenguado Europeo" -> new LenguadoEuropeo(sexo);
+                                    case "Lubina Rayada" -> new LubinaRayada(sexo);
+                                    case "R\u00f3balo" -> new Robalo(sexo);
+                                    default -> null;
+                                };
+    
                                 if (pez != null) {
                                     pez.setEdad(pezJson.get("edad").getAsInt());
                                     pez.setVivo(pezJson.get("vivo").getAsBoolean());
@@ -1083,43 +1116,21 @@ public class Simulador {
                                 }
                             }
                         }
-            
+    
                         piscifactoria.getTanques().add(tanque);
                     }
-            
+    
                     piscifactorias.add(piscifactoria);
                 }
-            }            
+            }
     
-            System.out.println("Partida cargada exitosamente desde: " + archivoPartida);
-    
+            System.out.println("Partida cargada: " + archivoPartida);
+            logger.log("Sistema cargado.");
         } catch (Exception e) {
             System.err.println("Error al cargar el archivo: " + e.getMessage());
         }
     }
     
-    
-    
-    /**
-     * Crea una instancia de Pez según su tipo y sexo.
-     *
-     * @param tipo El tipo del pez (nombre del pez).
-     * @param sexo true para macho, false para hembra.
-     * @return Una instancia del pez correspondiente o null si no se reconoce el tipo.
-     */
-    private Pez crearPez(String tipo, boolean sexo) {
-        switch (tipo) {
-            case "Pejerrey":
-                return new Pejerrey(sexo);
-            case "Trucha":
-                //return new Trucha(sexo);
-            case "Tilapia":
-                //return new Tilapia(sexo);
-            // Agrega más casos según sea necesario
-            default:
-                return null;
-        }
-    }
     
     
 
@@ -1213,15 +1224,14 @@ public class Simulador {
                     break;
                 case 99:
                     Simulador.monedas.ganarMonedas(1000);
-                    System.out.println("\nAñadidas 1000 monedas mediante la opción oculta. Monedas actuales, "
-                            + monedas.getMonedas());
+                    System.out.println("\nAñadidas 1000 monedas mediante la opción oculta. Monedas actuales, " + monedas.getMonedas());
                     Simulador.logger.log("Añadidas monedas mediante la opción oculta.");
                     break;
                 case 14:
                     running = false;
+                    logger.log("Cierre de la partida");
                     simulador.guardarEstado();
                     System.out.println("\nSaliendo del simulador.");
-                    logger.log("Cierre de la partida");
                     break;
                 default:
                     System.out.println("\nOpción no válida. Por favor, intente de nuevo.");

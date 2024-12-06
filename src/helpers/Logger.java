@@ -22,13 +22,9 @@ public class Logger {
         try {
             // Inicializa el logWriter para logs generales
             File logFile = new File("logs/" + logFileName + ".log");
-            logFile.getParentFile().mkdirs();
             logWriter = new BufferedWriter(new FileWriter(logFile, true));
 
-            // Inicializa el errorWriter para logs de errores
-            File errorFile = new File("logs/0_errors.log");
-            errorFile.getParentFile().mkdirs();
-            errorWriter = new BufferedWriter(new FileWriter(errorFile, true));
+            errorWriter = new BufferedWriter(new FileWriter(Simulador.errorLog, true));
         } catch (IOException e) {
             Simulador.logger.logError("No se pudo iniciar el Logger: " + e.getMessage());
         }
