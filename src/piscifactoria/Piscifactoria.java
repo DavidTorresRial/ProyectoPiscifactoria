@@ -107,13 +107,20 @@ public abstract class Piscifactoria {
     }
 
     /** Hace avanzar el ciclo de vida en la piscifactoría, alimentando a los peces y actualizando sus estados. */
-    public void nextDay() {
+    public int[] nextDay() {
+        int pecesVendidos = 0;
+        int monedasGanadas = 0;
+    
         for (Tanque tanque : tanques) {
             alimentarPeces(tanque);
-            tanque.nextDay();
+            int[] resultadoTanque = tanque.nextDay();
+            pecesVendidos += resultadoTanque[0];
+            monedasGanadas += resultadoTanque[1];
         }
+    
+        return new int[]{pecesVendidos, monedasGanadas};
     }
-
+    
     /** Mejora el almacén de comida aumentando su capacidad máxima. */
     public abstract void upgradeFood();
 
@@ -184,8 +191,6 @@ public abstract class Piscifactoria {
                 }
             }
         }
-        System.out.println("\n(Comida vegetal restante: " + cantidadComidaVegetal + ")");
-        System.out.println("(Comida animal restante: " + cantidadComidaAnimal + ")");
     }
 
     /**

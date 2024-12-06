@@ -17,9 +17,7 @@ public class FileHelper {
             File carpetaFile = new File(carpeta.trim());
             try {
                 if (!carpetaFile.exists()) {
-                    if (!carpetaFile.mkdirs()) {
-                        Simulador.logger.logError("Error al crear la carpeta: " + carpeta.trim());
-                    }
+                    carpetaFile.mkdirs();
                 }
             } catch (Exception e) {
                 Simulador.logger.logError("Ocurrió un error inesperado al intentar crear la carpeta '" + carpeta.trim() + "': " + e.getMessage());
