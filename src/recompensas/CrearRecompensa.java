@@ -14,8 +14,10 @@ import commons.Simulador;
 
 public class CrearRecompensa {
 
+    private static final String REWARDS_DIRECTORY = "rewards/";
+
     public static void createAlgasReward(int type) {
-        String fileName = "algas_" + type + ".xml";
+        String fileName = REWARDS_DIRECTORY + "algas_" + type + ".xml";
         String name = "Algas " + romanize(type);
         int rarity = type - 1;
         int foodAmount = getFoodAmount(type);
@@ -66,7 +68,7 @@ public class CrearRecompensa {
     }
 
     public static void createPiensoReward(int type) {
-        String fileName = "pienso_" + type + ".xml";
+        String fileName = REWARDS_DIRECTORY + "pienso_" + type + ".xml";
         String name = "Pienso " + romanize(type);
         int rarity = type - 1;
         int foodAmount = getFoodAmount(type);
@@ -118,7 +120,7 @@ public class CrearRecompensa {
     }
 
     public static void createMonedasReward(int type) {
-        String fileName = "monedas_" + type + ".xml";
+        String fileName = REWARDS_DIRECTORY + "monedas_" + type + ".xml";
         String name = "Monedas " + romanize(type);
         int rarity = type - 1;
         int coinsAmount = getCoinsAmount(type);
@@ -169,7 +171,7 @@ public class CrearRecompensa {
     }
 
     public static void createComidaReward(int type) {
-        String fileName = "comida_" + type + ".xml";
+        String fileName = REWARDS_DIRECTORY + "comida_" + type + ".xml";
         String name = "Comida " + romanize(type);
         int rarity = type - 1;
         int foodAmount = getSharedFoodAmount(type);
@@ -222,7 +224,7 @@ public class CrearRecompensa {
     
     public static void createTanqueReward(int type, String part) {
         String tipo = getTypeAmount(type) == 'r' ? "rio" : "mar";
-        String fileName = "tanque_" + getTypeAmount(type) + ".xml";
+        String fileName = REWARDS_DIRECTORY + "tanque_" + getTypeAmount(type) + ".xml";
         String name = "Tanuque de " + tipo;
         String description = "Materiales para la construcción, de forma gratuita, de un tanque de una piscifactoría de " + tipo + ".";
 
@@ -277,7 +279,7 @@ public class CrearRecompensa {
 
     public static void createPiscifactoriaReward(int type, String part) {
         String tipo = getTypeAmount(type) == 'r' ? "rio" : "mar";
-        String fileName = "piscifactoria_" + getTypeAmount(type) + "_" +  part.toLowerCase() + ".xml";
+        String fileName = REWARDS_DIRECTORY + "piscifactoria_" + getTypeAmount(type) + "_" +  part.toLowerCase() + ".xml";
         String name = "Piscifactoria de " + tipo + " [" + part + "]";
         String description = "Materiales para la construcción de una piscifactoría de " + tipo + ". Con la parte A y B, puedes obtenerla de forma gratuita.";
 
@@ -331,7 +333,7 @@ public class CrearRecompensa {
     }
 
     public static void createAlmacenReward(String part) {
-        String fileName = "almacen_" +  part.toLowerCase() + ".xml";
+        String fileName = REWARDS_DIRECTORY + "almacen_" +  part.toLowerCase() + ".xml";
         String name = "Almacen central " + " [" + part + "]";
         String description = "Materiales para la construcción de un almacén central. Con la parte A, B, C y D, puedes obtenerlo de forma gratuita.";
 

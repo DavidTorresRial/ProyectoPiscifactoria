@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import recompensas.CrearRecompensa;
 import helpers.InputHelper;
 import helpers.MenuHelper;
 
@@ -74,6 +75,13 @@ public class Simulador {
             piscifactorias.add(new PiscifactoriaDeRio(nombrePiscifactoria));
             piscifactorias.get(0).añadirComidaAnimal(piscifactorias.get(0).getCapacidadMaximaComida());
             piscifactorias.get(0).añadirComidaVegetal(piscifactorias.get(0).getCapacidadMaximaComida());
+
+            CrearRecompensa.createAlgasReward(1);
+            CrearRecompensa.createPiensoReward(1);
+            CrearRecompensa.createComidaReward(1);
+            CrearRecompensa.createTanqueReward(1, "A");
+            CrearRecompensa.createAlmacenReward("A");
+            CrearRecompensa.createMonedasReward(1);
         }
     
         /** Método que muestra el texto del menú. */
