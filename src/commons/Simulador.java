@@ -574,8 +574,8 @@ public class Simulador {
                             + selectTank.getKey().getNombre() + "."));
 
                     transcriptor.transcribir(pezSeleccionado.getNombre() + (pezSeleccionado.isSexo() ? " (M)" : " (H)" + " comprado por " 
-                    + pezSeleccionado.getDatos().getCoste() + " monedas. Añadido al tanque " + tanqueSeleccionado.getNumeroTanque() 
-                    + " de la piscifactoria " + selectTank.getKey().getNombre()));
+                            + pezSeleccionado.getDatos().getCoste() + " monedas. Añadido al tanque " + tanqueSeleccionado.getNumeroTanque() 
+                            + " de la piscifactoria " + selectTank.getKey().getNombre()));
                 }
             }
         }
@@ -1062,5 +1062,6 @@ public class Simulador {
         }
         InputHelper.close();
         Simulador.logger.close();
+        Simulador.transcriptor.close();
     }
 }
