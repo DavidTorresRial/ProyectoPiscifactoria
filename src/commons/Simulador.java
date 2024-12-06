@@ -984,84 +984,100 @@ public class Simulador {
      */
     public static void main(String[] args) {
         Simulador simulador = new Simulador();
-        simulador.init();
-
-        boolean running = true;
-        while (running) {
-
-            simulador.menu();
-            int option = InputHelper.readInt("Ingrese su opción: ");
-
-            switch (option) {
-                case 1:
-                    simulador.showGeneralStatus();
-                    break;
-                case 2:
-                    simulador.showSpecificStatus();
-                    break;
-                case 3:
-                    simulador.showTankStatus();
-                    break;
-                case 4:
-                    simulador.showStats();
-                    break;
-                case 5:
-                    simulador.showIctio();
-                    break;
-                case 6:
-                    simulador.nextDay();
-                    if (almacenCentral != null) {
-                        almacenCentral.distribuirComida(simulador.piscifactorias);
+    
+        try {
+            simulador.init(); // Inicializar el sistema
+    
+            boolean running = true;
+            while (running) {
+                try {
+                    simulador.menu();
+                    int option = InputHelper.readInt("Ingrese su opción: ");
+    
+                    switch (option) {
+                        case 1:
+                            simulador.showGeneralStatus();
+                            break;
+                        case 2:
+                            simulador.showSpecificStatus();
+                            break;
+                        case 3:
+                            simulador.showTankStatus();
+                            break;
+                        case 4:
+                            simulador.showStats();
+                            break;
+                        case 5:
+                            simulador.showIctio();
+                            break;
+                        case 6:
+                            simulador.nextDay();
+                            if (almacenCentral != null) {
+                                almacenCentral.distribuirComida(simulador.piscifactorias);
+                            }
+                            simulador.guardarEstado();
+                            break;
+                        case 7:
+                            simulador.addFood();
+                            if (almacenCentral != null) {
+                                almacenCentral.distribuirComida(simulador.piscifactorias);
+                            }
+                            break;
+                        case 8:
+                            simulador.addFish();
+                            break;
+                        case 9:
+                            simulador.sell();
+                            break;
+                        case 10:
+                            simulador.cleanTank();
+                            break;
+                        case 11:
+                            simulador.emptyTank();
+                            break;
+                        case 12:
+                            simulador.upgrade();
+                            break;
+                        case 13:
+                            int dias = InputHelper.readInt("Ingrese los días para avanzar en el simulador: ");
+                            simulador.nextDay(dias);
+                            break;
+                        case 98:
+                            simulador.pecesRandom();
+                            break;
+                        case 99:
+                            Simulador.monedas.ganarMonedas(1000);
+                            System.out.println("\nAñadidas 1000 monedas mediante la opción oculta. Monedas actuales: "
+                                    + monedas.getMonedas());
+                            logger.log("Añadidas monedas mediante la opción oculta.");
+                            transcriptor.transcribir("Añadidas 1000 monedas mediante la opción oculta. Monedas actuales: "
+                                    + monedas.getMonedas());
+                            break;
+                        case 14:
+                            running = false;
+                            simulador.guardarEstado();
+                            System.out.println("\nSaliendo del simulador.");
+                            logger.log("Cierre de la partida.");
+                            break;
+                        default:
+                            System.out.println("\nOpción no válida. Por favor, intente de nuevo.");
                     }
-                    simulador.guardarEstado();
-                    break;
-                case 7:
-                    simulador.addFood();
-                    if (almacenCentral != null) {
-                        almacenCentral.distribuirComida(simulador.piscifactorias);
-                    }
-                    break;
-                case 8:
-                    simulador.addFish();
-                    break;
-                case 9:
-                    simulador.sell();
-                    break;
-                case 10:
-                    simulador.cleanTank();
-                    break;
-                case 11:
-                    simulador.emptyTank();
-                    break;
-                case 12:
-                    simulador.upgrade();
-                    break;
-                case 13:
-                    int dias = InputHelper.readInt("\nIngrese los dias para avanzar en el simulador: ");
-                    simulador.nextDay(dias);
-                    break;
-                case 98:
-                    simulador.pecesRandom();
-                    break;
-                case 99:
-                    Simulador.monedas.ganarMonedas(1000);
-                    System.out.println("\nAñadidas 1000 monedas mediante la opción oculta. Monedas actuales, "
-                            + monedas.getMonedas());
-                    logger.log("Añadidas monedas mediante la opción oculta.");
-                    transcriptor.transcribir("Añadidas 1000 monedas mediante la opción oculta. Monedas actuales, " + monedas.getMonedas() + ".");
-                    break;
-                case 14:
-                    running = false;
-                    simulador.guardarEstado();
-                    System.out.println("\nSaliendo del simulador.");
-                    logger.log("Cierre de la partida");
-                    break;
-                default:
-                    System.out.println("\nOpción no válida. Por favor, intente de nuevo.");
+                } catch (IllegalArgumentException e) {
+                    // Excepciones del usuario
+                    System.out.println("Entrada inválida: " + e.getMessage());
+                } catch (Exception e) {
+                    // Excepciones inesperadas
+                    logger.logError("Error inesperado: " + e.getMessage());
+                }
             }
+        } catch (Exception e) {
+            // Excepciones graves
+            logger.logError("Error crítico en el sistema: " + e.getMessage());
+        } finally {
+            InputHelper.close();
+            Simulador.logger.close();
+            Simulador.transcriptor.close();
         }
-        InputHelper.close();
-        Simulador.logger.close();
-        Simulador.transcriptor.close();
     }
+    
 }
