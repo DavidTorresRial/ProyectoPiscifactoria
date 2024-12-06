@@ -104,8 +104,8 @@ public class Simulador {
         piscifactorias.get(0).añadirComidaVegetal(piscifactorias.get(0).getCapacidadMaximaComida());
 
         // Listar peces por tipo
-        transcriptor.transcribir("\n========= Peces =========\n" +
-            "Rio:\n"
+        transcriptor.transcribir("\n========= Peces =========\n"
+            + "Rio:\n"
             + AlmacenPropiedades.CARPA_PLATEADA.getNombre() +"\n"
             + AlmacenPropiedades.PEJERREY.getNombre() +"\n"
             + AlmacenPropiedades.PERCA_EUROPEA.getNombre() +"\n"
@@ -119,7 +119,8 @@ public class Simulador {
             + AlmacenPropiedades.ROBALO.getNombre() +"\n"
             + "Doble:\n" 
             + AlmacenPropiedades.SALMON_ATLANTICO.getNombre() +"\n"
-            + AlmacenPropiedades.TRUCHA_ARCOIRIS.getNombre()
+            + AlmacenPropiedades.TRUCHA_ARCOIRIS.getNombre() +"\n"
+            + AlmacenPropiedades.DORADA.getNombre()
             );
     }
     
@@ -276,7 +277,8 @@ public class Simulador {
                 AlmacenPropiedades.PEJERREY.getNombre(),
                 AlmacenPropiedades.PERCA_EUROPEA.getNombre(),
                 AlmacenPropiedades.SALMON_CHINOOK.getNombre(),
-                AlmacenPropiedades.TILAPIA_NILO.getNombre()
+                AlmacenPropiedades.TILAPIA_NILO.getNombre(),
+                AlmacenPropiedades.DORADA.getNombre()
         };
         MenuHelper.mostrarMenuCancelar(pecesNombres);
 
@@ -502,7 +504,8 @@ public class Simulador {
                                 "Pejerrey",
                                 "Perca Europea",
                                 "Salmón Chinook",
-                                "Tilapia del Nilo"
+                                "Tilapia del Nilo",
+                                "Dorada"
                         };
                     } else {
                         opcionesPeces = new String[] {
@@ -512,7 +515,8 @@ public class Simulador {
                                 "Besugo",
                                 "Lenguado Europeo",
                                 "Lubina Rayada",
-                                "Robalo"
+                                "Robalo",
+                                "Dorada"
                         };
                     }
                 } else {
@@ -550,6 +554,9 @@ public class Simulador {
                             break;
                         case 7:
                             pezSeleccionado = esDeRio ? new TilapiaDelNilo(sexo) : new Robalo(sexo);
+                            break;
+                        case 8:
+                            pezSeleccionado = new Dorada(sexo);
                             break;
                         case 0:
                     }
@@ -857,7 +864,8 @@ public class Simulador {
                                             new Pejerrey(sexo),
                                             new PercaEuropea(sexo),
                                             new SalmonChinook(sexo),
-                                            new TilapiaDelNilo(sexo)
+                                            new TilapiaDelNilo(sexo),
+                                            new Dorada(sexo)
                                     }
                                     : new Pez[] {
                                             new SalmonAtlantico(sexo),
@@ -866,8 +874,9 @@ public class Simulador {
                                             new Besugo(sexo),
                                             new LenguadoEuropeo(sexo),
                                             new LubinaRayada(sexo),
-                                            new Robalo(sexo)
-                                    })[random.nextInt(6)];
+                                            new Robalo(sexo),
+                                            new Dorada(sexo)
+                                    })[random.nextInt(7)];
                     tanqueSeleccionado.getPeces().add(pezSeleccionado);
                 }
                 System.out.println("\nSe han añadido 4 " + pezSeleccionado.getNombre() + " al tanque "
@@ -898,7 +907,8 @@ public class Simulador {
                 AlmacenPropiedades.PEJERREY.getNombre(),
                 AlmacenPropiedades.PERCA_EUROPEA.getNombre(),
                 AlmacenPropiedades.SALMON_CHINOOK.getNombre(),
-                AlmacenPropiedades.TILAPIA_NILO.getNombre()
+                AlmacenPropiedades.TILAPIA_NILO.getNombre(),
+                AlmacenPropiedades.DORADA.getNombre()
         ));
         estado.put("empresa", nombreEntidad);
         estado.put("dia", dia);

@@ -7,7 +7,7 @@ import java.util.Random;
 import peces.propiedades.Activo;
 import peces.propiedades.Carnivoro;
 import peces.propiedades.Filtrador;
-
+import peces.propiedades.Omnivoro;
 import peces.Pez;
 import tanque.Tanque;
 
@@ -112,14 +112,14 @@ public abstract class Piscifactoria {
      *
      * @param tanque El tanque del que se alimentarán los peces.
      */
-    private void alimentarPeces(Tanque tanque) { // TODO alimentar en la clase pez haciendo una jerarquia de clases que extiendan de sus propiedades
+    private void alimentarPeces(Tanque tanque) {
         Random rand = new Random();
-
+    
         for (Pez pez : tanque.getPeces()) {
             if (!pez.isVivo()) {
-                continue;
+                continue; // Ignorar peces muertos
             }
-
+    
             if (pez instanceof Filtrador) {
                 // Filtrador: 50% de probabilidad de no consumir comida
                 if (rand.nextDouble() < 0.5) {
@@ -131,14 +131,11 @@ public abstract class Piscifactoria {
                     cantidadComidaVegetal--;
                     pez.setAlimentado(true);
                 } else if (Simulador.almacenCentral != null && Simulador.almacenCentral.getCantidadComidaVegetal() > 0) {
-                    // Extraer comida vegetal del almacén
-                    if (Simulador.almacenCentral.getCantidadComidaVegetal() >= 1) {
-                        Simulador.almacenCentral.setCantidadComidaVegetal(Simulador.almacenCentral.getCantidadComidaVegetal() - 1);
-                        cantidadComidaVegetal++;
-                        pez.setAlimentado(true);
-                    } else {
-                        System.out.println("No hay suficiente comida vegetal.");
-                    }
+                    Simulador.almacenCentral.setCantidadComidaVegetal(Simulador.almacenCentral.getCantidadComidaVegetal() - 1);
+                    cantidadComidaVegetal++;
+                    pez.setAlimentado(true);
+                } else {
+                    System.out.println("No hay suficiente comida vegetal.");
                 }
             } else if (pez instanceof Carnivoro) {
                 // Carnívoro: Consume comida animal
@@ -146,34 +143,60 @@ public abstract class Piscifactoria {
                     cantidadComidaAnimal--;
                     pez.setAlimentado(true);
                 } else if (Simulador.almacenCentral != null && Simulador.almacenCentral.getCantidadComidaAnimal() > 0) {
-                    // Extraer comida animal del almacén
-                    if (Simulador.almacenCentral.getCantidadComidaAnimal() >= 1) {
+                    Simulador.almacenCentral.setCantidadComidaAnimal(Simulador.almacenCentral.getCantidadComidaAnimal() - 1);
+                    cantidadComidaAnimal++;
+                    pez.setAlimentado(true);
+                } else {
+                    System.out.println("No hay suficiente comida animal.");
+                }
+            } else if (pez instanceof Omnivoro) {
+                // Omnívoro: 25% de probabilidad de no consumir comida
+                if (rand.nextDouble() < 0.25) {
+                    pez.setAlimentado(true);
+                    continue; // No consume comida
+                }
+    
+                // Intentar consumir comida vegetal primero
+                if (cantidadComidaVegetal > 0) {
+                    cantidadComidaVegetal--;
+                    pez.setAlimentado(true);
+                } else if (cantidadComidaAnimal > 0) {
+                    cantidadComidaAnimal--;
+                    pez.setAlimentado(true);
+                } else if (Simulador.almacenCentral != null) {
+                    // Si no hay comida local, intenta usar del almacén central
+                    if (Simulador.almacenCentral.getCantidadComidaVegetal() > 0) {
+                        Simulador.almacenCentral.setCantidadComidaVegetal(Simulador.almacenCentral.getCantidadComidaVegetal() - 1);
+                        cantidadComidaVegetal++;
+                        pez.setAlimentado(true);
+                    } else if (Simulador.almacenCentral.getCantidadComidaAnimal() > 0) {
                         Simulador.almacenCentral.setCantidadComidaAnimal(Simulador.almacenCentral.getCantidadComidaAnimal() - 1);
                         cantidadComidaAnimal++;
                         pez.setAlimentado(true);
                     } else {
-                        System.out.println("No hay suficiente comida animal.");
+                        System.out.println("No hay suficiente comida para el omnívoro.");
                     }
                 }
             }
-
+    
             // Activo: 50% de probabilidad de consumir el doble de comida
-            if (pez instanceof Activo) {
-                if (pez.isAlimentado()) {
-                    // Verificar si puede consumir el doble
-                    if (rand.nextDouble() < 0.5) {
-                        if (pez instanceof Carnivoro && cantidadComidaAnimal > 0) {
-                            cantidadComidaAnimal--; // Consume una unidad adicional si es posible
-                        } else if (pez instanceof Filtrador && cantidadComidaVegetal > 0) {
-                            cantidadComidaVegetal--; // Consume una unidad adicional si es posible
-                        }
+            if (pez instanceof Activo && pez.isAlimentado()) {
+                if (rand.nextDouble() < 0.5) {
+                    // Intentar consumir el doble
+                    if (pez instanceof Carnivoro && cantidadComidaAnimal > 0) {
+                        cantidadComidaAnimal--; // Consume una unidad adicional si es posible
+                    } else if (pez instanceof Filtrador && cantidadComidaVegetal > 0) {
+                        cantidadComidaVegetal--; // Consume una unidad adicional si es posible
                     }
                 }
             }
         }
+    
+        // Mostrar el estado de la comida después de alimentar
         System.out.println("\n(Comida vegetal restante: " + cantidadComidaVegetal + ")");
         System.out.println("(Comida animal restante: " + cantidadComidaAnimal + ")");
     }
+    
 
     /**
      * Método para añadir comida animal al almacén.
