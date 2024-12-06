@@ -7,7 +7,7 @@ public class SistemaMonedas {
     private int monedas;
 
     /** Instancia única de SistemaMonedas. */
-    private static SistemaMonedas instanciaUnica;
+    private static SistemaMonedas instance;
 
     /** Constructor privado que inicializa el saldo con 100 monedas. */
     private SistemaMonedas() {
@@ -21,10 +21,10 @@ public class SistemaMonedas {
      * @return La instancia única de SistemaMonedas.
      */
     static SistemaMonedas getInstancia() {
-        if (instanciaUnica == null) {
-            instanciaUnica = new SistemaMonedas();
+        if (instance == null) {
+            instance = new SistemaMonedas();
         }
-        return instanciaUnica;
+        return instance;
     }
 
     /**

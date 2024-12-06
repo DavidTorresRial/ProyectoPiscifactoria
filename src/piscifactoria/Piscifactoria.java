@@ -100,18 +100,91 @@ public abstract class Piscifactoria {
     }
 
     /** Hace avanzar el ciclo de vida en la piscifactoría, alimentando a los peces y actualizando sus estados. */
-    public void nextDay() {
+    public int[] nextDay() {
+        int pecesVendidos = 0;
+        int monedasGanadas = 0;
+    
         for (Tanque tanque : tanques) {
-            tanque.alimentar(cantidadComidaAnimal, cantidadComidaVegetal);
-            tanque.nextDay();
+            alimentarPeces(tanque);
+            int[] resultadoTanque = tanque.nextDay();
+            pecesVendidos += resultadoTanque[0];
+            monedasGanadas += resultadoTanque[1];
         }
+    
+        return new int[]{pecesVendidos, monedasGanadas};
     }
-
+    
     /** Mejora el almacén de comida aumentando su capacidad máxima. */
     public abstract void upgradeFood();
 
     /** Agrega un tanque, verifica monedas y el límite de tanques. */
     public abstract void addTanque();
+
+    /**
+     * Alimenta a los peces en un tanque específico.
+     *
+     * @param tanque El tanque del que se alimentarán los peces.
+     */
+    private void alimentarPeces(Tanque tanque) { // TODO alimentar en la clase pez haciendo una jerarquia de clases que extiendan de sus propiedades
+        Random rand = new Random();
+
+        for (Pez pez : tanque.getPeces()) {
+            if (!pez.isVivo()) {
+                continue;
+            }
+
+            if (pez instanceof Filtrador) {
+                // Filtrador: 50% de probabilidad de no consumir comida
+                if (rand.nextDouble() < 0.5) {
+                    pez.setAlimentado(true);
+                    continue; // No consume comida
+                }
+                // Intentar alimentar al filtrador
+                if (cantidadComidaVegetal > 0) {
+                    cantidadComidaVegetal--;
+                    pez.setAlimentado(true);
+                } else if (Simulador.almacenCentral != null && Simulador.almacenCentral.getCantidadComidaVegetal() > 0) {
+                    // Extraer comida vegetal del almacén
+                    if (Simulador.almacenCentral.getCantidadComidaVegetal() >= 1) {
+                        Simulador.almacenCentral.setCantidadComidaVegetal(Simulador.almacenCentral.getCantidadComidaVegetal() - 1);
+                        cantidadComidaVegetal++;
+                        pez.setAlimentado(true);
+                    } else {
+                        System.out.println("No hay suficiente comida vegetal.");
+                    }
+                }
+            } else if (pez instanceof Carnivoro) {
+                // Carnívoro: Consume comida animal
+                if (cantidadComidaAnimal > 0) {
+                    cantidadComidaAnimal--;
+                    pez.setAlimentado(true);
+                } else if (Simulador.almacenCentral != null && Simulador.almacenCentral.getCantidadComidaAnimal() > 0) {
+                    // Extraer comida animal del almacén
+                    if (Simulador.almacenCentral.getCantidadComidaAnimal() >= 1) {
+                        Simulador.almacenCentral.setCantidadComidaAnimal(Simulador.almacenCentral.getCantidadComidaAnimal() - 1);
+                        cantidadComidaAnimal++;
+                        pez.setAlimentado(true);
+                    } else {
+                        System.out.println("No hay suficiente comida animal.");
+                    }
+                }
+            }
+
+            // Activo: 50% de probabilidad de consumir el doble de comida
+            if (pez instanceof Activo) {
+                if (pez.isAlimentado()) {
+                    // Verificar si puede consumir el doble
+                    if (rand.nextDouble() < 0.5) {
+                        if (pez instanceof Carnivoro && cantidadComidaAnimal > 0) {
+                            cantidadComidaAnimal--; // Consume una unidad adicional si es posible
+                        } else if (pez instanceof Filtrador && cantidadComidaVegetal > 0) {
+                            cantidadComidaVegetal--; // Consume una unidad adicional si es posible
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     /**
      * Método para añadir comida animal al almacén.
@@ -147,6 +220,14 @@ public abstract class Piscifactoria {
         }
     }
 
+    public void setCantidadComidaAnimal(int cantidadComidaAnimal) {
+        this.cantidadComidaAnimal = cantidadComidaAnimal;
+    }
+
+    public void setCantidadComidaVegetal(int cantidadComidaVegetal) {
+        this.cantidadComidaVegetal = cantidadComidaVegetal;
+    }
+
     /**
      * Devuelve el nombre de la piscifactoría.
      *
@@ -172,6 +253,16 @@ public abstract class Piscifactoria {
      */
     public int getCapacidadMaximaComida() {
         return capacidadMaximaComida;
+    }
+
+    /**
+     * Establece un incremento a la capacidad máxima de comida del depósito.
+     * 
+     * @param num El valor que se sumará a la capacidad máxima de comida.
+     * @return La nueva capacidad máxima de comida después de la suma.
+     */
+    public int setCapacidadMaximaComida(int num) {
+        return capacidadMaximaComida = num;
     }
 
     /**
