@@ -104,8 +104,23 @@ public class Simulador {
         piscifactorias.get(0).añadirComidaVegetal(piscifactorias.get(0).getCapacidadMaximaComida());
 
         // Listar peces por tipo
-        transcriptor.transcribir("\n========= Peces =========");
-       // TODO Preguntar a Adrian si ten que mostrar todos os peixes posibles a meter, e como funciona o dos extras
+        transcriptor.transcribir("\n========= Peces =========\n" +
+            "Rio:\n"
+            + AlmacenPropiedades.CARPA_PLATEADA.getNombre() +"\n"
+            + AlmacenPropiedades.PEJERREY.getNombre() +"\n"
+            + AlmacenPropiedades.PERCA_EUROPEA.getNombre() +"\n"
+            + AlmacenPropiedades.SALMON_CHINOOK.getNombre() +"\n"
+            + AlmacenPropiedades.TILAPIA_NILO.getNombre() + "\n"
+            + "Mar:\n"
+            + AlmacenPropiedades.ARENQUE_ATLANTICO.getNombre() +"\n"
+            + AlmacenPropiedades.BESUGO.getNombre() +"\n"
+            + AlmacenPropiedades.LENGUADO_EUROPEO.getNombre() +"\n"
+            + AlmacenPropiedades.LUBINA_RAYADA.getNombre() +"\n"
+            + AlmacenPropiedades.ROBALO.getNombre() +"\n"
+            + "Doble:\n" 
+            + AlmacenPropiedades.SALMON_ATLANTICO.getNombre() +"\n"
+            + AlmacenPropiedades.TRUCHA_ARCOIRIS.getNombre()
+            );
     }
     
 
