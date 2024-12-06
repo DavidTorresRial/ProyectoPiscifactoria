@@ -55,7 +55,7 @@ public class FileHelper {
             File[] archivos = folder.listFiles();
 
             if (archivos != null && archivos.length > 0) {
-                System.out.println("Seleccione una archivo:");
+                System.out.println("\nSelecciona una partida: ");
 
                 for (int i = 0; i < archivos.length; i++) {
                     if (archivos[i].isFile()) {

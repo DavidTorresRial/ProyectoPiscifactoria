@@ -26,12 +26,6 @@ public class AlmacenCentral {
         this.cantidadComidaVegetal = 0;
     }
 
-    public AlmacenCentral(int capacidadAlmacen, int comidaVegetal, int comidaAnimal) {
-        this.capacidadAlmacen = capacidadAlmacen;
-        this.cantidadComidaAnimal = comidaVegetal;
-        this.cantidadComidaVegetal = comidaAnimal;
-    }
-
     /**
      * Aumenta la capacidad del almacén central en 50 unidades si hay monedas suficientes.
      * 
@@ -77,16 +71,6 @@ public class AlmacenCentral {
         }
     }
 
-    /** Muestra el estado actual del almacén. */
-    public void mostrarEstado() {
-        System.out.println("\nEstado del Almacén Central:");
-
-        System.out.println("Comida vegetal al " + (cantidadComidaVegetal * 100 / capacidadAlmacen) + 
-                "% de su capacidad. [" + cantidadComidaVegetal + "/" + capacidadAlmacen + "]");
-        System.out.println("Comida animal al " + (cantidadComidaAnimal * 100 / capacidadAlmacen)+ 
-                "% de su capacidad. [" + cantidadComidaAnimal + "/" + capacidadAlmacen + "]");
-    }
-
     /**
      * Distribuye equitativamente la comida animal y vegetal entre las piscifactorías disponibles.
      * 
@@ -129,55 +113,68 @@ public class AlmacenCentral {
     }
 
     /**
-     * Devuelve la capacidad total del almacén.
+     * Obtiene la capacidad total del almacén.
      * 
-     * @return La capacidad del almacén.
+     * @return Capacidad actual del almacén.
      */
     public int getCapacidadAlmacen() {
         return capacidadAlmacen;
     }
 
     /**
-     * Devuelve la cantidad de comida animal actualmente almacenada.
+     * Establece la capacidad total del almacén.
      * 
-     * @return La cantidad de comida animal.
+     * @param capacidadAlmacen Nueva capacidad del almacén. Debe ser positiva.
+     */
+    public void setCapacidadAlmacen(int capacidadAlmacen) {
+        if (capacidadAlmacen > 0) {
+            this.capacidadAlmacen = capacidadAlmacen;
+        } else {
+            System.out.println("La capacidad del almacén debe ser positiva.");
+        }
+    }
+
+    /**
+     * Obtiene la cantidad de comida animal almacenada.
+     * 
+     * @return Cantidad de comida animal.
      */
     public int getCantidadComidaAnimal() {
         return cantidadComidaAnimal;
     }
 
     /**
-     * Establece la cantidad de comida animal en el almacén.
+     * Establece la cantidad de comida animal almacenada.
      * 
-     * @param cantidadComidaAnimal Nueva cantidad de comida animal.
+     * @param cantidadComidaAnimal Nueva cantidad de comida animal. Debe ser no negativa y no exceder la capacidad del almacén.
      */
     public void setCantidadComidaAnimal(int cantidadComidaAnimal) {
-        if (cantidadComidaAnimal <= capacidadAlmacen) {
+        if (cantidadComidaAnimal >= 0 && cantidadComidaAnimal <= capacidadAlmacen) {
             this.cantidadComidaAnimal = cantidadComidaAnimal;
         } else {
-            System.out.println("No se puede establecer la cantidad de comida animal: excede la capacidad.");
+            System.out.println("Cantidad de comida animal inválida: debe estar entre 0 y " + capacidadAlmacen);
         }
     }
 
     /**
-     * Devuelve la cantidad de comida vegetal actualmente almacenada.
+     * Obtiene la cantidad de comida vegetal almacenada.
      * 
-     * @return La cantidad de comida vegetal.
+     * @return Cantidad de comida vegetal.
      */
     public int getCantidadComidaVegetal() {
         return cantidadComidaVegetal;
     }
 
     /**
-     * Establece la cantidad de comida vegetal en el almacén.
+     * Establece la cantidad de comida vegetal almacenada.
      * 
-     * @param cantidadComidaVegetal Nueva cantidad de comida vegetal.
+     * @param cantidadComidaVegetal Nueva cantidad de comida vegetal. Debe ser no negativa y no exceder la capacidad del almacén.
      */
     public void setCantidadComidaVegetal(int cantidadComidaVegetal) {
-        if (cantidadComidaVegetal <= capacidadAlmacen) {
+        if (cantidadComidaVegetal >= 0 && cantidadComidaVegetal <= capacidadAlmacen) {
             this.cantidadComidaVegetal = cantidadComidaVegetal;
         } else {
-            System.out.println("No se puede establecer la cantidad de comida vegetal: excede la capacidad.");
+            System.out.println("Cantidad de comida vegetal inválida: debe estar entre 0 y " + capacidadAlmacen);
         }
     }
 
@@ -188,9 +185,9 @@ public class AlmacenCentral {
      */
     @Override
     public String toString() {
-        return "Información del Almacén Central:" +
+        return "\nInformación del Almacén Central:" +
                 "\n  Capacidad Total          : " + capacidadAlmacen +
-                "\n  Comida Animal            : " + cantidadComidaAnimal + " (" + ((cantidadComidaAnimal * 100.0) / capacidadAlmacen) + "% de la capacidad)" +
-                "\n  Comida Vegetal           : " + cantidadComidaVegetal + " (" + ((cantidadComidaVegetal * 100.0) / capacidadAlmacen) + "% de la capacidad)";
+                "\n  Comida Animal            : " + cantidadComidaAnimal + " (" + (cantidadComidaAnimal  > 0 ? ((cantidadComidaAnimal * 100.0) / capacidadAlmacen) : "0") + "% de la capacidad)" +
+                "\n  Comida Vegetal           : " + cantidadComidaVegetal + " (" + (cantidadComidaVegetal > 0 ? ((cantidadComidaVegetal * 100.0) / capacidadAlmacen) : "0") + "% de la capacidad)";
     }
 }

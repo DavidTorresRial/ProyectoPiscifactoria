@@ -87,6 +87,7 @@ public class Tanque {
         for (Pez pez : peces) {
             if (pez.isSexo() && pez.isFertil()) {
                 hayMachoFertil = true;
+                break;
             }
         }
 
@@ -124,8 +125,8 @@ public class Tanque {
                     }
                     hembra.setFertil(false);
                 }
+                System.out.println("\nSe han creado " + nuevosMachos + " nuevos machos y " + nuevasHembras + " nuevas hembras.");
             }
-            System.out.println("\nSe han creado " + nuevosMachos + " nuevos machos y " + nuevasHembras + " nuevas hembras.");
         }
     }
 
@@ -136,17 +137,23 @@ public class Tanque {
      * @return true si el pez se añadió correctamente, false en caso contrario.
      */
     public boolean addFish(Pez pez) {
-        if (peces.size() >= capacidadMaxima) {
-            System.out.println("El tanque está lleno. Capacidad máxima alcanzada.");
+        if (peces.size() < capacidadMaxima) {
+            if (Simulador.monedas.gastarMonedas(pez.getDatos().getCoste())) {
+                if (peces.isEmpty() || peces.get(0).getNombre().equals(pez.getNombre())) {
+                    peces.add(pez);
+                    return true;
+                } else {
+                    System.out.println("\nTipo de pez incompatible. Solo se pueden agregar peces de tipo: " + peces.get(0).getNombre());
+                    return false;
+                }
+            } else {
+                System.out.println("\nNecesitas " + pez.getDatos().getCoste() + " monedas para comprar un " + pez.getNombre() + ".");
+                return false;
+            }
+        } else {
+            System.out.println("\nEl tanque está lleno. Capacidad máxima alcanzada.");
             return false;
         }
-        if (Simulador.monedas.gastarMonedas(pez.getDatos().getCoste())) {
-            if (peces.isEmpty() || peces.get(0).getNombre().equals(pez.getNombre())) {
-                peces.add(pez);
-                return true;
-            }
-        }
-        return false;
     }
 
     /** Vende los peces maduros y actualiza el sistema de monedas. */
