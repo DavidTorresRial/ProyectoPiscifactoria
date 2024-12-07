@@ -71,7 +71,8 @@ public class Simulador {
             AlmacenPropiedades.PEJERREY.getNombre(),
             AlmacenPropiedades.PERCA_EUROPEA.getNombre(),
             AlmacenPropiedades.SALMON_CHINOOK.getNombre(),
-            AlmacenPropiedades.TILAPIA_NILO.getNombre()
+            AlmacenPropiedades.TILAPIA_NILO.getNombre(),
+            AlmacenPropiedades.DORADA.getNombre()
     });
 
     /** Sistema de monedas para manejar transacciones. */
