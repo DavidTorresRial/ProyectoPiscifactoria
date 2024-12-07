@@ -2,16 +2,14 @@ package piscifactoria;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Random;
 
-import peces.propiedades.Activo;
-import peces.propiedades.Carnivoro;
+import peces.propiedades.Omnivoro;
 import peces.propiedades.Filtrador;
+import peces.propiedades.Carnivoro;
+import peces.propiedades.CarnivoroActivo;
 
 import peces.Pez;
 import tanque.Tanque;
-
-import commons.Simulador;
 
 /** Clase abstracta que representa una piscifactoría que gestiona tanques de peces. */
 public abstract class Piscifactoria {
@@ -19,7 +17,7 @@ public abstract class Piscifactoria {
     /** El nombre de la piscifactoría. */
     protected String nombre;
 
-    /** Lista de tanques con distintos tipos de peces. */
+    /** Lista para almacenar los tanques en la piscifactoria. */
     protected List<Tanque> tanques = new ArrayList<>();
     
     /** Número máximo de tanques permitidos en la piscifactoría. */
@@ -37,7 +35,7 @@ public abstract class Piscifactoria {
     /**
      * Constructor para crear una nueva piscifactoría.
      *
-     * @param nombre  El nombre de la piscifactoría.
+     * @param nombre El nombre de la piscifactoría.
      */
     public Piscifactoria(String nombre) {        
         this.nombre = nombre;
@@ -132,62 +130,22 @@ public abstract class Piscifactoria {
      *
      * @param tanque El tanque del que se alimentarán los peces.
      */
-    private void alimentarPeces(Tanque tanque) { // TODO alimentar en la clase pez haciendo una jerarquia de clases que extiendan de sus propiedades
-        Random rand = new Random();
+    private void alimentarPeces(Tanque tanque) {
 
         for (Pez pez : tanque.getPeces()) {
-            if (!pez.isVivo()) {
-                continue;
-            }
-
-            if (pez instanceof Filtrador) {
-                // Filtrador: 50% de probabilidad de no consumir comida
-                if (rand.nextDouble() < 0.5) {
-                    pez.setAlimentado(true);
-                    continue; // No consume comida
-                }
-                // Intentar alimentar al filtrador
-                if (cantidadComidaVegetal > 0) {
-                    cantidadComidaVegetal--;
-                    pez.setAlimentado(true);
-                } else if (Simulador.almacenCentral != null && Simulador.almacenCentral.getCantidadComidaVegetal() > 0) {
-                    // Extraer comida vegetal del almacén
-                    if (Simulador.almacenCentral.getCantidadComidaVegetal() >= 1) {
-                        Simulador.almacenCentral.setCantidadComidaVegetal(Simulador.almacenCentral.getCantidadComidaVegetal() - 1);
-                        cantidadComidaVegetal++;
-                        pez.setAlimentado(true);
+            if (pez.isVivo()) {
+                if (pez instanceof Omnivoro) {
+                    if (this.cantidadComidaAnimal >= this.cantidadComidaVegetal) {
+                        this.cantidadComidaAnimal -= pez.alimentar(this.cantidadComidaAnimal, this.cantidadComidaVegetal);
                     } else {
-                        System.out.println("No hay suficiente comida vegetal.");
+                        this.cantidadComidaVegetal -= pez.alimentar(this.cantidadComidaAnimal, this.cantidadComidaVegetal);
                     }
-                }
-            } else if (pez instanceof Carnivoro) {
-                // Carnívoro: Consume comida animal
-                if (cantidadComidaAnimal > 0) {
-                    cantidadComidaAnimal--;
-                    pez.setAlimentado(true);
-                } else if (Simulador.almacenCentral != null && Simulador.almacenCentral.getCantidadComidaAnimal() > 0) {
-                    // Extraer comida animal del almacén
-                    if (Simulador.almacenCentral.getCantidadComidaAnimal() >= 1) {
-                        Simulador.almacenCentral.setCantidadComidaAnimal(Simulador.almacenCentral.getCantidadComidaAnimal() - 1);
-                        cantidadComidaAnimal++;
-                        pez.setAlimentado(true);
-                    } else {
-                        System.out.println("No hay suficiente comida animal.");
-                    }
-                }
-            }
-
-            // Activo: 50% de probabilidad de consumir el doble de comida
-            if (pez instanceof Activo) {
-                if (pez.isAlimentado()) {
-                    // Verificar si puede consumir el doble
-                    if (rand.nextDouble() < 0.5) {
-                        if (pez instanceof Carnivoro && cantidadComidaAnimal > 0) {
-                            cantidadComidaAnimal--; // Consume una unidad adicional si es posible
-                        } else if (pez instanceof Filtrador && cantidadComidaVegetal > 0) {
-                            cantidadComidaVegetal--; // Consume una unidad adicional si es posible
-                        }
-                    }
+                } else if (pez instanceof Filtrador) {
+                    this.cantidadComidaVegetal -= pez.alimentar(this.cantidadComidaAnimal, this.cantidadComidaVegetal);
+                } else if (pez instanceof Carnivoro) {
+                    this.cantidadComidaAnimal -= pez.alimentar(this.cantidadComidaAnimal, this.cantidadComidaVegetal);
+                } else if (pez instanceof CarnivoroActivo) {
+                    this.cantidadComidaAnimal -= pez.alimentar(this.cantidadComidaAnimal, this.cantidadComidaVegetal);
                 }
             }
         }
