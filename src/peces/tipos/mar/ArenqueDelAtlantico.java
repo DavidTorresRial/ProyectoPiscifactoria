@@ -1,10 +1,11 @@
 package peces.tipos.mar;
 
+import peces.Pez;
 import peces.propiedades.Filtrador;
 import propiedades.AlmacenPropiedades;
 
 /** Pez de mar Arenque del Atlántico. */
-public class ArenqueDelAtlantico extends Filtrador {
+public class ArenqueDelAtlantico extends Pez implements Filtrador {
 
     /**
      * Crea una instancia de ArenqueDelAtlantico con el sexo especificado.

@@ -1,10 +1,11 @@
 package peces.tipos.rio;
 
-import peces.propiedades.CarnivoroActivo;
+import peces.Pez;
+import peces.propiedades.Activo;
 import propiedades.AlmacenPropiedades;
 
 /** Pez de río Perca Europea. */
-public class PercaEuropea extends CarnivoroActivo {
+public class PercaEuropea extends Pez implements Activo {
 
     /**
      * Crea una instancia de PercaEuropea con el sexo especificado.
