@@ -1,10 +1,11 @@
 package peces.tipos.rio;
 
+import peces.Pez;
 import peces.propiedades.Filtrador;
 import propiedades.AlmacenPropiedades;
 
 /** Pez de río Tilapia del Nilo. */
-public class TilapiaDelNilo extends Filtrador {
+public class TilapiaDelNilo extends Pez implements Filtrador {
 
     /**
      * Crea una instancia de TilapiaDelNilo con el sexo especificado.

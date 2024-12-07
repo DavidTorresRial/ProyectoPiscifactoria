@@ -2,8 +2,16 @@ package piscifactoria;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Random;
 
+import peces.propiedades.Activo;
+import peces.propiedades.Carnivoro;
+import peces.propiedades.Filtrador;
+
+import peces.Pez;
 import tanque.Tanque;
+
+import commons.Simulador;
 
 /** Clase abstracta que representa una piscifactoría que gestiona tanques de peces. */
 public abstract class Piscifactoria {
@@ -18,10 +26,10 @@ public abstract class Piscifactoria {
     protected final int numeroMaximoTanques = 10;
     
     /** Cantidad actual de comida animal. */
-    protected int cantidadComidaAnimal; 
-    
+    private int cantidadComidaAnimal;
+
     /** Cantidad actual de comida vegetal. */
-    protected int cantidadComidaVegetal; 
+    private int cantidadComidaVegetal;
 
     /** Capacidad máxima para ambos tipos de comida. */
     protected int capacidadMaximaComida;
@@ -62,7 +70,6 @@ public abstract class Piscifactoria {
     
         showFood();
     }
-    
 
     /** Muestra el estado de cada tanque en la piscifactoría. */
     public void showTankStatus() {
@@ -192,7 +199,7 @@ public abstract class Piscifactoria {
      * @param cantidad La cantidad de comida animal a añadir. Debe ser positiva.
      * @return true si se añadió la comida, false si no se pudo añadir.
      */
-    public boolean añadirComidaAnimal(int cantidad) { // TODO Tambien preguntar si juntar estos dos métodos 
+    public boolean añadirComidaAnimal(int cantidad) {
         int nuevaCantidad = cantidadComidaAnimal + cantidad;
         if (cantidad >= 0 && nuevaCantidad <= capacidadMaximaComida) {
             cantidadComidaAnimal = nuevaCantidad;
@@ -244,6 +251,15 @@ public abstract class Piscifactoria {
      */
     public List<Tanque> getTanques() {
         return this.tanques;
+    }
+
+    /**
+     * Obtiene el número máximo de tanques que puede tener la piscifactoría.
+     *
+     * @return El número máximo de tanques permitidos en la piscifactoría.
+     */
+    public int getNumeroMaximoTanques() {
+        return numeroMaximoTanques;
     }
 
     /**

@@ -55,14 +55,13 @@ public class Tanque {
         System.out.println("Fértiles: " + fertiles + " / " + vivos);
     }
 
-
     /** Muestra el estado de todos los peces del tanque. */
     public void showFishStatus() {
         System.out.println("--------------- Peces en el Tanque " + numeroTanque + " ---------------");
         if (peces.isEmpty()) {
             System.out.println("El tanque está vacío.");
         } else {
-            peces.forEach(Pez::showStatus); // TODO preguntar diferencia entre foreach y un for normal 
+            peces.forEach(Pez::showStatus);
         }
     }
 
@@ -199,6 +198,36 @@ public class Tanque {
      */
     public int getCapacidad() {
         return capacidadMaxima;
+    }
+
+    /**
+     * Cuenta y devuelve el número de peces vivos en el tanque.
+     *
+     * @return número de peces vivos en el tanque.
+     */
+    public int getVivos() {
+        int pecesVivos = 0;
+        for (Pez pez : peces) {
+            if (pez.isVivo()) {
+                pecesVivos++;
+            }
+        }
+        return pecesVivos;
+    }
+
+    /**
+     * Cuenta y devuelve el número de peces alimentados en el tanque.
+     *
+     * @return número de peces alimentados en el tanque.
+     */
+    public int getAlimentados() {
+        int pecesAlimentados = 0;
+        for (Pez pez : peces) {
+            if (pez.isAlimentado()) {
+                pecesAlimentados++;
+            }
+        }
+        return pecesAlimentados;
     }
 
     /**

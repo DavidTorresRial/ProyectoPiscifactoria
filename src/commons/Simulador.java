@@ -1200,9 +1200,6 @@ public class Simulador {
         while (running) {
 
             simulador.menu();
-
-            simulador.guardarEstado();
-
             int option = InputHelper.readInt("Ingrese su opción: ");
 
             switch (option) {

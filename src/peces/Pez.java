@@ -20,19 +20,19 @@ public abstract class Pez {
     private final boolean sexo;
 
     /** Estado de fertilidad del pez: true si es fértil, false si no lo es. */
-    protected boolean fertil = false;
+    private boolean fertil = false;
 
     /** Estado de vida del pez: true si está vivo, false si está muerto. */
-    protected boolean vivo = true;
+    private boolean vivo = true;
 
     /** Estado de alimentación del pez: true si ha sido alimentado, false si no. */
-    protected boolean alimentado = false;
+    private boolean alimentado = false;
 
     /** Ciclo reproductivo del pez, decrementa hasta que el pez se vuelve fértil. */
     protected int ciclo;
 
     /** Datos específicos del pez extraídos de PecesDatos. */
-    protected PecesDatos datos;
+    private PecesDatos datos;
 
     private boolean primeraVez = true; // TODO revisar si es completamente necesario este atributo
 
@@ -118,9 +118,6 @@ public abstract class Pez {
      */
     public abstract Pez clonar(boolean nuevoSexo);
 
-    /** Método que alimenta a los peces. */
-    public abstract void alimentar(int cantidadComidaAnimal, int cantidadComidaVegetal);
-
     /**
      * @return el nombre común del pez.
      */
@@ -194,7 +191,16 @@ public abstract class Pez {
     public PecesDatos getDatos() {
         return datos;
     }
-   
+
+    /**
+     * Establece la edad del pez.
+     * 
+     * @param edad la nueva edad del pez.
+     */
+    public void setEdad(int edad) {
+        this.edad = edad;
+    }
+
     /**
      * Establece si el pez es fértil.
      *
@@ -202,6 +208,42 @@ public abstract class Pez {
      */
     public void setFertil(boolean fertil) {
         this.fertil = fertil;
+    }
+
+    /**
+     * Establece si el pez está vivo.
+     * 
+     * @param vivo true si el pez está vivo, false si está muerto.
+     */
+    public void setVivo(boolean vivo) {
+        this.vivo = vivo;
+    }
+
+    /**
+     * Establece el estado de alimentación del pez.
+     * 
+     * @param alimentado true si el pez ha sido alimentado, false si no.
+     */
+    public void setAlimentado(boolean alimentado) {
+        this.alimentado = alimentado;
+    }
+
+    /**
+     * Establece el ciclo reproductivo del pez.
+     * 
+     * @param ciclo el nuevo ciclo reproductivo.
+     */
+    public void setCiclo(int ciclo) {
+        this.ciclo = ciclo;
+    }
+
+    /**
+     * Establece los datos específicos del pez.
+     * 
+     * @param datos el objeto PecesDatos asociado.
+     */
+    public void setDatos(PecesDatos datos) {
+        this.datos = datos;
     }
 
     /**

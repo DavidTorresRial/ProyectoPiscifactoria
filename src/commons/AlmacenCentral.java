@@ -21,7 +21,7 @@ public class AlmacenCentral {
 
     /** Constructor del almacén central. */
     public AlmacenCentral() {
-        this.capacidadAlmacen = 200; // TODO preguntar si se puede dejar el constructor vacio y inicializar los valores en los atributos ya que van a ser siempre los mismos o es mejor dejarlos en el cosntructor
+        this.capacidadAlmacen = 200;
         this.cantidadComidaAnimal = 0;
         this.cantidadComidaVegetal = 0;
     }
@@ -47,7 +47,7 @@ public class AlmacenCentral {
      * @param cantidad La cantidad de comida animal a añadir. Debe ser positiva.
      * @return true si se añadió la comida, false si no se pudo añadir.
      */
-    public void añadirComidaAnimal(int cantidad) { // TODO Tambien preguntar si juntar estos dos métodos 
+    public void añadirComidaAnimal(int cantidad) {
         int nuevaCantidad = cantidadComidaAnimal + cantidad;
         if (cantidad >= 0 && nuevaCantidad <= capacidadAlmacen) {
             cantidadComidaAnimal = nuevaCantidad;
