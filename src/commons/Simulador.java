@@ -6,7 +6,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -65,6 +64,7 @@ public class Simulador {
 
     /** Lista de nombres de peces implementados. */
     private final static String[] pecesImplementados = {
+        AlmacenPropiedades.DORADA.getNombre(),
         AlmacenPropiedades.SALMON_ATLANTICO.getNombre(),
         AlmacenPropiedades.TRUCHA_ARCOIRIS.getNombre(),
         AlmacenPropiedades.ARENQUE_ATLANTICO.getNombre(),
@@ -351,7 +351,7 @@ public class Simulador {
         System.out.println("\n" + totalPecesVendidos + " peces vendidos por un total de " + totalMonedasGanadas + " monedas.");
         logger.log("Fin del día " + dia + ".");
         transcriptor.transcribir("Fin del día " + dia + ".");
-        transcriptor.transcribir("Peces actuales, " + "" + " de río Y de mar.");
+        transcriptor.transcribir("Peces actuales, " + "" + " de río " + "" + " de mar."); // TODO
         transcriptor.transcribir(totalMonedasGanadas + " monedas ganadas por un total de " + monedas.getMonedas() + ".");
 
         transcriptor.transcribir("-------------------------" + "\n>>> Inicio del día " + (dia + 1) + ".");
@@ -520,6 +520,7 @@ public class Simulador {
                 if (tanqueSeleccionado.getPeces().isEmpty()) {
                     if (esDeRio) {
                         opcionesPeces = new String[] {
+                                "Dorada",
                                 "Salmón del Atlántico",
                                 "Trucha Arcoíris",
                                 "Carpa Plateada",
@@ -530,6 +531,7 @@ public class Simulador {
                         };
                     } else {
                         opcionesPeces = new String[] {
+                                "Dorada",
                                 "Salmon del Atlántico",
                                 "Trucha Arcoíris",
                                 "Arenque del Atlántico",
@@ -555,24 +557,27 @@ public class Simulador {
                 if (tanqueSeleccionado.getPeces().isEmpty()) {
                     switch (opcion) {
                         case 1:
-                            pezSeleccionado = new SalmonAtlantico(sexo);
+                            pezSeleccionado = new Dorada(sexo);
                             break;
                         case 2:
-                            pezSeleccionado = new TruchaArcoiris(sexo);
+                            pezSeleccionado = new SalmonAtlantico(sexo);
                             break;
                         case 3:
-                            pezSeleccionado = esDeRio ? new CarpaPlateada(sexo) : new ArenqueDelAtlantico(sexo);
+                            pezSeleccionado = new TruchaArcoiris(sexo);
                             break;
                         case 4:
-                            pezSeleccionado = esDeRio ? new Pejerrey(sexo) : new Besugo(sexo);
+                            pezSeleccionado = esDeRio ? new CarpaPlateada(sexo) : new ArenqueDelAtlantico(sexo);
                             break;
                         case 5:
-                            pezSeleccionado = esDeRio ? new PercaEuropea(sexo) : new LenguadoEuropeo(sexo);
+                            pezSeleccionado = esDeRio ? new Pejerrey(sexo) : new Besugo(sexo);
                             break;
                         case 6:
-                            pezSeleccionado = esDeRio ? new SalmonChinook(sexo) : new LubinaRayada(sexo);
+                            pezSeleccionado = esDeRio ? new PercaEuropea(sexo) : new LenguadoEuropeo(sexo);
                             break;
                         case 7:
+                            pezSeleccionado = esDeRio ? new SalmonChinook(sexo) : new LubinaRayada(sexo);
+                            break;
+                        case 8:
                             pezSeleccionado = esDeRio ? new TilapiaDelNilo(sexo) : new Robalo(sexo);
                             break;
                         case 0:
@@ -874,6 +879,7 @@ public class Simulador {
                             ? tanqueSeleccionado.getPeces().get(0).clonar(sexo)
                             : (esDeRio
                                     ? new Pez[] {
+                                            new Dorada(sexo),
                                             new SalmonAtlantico(sexo),
                                             new ArenqueDelAtlantico(sexo),
                                             new CarpaPlateada(sexo),
@@ -883,6 +889,7 @@ public class Simulador {
                                             new TilapiaDelNilo(sexo)
                                     }
                                     : new Pez[] {
+                                            new Dorada(sexo),
                                             new SalmonAtlantico(sexo),
                                             new TruchaArcoiris(sexo),
                                             new ArenqueDelAtlantico(sexo),
@@ -890,7 +897,7 @@ public class Simulador {
                                             new LenguadoEuropeo(sexo),
                                             new LubinaRayada(sexo),
                                             new Robalo(sexo)
-                                    })[random.nextInt(6)];
+                                    })[random.nextInt(7)];
                     tanqueSeleccionado.getPeces().add(pezSeleccionado);
                 }
                 System.out.println("\nSe han añadido 4 " + pezSeleccionado.getNombre() + " al tanque "
@@ -925,36 +932,11 @@ public class Simulador {
         // Crear estructura principal con LinkedHashMap para preservar el orden
         Map<String, Object> estado = new LinkedHashMap<>();
 
-        estado.put("implementados", Arrays.asList(
-                AlmacenPropiedades.SALMON_ATLANTICO.getNombre(),
-                AlmacenPropiedades.TRUCHA_ARCOIRIS.getNombre(),
-                AlmacenPropiedades.ARENQUE_ATLANTICO.getNombre(),
-                AlmacenPropiedades.BESUGO.getNombre(),
-                AlmacenPropiedades.LENGUADO_EUROPEO.getNombre(),
-                AlmacenPropiedades.LUBINA_RAYADA.getNombre(),
-                AlmacenPropiedades.ROBALO.getNombre(),
-                AlmacenPropiedades.CARPA_PLATEADA.getNombre(),
-                AlmacenPropiedades.PEJERREY.getNombre(),
-                AlmacenPropiedades.PERCA_EUROPEA.getNombre(),
-                AlmacenPropiedades.SALMON_CHINOOK.getNombre(),
-                AlmacenPropiedades.TILAPIA_NILO.getNombre()
-        ));
+        estado.put("implementados", pecesImplementados);
         estado.put("empresa", nombreEntidad);
         estado.put("dia", dia);
         estado.put("monedas", monedas.getMonedas());
-        estado.put("orca", Simulador.estadisticas.exportarDatos(new String[] {
-                AlmacenPropiedades.SALMON_ATLANTICO.getNombre(), 
-                AlmacenPropiedades.TRUCHA_ARCOIRIS.getNombre(), 
-                AlmacenPropiedades.ARENQUE_ATLANTICO.getNombre(),
-                AlmacenPropiedades.BESUGO.getNombre(),
-                AlmacenPropiedades.LENGUADO_EUROPEO.getNombre(),
-                AlmacenPropiedades.LUBINA_RAYADA.getNombre(),
-                AlmacenPropiedades.ROBALO.getNombre(),
-                AlmacenPropiedades.CARPA_PLATEADA.getNombre(),
-                AlmacenPropiedades.PEJERREY.getNombre(),
-                AlmacenPropiedades.PERCA_EUROPEA.getNombre(),
-                AlmacenPropiedades.SALMON_CHINOOK.getNombre(),
-                AlmacenPropiedades.TILAPIA_NILO.getNombre()}));
+        estado.put("orca", Simulador.estadisticas.exportarDatos(pecesImplementados));
 
         // Edificios - Almacén
         Map<String, Object> almacenMap = new LinkedHashMap<>();
@@ -1122,6 +1104,7 @@ public class Simulador {
                                 String tipoPez = tanqueJson.has("pez") ? tanqueJson.get("pez").getAsString() : "Desconocido";
                                 boolean sexo = pezJson.get("sexo").getAsBoolean();
                                 Pez pez = switch (tipoPez) {
+                                    case "Dorada" -> new Dorada(sexo);
                                     case "Salm\u00f3n atl\u00e1ntico" -> new SalmonAtlantico(sexo);
                                     case "Trucha arco\u00edris" -> new TruchaArcoiris(sexo);
                                     case "Carpa plateada" -> new CarpaPlateada(sexo);

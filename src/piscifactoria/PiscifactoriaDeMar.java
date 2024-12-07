@@ -56,5 +56,4 @@ public class PiscifactoriaDeMar extends Piscifactoria {
             System.out.println("\nNo tienes suficientes monedas para agregar un tanque de río. Necesitas " + costoTanque + " monedas.");
         }
     }
-
 }
