@@ -367,7 +367,20 @@ public class Simulador {
         System.out.println("\n" + totalPecesVendidos + " peces vendidos por un total de " + totalMonedasGanadas + " monedas.");
         logger.log("Fin del día " + dia + ".");
         transcriptor.transcribir("Fin del día " + dia + ".");
-        transcriptor.transcribir("Peces actuales, " + "" + " de río " + "" + " de mar."); // TODO
+
+        // Con esto cuenta los peces que hai de rio y de mar
+        int pecesDeRio = 0;
+        int pecesDeMar = 0;
+
+        // Y ahorra recorremos las piscifactorías y contamos los peces según el tipo de rio o mar
+        for (Piscifactoria piscifactoria : piscifactorias) {
+            if (piscifactoria instanceof PiscifactoriaDeRio) {
+                pecesDeRio += piscifactoria.getTotalVivos();
+            } else if (piscifactoria instanceof PiscifactoriaDeMar) {
+                pecesDeMar += piscifactoria.getTotalVivos();
+            }
+        }
+        transcriptor.transcribir("Peces actuales: " + pecesDeRio + " de río y " + pecesDeMar + " de mar.");
         transcriptor.transcribir(totalMonedasGanadas + " monedas ganadas por un total de " + monedas.getMonedas() + ".");
 
         transcriptor.transcribir("-------------------------" + "\n>>> Inicio del día " + (dia + 1) + ".");
