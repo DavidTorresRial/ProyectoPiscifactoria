@@ -1,7 +1,11 @@
 package piscifactoria;
 
 import java.util.List;
+
+import commons.Simulador;
+
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import peces.propiedades.Omnivoro;
 import peces.propiedades.Filtrador;
@@ -149,6 +153,34 @@ public abstract class Piscifactoria {
                 }
             }
         }
+    }
+
+    public static void sellFish(Tanque tanqueSeleccionado) {
+        if (tanqueSeleccionado != null) {
+                int pecesVendidos = 0;
+                int totalDinero = 0;
+    
+                Iterator<Pez> iterator = tanqueSeleccionado.getPeces().iterator();
+    
+                while (iterator.hasNext()) {
+                    Pez pez = iterator.next();
+    
+                    if (pez.getEdad() >= pez.getDatos().getMadurez() && pez.isVivo()) {
+                        Simulador.monedas.ganarMonedas(pez.getDatos().getMonedas());
+                        Simulador.estadisticas.registrarVenta(pez.getNombre(), pez.getDatos().getMonedas());
+    
+                        totalDinero += (pez.getDatos().getMonedas() / 2);
+                        pecesVendidos++;
+    
+                        iterator.remove();
+                    }
+                }
+                if (pecesVendidos > 0) {
+                    System.out.println("Vendidos " + pecesVendidos + " peces de la piscifactoría de forma manual por " + totalDinero + " monedas.");
+                } else {
+                    System.out.println("\nNo hay peces adultos para vender.");
+                }
+            }
     }
 
     /**
