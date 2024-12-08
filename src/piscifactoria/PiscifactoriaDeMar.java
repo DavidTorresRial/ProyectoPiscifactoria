@@ -7,13 +7,13 @@ import tanque.Tanque;
 public class PiscifactoriaDeMar extends Piscifactoria {
 
     /** Costo en monedas para mejorar la capacidad de comida. */
-    private final int costoMejora = 200;
+    private static final int COSTO_MEJORA = 200;
 
     /** Incremento de capacidad de comida en cada mejora. */
-    private final int incrementoCapacidad = 100;
+    private static final int INCREMENTO_CAPACIDAD = 100;
 
     /** Capacidad máxima de comida permitida. */
-    private final int capacidadMaximaPermitida = 1000;
+    private static final int CAPACIDAD_MAXIMA_PERMITIDA = 1000;
 
     /**
      * Crea una nueva piscifactoría de mar con un tanque inicial.
@@ -29,12 +29,12 @@ public class PiscifactoriaDeMar extends Piscifactoria {
     /** Mejora la capacidad de comida de la piscifactoría si hay monedas suficientes y no se supera la capacidad máxima. */
     @Override
     public void upgradeFood() {
-        if (capacidadMaximaComida + incrementoCapacidad <= capacidadMaximaPermitida) {
-            if (Simulador.monedas.gastarMonedas(costoMejora)) {
-                capacidadMaximaComida += incrementoCapacidad;
-                System.out.println("\nMejorada la piscifactoría " + nombre + " aumentando su capacidad de comida hasta un total de " + capacidadMaximaComida + " por " + costoMejora + " monedas.");
+        if (capacidadMaximaComida + INCREMENTO_CAPACIDAD <= CAPACIDAD_MAXIMA_PERMITIDA) {
+            if (Simulador.monedas.gastarMonedas(COSTO_MEJORA)) {
+                capacidadMaximaComida += INCREMENTO_CAPACIDAD;
+                System.out.println("\nMejorada la piscifactoría " + nombre + " aumentando su capacidad de comida hasta un total de " + capacidadMaximaComida + " por " + COSTO_MEJORA + " monedas.");
                 Simulador.logger.log("Mejorada la piscifactoría " + nombre + " aumentando su capacidad de comida.");
-                Simulador.transcriptor.transcribir("Mejorada la piscifactoría " + nombre + " aumentando su capacidad de comida hasta un total de " + capacidadMaximaComida + " por " + costoMejora + " monedas.");
+                Simulador.transcriptor.transcribir("Mejorada la piscifactoría " + nombre + " aumentando su capacidad de comida hasta un total de " + capacidadMaximaComida + " por " + COSTO_MEJORA + " monedas.");
             } else {
                 System.out.println("No tienes suficientes monedas para mejorar el almacén de comida de la piscifactoría " + nombre + ".");
             }

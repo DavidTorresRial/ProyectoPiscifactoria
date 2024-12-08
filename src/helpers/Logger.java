@@ -20,7 +20,6 @@ public class Logger {
      */
     private Logger(String logFileName) {
         try {
-            // Inicializa el logWriter para logs generales
             File logFile = new File("logs/" + logFileName + ".log");
             logWriter = new BufferedWriter(new FileWriter(logFile, true));
 

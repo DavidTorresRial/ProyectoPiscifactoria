@@ -145,6 +145,7 @@ public class Simulador {
                 "  - " + AlmacenPropiedades.LUBINA_RAYADA.getNombre() + "\n" +
                 "  - " + AlmacenPropiedades.ROBALO.getNombre() + "\n" +
                 "\nDoble:\n" +
+                "  - " + AlmacenPropiedades.DORADA.getNombre() + "\n" +
                 "  - " + AlmacenPropiedades.SALMON_ATLANTICO.getNombre() + "\n" +
                 "  - " + AlmacenPropiedades.TRUCHA_ARCOIRIS.getNombre()
             );
