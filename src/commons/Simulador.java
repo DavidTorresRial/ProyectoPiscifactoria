@@ -27,7 +27,8 @@ import helpers.Transcriptor;
 import propiedades.AlmacenPropiedades;
 import propiedades.PecesDatos;
 import propiedades.PecesProps;
-
+import recompensas.CrearRecompensa;
+import recompensas.UsarRecompensa;
 import estadisticas.Estadisticas;
 
 import piscifactoria.Piscifactoria;
@@ -54,10 +55,10 @@ public class Simulador {
     private int dia = 0;
 
     /** Lista de piscifactorías en el sistema. */
-    private List<Piscifactoria> piscifactorias = new ArrayList<>();
+    private static List<Piscifactoria> piscifactorias = new ArrayList<>();
 
     /** Nombre de la entidad o partida en la simulación. */
-    private String nombreEntidad;
+    public static String nombreEntidad;
 
     /** Nombre de la piscifactoría. */
     private String nombrePiscifactoria;
@@ -96,7 +97,7 @@ public class Simulador {
 
     /** Metodo que inicializa todo el sistema. */
     public void init() {
-        FileHelper.crearCarpetas(new String[] {"transcripciones", "logs", "saves"});
+        FileHelper.crearCarpetas(new String[] {"transcripciones", "logs", "saves", "rewards"});
 
         if (!errorLog.exists()) {
             try {
@@ -157,6 +158,19 @@ public class Simulador {
             piscifactorias.add(new PiscifactoriaDeRio(nombrePiscifactoria));
             piscifactorias.get(0).añadirComidaAnimal(piscifactorias.get(0).getCapacidadMaximaComida());
             piscifactorias.get(0).añadirComidaVegetal(piscifactorias.get(0).getCapacidadMaximaComida());
+
+            CrearRecompensa.createAlgasReward(1);
+            CrearRecompensa.createPiensoReward(1);
+            CrearRecompensa.createComidaReward(1);
+            CrearRecompensa.createMonedasReward(1);
+            CrearRecompensa.createTanqueReward(1, "A");
+            CrearRecompensa.createPiscifactoriaReward(1, "A");
+            CrearRecompensa.createPiscifactoriaReward(1, "B");
+            CrearRecompensa.createAlmacenReward("A");
+            CrearRecompensa.createAlmacenReward("B");
+            CrearRecompensa.createAlmacenReward("C");
+            CrearRecompensa.createAlmacenReward("D");
+            
             guardarEstado();
         }
     }
@@ -177,6 +191,7 @@ public class Simulador {
                 "Limpiar tanque",
                 "Vaciar tanque",
                 "Mejorar",
+                "Recompensas",
                 "Pasar varios días",
                 "Salir"
         });
@@ -852,6 +867,32 @@ public class Simulador {
         }
     }
 
+    /** Muestra un menú con las recompensas disponibles y permite al usuario seleccionar una. */
+    private void recompensas() {
+        System.out.println("\n================== Recompensas Disponibles =================");
+        String[] opciones = UsarRecompensa.getRewards();
+        MenuHelper.mostrarMenuCancelar(opciones);
+        String seleccion = opciones[InputHelper.solicitarNumero(0, opciones.length) - 1];
+
+        switch (seleccion) {
+            case "Algas I":
+                UsarRecompensa.readFood("algas_1.xml");
+                break;
+
+            case "Comida I":
+                UsarRecompensa.readFood("comida_1.xml"); 
+                break;
+
+            case "Pienso I":
+                UsarRecompensa.readFood("pienso_1.xml"); 
+                break;
+
+            case "Monedas I":
+                UsarRecompensa.readCoins("monedas_1.xml"); 
+                break;
+        }
+    }
+
     /** Añade 4 peces al primer tanque de la piscifactoría seleccionada que tenga espacio suficiente. */
     public void pecesRandom() {
         Piscifactoria piscifactoriaSeleccionada = selectPisc();
@@ -906,6 +947,104 @@ public class Simulador {
 
                 logger.log("Añadidos peces mediante la opción oculta a la piscifactoría " + piscifactoriaSeleccionada.getNombre() + ".");
             }
+        }
+    }
+
+    /**
+     * Distribuye una cantidad de comida entre las piscifactorias según el tipo de comida.
+     * 
+     * @param cantidadComida La cantidad de comida a distribuir.
+     * @param tipo El tipo de comida a distribuir ("algae", "animal", "general").
+     */
+    public static void distribuirComida(int cantidadComida, String tipo) {
+     
+        switch (tipo) {
+            case "algae":
+                int necesitanComidaVegetal = 0;
+
+                do {
+                    for (Piscifactoria piscifactoria : piscifactorias) {
+                        if (piscifactoria.getComidaVegetalActual() < piscifactoria.getCapacidadMaximaComida()) {
+                            necesitanComidaVegetal++;
+                        }
+                    }
+                    int comidaVegetalPorPiscifactoria = (necesitanComidaVegetal > 0) ? cantidadComida / necesitanComidaVegetal : 0;
+        
+                    for (Piscifactoria piscifactoria : piscifactorias) {
+                        if (piscifactoria.getComidaVegetalActual() < piscifactoria.getCapacidadMaximaComida()) {
+                            int espacioDisponibleVegetal = piscifactoria.getCapacidadMaximaComida() - piscifactoria.getComidaVegetalActual();
+                            int comidaMaxima = Math.min(espacioDisponibleVegetal, comidaVegetalPorPiscifactoria);
+                            piscifactoria.añadirComidaVegetal(comidaMaxima);
+                            cantidadComida -= comidaMaxima;
+                            necesitanComidaVegetal--;
+                        }
+                    }
+                } while (necesitanComidaVegetal != 0);
+                break;
+
+            case "animal":
+                int necesitanComidaAnimal = 0;
+
+                do {
+                    for (Piscifactoria piscifactoria : piscifactorias) {
+                        if (piscifactoria.getComidaAnimalActual() < piscifactoria.getCapacidadMaximaComida()) {
+                            necesitanComidaAnimal++;
+                        }
+                    }
+                    int comidaAnimalPorPiscifactoria = (necesitanComidaAnimal > 0) ? cantidadComida / necesitanComidaAnimal : 0;
+        
+                    for (Piscifactoria piscifactoria : piscifactorias) {
+                        if (piscifactoria.getComidaAnimalActual() < piscifactoria.getCapacidadMaximaComida()) {
+                            int espacioDisponibleAnimal = piscifactoria.getCapacidadMaximaComida() - piscifactoria.getComidaAnimalActual();
+                            int comidaMaxima = Math.min(espacioDisponibleAnimal, comidaAnimalPorPiscifactoria);
+                            piscifactoria.añadirComidaAnimal(comidaMaxima);
+                            cantidadComida -= comidaMaxima;
+                            necesitanComidaAnimal--;
+                        }
+                    }
+                } while (necesitanComidaAnimal != 0);
+                break;
+    
+            case "general":
+                necesitanComidaAnimal = 0;
+                necesitanComidaVegetal = 0;
+
+                do {
+                    for (Piscifactoria piscifactoria : piscifactorias) {
+                        if (piscifactoria.getComidaAnimalActual() < piscifactoria.getCapacidadMaximaComida()) {
+                            necesitanComidaAnimal++;
+                        }
+                        if (piscifactoria.getComidaVegetalActual() < piscifactoria.getCapacidadMaximaComida()) {
+                            necesitanComidaVegetal++;
+                        }
+                    }
+        
+                    int comidaAnimalPorPiscifactoria = (necesitanComidaAnimal > 0) ? (cantidadComida / 2) / necesitanComidaAnimal : 0;
+                    int comidaVegetalPorPiscifactoria = (necesitanComidaVegetal > 0) ? (cantidadComida / 2) / necesitanComidaVegetal : 0;
+        
+                    for (Piscifactoria piscifactoria : piscifactorias) {
+                        if (piscifactoria.getComidaAnimalActual() < piscifactoria.getCapacidadMaximaComida()) {
+                            int espacioDisponibleAnimal = piscifactoria.getCapacidadMaximaComida() - piscifactoria.getComidaAnimalActual();
+                            int comidaMaxima = Math.min(espacioDisponibleAnimal, comidaAnimalPorPiscifactoria);
+                            piscifactoria.añadirComidaAnimal(comidaMaxima);
+                            cantidadComida -= comidaMaxima;
+                            necesitanComidaAnimal--;
+                        }
+        
+                        if (piscifactoria.getComidaVegetalActual() < piscifactoria.getCapacidadMaximaComida()) {
+                            int espacioDisponibleVegetal = piscifactoria.getCapacidadMaximaComida() - piscifactoria.getComidaVegetalActual();
+                            int comidaMaxima = Math.min(espacioDisponibleVegetal, comidaVegetalPorPiscifactoria);
+                            piscifactoria.añadirComidaVegetal(comidaMaxima);
+                            cantidadComida -= comidaMaxima;
+                            necesitanComidaVegetal--;
+                        }
+                    }
+                } while (necesitanComidaAnimal != 0 && necesitanComidaVegetal != 0);
+                break;
+    
+            default:
+                System.out.println("Error: Tipo de comida no válido.");
+                break;
         }
     }
 
@@ -1204,14 +1343,14 @@ public class Simulador {
                 case 6:
                     simulador.nextDay();
                     if (almacenCentral != null) {
-                        almacenCentral.distribuirComida(simulador.piscifactorias);
+                        almacenCentral.distribuirComida(Simulador.piscifactorias);
                     }
                     simulador.guardarEstado();
                     break;
                 case 7:
                     simulador.addFood();
                     if (almacenCentral != null) {
-                        almacenCentral.distribuirComida(simulador.piscifactorias);
+                        almacenCentral.distribuirComida(Simulador.piscifactorias);
                     }
                     break;
                 case 8:
@@ -1230,6 +1369,9 @@ public class Simulador {
                     simulador.upgrade();
                     break;
                 case 13:
+                    simulador.recompensas();
+                    break;
+                case 14:
                     int dias = InputHelper.readInt("\nIngrese los dias para avanzar en el simulador: ");
                     simulador.nextDay(dias);
                     break;
@@ -1241,7 +1383,7 @@ public class Simulador {
                     System.out.println("\nAñadidas 1000 monedas mediante la opción oculta. Monedas actuales, " + monedas.getMonedas());
                     Simulador.logger.log("Añadidas monedas mediante la opción oculta.");
                     break;
-                case 14:
+                case 15:
                     running = false;
                     logger.log("Cierre de la partida");
                     simulador.guardarEstado();
@@ -1253,5 +1395,6 @@ public class Simulador {
         }
         InputHelper.close();
         Simulador.logger.close();
+        Simulador.transcriptor.close();
     }
 }
