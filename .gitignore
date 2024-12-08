@@ -12,3 +12,6 @@ logs/
 
 # Ignora la carpeta Transcripciones
 transcripciones/
+
+# Ignora la carpeta Rewards
+rewards/

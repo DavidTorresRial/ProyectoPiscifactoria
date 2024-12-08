@@ -186,11 +186,19 @@ public abstract class Piscifactoria {
     }
 
     public void setCantidadComidaAnimal(int cantidadComidaAnimal) {
-        this.cantidadComidaAnimal = cantidadComidaAnimal;
+        if (cantidadComidaAnimal > capacidadMaximaComida) {
+            this.cantidadComidaVegetal = capacidadMaximaComida;
+        } else {
+            this.cantidadComidaAnimal = cantidadComidaAnimal;
+        }
     }
 
     public void setCantidadComidaVegetal(int cantidadComidaVegetal) {
-        this.cantidadComidaVegetal = cantidadComidaVegetal;
+        if (cantidadComidaVegetal > capacidadMaximaComida) {
+            this.cantidadComidaVegetal = capacidadMaximaComida;
+        } else {
+            this.cantidadComidaVegetal = cantidadComidaVegetal;
+        }
     }
 
     /**
