@@ -2,16 +2,14 @@ package piscifactoria;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Random;
 
-import peces.propiedades.Activo;
-import peces.propiedades.Carnivoro;
+import peces.propiedades.Omnivoro;
 import peces.propiedades.Filtrador;
+import peces.propiedades.Carnivoro;
+import peces.propiedades.CarnivoroActivo;
 
 import peces.Pez;
 import tanque.Tanque;
-
-import commons.Simulador;
 
 /** Clase abstracta que representa una piscifactoría que gestiona tanques de peces. */
 public abstract class Piscifactoria {
@@ -19,7 +17,7 @@ public abstract class Piscifactoria {
     /** El nombre de la piscifactoría. */
     protected String nombre;
 
-    /** Lista de tanques con distintos tipos de peces. */
+    /** Lista para almacenar los tanques en la piscifactoria. */
     protected List<Tanque> tanques = new ArrayList<>();
     
     /** Número máximo de tanques permitidos en la piscifactoría. */
@@ -37,7 +35,7 @@ public abstract class Piscifactoria {
     /**
      * Constructor para crear una nueva piscifactoría.
      *
-     * @param nombre  El nombre de la piscifactoría.
+     * @param nombre El nombre de la piscifactoría.
      */
     public Piscifactoria(String nombre) {        
         this.nombre = nombre;
@@ -46,15 +44,28 @@ public abstract class Piscifactoria {
     /** Muestra toda la información de la piscifactoría. */
     public void showStatus() {
         System.out.println("\n=============== " + nombre + " ===============");
+        
+        int totalPeces = getTotalPeces();
+        int capacidadTotal = getCapacidadTotal();
+        int totalVivos = getTotalVivos();
+        int totalAlimentados = getTotalAlimentados();
+        int totalAdultos = getTotalAdultos();
+        int totalHembras = getTotalHembras();
+        int totalMachos = getTotalMachos();
+        int totalFertiles = getTotalFertiles();
+        int porcentajeOcupacion = (capacidadTotal > 0) ? (totalPeces * 100) / capacidadTotal : 0;
+        int porcentajeVivos = (totalPeces > 0) ? (totalVivos * 100) / totalPeces : 0;
+        int porcentajeAlimentados = (totalVivos > 0) ? (totalAlimentados * 100) / totalVivos : 0;
+        int porcentajeAdultos = (totalVivos > 0) ? (totalAdultos * 100) / totalVivos : 0;
+    
         System.out.println("Tanques: " + tanques.size());
-
-        System.out.println("Ocupación: " + getTotalPeces() + " / " + getCapacidadTotal() + " (" + ((getCapacidadTotal() > 0) ? (getTotalPeces() * 100) / getCapacidadTotal() : 0) + "%)");
-        System.out.println("Peces vivos: " + getTotalVivos() + " / " + getTotalPeces() + " (" + ((getTotalPeces() > 0) ? (getTotalVivos() * 100) / getTotalPeces() : 0) + "%)");
-        System.out.println("Peces alimentados: " + getTotalAlimentados() + " / " + getTotalVivos() + " (" + ((getTotalVivos() > 0) ? (getTotalAlimentados() * 100) / getTotalVivos() : 0) + "%)");
-        System.out.println("Peces adultos: " + getTotalAdultos() + " / " + getTotalVivos() + " (" + ((getTotalVivos() > 0) ? (getTotalAdultos() * 100) / getTotalVivos() : 0) + "%)");
-        System.out.println("Hembras / Machos: " + getTotalHembras() + " / " + getTotalMachos());
-        System.out.println("Fértiles: " + getTotalFertiles() + " / " + getTotalVivos());
-
+        System.out.println("Ocupación: " + totalPeces + " / " + capacidadTotal + " (" + porcentajeOcupacion + "%)");
+        System.out.println("Peces vivos: " + totalVivos + " / " + totalPeces + " (" + porcentajeVivos + "%)");
+        System.out.println("Peces alimentados: " + totalAlimentados + " / " + totalVivos + " (" + porcentajeAlimentados + "%)");
+        System.out.println("Peces adultos: " + totalAdultos + " / " + totalVivos + " (" + porcentajeAdultos + "%)");
+        System.out.println("Hembras / Machos: " + totalHembras + " / " + totalMachos);
+        System.out.println("Fértiles: " + totalFertiles + " / " + totalVivos);
+    
         showFood();
     }
 
@@ -94,13 +105,20 @@ public abstract class Piscifactoria {
     }
 
     /** Hace avanzar el ciclo de vida en la piscifactoría, alimentando a los peces y actualizando sus estados. */
-    public void nextDay() {
+    public int[] nextDay() {
+        int pecesVendidos = 0;
+        int monedasGanadas = 0;
+    
         for (Tanque tanque : tanques) {
             alimentarPeces(tanque);
-            tanque.nextDay();
+            int[] resultadoTanque = tanque.nextDay();
+            pecesVendidos += resultadoTanque[0];
+            monedasGanadas += resultadoTanque[1];
         }
+    
+        return new int[]{pecesVendidos, monedasGanadas};
     }
-
+    
     /** Mejora el almacén de comida aumentando su capacidad máxima. */
     public abstract void upgradeFood();
 
@@ -112,67 +130,25 @@ public abstract class Piscifactoria {
      *
      * @param tanque El tanque del que se alimentarán los peces.
      */
-    private void alimentarPeces(Tanque tanque) { // TODO alimentar en la clase pez haciendo una jerarquia de clases que extiendan de sus propiedades
-        Random rand = new Random();
+    private void alimentarPeces(Tanque tanque) {
 
         for (Pez pez : tanque.getPeces()) {
-            if (!pez.isVivo()) {
-                continue;
-            }
-
-            if (pez instanceof Filtrador) {
-                // Filtrador: 50% de probabilidad de no consumir comida
-                if (rand.nextDouble() < 0.5) {
-                    pez.setAlimentado(true);
-                    continue; // No consume comida
-                }
-                // Intentar alimentar al filtrador
-                if (cantidadComidaVegetal > 0) {
-                    cantidadComidaVegetal--;
-                    pez.setAlimentado(true);
-                } else if (Simulador.almacenCentral != null && Simulador.almacenCentral.getCantidadComidaVegetal() > 0) {
-                    // Extraer comida vegetal del almacén
-                    if (Simulador.almacenCentral.getCantidadComidaVegetal() >= 1) {
-                        Simulador.almacenCentral.setCantidadComidaVegetal(Simulador.almacenCentral.getCantidadComidaVegetal() - 1);
-                        cantidadComidaVegetal++;
-                        pez.setAlimentado(true);
+            if (pez.isVivo()) {
+                if (pez instanceof Omnivoro) {
+                    if (this.cantidadComidaAnimal >= this.cantidadComidaVegetal) {
+                        this.cantidadComidaAnimal -= pez.alimentar(this.cantidadComidaAnimal, this.cantidadComidaVegetal);
                     } else {
-                        System.out.println("No hay suficiente comida vegetal.");
+                        this.cantidadComidaVegetal -= pez.alimentar(this.cantidadComidaAnimal, this.cantidadComidaVegetal);
                     }
-                }
-            } else if (pez instanceof Carnivoro) {
-                // Carnívoro: Consume comida animal
-                if (cantidadComidaAnimal > 0) {
-                    cantidadComidaAnimal--;
-                    pez.setAlimentado(true);
-                } else if (Simulador.almacenCentral != null && Simulador.almacenCentral.getCantidadComidaAnimal() > 0) {
-                    // Extraer comida animal del almacén
-                    if (Simulador.almacenCentral.getCantidadComidaAnimal() >= 1) {
-                        Simulador.almacenCentral.setCantidadComidaAnimal(Simulador.almacenCentral.getCantidadComidaAnimal() - 1);
-                        cantidadComidaAnimal++;
-                        pez.setAlimentado(true);
-                    } else {
-                        System.out.println("No hay suficiente comida animal.");
-                    }
-                }
-            }
-
-            // Activo: 50% de probabilidad de consumir el doble de comida
-            if (pez instanceof Activo) {
-                if (pez.isAlimentado()) {
-                    // Verificar si puede consumir el doble
-                    if (rand.nextDouble() < 0.5) {
-                        if (pez instanceof Carnivoro && cantidadComidaAnimal > 0) {
-                            cantidadComidaAnimal--; // Consume una unidad adicional si es posible
-                        } else if (pez instanceof Filtrador && cantidadComidaVegetal > 0) {
-                            cantidadComidaVegetal--; // Consume una unidad adicional si es posible
-                        }
-                    }
+                } else if (pez instanceof Filtrador) {
+                    this.cantidadComidaVegetal -= pez.alimentar(this.cantidadComidaAnimal, this.cantidadComidaVegetal);
+                } else if (pez instanceof Carnivoro) {
+                    this.cantidadComidaAnimal -= pez.alimentar(this.cantidadComidaAnimal, this.cantidadComidaVegetal);
+                } else if (pez instanceof CarnivoroActivo) {
+                    this.cantidadComidaAnimal -= pez.alimentar(this.cantidadComidaAnimal, this.cantidadComidaVegetal);
                 }
             }
         }
-        System.out.println("\n(Comida vegetal restante: " + cantidadComidaVegetal + ")");
-        System.out.println("(Comida animal restante: " + cantidadComidaAnimal + ")");
     }
 
     /**
@@ -206,6 +182,22 @@ public abstract class Piscifactoria {
         } else {
             System.out.println("No se puede añadir la cantidad de comida vegetal: excede la capacidad.");
             return false;
+        }
+    }
+
+    public void setCantidadComidaAnimal(int cantidadComidaAnimal) {
+        if (cantidadComidaAnimal > capacidadMaximaComida) {
+            this.cantidadComidaVegetal = capacidadMaximaComida;
+        } else {
+            this.cantidadComidaAnimal = cantidadComidaAnimal;
+        }
+    }
+
+    public void setCantidadComidaVegetal(int cantidadComidaVegetal) {
+        if (cantidadComidaVegetal > capacidadMaximaComida) {
+            this.cantidadComidaVegetal = capacidadMaximaComida;
+        } else {
+            this.cantidadComidaVegetal = cantidadComidaVegetal;
         }
     }
 
@@ -252,7 +244,7 @@ public abstract class Piscifactoria {
      * @return La nueva capacidad máxima de comida después de la suma.
      */
     public int setCapacidadMaximaComida(int num) {
-        return capacidadMaximaComida += num;
+        return capacidadMaximaComida = num;
     }
 
     /**

@@ -26,15 +26,16 @@ public abstract class Pez {
     private boolean vivo = true;
 
     /** Estado de alimentación del pez: true si ha sido alimentado, false si no. */
-    private boolean alimentado = false;
+    protected boolean alimentado = false;
+
+    /**  Estado de madurez del pez: true si el pez ha alcanzado la madurez, false si no. */
+    private boolean maduro = false;
 
     /** Ciclo reproductivo del pez, decrementa hasta que el pez se vuelve fértil. */
     protected int ciclo;
 
     /** Datos específicos del pez extraídos de PecesDatos. */
     private PecesDatos datos;
-
-    private boolean primeraVez = true; // TODO revisar si es completamente necesario este atributo
 
     /**
      * Constructor que inicializa un Pez con su sexo y datos asociados.
@@ -74,9 +75,9 @@ public abstract class Pez {
                 edad++;
 
                 if (!sexo) {
-                    if (edad >= datos.getMadurez() && primeraVez) {
+                    if (edad >= datos.getMadurez() && !maduro) {
                         fertil = true;
-                        primeraVez = false;
+                        maduro = true;
                     } else if (edad >= datos.getMadurez()) {
                         ciclo--;
                         if (ciclo <= 0) {
@@ -117,6 +118,15 @@ public abstract class Pez {
      * @return una nueva instancia de la subclase correspondiente.
      */
     public abstract Pez clonar(boolean nuevoSexo);
+
+    /**
+     * Método abstracto que alimenta al pez.
+     * 
+     * @param cantidadComidaAnimal Cantidad de comida animal disponible.
+     * @param cantidadComidaVegetal Cantidad de comida vegetal disponible.
+     * @return La cantidad de comida a consumir.
+     */
+    public abstract int alimentar(int cantidadComidaAnimal, int cantidadComidaVegetal);
 
     /**
      * @return el nombre común del pez.
@@ -171,7 +181,7 @@ public abstract class Pez {
      * @return true si el pez es maduro, false si no.
      */
     public boolean isMaduro() {
-        if (edad >= datos.getMadurez()) {
+        if (maduro) {
             return true;
         } else {
             return false;
@@ -260,7 +270,7 @@ public abstract class Pez {
                 "\n  Sexo               : " + (sexo ? "Macho" : "Hembra") +
                 "\n  Vivo               : " + (vivo ? "Sí" : "No") +
                 "\n  Alimentado         : " + (alimentado ? "Sí" : "No") +
-                "\n  Adulto             : " + (edad >= datos.getMadurez() ? "Sí" : "No") +
+                "\n  Adulto             : " + (maduro ? "Sí" : "No") +
                 "\n  Fértil             : " + (fertil ? "Sí" : "No") +
                 "\n  Ciclo              : " + ciclo;
     }
