@@ -642,33 +642,7 @@ public class Simulador {
     public void sell() {
         var selectTank = selectTank();
         Tanque tanqueSeleccionado = selectTank.getValue();
-        if (tanqueSeleccionado != null) {
-            int pecesVendidos = 0;
-            int totalDinero = 0;
-
-            Iterator<Pez> iterator = tanqueSeleccionado.getPeces().iterator();
-
-            while (iterator.hasNext()) {
-                Pez pez = iterator.next();
-
-                if (pez.getEdad() >= pez.getDatos().getMadurez() && pez.isVivo()) {
-                    monedas.ganarMonedas(pez.getDatos().getMonedas());
-                    estadisticas.registrarVenta(pez.getNombre(), pez.getDatos().getMonedas());
-
-                    totalDinero += pez.getDatos().getMonedas();
-                    pecesVendidos++;
-
-                    iterator.remove();
-                }
-            }
-            if (pecesVendidos > 0) {
-                System.out.println("Vendidos " + pecesVendidos + " peces de la piscifactoría " + selectTank.getKey().getNombre() + " de forma manual por " + totalDinero + " monedas.");
-                logger.log("Vendidos " + pecesVendidos + " peces de la piscifactoría " + selectTank.getKey().getNombre() + " de forma manual.");
-                transcriptor.transcribir("Vendidos " + pecesVendidos + " peces de la piscifactoría " + selectTank.getKey().getNombre() + " de forma manual por " + totalDinero + " monedas.");
-            } else {
-                System.out.println("\nNo hay peces adultos para vender.");
-            }
-        }
+        Piscifactoria.sellFish(tanqueSeleccionado);
     }
 
     /** Elimina todos los peces muertos del tanque seleccionado. */
