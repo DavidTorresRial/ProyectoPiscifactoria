@@ -72,7 +72,7 @@ public class CrearRecompensa {
             Simulador.logger.log("Recompensa creada.");
             Simulador.transcriptor.transcribir("Recompensa " + name + " creada.");
         } catch (Exception e) {
-            e.printStackTrace();
+            Simulador.logger.logError("Error al crear la recompensa '" + name + "' en el archivo '" + fileName + "': " + e.getMessage());
         }
     }
 
@@ -130,7 +130,7 @@ public class CrearRecompensa {
             Simulador.logger.log("Recompensa creada.");
             Simulador.transcriptor.transcribir("Recompensa " + name + " creada.");
         } catch (Exception e) {
-            e.printStackTrace();
+            Simulador.logger.logError("Error al crear la recompensa '" + name + "' en el archivo '" + fileName + "': " + e.getMessage());
         }
     }
 
@@ -180,7 +180,6 @@ public class CrearRecompensa {
                 root.addElement("quantity").addText("1");
             }
 
-            // Guardar el documento actualizado o nuevo
             OutputFormat format = OutputFormat.createPrettyPrint();
             XMLWriter writer = new XMLWriter(new FileWriter(file), format);
             writer.write(document);
@@ -189,7 +188,7 @@ public class CrearRecompensa {
             Simulador.logger.log("Recompensa creada.");
             Simulador.transcriptor.transcribir("Recompensa " + name + " creada.");
         } catch (Exception e) {
-            e.printStackTrace();
+            Simulador.logger.logError("Error al crear la recompensa '" + name + "' en el archivo '" + fileName + "': " + e.getMessage());
         }
     }
 
@@ -238,7 +237,6 @@ public class CrearRecompensa {
                 root.addElement("quantity").addText("1");
             }
 
-            // Guardar el documento actualizado o nuevo
             OutputFormat format = OutputFormat.createPrettyPrint();
             XMLWriter writer = new XMLWriter(new FileWriter(file), format);
             writer.write(document);
@@ -247,7 +245,7 @@ public class CrearRecompensa {
             Simulador.logger.log("Recompensa creada.");
             Simulador.transcriptor.transcribir("Recompensa " + name + " creada.");
         } catch (Exception e) {
-            e.printStackTrace();
+            Simulador.logger.logError("Error al crear la recompensa '" + name + "' en el archivo '" + fileName + "': " + e.getMessage());
         }
     }
     
@@ -309,7 +307,7 @@ public class CrearRecompensa {
             Simulador.logger.log("Recompensa creada.");
             Simulador.transcriptor.transcribir("Recompensa " + name + " creada.");
         } catch (Exception e) {
-            e.printStackTrace();
+            Simulador.logger.logError("Error al crear la recompensa '" + name + "' en el archivo '" + fileName + "': " + e.getMessage());
         }
     }
 
@@ -371,7 +369,7 @@ public class CrearRecompensa {
             Simulador.logger.log("Recompensa creada.");
             Simulador.transcriptor.transcribir("Recompensa " + name + " creada.");
         } catch (Exception e) {
-            e.printStackTrace();
+            Simulador.logger.logError("Error al crear la recompensa '" + name + "' en el archivo '" + fileName + "': " + e.getMessage());
         }
     }
 
@@ -431,7 +429,7 @@ public class CrearRecompensa {
             Simulador.logger.log("Recompensa creada.");
             Simulador.transcriptor.transcribir("Recompensa " + name + " creada.");
         } catch (Exception e) {
-            e.printStackTrace();
+            Simulador.logger.logError("Error al crear la recompensa '" + name + "' en el archivo '" + fileName + "': " + e.getMessage());
         }
     }
 

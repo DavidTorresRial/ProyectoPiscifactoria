@@ -164,9 +164,15 @@ public class Simulador {
             CrearRecompensa.createPiensoReward(1);
             CrearRecompensa.createComidaReward(1);
             CrearRecompensa.createMonedasReward(1);
+
             CrearRecompensa.createTanqueReward(1, "A");
+            CrearRecompensa.createTanqueReward(2, "A");
+
             CrearRecompensa.createPiscifactoriaReward(1, "A");
             CrearRecompensa.createPiscifactoriaReward(1, "B");
+            CrearRecompensa.createPiscifactoriaReward(2, "A");
+            CrearRecompensa.createPiscifactoriaReward(2, "B");
+
             CrearRecompensa.createAlmacenReward("A");
             CrearRecompensa.createAlmacenReward("B");
             CrearRecompensa.createAlmacenReward("C");
@@ -885,25 +891,55 @@ public class Simulador {
     private void recompensas() {
         System.out.println("\n================== Recompensas Disponibles =================");
         String[] opciones = UsarRecompensa.getRewards();
+
         MenuHelper.mostrarMenuCancelar(opciones);
-        String seleccion = opciones[InputHelper.solicitarNumero(0, opciones.length) - 1];
-
-        switch (seleccion) {
-            case "Algas I":
-                UsarRecompensa.readFood("algas_1.xml");
-                break;
-
-            case "Comida I":
-                UsarRecompensa.readFood("comida_1.xml"); 
-                break;
-
-            case "Pienso I":
-                UsarRecompensa.readFood("pienso_1.xml"); 
-                break;
-
-            case "Monedas I":
-                UsarRecompensa.readCoins("monedas_1.xml"); 
-                break;
+        int opcion = InputHelper.solicitarNumero(0, opciones.length) -1;
+        if (opcion >= 0) {
+            String seleccion = opciones[opcion];
+    
+            switch (seleccion) {
+                case "Algas I":
+                    UsarRecompensa.readFood("algas_1.xml");
+                    break;
+    
+                case "Comida I":
+                    UsarRecompensa.readFood("comida_1.xml"); 
+                    break;
+    
+                case "Pienso I":
+                    UsarRecompensa.readFood("pienso_1.xml"); 
+                    break;
+                
+                case "Monedas I":
+                    UsarRecompensa.readCoins("monedas_1.xml"); 
+                    break;
+    
+                case "Tanque de mar":
+                    break;
+    
+                case "Tanque de rio":
+                    break;
+    
+                case "Piscifactoria de mar [A]", "Piscifactoria de mar [B]":
+                    Piscifactoria pm = UsarRecompensa.readPiscifactoria(false);
+                    if (pm != null) {
+                        piscifactorias.add(pm);
+                    }
+                    break;
+    
+                case "Piscifactoria de rio [A]", "Piscifactoria de rio [B]":
+                    Piscifactoria pr = UsarRecompensa.readPiscifactoria(true);
+                    if (pr != null) {
+                        piscifactorias.add(pr);
+                    }
+                    break;
+    
+                case "Almacen central [A]", "Almacen central [B]", "Almacen central [C]", "Almacen central [D]":
+                    if (UsarRecompensa.readAlmacenCentral() && almacenCentral == null) {
+                        almacenCentral = new AlmacenCentral();
+                    }
+                    break;
+            } 
         }
     }
 
