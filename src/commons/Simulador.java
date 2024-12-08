@@ -891,11 +891,12 @@ public class Simulador {
     private void recompensas() {
         System.out.println("\n================== Recompensas Disponibles =================");
         String[] opciones = UsarRecompensa.getRewards();
+        String[] opcionesSinCorchete = UsarRecompensa.getRewardsWithoutBrackets(opciones);
 
         MenuHelper.mostrarMenuCancelar(opciones);
         int opcion = InputHelper.solicitarNumero(0, opciones.length) -1;
         if (opcion >= 0) {
-            String seleccion = opciones[opcion];
+            String seleccion = opcionesSinCorchete[opcion];
     
             switch (seleccion) {
                 case "Algas I":
@@ -920,21 +921,21 @@ public class Simulador {
                 case "Tanque de rio":
                     break;
     
-                case "Piscifactoria de mar [A]", "Piscifactoria de mar [B]":
+                case "Piscifactoria de mar":
                     Piscifactoria pm = UsarRecompensa.readPiscifactoria(false);
                     if (pm != null) {
                         piscifactorias.add(pm);
                     }
                     break;
     
-                case "Piscifactoria de rio [A]", "Piscifactoria de rio [B]":
+                case "Piscifactoria de rio":
                     Piscifactoria pr = UsarRecompensa.readPiscifactoria(true);
                     if (pr != null) {
                         piscifactorias.add(pr);
                     }
                     break;
     
-                case "Almacen central [A]", "Almacen central [B]", "Almacen central [C]", "Almacen central [D]":
+                case "Almacen central":
                     if (UsarRecompensa.readAlmacenCentral() && almacenCentral == null) {
                         almacenCentral = new AlmacenCentral();
                     }
