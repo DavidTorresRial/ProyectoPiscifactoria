@@ -2,6 +2,8 @@ package helpers;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import commons.Simulador;
@@ -101,14 +103,15 @@ public class FileHelper {
      */
     public static String[] obtenerArchivosEnDirectorio(String rutaDirectorio) {
         File folder = new File(rutaDirectorio);
-    
+
         if (folder.exists() && folder.isDirectory()) {
             File[] archivos = folder.listFiles();
-    
+
             if (archivos != null && archivos.length > 0) {
+                Arrays.sort(archivos, Comparator.comparing(File::getName));
 
                 List<String> nombresArchivos = new ArrayList<>();
-    
+
                 for (File archivo : archivos) {
                     if (archivo.isFile()) {
                         String nombreArchivo = archivo.getName();
@@ -116,7 +119,6 @@ public class FileHelper {
                     }
                 }
                 return nombresArchivos.toArray(new String[0]);
-
             } else {
                 Simulador.logger.logError("No hay archivos en el directorio: " + rutaDirectorio);
                 return new String[0];
