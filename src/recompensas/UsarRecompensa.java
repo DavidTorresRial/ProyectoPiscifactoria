@@ -154,7 +154,7 @@ public class UsarRecompensa {
      * 
      * @param fileName Nombre del archivo XML que contiene la recompensa.
      */
-    public static void readTank(String fileName) {
+    public static boolean readTank(String fileName) {
         File xmlFile = new File("rewards/" + fileName);
         if (xmlFile.exists()) {
             try {
@@ -165,17 +165,6 @@ public class UsarRecompensa {
                 Element root = document.getRootElement();
 
                 Element name = root.element("name");
-                
-                Element give = root.element("give");
-                Element building = give.element("building");
-                String code = building.attributeValue("code");
-                int tipo = Integer.parseInt(code);
-    
-                if (tipo == 2) {
-                    // Crear tanque de rio // TODO 
-                } else {
-                    // Crear tanque de mar // TODO 
-                }
     
                 Element quantityElement = root.element("quantity");
                 int quantity = Integer.parseInt(quantityElement.getText());
@@ -198,6 +187,9 @@ public class UsarRecompensa {
             } catch (Exception e) {
                 Simulador.logger.logError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
             }
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -476,6 +468,7 @@ public class UsarRecompensa {
         List<String> rewardNames = new ArrayList<>();
         
         Boolean[] partesAlmacen = {false, false, false, false};
+
         Boolean[] partesPiscifactoriaRio = {false, false};
         Boolean[] partesPiscifactoriaMar = {false, false};
         
@@ -516,7 +509,6 @@ public class UsarRecompensa {
                                         partesAlmacen[3] = true;
                                         break;
                                     default:
-                                        break;
                                 }
                             }
                         }
@@ -535,7 +527,6 @@ public class UsarRecompensa {
                                         partesPiscifactoriaMar[1] = true;
                                         break;
                                     default:
-                                        break;
                                 }
                             }
                         }
@@ -554,8 +545,26 @@ public class UsarRecompensa {
                                         partesPiscifactoriaRio[1] = true;
                                         break;
                                     default:
-                                        break;
                                 }
+                            }
+                        }
+
+                        // Procesar las partes para Tanque de mar
+                        if (buildingElement != null && buildingElement.getText().contains("Tanque de mar")) {
+                            Element partElement = document.getRootElement().element("give").element("part");
+
+                            if (partElement != null) {
+                                rewardNames.add("Tanque de mar [A]");
+
+                            }
+                        }
+
+                        // Procesar las partes para Tanque de rio
+                        if (buildingElement != null && buildingElement.getText().contains("Tanque de rio")) {
+                            Element partElement = document.getRootElement().element("give").element("part");
+
+                            if (partElement != null) {
+                                rewardNames.add("Tanque de rio [A]");
                             }
                         }
                     }

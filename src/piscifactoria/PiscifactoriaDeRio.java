@@ -46,14 +46,18 @@ public class PiscifactoriaDeRio extends Piscifactoria {
     /** Agrega un nuevo tanque a la piscifactoría aumentando el costo según la cantidad de tanques actuales. */
     @Override
     public void addTanque() {
-        int costoTanque = 150 * (tanques.size() + 1);
-        if (Simulador.monedas.gastarMonedas(costoTanque)) {
-            tanques.add(new Tanque(tanques.size() + 1, 25));
-            System.out.println("\nComprado un tanque número " + tanques.size() + " de la piscifactoría " + nombre + ".");
-            Simulador.logger.log("Comprado un tanque para la piscifactoría " + nombre + ".");
-            Simulador.transcriptor.transcribir("Comprado un tanque número " + tanques.size() + " de la piscifactoría " + nombre + ".");
+        if (tanques.size() < numeroMaximoTanques) {
+            int costoTanque = 150 * (tanques.size() + 1);
+            if (Simulador.monedas.gastarMonedas(costoTanque)) {
+                tanques.add(new Tanque(tanques.size() + 1, 25));
+                System.out.println("\nComprado un tanque número " + tanques.size() + " de la piscifactoría " + nombre + ".");
+                Simulador.logger.log("Comprado un tanque para la piscifactoría " + nombre + ".");
+                Simulador.transcriptor.transcribir("Comprado un tanque número " + tanques.size() + " de la piscifactoría " + nombre + ".");
+            } else {
+                System.out.println("\nNo tienes suficientes monedas para agregar un tanque de río. Necesitas " + costoTanque + " monedas.");
+            }
         } else {
-            System.out.println("\nNo tienes suficientes monedas para agregar un tanque de río. Necesitas " + costoTanque + " monedas.");
+            System.out.println("\nCapacidad máxima alcanzada: no se pueden añadir más tanques a \"" + nombre + "\".");
         }
     }    
 }

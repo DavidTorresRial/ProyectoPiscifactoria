@@ -6,7 +6,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -888,11 +887,42 @@ public class Simulador {
                 case "Monedas I":
                     UsarRecompensa.readCoins("monedas_1.xml"); 
                     break;
-    
-                case "Tanque de mar":
+
+                case "Tanque de rio":
+                    Piscifactoria selectPiscRio = selectPisc();
+                    if (selectPiscRio instanceof PiscifactoriaDeRio) {
+                        if (selectPiscRio.getTanques().size() < selectPiscRio.getNumeroMaximoTanques()) {
+                            if (UsarRecompensa.readTank("tanque_m.xml")) {
+                                selectPiscRio.getTanques().add(new Tanque(selectPiscRio.getTanques().size() + 1, 100));
+                            }
+                        } else {
+                            System.out.println("\nCapacidad máxima alcanzada: no se pueden añadir más tanques a \"" + selectPiscRio.getNombre() + "\".");
+                        }
+                    } else {
+                        System.out.println("\nNo puedes añadir el tanque a una Piscifactria de Rio.");
+                    }
                     break;
     
-                case "Tanque de rio":
+                case "Tanque de mar":
+                    Piscifactoria selectPiscMar= selectPisc();
+                    if (selectPiscMar instanceof PiscifactoriaDeMar) {
+                        if (selectPiscMar.getTanques().size() < selectPiscMar.getNumeroMaximoTanques()) {
+                            if (UsarRecompensa.readTank("tanque_m.xml")) {
+                                selectPiscMar.getTanques().add(new Tanque(selectPiscMar.getTanques().size() + 1, 100));
+                            }
+                        } else {
+                            System.out.println("\nCapacidad máxima alcanzada: no se pueden añadir más tanques a \"" + selectPiscMar.getNombre() + "\".");
+                        }
+                    } else {
+                        System.out.println("\nNo puedes añadir el tanque a una Piscifactria de Rio.");
+                    }
+                    break;
+                
+                case "Piscifactoria de rio":
+                    Piscifactoria pr = UsarRecompensa.readPiscifactoria(true);
+                    if (pr != null) {
+                        piscifactorias.add(pr);
+                    }
                     break;
     
                 case "Piscifactoria de mar":
@@ -902,18 +932,16 @@ public class Simulador {
                     }
                     break;
     
-                case "Piscifactoria de rio":
-                    Piscifactoria pr = UsarRecompensa.readPiscifactoria(true);
-                    if (pr != null) {
-                        piscifactorias.add(pr);
-                    }
-                    break;
-    
                 case "Almacen central":
-                    if (UsarRecompensa.readAlmacenCentral() && almacenCentral == null) {
-                        almacenCentral = new AlmacenCentral();
+                    if (almacenCentral == null) {
+                        if (UsarRecompensa.readAlmacenCentral()) {
+                            almacenCentral = new AlmacenCentral();
+                        }
+                    } else {
+                        System.out.println("\nYa dispones de un Almacen Central.");
                     }
                     break;
+                default:
             } 
         }
     }
@@ -1065,10 +1093,6 @@ public class Simulador {
                         }
                     }
                 } while (necesitanComidaAnimal != 0 && necesitanComidaVegetal != 0);
-                break;
-    
-            default:
-                System.out.println("Error: Tipo de comida no válido.");
                 break;
         }
     }
@@ -1340,86 +1364,91 @@ public class Simulador {
      * @param args argumentos de la línea de comandos
      */
     public static void main(String[] args) {
-        Simulador simulador = new Simulador();
-        simulador.init();
-
-        boolean running = true;
-        while (running) {
-
-            simulador.menu();
-            int option = InputHelper.readInt("Ingrese su opción: ");
-
-            switch (option) {
-                case 1:
-                    simulador.showGeneralStatus();
-                    break;
-                case 2:
-                    simulador.showSpecificStatus();
-                    break;
-                case 3:
-                    simulador.showTankStatus();
-                    break;
-                case 4:
-                    simulador.showStats();
-                    break;
-                case 5:
-                    simulador.showIctio();
-                    break;
-                case 6:
-                    simulador.nextDay();
-                    if (almacenCentral != null) {
-                        almacenCentral.distribuirComida(Simulador.piscifactorias);
-                    }
-                    simulador.guardarEstado();
-                    break;
-                case 7:
-                    simulador.addFood();
-                    if (almacenCentral != null) {
-                        almacenCentral.distribuirComida(Simulador.piscifactorias);
-                    }
-                    break;
-                case 8:
-                    simulador.addFish();
-                    break;
-                case 9:
-                    simulador.sell();
-                    break;
-                case 10:
-                    simulador.cleanTank();
-                    break;
-                case 11:
-                    simulador.emptyTank();
-                    break;
-                case 12:
-                    simulador.upgrade();
-                    break;
-                case 13:
-                    simulador.recompensas();
-                    break;
-                case 14:
-                    int dias = InputHelper.readInt("\nIngrese los dias para avanzar en el simulador: ");
-                    simulador.nextDay(dias);
-                    break;
-                case 98:
-                    simulador.pecesRandom();
-                    break;
-                case 99:
-                    Simulador.monedas.ganarMonedas(1000);
-                    System.out.println("\nAñadidas 1000 monedas mediante la opción oculta. Monedas actuales, " + monedas.getMonedas());
-                    Simulador.logger.log("Añadidas monedas mediante la opción oculta.");
-                    break;
-                case 15:
-                    running = false;
-                    logger.log("Cierre de la partida");
-                    simulador.guardarEstado();
-                    System.out.println("\nSaliendo del simulador.");
-                    break;
-                default:
-                    System.out.println("\nOpción no válida. Por favor, intente de nuevo.");
+        try {
+            Simulador simulador = new Simulador();
+            simulador.init();
+    
+            boolean running = true;
+            while (running) {
+    
+                simulador.menu();
+                int option = InputHelper.readInt("Ingrese su opción: ");
+    
+                switch (option) {
+                    case 1:
+                        simulador.showGeneralStatus();
+                        break;
+                    case 2:
+                        simulador.showSpecificStatus();
+                        break;
+                    case 3:
+                        simulador.showTankStatus();
+                        break;
+                    case 4:
+                        simulador.showStats();
+                        break;
+                    case 5:
+                        simulador.showIctio();
+                        break;
+                    case 6:
+                        simulador.nextDay();
+                        if (almacenCentral != null) {
+                            almacenCentral.distribuirComida(Simulador.piscifactorias);
+                        }
+                        simulador.guardarEstado();
+                        break;
+                    case 7:
+                        simulador.addFood();
+                        if (almacenCentral != null) {
+                            almacenCentral.distribuirComida(Simulador.piscifactorias);
+                        }
+                        break;
+                    case 8:
+                        simulador.addFish();
+                        break;
+                    case 9:
+                        simulador.sell();
+                        break;
+                    case 10:
+                        simulador.cleanTank();
+                        break;
+                    case 11:
+                        simulador.emptyTank();
+                        break;
+                    case 12:
+                        simulador.upgrade();
+                        break;
+                    case 13:
+                        simulador.recompensas();
+                        break;
+                    case 14:
+                        int dias = InputHelper.readInt("\nIngrese los dias para avanzar en el simulador: ");
+                        simulador.nextDay(dias);
+                        break;
+                    case 98:
+                        simulador.pecesRandom();
+                        break;
+                    case 99:
+                        Simulador.monedas.ganarMonedas(1000);
+                        System.out.println("\nAñadidas 1000 monedas mediante la opción oculta. Monedas actuales, " + monedas.getMonedas());
+                        Simulador.logger.log("Añadidas monedas mediante la opción oculta.");
+                        break;
+                    case 15:
+                        running = false;
+                        logger.log("Cierre de la partida");
+                        simulador.guardarEstado();
+                        System.out.println("\nSaliendo del simulador.");
+                        break;
+                    default:
+                        System.out.println("\nOpción no válida. Por favor, intente de nuevo.");
+                }
             }
+        } catch (Exception e) {
+            Simulador.logger.logError("Error en el Main.");
+        } finally {
+            InputHelper.close();
+            Simulador.logger.close();
+            Simulador.transcriptor.close();
         }
-        InputHelper.close();
-        Simulador.logger.close();
-        Simulador.transcriptor.close();
     }
 }
