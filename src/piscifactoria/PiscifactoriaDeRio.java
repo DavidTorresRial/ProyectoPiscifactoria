@@ -7,13 +7,13 @@ import tanque.Tanque;
 public class PiscifactoriaDeRio extends Piscifactoria {
 
     /** Costo en monedas para mejorar la capacidad de comida. */
-    private static final int COSTO_MEJORA = 50;
+    private final int COSTO_MEJORA = 50;
 
     /** Incremento de capacidad de comida en cada mejora. */
-    private static final int INCREMENTO_CAPACIDAD = 25;
+    private final int INCREMENTO_CAPACIDAD = 25;
 
     /** Capacidad máxima de comida permitida. */
-    private static final int CAPACIDAD_MAXIMA_PERMITIDA = 250;
+    private final int CAPACIDAD_MAXIMA_PERMITIDA = 250;
 
     /**
      * Crea una nueva piscifactoría de río con un tanque inicial.

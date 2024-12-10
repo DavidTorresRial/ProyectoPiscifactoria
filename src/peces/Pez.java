@@ -105,9 +105,10 @@ public abstract class Pez {
     /** Reinicia el estado del pez a su condición inicial. */
     public void reset() {
         edad = 0;
-        fertil = false;
         vivo = true;
+        fertil = false;
         alimentado = false;
+        maduro = false;
         ciclo = datos.getCiclo();
     }
 
@@ -181,11 +182,7 @@ public abstract class Pez {
      * @return true si el pez es maduro, false si no.
      */
     public boolean isMaduro() {
-        if (maduro) {
-            return true;
-        } else {
-            return false;
-        }
+        return maduro;
     }
 
     /**
@@ -239,21 +236,21 @@ public abstract class Pez {
     }
 
     /**
+     * Establece si el pez es maduro.
+     * 
+     * @param alimentado true si el pez es maduro, false si no.
+     */
+    public void setMaduro(boolean maduro) {
+        this.maduro = maduro;
+    }
+
+    /**
      * Establece el ciclo reproductivo del pez.
      * 
      * @param ciclo el nuevo ciclo reproductivo.
      */
     public void setCiclo(int ciclo) {
         this.ciclo = ciclo;
-    }
-
-    /**
-     * Establece los datos específicos del pez.
-     * 
-     * @param datos el objeto PecesDatos asociado.
-     */
-    public void setDatos(PecesDatos datos) {
-        this.datos = datos;
     }
 
     /**

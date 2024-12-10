@@ -23,12 +23,14 @@ import helpers.InputHelper;
 import helpers.Logger;
 import helpers.MenuHelper;
 import helpers.Transcriptor;
+
 import propiedades.AlmacenPropiedades;
 import propiedades.PecesDatos;
 import propiedades.PecesProps;
+import estadisticas.Estadisticas;
+
 import recompensas.CrearRecompensa;
 import recompensas.UsarRecompensa;
-import estadisticas.Estadisticas;
 
 import piscifactoria.Piscifactoria;
 import piscifactoria.PiscifactoriaDeMar;
@@ -88,10 +90,13 @@ public class Simulador {
     /** Almacén central de comida para abastecer las piscifactorías. */
     public static AlmacenCentral almacenCentral;
 
+    /**  Logger para gestionar los registros de eventos y errores del sistema. */
     public static Logger logger;
 
+    /**  Transcriptor para registrar los eventos de las piscifactorías en archivos. */
     public static Transcriptor transcriptor;
 
+    /**  Archivo de registro de errores (logs), donde se guardan los errores generales del sistema. */
     public final static File errorLog = new File("logs/0_errors.log");
 
     /** Metodo que inicializa todo el sistema. */
@@ -115,9 +120,14 @@ public class Simulador {
                 respuesta = InputHelper.readString("¿Desea cargar una partida existente? (S/N): ").toUpperCase();
                 if (respuesta.equals("S")) {
                     String partida = FileHelper.mostrarMenuConArchivos("saves");
-                    logger = Logger.getInstance(partida);
-                    transcriptor = Transcriptor.getInstance(partida);
-                    load(partida);
+                    if (partida == null) {
+                        respuesta = "N";
+                    } else {
+                        logger = Logger.getInstance(partida);
+                        transcriptor = Transcriptor.getInstance(partida);
+
+                        load(partida);
+                    }
                 }
             } while (!respuesta.equals("S") && !respuesta.equals("N"));
         }
@@ -130,23 +140,24 @@ public class Simulador {
             logger.log("Inicio de la simulación: " + nombreEntidad);
             transcriptor.transcribir("Inicio de la simulación: " + nombreEntidad);
             transcriptor.transcribir("Dinero inicial: " + monedas.getMonedas() + " monedas.");
+
             transcriptor.transcribir("\n========= Peces =========\n" +
                 "Rio:\n" +
-                "  - " + AlmacenPropiedades.CARPA_PLATEADA.getNombre() + "\n" +
-                "  - " + AlmacenPropiedades.PEJERREY.getNombre() + "\n" +
-                "  - " + AlmacenPropiedades.PERCA_EUROPEA.getNombre() + "\n" +
-                "  - " + AlmacenPropiedades.SALMON_CHINOOK.getNombre() + "\n" +
-                "  - " + AlmacenPropiedades.TILAPIA_NILO.getNombre() + "\n" +
+                "  -" + AlmacenPropiedades.CARPA_PLATEADA.getNombre() + "\n" +
+                "  -" + AlmacenPropiedades.PEJERREY.getNombre() + "\n" +
+                "  -" + AlmacenPropiedades.PERCA_EUROPEA.getNombre() + "\n" +
+                "  -" + AlmacenPropiedades.SALMON_CHINOOK.getNombre() + "\n" +
+                "  -" + AlmacenPropiedades.TILAPIA_NILO.getNombre() + "\n" +
                 "\nMar:\n" +
-                "  - " + AlmacenPropiedades.ARENQUE_ATLANTICO.getNombre() + "\n" +
-                "  - " + AlmacenPropiedades.BESUGO.getNombre() + "\n" +
-                "  - " + AlmacenPropiedades.LENGUADO_EUROPEO.getNombre() + "\n" +
-                "  - " + AlmacenPropiedades.LUBINA_RAYADA.getNombre() + "\n" +
-                "  - " + AlmacenPropiedades.ROBALO.getNombre() + "\n" +
+                "  -" + AlmacenPropiedades.ARENQUE_ATLANTICO.getNombre() + "\n" +
+                "  -" + AlmacenPropiedades.BESUGO.getNombre() + "\n" +
+                "  -" + AlmacenPropiedades.LENGUADO_EUROPEO.getNombre() + "\n" +
+                "  -" + AlmacenPropiedades.LUBINA_RAYADA.getNombre() + "\n" +
+                "  -" + AlmacenPropiedades.ROBALO.getNombre() + "\n" +
                 "\nDoble:\n" +
-                "  - " + AlmacenPropiedades.DORADA.getNombre() + "\n" +
-                "  - " + AlmacenPropiedades.SALMON_ATLANTICO.getNombre() + "\n" +
-                "  - " + AlmacenPropiedades.TRUCHA_ARCOIRIS.getNombre()
+                "  -" + AlmacenPropiedades.DORADA.getNombre() + "\n" +
+                "  -" + AlmacenPropiedades.SALMON_ATLANTICO.getNombre() + "\n" +
+                "  -" + AlmacenPropiedades.TRUCHA_ARCOIRIS.getNombre()
             );
             estadisticas = new Estadisticas(pecesImplementados);
             transcriptor.transcribir("-------------------------" + "\n>>> Inicio del día " + (dia + 1) + ".");
@@ -158,24 +169,6 @@ public class Simulador {
             piscifactorias.add(new PiscifactoriaDeRio(nombrePiscifactoria));
             piscifactorias.get(0).añadirComidaAnimal(piscifactorias.get(0).getCapacidadMaximaComida());
             piscifactorias.get(0).añadirComidaVegetal(piscifactorias.get(0).getCapacidadMaximaComida());
-
-            CrearRecompensa.createAlgasReward(1);
-            CrearRecompensa.createPiensoReward(1);
-            CrearRecompensa.createComidaReward(1);
-            CrearRecompensa.createMonedasReward(1);
-
-            CrearRecompensa.createTanqueReward(1, "A");
-            CrearRecompensa.createTanqueReward(2, "A");
-
-            CrearRecompensa.createPiscifactoriaReward(1, "A");
-            CrearRecompensa.createPiscifactoriaReward(1, "B");
-            CrearRecompensa.createPiscifactoriaReward(2, "A");
-            CrearRecompensa.createPiscifactoriaReward(2, "B");
-
-            CrearRecompensa.createAlmacenReward("A");
-            CrearRecompensa.createAlmacenReward("B");
-            CrearRecompensa.createAlmacenReward("C");
-            CrearRecompensa.createAlmacenReward("D");
             
             guardarEstado();
         }
@@ -373,11 +366,8 @@ public class Simulador {
         logger.log("Fin del día " + dia + ".");
         transcriptor.transcribir("Fin del día " + dia + ".");
 
-        // Con esto cuenta los peces que hai de rio y de mar
-        int pecesDeRio = 0;
-        int pecesDeMar = 0;
+        int pecesDeRio = 0, pecesDeMar = 0;
 
-        // Y ahorra recorremos las piscifactorías y contamos los peces según el tipo de rio o mar
         for (Piscifactoria piscifactoria : piscifactorias) {
             if (piscifactoria instanceof PiscifactoriaDeRio) {
                 pecesDeRio += piscifactoria.getTotalVivos();
@@ -385,6 +375,7 @@ public class Simulador {
                 pecesDeMar += piscifactoria.getTotalVivos();
             }
         }
+
         transcriptor.transcribir("Peces actuales: " + pecesDeRio + " de río y " + pecesDeMar + " de mar.");
         transcriptor.transcribir(totalMonedasGanadas + " monedas ganadas por un total de " + monedas.getMonedas() + ".");
 
@@ -769,7 +760,8 @@ public class Simulador {
             System.out.println("\n=================== Mejorar Piscifactoría ==================");
             String[] opcionesMejoraPiscifactoria = { "Comprar tanque", "Aumentar almacén de comida" };
             MenuHelper.mostrarMenuCancelar(opcionesMejoraPiscifactoria);
-            int mejoraPiscifactoria = InputHelper.readInt("Seleccione la mejora: ");
+
+            int mejoraPiscifactoria = InputHelper.solicitarNumero(0, opcionesMejoraPiscifactoria.length);
 
             Piscifactoria piscifactoriaSeleccionada = selectPisc();
 
@@ -863,8 +855,8 @@ public class Simulador {
     /** Muestra un menú con las recompensas disponibles y permite al usuario seleccionar una. */
     private void recompensas() {
         System.out.println("\n================== Recompensas Disponibles =================");
-        String[] opciones = UsarRecompensa.getRewards();
-        String[] opcionesSinCorchete = UsarRecompensa.getRewardsWithoutBrackets(opciones);
+        String[] opciones = FileHelper.getRewards();
+        String[] opcionesSinCorchete = FileHelper.getRewardsWithoutBrackets(opciones);
 
         MenuHelper.mostrarMenuCancelar(opciones);
         int opcion = InputHelper.solicitarNumero(0, opciones.length) -1;
@@ -944,6 +936,28 @@ public class Simulador {
                 default:
             } 
         }
+    }
+
+    /** Genera diversas recompensas. */
+    private void generarRecompensas() {
+        CrearRecompensa.createAlgasReward(1);
+        CrearRecompensa.createPiensoReward(1);
+        CrearRecompensa.createComidaReward(1);
+
+        CrearRecompensa.createMonedasReward(1);
+
+        CrearRecompensa.createTanqueReward(1, "A");
+        CrearRecompensa.createTanqueReward(2, "A");
+
+        CrearRecompensa.createPiscifactoriaReward(1, "A");
+        CrearRecompensa.createPiscifactoriaReward(1, "B");
+        CrearRecompensa.createPiscifactoriaReward(2, "A");
+        CrearRecompensa.createPiscifactoriaReward(2, "B");
+
+        CrearRecompensa.createAlmacenReward("A");
+        CrearRecompensa.createAlmacenReward("B");
+        CrearRecompensa.createAlmacenReward("C");
+        CrearRecompensa.createAlmacenReward("D");
     }
 
     /** Añade 4 peces al primer tanque de la piscifactoría seleccionada que tenga espacio suficiente. */
@@ -1097,24 +1111,8 @@ public class Simulador {
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public void guardarEstado() { // TODO 
+    /** Guarda el estado actual del simulador en un archivo JSON en la carpeta "saves". */
+    public void guardarEstado() {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
         // Crear estructura principal con LinkedHashMap para preservar el orden
@@ -1196,6 +1194,11 @@ public class Simulador {
         }
     }
 
+    /**
+     * Carga el estado de una partida desde un archivo JSON y restablece los datos del simulador,
+     * 
+     * @param archivoPartida El nombre del archivo de partida a cargar.
+     */
     public void load(String archivoPartida) {
         try {
             // Leer el archivo JSON
@@ -1277,10 +1280,20 @@ public class Simulador {
     
                     for (JsonElement tanqueElement : tanquesArray) {
                         JsonObject tanqueJson = tanqueElement.getAsJsonObject();
-                        Tanque tanque = new Tanque(
-                                tanqueJson.get("num").getAsInt(),
-                                25 // O ajustar capacidad si es dinámico
-                        );
+                        Tanque tanque;
+                        if (piscifactoria instanceof PiscifactoriaDeRio) {
+                            tanque = new Tanque(
+                                    tanqueJson.get("num").getAsInt(),
+                                    25
+                            );
+                        } else if (piscifactoria instanceof PiscifactoriaDeMar) {
+                            tanque = new Tanque(
+                                    tanqueJson.get("num").getAsInt(),
+                                    100
+                            );
+                        } else {
+                            tanque = null;
+                        }
     
                         // Cargar peces directamente aquí
                         if (tanqueJson.has("peces") && !tanqueJson.get("peces").isJsonNull()) {
@@ -1326,42 +1339,19 @@ public class Simulador {
                 }
             }
     
-            System.out.println("Partida cargada: " + archivoPartida);
+            System.out.println("\nPartida cargada: " + archivoPartida);
             logger.log("Sistema cargado.");
         } catch (Exception e) {
             System.err.println("Error al cargar el archivo: " + e.getMessage());
         }
     }
-    
-    
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     /**
-     * Punto de entrada principal del simulador. Inicializa la simulación y
-     * entra en un bucle principal que muestra el menú y ejecuta las acciones
-     * seleccionadas por el usuario.
+     * Método principal que gestiona el flujo del simulador, 
+     * mostrando el menú y procesando las opciones del usuario.
+     * El ciclo continúa hasta que el usuario decide salir.
      *
-     * @param args argumentos de la línea de comandos
+     * @param args Argumentos de línea de comandos, no utilizados.
      */
     public static void main(String[] args) {
         try {
@@ -1370,81 +1360,57 @@ public class Simulador {
     
             boolean running = true;
             while (running) {
-    
                 simulador.menu();
                 int option = InputHelper.readInt("Ingrese su opción: ");
     
                 switch (option) {
-                    case 1:
-                        simulador.showGeneralStatus();
-                        break;
-                    case 2:
-                        simulador.showSpecificStatus();
-                        break;
-                    case 3:
-                        simulador.showTankStatus();
-                        break;
-                    case 4:
-                        simulador.showStats();
-                        break;
-                    case 5:
-                        simulador.showIctio();
-                        break;
-                    case 6:
+                    case 1: simulador.showGeneralStatus(); break;
+                    case 2: simulador.showSpecificStatus(); break;
+                    case 3: simulador.showTankStatus(); break;
+                    case 4: simulador.showStats(); break;
+                    case 5: simulador.showIctio(); break;
+                    case 6: 
                         simulador.nextDay();
                         if (almacenCentral != null) {
                             almacenCentral.distribuirComida(Simulador.piscifactorias);
                         }
                         simulador.guardarEstado();
                         break;
-                    case 7:
+                    case 7: 
                         simulador.addFood();
                         if (almacenCentral != null) {
                             almacenCentral.distribuirComida(Simulador.piscifactorias);
                         }
                         break;
-                    case 8:
-                        simulador.addFish();
-                        break;
-                    case 9:
-                        simulador.sell();
-                        break;
-                    case 10:
-                        simulador.cleanTank();
-                        break;
-                    case 11:
-                        simulador.emptyTank();
-                        break;
-                    case 12:
-                        simulador.upgrade();
-                        break;
-                    case 13:
-                        simulador.recompensas();
-                        break;
+                    case 8: simulador.addFish(); break;
+                    case 9: simulador.sell(); break;
+                    case 10: simulador.cleanTank(); break;
+                    case 11: simulador.emptyTank(); break;
+                    case 12: simulador.upgrade(); break;
+                    case 13: simulador.recompensas(); break;
                     case 14:
-                        int dias = InputHelper.readInt("\nIngrese los dias para avanzar en el simulador: ");
+                        int dias = InputHelper.readInt("\nIngrese los días para avanzar en el simulador: ");
                         simulador.nextDay(dias);
                         break;
-                    case 98:
-                        simulador.pecesRandom();
-                        break;
+                    case 97: simulador.generarRecompensas(); break;
+                    case 98: simulador.pecesRandom(); break;
                     case 99:
                         Simulador.monedas.ganarMonedas(1000);
                         System.out.println("\nAñadidas 1000 monedas mediante la opción oculta. Monedas actuales, " + monedas.getMonedas());
                         Simulador.logger.log("Añadidas monedas mediante la opción oculta.");
                         break;
-                    case 15:
+                    case 15: 
                         running = false;
                         logger.log("Cierre de la partida");
                         simulador.guardarEstado();
                         System.out.println("\nSaliendo del simulador.");
                         break;
                     default:
-                        System.out.println("\nOpción no válida. Por favor, intente de nuevo.");
+                        System.out.println("\nEntrada no válida. Por favor, ingrese un número entero.");
                 }
             }
         } catch (Exception e) {
-            Simulador.logger.logError("Error en el Main.");
+            Simulador.logger.logError("Error en el Main: " + e.getMessage());
         } finally {
             InputHelper.close();
             Simulador.logger.close();
