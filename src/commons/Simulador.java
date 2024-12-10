@@ -336,7 +336,25 @@ public class Simulador {
             System.out.println("Óptimo: " + pezSeleccionado.getOptimo());
 
             PecesProps[] propiedades = pezSeleccionado.getPropiedades();
-            System.out.print("Propiedades: ");
+
+            System.out.print("Alimentación: ");
+            for (int i = 0; i < propiedades.length; i++) {
+                switch (propiedades[i]) {
+                    case CARNIVORO:
+                        System.out.print("Carnívoro");
+                        break;
+                    case FILTRADOR:
+                        System.out.print("Herbívoro");
+                        break;
+                    case OMNIVORO:
+                        System.out.print("Omnívoro");
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            System.out.print("\nPropiedades: ");
             for (int i = 0; i < propiedades.length; i++) {
                 System.out.print(propiedades[i]);
                 if (i < propiedades.length - 1) {
