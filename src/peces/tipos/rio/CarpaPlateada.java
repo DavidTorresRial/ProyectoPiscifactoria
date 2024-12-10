@@ -1,11 +1,10 @@
 package peces.tipos.rio;
 
-import peces.Pez;
 import peces.propiedades.Filtrador;
 import propiedades.AlmacenPropiedades;
 
 /** Pez de río Carpa Plateada. */
-public class CarpaPlateada extends Pez implements Filtrador {
+public class CarpaPlateada extends Filtrador {
 
     /**
      * Crea una instancia de CarpaPlateada con el sexo especificado.
