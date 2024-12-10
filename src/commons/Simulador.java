@@ -122,6 +122,7 @@ public class Simulador {
                     String partida = FileHelper.mostrarMenuConArchivos("saves");
                     if (partida == null) {
                         respuesta = "N";
+                        System.out.println();
                     } else {
                         logger = Logger.getInstance(partida);
                         transcriptor = Transcriptor.getInstance(partida);
