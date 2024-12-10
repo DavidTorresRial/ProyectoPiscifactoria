@@ -4,9 +4,15 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import commons.Simulador;
+
 /** Clase para gestionar transcripciones detalladas de acciones en el sistema. */
 public class Transcriptor {
+
+    /** Instancia única de la clase Transcriptor. */
     private static Transcriptor instancia;
+
+    /** Escritor utilizado para escribir datos. */
     private BufferedWriter writer;
 
     /** Constructor privado para Singleton. */
@@ -14,7 +20,7 @@ public class Transcriptor {
         try {
             writer = new BufferedWriter(new FileWriter("transcripciones/" + nombrePartida + ".tr", true));
         } catch (IOException e) {
-            System.err.println("Error al crear el archivo de transcripciones: " + e.getMessage());
+            Simulador.logger.logError("Error al crear el archivo de transcripciones: " + e.getMessage());
         }
     }
 
@@ -33,7 +39,7 @@ public class Transcriptor {
             writer.newLine();
             writer.flush();
         } catch (IOException e) {
-            System.err.println("Error al escribir en la transcripción: " + e.getMessage());
+            Simulador.logger.logError("Error al escribir en la transcripción: " + e.getMessage());
         }
     }
 
@@ -44,7 +50,7 @@ public class Transcriptor {
                 writer.close();
             }
         } catch (IOException e) {
-            System.err.println("Error al cerrar el archivo de transcripción: " + e.getMessage());
+            Simulador.logger.logError("Error al cerrar el archivo de transcripción: " + e.getMessage());
         }
     }
 

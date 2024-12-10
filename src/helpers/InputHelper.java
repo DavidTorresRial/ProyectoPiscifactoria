@@ -52,16 +52,15 @@ public class InputHelper {
             System.out.print(prompt);
             String input = scanner.nextLine();
 
-            if (input.isEmpty()) {
-                System.out.println("\nLa entrada no puede estar vacía. Intente nuevamente.");
-                continue;
-            }
-
-            try {
-                numero = Integer.parseInt(input);
-                entradaValida = true;
-            } catch (NumberFormatException e) {
-                System.out.println("\nEntrada no válida. Por favor, ingrese un número entero.");
+            if (!input.isEmpty()) {
+                try {
+                    numero = Integer.parseInt(input);
+                    entradaValida = true;
+                } catch (NumberFormatException e) {
+                    System.out.println("\nEntrada no válida. Por favor, ingrese un número entero.");
+                }
+            } else {
+                System.out.println("\nLa entrada no puede estar vacía. Por favor, ingrese un número entero.");
             }
         }
         return numero;

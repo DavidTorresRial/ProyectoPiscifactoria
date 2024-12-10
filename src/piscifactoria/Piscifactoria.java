@@ -53,10 +53,11 @@ public abstract class Piscifactoria {
         int capacidadTotal = getCapacidadTotal();
         int totalVivos = getTotalVivos();
         int totalAlimentados = getTotalAlimentados();
-        int totalAdultos = getTotalAdultos();
+        int totalAdultos = getTotalMaduros();
         int totalHembras = getTotalHembras();
         int totalMachos = getTotalMachos();
         int totalFertiles = getTotalFertiles();
+
         int porcentajeOcupacion = (capacidadTotal > 0) ? (totalPeces * 100) / capacidadTotal : 0;
         int porcentajeVivos = (totalPeces > 0) ? (totalVivos * 100) / totalPeces : 0;
         int porcentajeAlimentados = (totalVivos > 0) ? (totalAlimentados * 100) / totalVivos : 0;
@@ -155,32 +156,37 @@ public abstract class Piscifactoria {
         }
     }
 
+    /**
+     * Vende los peces adultos y vivos de un tanque, registrando ganancias y estadísticas.
+     *
+     * @param tanqueSeleccionado el tanque del cual se venden los peces.
+     */
     public static void sellFish(Tanque tanqueSeleccionado) {
         if (tanqueSeleccionado != null) {
-                int pecesVendidos = 0;
-                int totalDinero = 0;
+            int pecesVendidos = 0;
+            int totalDinero = 0;
     
-                Iterator<Pez> iterator = tanqueSeleccionado.getPeces().iterator();
+            Iterator<Pez> iterator = tanqueSeleccionado.getPeces().iterator();
     
-                while (iterator.hasNext()) {
-                    Pez pez = iterator.next();
+            while (iterator.hasNext()) {
+                Pez pez = iterator.next();
     
-                    if (pez.getEdad() >= pez.getDatos().getMadurez() && pez.isVivo()) {
-                        Simulador.monedas.ganarMonedas(pez.getDatos().getMonedas());
-                        Simulador.estadisticas.registrarVenta(pez.getNombre(), pez.getDatos().getMonedas());
+                if (pez.getEdad() >= pez.getDatos().getMadurez() && pez.isVivo()) {
+                    Simulador.monedas.ganarMonedas(pez.getDatos().getMonedas());
+                    Simulador.estadisticas.registrarVenta(pez.getNombre(), pez.getDatos().getMonedas());
     
-                        totalDinero += (pez.getDatos().getMonedas() / 2);
-                        pecesVendidos++;
+                    totalDinero += (pez.getDatos().getMonedas() / 2);
+                    pecesVendidos++;
     
-                        iterator.remove();
-                    }
-                }
-                if (pecesVendidos > 0) {
-                    System.out.println("Vendidos " + pecesVendidos + " peces de la piscifactoría de forma manual por " + totalDinero + " monedas.");
-                } else {
-                    System.out.println("\nNo hay peces adultos para vender.");
+                    iterator.remove();
                 }
             }
+            if (pecesVendidos > 0) {
+                System.out.println("\nVendidos " + pecesVendidos + " peces de la piscifactoría de forma manual por " + totalDinero + " monedas.");
+            } else {
+                System.out.println("\nNo hay peces adultos para vender.");
+            }
+        }
     }
 
     /**
@@ -195,7 +201,7 @@ public abstract class Piscifactoria {
             cantidadComidaAnimal = nuevaCantidad;
             return true;
         } else {
-            System.out.println("No se puede añadir la cantidad de comida animal: excede la capacidad.");
+            System.out.println("\nNo se puede añadir la cantidad de comida animal: excede la capacidad.");
             return false;
         }
     }
@@ -212,24 +218,8 @@ public abstract class Piscifactoria {
             cantidadComidaVegetal = nuevaCantidad;          
             return true;
         } else {
-            System.out.println("No se puede añadir la cantidad de comida vegetal: excede la capacidad.");
+            System.out.println("\nNo se puede añadir la cantidad de comida vegetal: excede la capacidad.");
             return false;
-        }
-    }
-
-    public void setCantidadComidaAnimal(int cantidadComidaAnimal) {
-        if (cantidadComidaAnimal > capacidadMaximaComida) {
-            this.cantidadComidaVegetal = capacidadMaximaComida;
-        } else {
-            this.cantidadComidaAnimal = cantidadComidaAnimal;
-        }
-    }
-
-    public void setCantidadComidaVegetal(int cantidadComidaVegetal) {
-        if (cantidadComidaVegetal > capacidadMaximaComida) {
-            this.cantidadComidaVegetal = capacidadMaximaComida;
-        } else {
-            this.cantidadComidaVegetal = cantidadComidaVegetal;
         }
     }
 
@@ -289,12 +279,38 @@ public abstract class Piscifactoria {
     }
 
     /**
+     * Establece la cantidad de comida vegetal, respetando la capacidad máxima permitida.
+     *
+     * @param cantidadComidaVegetal la cantidad de comida vegetal a asignar.
+     */
+    public void setCantidadComidaVegetal(int cantidadComidaVegetal) {
+        if (cantidadComidaVegetal > capacidadMaximaComida) {
+            this.cantidadComidaVegetal = capacidadMaximaComida;
+        } else {
+            this.cantidadComidaVegetal = cantidadComidaVegetal;
+        }
+    }
+
+    /**
      * Devuelve la cantidad actual de comida animal en la piscifactoría.
      *
      * @return La cantidad actual de comida animal.
      */
     public int getComidaAnimalActual() {
         return cantidadComidaAnimal;
+    }
+
+    /**
+     * Establece la cantidad de comida animal, respetando la capacidad máxima permitida.
+     *
+     * @param cantidadComidaAnimal la cantidad de comida animal a asignar.
+     */
+    public void setCantidadComidaAnimal(int cantidadComidaAnimal) {
+        if (cantidadComidaAnimal > capacidadMaximaComida) {
+            this.cantidadComidaVegetal = capacidadMaximaComida;
+        } else {
+            this.cantidadComidaAnimal = cantidadComidaAnimal;
+        }
     }
 
     /**
@@ -321,45 +337,6 @@ public abstract class Piscifactoria {
             capacidadTotal += tanque.getCapacidad();
         }
         return capacidadTotal;
-    }
-
-    /**
-     * Devuelve el total de peces vivos en la piscifactoría.
-     *
-     * @return El total de peces vivos.
-     */
-    public int getTotalVivos() {
-        int totalVivos = 0;
-        for (Tanque tanque : tanques) {
-            totalVivos += tanque.getVivos();
-        }
-        return totalVivos;
-    }
-
-    /**
-     * Devuelve el total de peces alimentados en la piscifactoría.
-     *
-     * @return El total de peces alimentados.
-     */
-    public int getTotalAlimentados() {
-        int totalAlimentados = 0;
-        for (Tanque tanque : tanques) {
-            totalAlimentados += tanque.getAlimentados();
-        }
-        return totalAlimentados;
-    }
-
-    /**
-     * Devuelve el total de peces adultos en la piscifactoría.
-     *
-     * @return El total de peces adultos.
-     */
-    public int getTotalAdultos() {
-        int totalAdultos = 0;
-        for (Tanque tanque : tanques) {
-            totalAdultos += tanque.getAdultos();
-        }
-        return totalAdultos;
     }
 
     /**
@@ -402,6 +379,45 @@ public abstract class Piscifactoria {
     }
 
     /**
+     * Devuelve el total de peces vivos en la piscifactoría.
+     *
+     * @return El total de peces vivos.
+     */
+    public int getTotalVivos() {
+        int totalVivos = 0;
+        for (Tanque tanque : tanques) {
+            totalVivos += tanque.getVivos();
+        }
+        return totalVivos;
+    }
+
+    /**
+     * Devuelve el total de peces alimentados en la piscifactoría.
+     *
+     * @return El total de peces alimentados.
+     */
+    public int getTotalAlimentados() {
+        int totalAlimentados = 0;
+        for (Tanque tanque : tanques) {
+            totalAlimentados += tanque.getAlimentados();
+        }
+        return totalAlimentados;
+    }
+
+    /**
+     * Devuelve el total de peces adultos en la piscifactoría.
+     *
+     * @return El total de peces adultos.
+     */
+    public int getTotalMaduros() {
+        int totalMaduros = 0;
+        for (Tanque tanque : tanques) {
+            totalMaduros += tanque.getMaduros();
+        }
+        return totalMaduros;
+    }
+
+    /**
      * Devuelve una representación en cadena del estado de la piscifactoría.
      * 
      * @return una cadena que representa el estado de la piscifactoría.
@@ -413,7 +429,7 @@ public abstract class Piscifactoria {
                 "\n  Total de Peces       : " + getTotalPeces() + " (Ocupación: " + ((getCapacidadTotal() > 0) ? (getTotalPeces() * 100) / getCapacidadTotal() : 0) +
                 "\n  Peces Vivos          : " + getTotalVivos() +
                 "\n  Peces Alimentados    : " + getTotalAlimentados() +
-                "\n  Peces Adultos        : " + getTotalAdultos() +
+                "\n  Peces Adultos        : " + getTotalMaduros() +
                 "\n  Hembras              : " + getTotalHembras() +
                 "\n  Machos               : " + getTotalMachos() +
                 "\n  Peces Fértiles       : " + getTotalFertiles() +

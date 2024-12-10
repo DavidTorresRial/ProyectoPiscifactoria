@@ -8,8 +8,14 @@ import commons.Simulador;
 
 /** Clase para manejar el registro de logs en un archivo. */
 public class Logger {
+
+    /** Instancia única de la clase Logger. */
     private static Logger instance;
+
+    /** Escritor utilizado para registrar mensajes en el archivo de logs. */
     private BufferedWriter logWriter;
+
+    /** Escritor utilizado para registrar mensajes en el archivo de logs general. */
     private BufferedWriter errorWriter;
 
     /**
@@ -21,9 +27,10 @@ public class Logger {
     private Logger(String logFileName) {
         try {
             File logFile = new File("logs/" + logFileName + ".log");
-            logWriter = new BufferedWriter(new FileWriter(logFile, true));
 
+            logWriter = new BufferedWriter(new FileWriter(logFile, true));
             errorWriter = new BufferedWriter(new FileWriter(Simulador.errorLog, true));
+            
         } catch (IOException e) {
             Simulador.logger.logError("No se pudo iniciar el Logger: " + e.getMessage());
         }

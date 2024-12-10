@@ -37,11 +37,12 @@ public class Tanque {
 
         int vivos = getVivos();
         int alimentados = getAlimentados();
-        int adultos = getAdultos();
+        int adultos = getMaduros();
         int hembras = getHembras();
         int machos = getMachos();
         int fertiles = getFertiles();
         int ocupacion = peces.size();
+        
         int porcentajeOcupacion = (ocupacion * 100 / capacidadMaxima);
         int porcentajeVivos = (ocupacion > 0 ? (vivos * 100 / ocupacion) : 0);
         int porcentajeAlimentados = (vivos > 0 ? (alimentados * 100 / vivos) : 0);
@@ -201,51 +202,6 @@ public class Tanque {
     }
 
     /**
-     * Cuenta y devuelve el número de peces vivos en el tanque.
-     *
-     * @return número de peces vivos en el tanque.
-     */
-    public int getVivos() {
-        int pecesVivos = 0;
-        for (Pez pez : peces) {
-            if (pez.isVivo()) {
-                pecesVivos++;
-            }
-        }
-        return pecesVivos;
-    }
-
-    /**
-     * Cuenta y devuelve el número de peces alimentados en el tanque.
-     *
-     * @return número de peces alimentados en el tanque.
-     */
-    public int getAlimentados() {
-        int pecesAlimentados = 0;
-        for (Pez pez : peces) {
-            if (pez.isAlimentado()) {
-                pecesAlimentados++;
-            }
-        }
-        return pecesAlimentados;
-    }
-
-    /**
-     * Cuenta y devuelve el número de peces adultos en el tanque.
-     *
-     * @return número de peces adultos en el tanque.
-     */
-    public int getAdultos() {
-        int pecesAdultos = 0;
-        for (Pez pez : peces) {
-            if (pez.isMaduro()) {
-                pecesAdultos++;
-            }
-        }
-        return pecesAdultos;
-    }
-
-    /**
      * Cuenta y devuelve el número de machos en el tanque.
      *
      * @return número de machos en el tanque.
@@ -291,6 +247,36 @@ public class Tanque {
     }
 
     /**
+     * Cuenta y devuelve el número de peces vivos en el tanque.
+     *
+     * @return número de peces vivos en el tanque.
+     */
+    public int getVivos() {
+        int pecesVivos = 0;
+        for (Pez pez : peces) {
+            if (pez.isVivo()) {
+                pecesVivos++;
+            }
+        }
+        return pecesVivos;
+    }
+
+    /**
+     * Cuenta y devuelve el número de peces alimentados en el tanque.
+     *
+     * @return número de peces alimentados en el tanque.
+     */
+    public int getAlimentados() {
+        int pecesAlimentados = 0;
+        for (Pez pez : peces) {
+            if (pez.isAlimentado()) {
+                pecesAlimentados++;
+            }
+        }
+        return pecesAlimentados;
+    }
+
+    /**
      * Cuenta y devuelve el número de peces maduros en el tanque.
      *
      * @return número de peces maduros en el tanque.
@@ -318,7 +304,7 @@ public class Tanque {
                 "\n  Tipo de Pez         : " + (!peces.isEmpty() ? peces.get(0).getNombre() : "Ninguno") +
                 "\n  Peces Vivos         : " + getVivos() +
                 "\n  Peces Alimentados   : " + getAlimentados() +
-                "\n  Peces Adultos       : " + getAdultos() +
+                "\n  Peces Adultos       : " + getMaduros() +
                 "\n  Hembras             : " + getHembras() +
                 "\n  Machos              : " + getMachos() +
                 "\n  Peces Fértiles      : " + getFertiles();
