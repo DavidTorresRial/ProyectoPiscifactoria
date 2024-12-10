@@ -1,11 +1,10 @@
 package peces.tipos.doble;
 
-import peces.Pez;
 import peces.propiedades.Carnivoro;
 import propiedades.AlmacenPropiedades;
 
 /** Pez doble Trucha Arcoiris. */
-public class TruchaArcoiris extends Pez implements Carnivoro {
+public class TruchaArcoiris extends Carnivoro {
 
     /**
      * Crea una instancia de TruchaArcoiris con el sexo especificado.

@@ -7,7 +7,7 @@ public class SistemaMonedas {
     private int monedas;
 
     /** Instancia única de SistemaMonedas. */
-    private static SistemaMonedas instanciaUnica;
+    private static SistemaMonedas instance;
 
     /** Constructor privado que inicializa el saldo con 100 monedas. */
     private SistemaMonedas() {
@@ -21,10 +21,10 @@ public class SistemaMonedas {
      * @return La instancia única de SistemaMonedas.
      */
     static SistemaMonedas getInstancia() {
-        if (instanciaUnica == null) {
-            instanciaUnica = new SistemaMonedas();
+        if (instance == null) {
+            instance = new SistemaMonedas();
         }
-        return instanciaUnica;
+        return instance;
     }
 
     /**
@@ -45,10 +45,8 @@ public class SistemaMonedas {
     public boolean ganarMonedas(int cantidad) {
         if (cantidad > 0) {
             monedas += cantidad;
-            System.out.println("\nHas ganado " + cantidad + " monedas. Saldo actual: " + monedas + " monedas.");
             return true;
         }
-        System.out.println("\nNo se pueden ganar monedas negativas o cero.");
         return false;
     }
 
@@ -61,10 +59,8 @@ public class SistemaMonedas {
     public boolean gastarMonedas(int costo) {
         if (costo > 0 && costo <= monedas) {
             monedas -= costo;
-            System.out.println("\nSe han gastado " + costo + " monedas. Saldo restante: " + monedas + " monedas.");
             return true;
         }
-        System.out.println("\nNo tienes suficientes monedas para realizar esta acción.");
         return false;
     }
 

@@ -2,6 +2,8 @@ package helpers;
 
 import java.util.Scanner;
 
+import commons.Simulador;
+
 /** InputHelper facilita la lectura validada de cadenas y enteros. */
 public class InputHelper {
 
@@ -50,16 +52,15 @@ public class InputHelper {
             System.out.print(prompt);
             String input = scanner.nextLine();
 
-            if (input.isEmpty()) {
-                System.out.println("\nLa entrada no puede estar vacía. Intente nuevamente.");
-                continue;
-            }
-
-            try {
-                numero = Integer.parseInt(input);
-                entradaValida = true;
-            } catch (NumberFormatException e) {
-                System.out.println("\nEntrada no válida. Por favor, ingrese un número entero.");
+            if (!input.isEmpty()) {
+                try {
+                    numero = Integer.parseInt(input);
+                    entradaValida = true;
+                } catch (NumberFormatException e) {
+                    System.out.println("\nEntrada no válida. Por favor, ingrese un número entero.");
+                }
+            } else {
+                System.out.println("\nLa entrada no puede estar vacía. Por favor, ingrese un número entero.");
             }
         }
         return numero;
@@ -96,7 +97,7 @@ public class InputHelper {
                 scanner.close();
             }
         } catch (IllegalStateException e) {
-            System.err.println("El Scanner ya fue cerrado previamente.");
+            Simulador.logger.logError("El Scanner ya fue cerrado previamente: \n" + e);
         }
     }
 }
