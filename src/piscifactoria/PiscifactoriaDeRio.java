@@ -26,6 +26,18 @@ public class PiscifactoriaDeRio extends Piscifactoria {
         capacidadMaximaComida = 25;
     }
 
+    /**
+     * Constructor para crear una piscifactoría de río con valores personalizados.
+     *
+     * @param nombre Nombre de la piscifactoría.
+     * @param capacidadMaximaComida Capacidad máxima de comida que puede almacenar.
+     * @param cantidadComidaAnimal Cantidad de comida animal disponible.
+     * @param cantidadComidaVegetal Cantidad de comida vegetal disponible.
+     */
+    public PiscifactoriaDeRio(String nombre, int capacidadMaximaComida, int cantidadComidaAnimal, int cantidadComidaVegetal) {
+        super(nombre, capacidadMaximaComida, cantidadComidaAnimal, cantidadComidaVegetal);
+    }
+
     /** Mejora la capacidad de comida de la piscifactoría si hay monedas suficientes y no se supera la capacidad máxima. */
     @Override
     public void upgradeFood() {

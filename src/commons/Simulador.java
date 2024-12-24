@@ -1,22 +1,12 @@
 package commons;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import helpers.FileHelper;
 import helpers.InputHelper;
@@ -41,6 +31,7 @@ import peces.Pez;
 import peces.tipos.doble.*;
 import peces.tipos.mar.*;
 import peces.tipos.rio.*;
+import persistencia.GestorEstado;
 
 /**
  * La clase Simulador gestiona la simulación de una piscifactoría,
@@ -127,7 +118,7 @@ public class Simulador {
                         logger = Logger.getInstance(partida);
                         transcriptor = Transcriptor.getInstance(partida);
 
-                        load(partida);
+                        GestorEstado.load(this, partida);
                     }
                 }
             } while (!respuesta.equals("S") && !respuesta.equals("N"));
@@ -171,7 +162,7 @@ public class Simulador {
             piscifactorias.get(0).añadirComidaAnimal(piscifactorias.get(0).getCapacidadMaximaComida());
             piscifactorias.get(0).añadirComidaVegetal(piscifactorias.get(0).getCapacidadMaximaComida());
             
-            guardarEstado();
+            GestorEstado.guardarEstado(this);
         }
     }
 
@@ -1130,241 +1121,6 @@ public class Simulador {
         }
     }
 
-    /** Guarda el estado actual del simulador en un archivo JSON en la carpeta "saves". */
-    public void guardarEstado() {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
-        // Crear estructura principal con LinkedHashMap para preservar el orden
-        Map<String, Object> estado = new LinkedHashMap<>();
-
-        estado.put("implementados", pecesImplementados);
-        estado.put("empresa", nombreEntidad);
-        estado.put("dia", dia);
-        estado.put("monedas", monedas.getMonedas());
-        estado.put("orca", Simulador.estadisticas.exportarDatos(pecesImplementados));
-
-        // Edificios - Almacén
-        Map<String, Object> almacenMap = new LinkedHashMap<>();
-        almacenMap.put("disponible", almacenCentral != null && almacenCentral.getCapacidadAlmacen() > 0);
-        almacenMap.put("capacidad", almacenCentral != null ? almacenCentral.getCapacidadAlmacen() : 200);
-        almacenMap.put("comida", Map.of(
-                "vegetal", almacenCentral != null ? almacenCentral.getCantidadComidaVegetal() : 0,
-                "animal", almacenCentral != null ? almacenCentral.getCantidadComidaAnimal() : 0
-        ));
-        estado.put("edificios", Map.of("almacen", almacenMap));
-
-        // Piscifactorías
-        List<Map<String, Object>> piscifactoriasList = new ArrayList<>();
-        for (Piscifactoria piscifactoria : piscifactorias) {
-            Map<String, Object> piscifactoriaMap = new LinkedHashMap<>();
-            piscifactoriaMap.put("nombre", piscifactoria.getNombre());
-            piscifactoriaMap.put("tipo", piscifactoria instanceof PiscifactoriaDeRio ? 0 : 1);
-            piscifactoriaMap.put("capacidad", piscifactoria.getCapacidadMaximaComida());
-            piscifactoriaMap.put("comida", Map.of(
-                    "vegetal", piscifactoria.getComidaVegetalActual(),
-                    "animal", piscifactoria.getComidaAnimalActual()
-            ));
-
-            // Tanques
-            List<Map<String, Object>> tanquesList = new ArrayList<>();
-            for (Tanque tanque : piscifactoria.getTanques()) {
-                Map<String, Object> tanqueMap = new LinkedHashMap<>();
-                if (!tanque.getPeces().isEmpty()) {
-                    tanqueMap.put("pez", tanque.getPeces().get(0).getNombre());
-                    tanqueMap.put("num", tanque.getNumeroTanque());
-                    tanqueMap.put("datos", Map.of(
-                            "vivos", tanque.getPeces().size(),
-                            "maduros", tanque.getMaduros(),
-                            "fertiles", tanque.getFertiles() 
-                    ));
-
-                    // Peces
-                    List<Map<String, Object>> pecesList = new ArrayList<>();
-                    for (Pez pez : tanque.getPeces()) {
-                        Map<String, Object> pezMap = new LinkedHashMap<>();
-                        pezMap.put("edad", pez.getEdad());
-                        pezMap.put("sexo", pez.isSexo());
-                        pezMap.put("vivo", pez.isVivo());
-                        pezMap.put("maduro", pez.isMaduro());
-                        pezMap.put("fertil", pez.isFertil());
-                        pezMap.put("ciclo", pez.getDatos().getCiclo());
-                        pezMap.put("alimentado", pez.isAlimentado());
-                        pecesList.add(pezMap);
-                    }
-                    tanqueMap.put("peces", pecesList);
-                } else {
-                    tanqueMap.put("pez", "Sin peces");
-                    tanqueMap.put("num", tanque.getNumeroTanque());
-                    tanqueMap.put("datos", "No disponible");
-                }
-                tanquesList.add(tanqueMap);
-            }
-            piscifactoriaMap.put("tanques", tanquesList);
-            piscifactoriasList.add(piscifactoriaMap);
-        }
-        estado.put("piscifactorias", piscifactoriasList);
-
-        // Guardar el JSON en un archivo
-        try (FileWriter writer = new FileWriter("saves/" + nombreEntidad + ".save")) {
-            gson.toJson(estado, writer);
-            logger.log("Sistema guardado.");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Carga el estado de una partida desde un archivo JSON y restablece los datos del simulador,
-     * 
-     * @param archivoPartida El nombre del archivo de partida a cargar.
-     */
-    public void load(String archivoPartida) {
-        try {
-            // Leer el archivo JSON
-            FileReader reader = new FileReader("saves/" + archivoPartida + ".save");
-            JsonObject jsonObject = JsonParser.parseReader(reader).getAsJsonObject();
-            reader.close();
-    
-            // Cargar empresa
-            nombreEntidad = jsonObject.has("empresa") && !jsonObject.get("empresa").isJsonNull()
-                    ? jsonObject.get("empresa").getAsString()
-                    : "Empresa desconocida";
-    
-            // Cargar día y monedas
-            dia = jsonObject.has("dia") && !jsonObject.get("dia").isJsonNull()
-                    ? jsonObject.get("dia").getAsInt()
-                    : 0;
-            monedas.ganarMonedas(jsonObject.has("monedas") && !jsonObject.get("monedas").isJsonNull()
-                    ? jsonObject.get("monedas").getAsInt()
-                    : 0);
-    
-            // Cargar Almacén
-            if (jsonObject.has("edificios") && !jsonObject.get("edificios").isJsonNull()) {
-                JsonObject edificios = jsonObject.getAsJsonObject("edificios");
-                if (edificios.has("almacen") && !edificios.get("almacen").isJsonNull()) {
-                    JsonObject almacen = edificios.getAsJsonObject("almacen");
-    
-                    // Verificar si el almacén está disponible
-                    boolean disponible = almacen.get("disponible").getAsBoolean();
-                    if (disponible) {
-                        int capacidadAlmacen = almacen.get("capacidad").getAsInt();
-                        JsonObject comida = almacen.getAsJsonObject("comida");
-                        int comidaVegetal = comida.get("vegetal").getAsInt();
-                        int comidaAnimal = comida.get("animal").getAsInt();
-                        almacenCentral = new AlmacenCentral();
-                        almacenCentral.setCantidadComidaVegetal(comidaVegetal);
-                        almacenCentral.setCantidadComidaAnimal(comidaAnimal);
-                        almacenCentral.setCapacidadAlmacen(capacidadAlmacen);
-                    } else {
-                        almacenCentral = null; // No crear almacén si no está disponible
-                    }
-                }
-            }
-            
-            // Procesar 'orca' y crear el objeto Estadisticas
-            if (jsonObject.has("orca") && !jsonObject.get("orca").isJsonNull()) {
-                String orcaData = jsonObject.get("orca").getAsString();
-                estadisticas = new Estadisticas(pecesImplementados, orcaData);
-            }
-    
-            // Cargar piscifactorías
-            if (jsonObject.has("piscifactorias") && !jsonObject.get("piscifactorias").isJsonNull()) {
-                piscifactorias.clear(); // Limpia la lista antes de cargar
-                JsonArray piscifactoriasArray = jsonObject.getAsJsonArray("piscifactorias");
-    
-                for (JsonElement piscifactoriaElement : piscifactoriasArray) {
-                    JsonObject piscifactoriaJson = piscifactoriaElement.getAsJsonObject();
-    
-                    // Crear piscifactoría
-                    String nombre = piscifactoriaJson.get("nombre").getAsString();
-                    int tipo = piscifactoriaJson.get("tipo").getAsInt();
-                    Piscifactoria piscifactoria = (tipo == 0)
-                            ? new PiscifactoriaDeRio(nombre)
-                            : new PiscifactoriaDeMar(nombre);
-    
-                    // Configurar capacidades
-                    int capacidadMaxima = piscifactoriaJson.get("capacidad").getAsInt();
-                    piscifactoria.setCapacidadMaximaComida(capacidadMaxima);
-    
-                    // Configurar cantidades de comida
-                    JsonObject comida = piscifactoriaJson.getAsJsonObject("comida");
-                    int comidaVegetal = comida.get("vegetal").getAsInt();
-                    int comidaAnimal = comida.get("animal").getAsInt();
-                    piscifactoria.setCantidadComidaVegetal(comidaVegetal);
-                    piscifactoria.setCantidadComidaAnimal(comidaAnimal);
-    
-                    // Cargar tanques y peces
-                    piscifactoria.getTanques().clear(); // Limpia tanques existentes para evitar duplicados
-                    JsonArray tanquesArray = piscifactoriaJson.getAsJsonArray("tanques");
-    
-                    for (JsonElement tanqueElement : tanquesArray) {
-                        JsonObject tanqueJson = tanqueElement.getAsJsonObject();
-                        Tanque tanque;
-                        if (piscifactoria instanceof PiscifactoriaDeRio) {
-                            tanque = new Tanque(
-                                    tanqueJson.get("num").getAsInt(),
-                                    25
-                            );
-                        } else if (piscifactoria instanceof PiscifactoriaDeMar) {
-                            tanque = new Tanque(
-                                    tanqueJson.get("num").getAsInt(),
-                                    100
-                            );
-                        } else {
-                            tanque = null;
-                        }
-    
-                        // Cargar peces directamente aquí
-                        if (tanqueJson.has("peces") && !tanqueJson.get("peces").isJsonNull()) {
-                            JsonArray pecesArray = tanqueJson.getAsJsonArray("peces");
-                            for (JsonElement pezElement : pecesArray) {
-                                JsonObject pezJson = pezElement.getAsJsonObject();
-    
-                                // Crear pez según el tipo y sexo
-                                String tipoPez = tanqueJson.has("pez") ? tanqueJson.get("pez").getAsString() : "Desconocido";
-                                boolean sexo = pezJson.get("sexo").getAsBoolean();
-                                Pez pez = switch (tipoPez) {
-                                    case "Dorada" -> new Dorada(sexo);
-                                    case "Salm\u00f3n atl\u00e1ntico" -> new SalmonAtlantico(sexo);
-                                    case "Trucha arco\u00edris" -> new TruchaArcoiris(sexo);
-                                    case "Carpa plateada" -> new CarpaPlateada(sexo);
-                                    case "Pejerrey" -> new Pejerrey(sexo);
-                                    case "Perca europea" -> new PercaEuropea(sexo);
-                                    case "Salm\u00f3n chinook" -> new SalmonChinook(sexo);
-                                    case "Tilapia del Nilo" -> new TilapiaDelNilo(sexo);
-                                    case "Arenque del Atl\u00e1ntico" -> new ArenqueDelAtlantico(sexo);
-                                    case "Besugo" -> new Besugo(sexo);
-                                    case "Lenguado Europeo" -> new LenguadoEuropeo(sexo);
-                                    case "Lubina Rayada" -> new LubinaRayada(sexo);
-                                    case "R\u00f3balo" -> new Robalo(sexo);
-                                    default -> null;
-                                };
-    
-                                if (pez != null) {
-                                    pez.setEdad(pezJson.get("edad").getAsInt());
-                                    pez.setVivo(pezJson.get("vivo").getAsBoolean());
-                                    pez.setFertil(pezJson.get("fertil").getAsBoolean());
-                                    pez.setCiclo(pezJson.get("ciclo").getAsInt());
-                                    pez.setAlimentado(pezJson.get("alimentado").getAsBoolean());
-                                    tanque.getPeces().add(pez);
-                                }
-                            }
-                        }
-    
-                        piscifactoria.getTanques().add(tanque);
-                    }
-    
-                    piscifactorias.add(piscifactoria);
-                }
-            }
-    
-            System.out.println("\nPartida cargada: " + archivoPartida);
-            logger.log("Sistema cargado.");
-        } catch (Exception e) {
-            System.err.println("Error al cargar el archivo: " + e.getMessage());
-        }
-    }
-
     /**
      * Método principal que gestiona el flujo del simulador, 
      * mostrando el menú y procesando las opciones del usuario.
@@ -1393,7 +1149,7 @@ public class Simulador {
                         if (almacenCentral != null) {
                             almacenCentral.distribuirComida(Simulador.piscifactorias);
                         }
-                        simulador.guardarEstado();
+                        GestorEstado.guardarEstado(simulador);
                         break;
                     case 7: 
                         simulador.addFood();
@@ -1421,7 +1177,7 @@ public class Simulador {
                     case 15: 
                         running = false;
                         logger.log("Cierre de la partida");
-                        simulador.guardarEstado();
+                        GestorEstado.guardarEstado(simulador);
                         System.out.println("\nSaliendo del simulador.");
                         break;
                     default:
@@ -1435,5 +1191,68 @@ public class Simulador {
             Simulador.logger.close();
             Simulador.transcriptor.close();
         }
+    }
+
+    /**
+     * Obtiene el día actual del simulador.
+     *
+     * @return el día actual.
+     */
+    public int getDia() {
+        return dia;
+    }
+
+    /**
+     * Establece el día actual del simulador.
+     *
+     * @param dia el nuevo día a establecer.
+     */
+    public void setDia(int dia) {
+        this.dia = dia;
+    }
+
+    /**
+     * Obtiene la lista de piscifactorías asociadas al simulador.
+     *
+     * @return una lista de objetos de tipo Piscifactoria.
+     */
+    public List<Piscifactoria> getPiscifactorias() {
+        return piscifactorias;
+    }
+
+    /**
+     * Obtiene el nombre de la entidad del simulador.
+     *
+     * @return el nombre de la entidad.
+     */
+    public String getNombreEntidad() {
+        return nombreEntidad;
+    }
+
+    /**
+     * Establece el nombre de la entidad del simulador.
+     *
+     * @param nombreEntidad el nuevo nombre de la entidad.
+     */
+    public void setNombreEntidad(String nombreEntidad) {
+        Simulador.nombreEntidad = nombreEntidad;
+    }
+
+    /**
+     * Obtiene los nombres de los peces implementados en el simulador.
+     *
+     * @return un arreglo de cadenas con los nombres de los peces implementados.
+     */
+    public String[] getPecesImplementados() {
+        return pecesImplementados;
+    }
+
+    /**
+     * Establece las estadísticas del simulador.
+     *
+     * @param estadisticas el objeto de estadísticas a establecer.
+     */
+    public void setEstadisticas(Estadisticas estadisticas) {
+        Simulador.estadisticas = estadisticas;
     }
 }

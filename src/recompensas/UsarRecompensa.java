@@ -54,14 +54,14 @@ public class UsarRecompensa {
                                 if (Simulador.almacenCentral != null) {
                                     Simulador.almacenCentral.añadirComidaVegetal(cantidad);
                                 } else {
-                                    Simulador.distribuirComida(cantidad , "algae");
+                                    Simulador.distribuirComida(cantidad , tipoDeComida);
                                 }
                                 break;
                             case "animal":
                                 if (Simulador.almacenCentral != null) {
                                     Simulador.almacenCentral.añadirComidaAnimal(cantidad);
                                 } else {
-                                    Simulador.distribuirComida(cantidad , "animal");
+                                    Simulador.distribuirComida(cantidad , tipoDeComida);
                                 }
                                 break;
                             case "general":
@@ -69,7 +69,7 @@ public class UsarRecompensa {
                                     Simulador.almacenCentral.añadirComidaAnimal(cantidad / 2);
                                     Simulador.almacenCentral.añadirComidaVegetal(cantidad / 2);
                                 } else {
-                                    Simulador.distribuirComida(cantidad , "general");
+                                    Simulador.distribuirComida(cantidad , tipoDeComida);
                                 }
                                 break;
                             default:
