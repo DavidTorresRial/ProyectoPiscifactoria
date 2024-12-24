@@ -45,6 +45,21 @@ public abstract class Piscifactoria {
         this.nombre = nombre;
     }
 
+    /**
+     * Constructor para crear una piscifactoría con valores personalizados.
+     *
+     * @param nombre Nombre de la piscifactoría.
+     * @param capacidadMaximaComida Capacidad máxima de comida que puede almacenar.
+     * @param cantidadComidaAnimal Cantidad de comida animal disponible.
+     * @param cantidadComidaVegetal Cantidad de comida vegetal disponible.
+     */
+    public Piscifactoria(String nombre, int capacidadMaximaComida, int cantidadComidaAnimal, int cantidadComidaVegetal) {
+        this.nombre = nombre;
+        this.capacidadMaximaComida = capacidadMaximaComida;
+        this.cantidadComidaAnimal = cantidadComidaAnimal;
+        this.cantidadComidaVegetal = cantidadComidaVegetal;
+    }
+
     /** Muestra toda la información de la piscifactoría. */
     public void showStatus() {
         System.out.println("\n=============== " + nombre + " ===============");

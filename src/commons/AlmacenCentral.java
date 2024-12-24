@@ -27,6 +27,19 @@ public class AlmacenCentral {
     }
 
     /**
+     * Constructor del almacén central con valores personalizados.
+     *
+     * @param capacidadAlmacen la capacidad total del almacén.
+     * @param cantidadComidaAnimal la cantidad de comida animal en el almacén.
+     * @param cantidadComidaVegetal la cantidad de comida vegetal en el almacén.
+     */
+    public AlmacenCentral(int capacidadAlmacen, int cantidadComidaAnimal, int cantidadComidaVegetal) {
+        this.capacidadAlmacen = capacidadAlmacen;
+        this.cantidadComidaAnimal = cantidadComidaAnimal;
+        this.cantidadComidaVegetal = cantidadComidaVegetal;
+    }
+
+    /**
      * Aumenta la capacidad del almacén central en 50 unidades si hay monedas suficientes.
      * 
      * @return true si se aumentó la capacidad exitosamente, false en caso contrario.
