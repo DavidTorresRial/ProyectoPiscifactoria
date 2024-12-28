@@ -864,88 +864,94 @@ public class Simulador {
 
     /** Muestra un menú con las recompensas disponibles y permite al usuario seleccionar una. */
     private void recompensas() {
-        System.out.println("\n================== Recompensas Disponibles =================");
-        String[] opciones = FileHelper.getRewards();
-        String[] opcionesSinCorchete = FileHelper.getRewardsWithoutBrackets(opciones);
+        int opcion;
+        do {
+            System.out.println("\n================== Recompensas Disponibles =================");
+            String[] opciones = FileHelper.getRewards();
+            String[] opcionesSinCorchete = FileHelper.getRewardsWithoutBrackets(opciones);
 
-        MenuHelper.mostrarMenuCancelar(opciones);
-        int opcion = InputHelper.solicitarNumero(0, opciones.length) -1;
-        if (opcion >= 0) {
-            String seleccion = opcionesSinCorchete[opcion];
-    
-            switch (seleccion) {
-                case "Algas I":
-                    UsarRecompensa.readFood("algas_1.xml");
-                    break;
-    
-                case "Comida I":
-                    UsarRecompensa.readFood("comida_1.xml"); 
-                    break;
-    
-                case "Pienso I":
-                    UsarRecompensa.readFood("pienso_1.xml"); 
-                    break;
-                
-                case "Monedas I":
-                    UsarRecompensa.readCoins("monedas_1.xml"); 
-                    break;
+            MenuHelper.mostrarMenuCancelar(opciones);
+            opcion = InputHelper.solicitarNumero(0, opciones.length) - 1;
 
-                case "Tanque de rio":
-                    Piscifactoria selectPiscRio = selectPisc();
-                    if (selectPiscRio instanceof PiscifactoriaDeRio) {
-                        if (selectPiscRio.getTanques().size() < selectPiscRio.getNumeroMaximoTanques()) {
-                            if (UsarRecompensa.readTank("tanque_m.xml")) {
-                                selectPiscRio.getTanques().add(new Tanque(selectPiscRio.getTanques().size() + 1, 100));
+            if (opcion >= 0 && opcion < opciones.length) {
+                String seleccion = opcionesSinCorchete[opcion];
+
+                switch (seleccion) {
+                    case "Algas I":
+                        UsarRecompensa.readFood("algas_1.xml");
+                        break;
+
+                    case "Comida I":
+                        UsarRecompensa.readFood("comida_1.xml"); 
+                        break;
+
+                    case "Pienso I":
+                        UsarRecompensa.readFood("pienso_1.xml"); 
+                        break;
+
+                    case "Monedas I":
+                        UsarRecompensa.readCoins("monedas_1.xml"); 
+                        break;
+
+                    case "Tanque de rio":
+                        Piscifactoria selectPiscRio = selectPisc();
+                        if (selectPiscRio instanceof PiscifactoriaDeRio) {
+                            if (selectPiscRio.getTanques().size() < selectPiscRio.getNumeroMaximoTanques()) {
+                                if (UsarRecompensa.readTank("tanque_r.xml")) {
+                                    selectPiscRio.getTanques().add(new Tanque(selectPiscRio.getTanques().size() + 1, 100));
+                                }
+                            } else {
+                                System.out.println("\nCapacidad máxima alcanzada: no se pueden añadir más tanques a \"" + selectPiscRio.getNombre() + "\".");
                             }
                         } else {
-                            System.out.println("\nCapacidad máxima alcanzada: no se pueden añadir más tanques a \"" + selectPiscRio.getNombre() + "\".");
+                            System.out.println("\nNo puedes añadir el tanque a una Piscifactoria de Rio.");
                         }
-                    } else {
-                        System.out.println("\nNo puedes añadir el tanque a una Piscifactria de Rio.");
-                    }
-                    break;
-    
-                case "Tanque de mar":
-                    Piscifactoria selectPiscMar= selectPisc();
-                    if (selectPiscMar instanceof PiscifactoriaDeMar) {
-                        if (selectPiscMar.getTanques().size() < selectPiscMar.getNumeroMaximoTanques()) {
-                            if (UsarRecompensa.readTank("tanque_m.xml")) {
-                                selectPiscMar.getTanques().add(new Tanque(selectPiscMar.getTanques().size() + 1, 100));
+                        break;
+
+                    case "Tanque de mar":
+                        Piscifactoria selectPiscMar = selectPisc();
+                        if (selectPiscMar instanceof PiscifactoriaDeMar) {
+                            if (selectPiscMar.getTanques().size() < selectPiscMar.getNumeroMaximoTanques()) {
+                                if (UsarRecompensa.readTank("tanque_m.xml")) {
+                                    selectPiscMar.getTanques().add(new Tanque(selectPiscMar.getTanques().size() + 1, 100));
+                                }
+                            } else {
+                                System.out.println("\nCapacidad máxima alcanzada: no se pueden añadir más tanques a \"" + selectPiscMar.getNombre() + "\".");
                             }
                         } else {
-                            System.out.println("\nCapacidad máxima alcanzada: no se pueden añadir más tanques a \"" + selectPiscMar.getNombre() + "\".");
+                            System.out.println("\nNo puedes añadir el tanque a una Piscifactoria de Mar.");
                         }
-                    } else {
-                        System.out.println("\nNo puedes añadir el tanque a una Piscifactria de Rio.");
-                    }
-                    break;
-                
-                case "Piscifactoria de rio":
-                    Piscifactoria pr = UsarRecompensa.readPiscifactoria(true);
-                    if (pr != null) {
-                        piscifactorias.add(pr);
-                    }
-                    break;
-    
-                case "Piscifactoria de mar":
-                    Piscifactoria pm = UsarRecompensa.readPiscifactoria(false);
-                    if (pm != null) {
-                        piscifactorias.add(pm);
-                    }
-                    break;
-    
-                case "Almacen central":
-                    if (almacenCentral == null) {
-                        if (UsarRecompensa.readAlmacenCentral()) {
-                            almacenCentral = new AlmacenCentral();
+                        break;
+
+                    case "Piscifactoria de rio":
+                        Piscifactoria pr = UsarRecompensa.readPiscifactoria(true);
+                        if (pr != null) {
+                            piscifactorias.add(pr);
                         }
-                    } else {
-                        System.out.println("\nYa dispones de un Almacen Central.");
-                    }
-                    break;
-                default:
-            } 
-        }
+                        break;
+
+                    case "Piscifactoria de mar":
+                        Piscifactoria pm = UsarRecompensa.readPiscifactoria(false);
+                        if (pm != null) {
+                            piscifactorias.add(pm);
+                        }
+                        break;
+
+                    case "Almacen central":
+                        if (almacenCentral == null) {
+                            if (UsarRecompensa.readAlmacenCentral()) {
+                                almacenCentral = new AlmacenCentral();
+                            }
+                        } else {
+                            System.out.println("\nYa dispones de un Almacen Central.");
+                        }
+                        break;
+                    
+                    default:
+                        System.out.println("\nOpción no válida.");
+                }
+            }
+        } while (opcion != -1);
     }
 
     /** Genera diversas recompensas. */
