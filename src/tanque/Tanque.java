@@ -6,6 +6,8 @@ import java.util.Iterator;
 
 import commons.Simulador;
 
+import piscifactoria.Piscifactoria;
+
 import peces.Pez;
 
 /** Representa un tanque para almacenar peces con capacidades de gestión y reproducción. */
@@ -35,13 +37,13 @@ public class Tanque {
     public void showStatus() {
         System.out.println("\n=============== Tanque " + numeroTanque + " ===============");
 
+        int ocupacion = peces.size();
         int vivos = getVivos();
         int alimentados = getAlimentados();
         int adultos = getMaduros();
         int hembras = getHembras();
         int machos = getMachos();
         int fertiles = getFertiles();
-        int ocupacion = peces.size();
         
         int porcentajeOcupacion = (ocupacion * 100 / capacidadMaxima);
         int porcentajeVivos = (ocupacion > 0 ? (vivos * 100 / ocupacion) : 0);
@@ -66,12 +68,29 @@ public class Tanque {
         }
     }
 
-    /** Muestra la capacidad actual del tanque. */
-    public void showCapacity() {
-        System.out.println("Tanque " + numeroTanque + " de la piscifactoría al " + (peces.size() * 100 / capacidadMaxima) + "% de capacidad. [" + peces.size() + "/" + capacidadMaxima + "]");
+    /**
+     * Muestra la capacidad actual del tanque.
+     * 
+     * @param piscifactoria la piscifactoría a la que pertenece el tanque.
+     */
+    public void showCapacity(Piscifactoria piscifactoria) {                     // TODO Preguntar si pasar todo el objeto o solo el nombre. Y preguntar que tan optimo es el String.format.
+        int porcentajeCapacidad = (peces.size() * 100) / capacidadMaxima;
+        String mensaje = String.format(
+            "Tanque %d de la %s al %d%% de capacidad. [%d/%d]",
+            numeroTanque,
+            piscifactoria.getNombre(),
+            porcentajeCapacidad,
+            peces.size(),
+            capacidadMaxima
+        );
+        System.out.println(mensaje);
     }
-
-    /** Avanza un día en el tanque, haciendo crecer los peces y ejecutando la reproducción. */
+    
+    /**
+     * Avanza un día en el tanque, haciendo crecer los peces y ejecutando la reproducción.
+     * 
+     * @return Un arreglo con el número de peces vendidos y las monedas ganadas.
+     */
     public int[] nextDay() {
         for (Pez pez : peces) {
             pez.grow();
@@ -155,7 +174,11 @@ public class Tanque {
         }
     }
 
-    /** Vende los peces maduros y actualiza el sistema de monedas. */
+    /**
+     * Vende los peces maduros, actualiza el sistema de monedas y registra la venta.
+     * 
+     * @return Un arreglo con el número de peces vendidos y las monedas ganadas.
+     */
     public int[] sellFish() {
         int pecesVendidos = 0, monedasGanadas = 0;
     

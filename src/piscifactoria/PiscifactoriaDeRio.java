@@ -3,7 +3,7 @@ package piscifactoria;
 import commons.Simulador;
 import tanque.Tanque;
 
-/** Representa una piscifactoría especializada en peces de río. */
+/** Representa una piscifactoría de peces de río. */
 public class PiscifactoriaDeRio extends Piscifactoria {
 
     /** Costo en monedas para mejorar la capacidad de comida. */
