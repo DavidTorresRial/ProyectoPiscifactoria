@@ -111,7 +111,7 @@ public abstract class Piscifactoria {
      */
     public void showCapacity(int numeroTanque) {
         Tanque tanque = tanques.get(numeroTanque - 1);
-        tanque.showCapacity();
+        tanque.showCapacity(this);
     }
 
     /** Muestra el estado actual del depósito de comida de la piscifactoría. */
@@ -124,7 +124,11 @@ public abstract class Piscifactoria {
                 + "% de su capacidad. [" + cantidadComidaAnimal + "/" + capacidadMaximaComida + "]");
     }
 
-    /** Hace avanzar el ciclo de vida en la piscifactoría, alimentando a los peces y actualizando sus estados. */
+    /**
+     * Hace avanzar el ciclo de vida en la piscifactoría, alimentando a los peces y actualizando sus estados.
+     * 
+     * @return Un arreglo con el número de peces vendidos y las monedas ganadas durante el día.
+     */
     public int[] nextDay() {
         int pecesVendidos = 0;
         int monedasGanadas = 0;

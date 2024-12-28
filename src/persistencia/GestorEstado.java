@@ -32,8 +32,9 @@ import tanque.Tanque;
 public class GestorEstado {
 
     /**
-     * Guarda el estado actual del simulador en un archivo JSON en la carpeta
-     * "saves".
+     * Guarda el estado actual del simulador en un archivo JSON en la carpeta "saves".
+     * 
+     * @param simulador El objeto del simulador que se va a guardar.
      */
     public static void guardarEstado(Simulador simulador) {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();

@@ -6,7 +6,11 @@ import java.io.IOException;
 
 /** Clase para gestionar transcripciones detalladas de acciones en el sistema. */
 public class Transcriptor {
+
+    /** Instancia única de la clase Transcriptor. */
     private static Transcriptor instancia;
+
+    /** Escritor utilizado para registrar mensajes. */
     private BufferedWriter writer;
 
     /**
