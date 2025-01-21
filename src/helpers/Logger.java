@@ -51,7 +51,7 @@ public class Logger {
      * @param message El mensaje a escribir.
      */
     public void log(String logFileName, String message) {
-        File logFile = new File("logs/" + logFileName + ".log");
+        File logFile = new File("logs/" + logFileName + ".log");  //TODO si meter esta linea en el init o aunque sea la ruta pasandole como parametro en nombre de la partida
         try (BufferedWriter logWriter = new BufferedWriter(new FileWriter(logFile, true))) {
             if (!logFile.getParentFile().exists()) {
                 logFile.getParentFile().mkdirs();
