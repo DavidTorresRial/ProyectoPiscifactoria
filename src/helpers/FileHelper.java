@@ -17,18 +17,24 @@ public class FileHelper {
 
     /**
      * Crea múltiples carpetas si no existen.
-     * 
+     *
      * @param carpetas Array de nombres de carpetas a crear.
      */
     public static void crearCarpetas(String[] carpetas) {
         for (String carpeta : carpetas) {
-            File carpetaFile = new File(carpeta.trim());
+            String carpetaTrimmed = carpeta.trim();
+            File carpetaFile = new File(carpetaTrimmed);
+            
             try {
                 if (!carpetaFile.exists()) {
-                    carpetaFile.mkdirs();
+                    if (!carpetaFile.mkdirs()) {
+                        Simulador.logger.logError("No se pudo crear la carpeta: " + carpetaTrimmed);
+                    }
                 }
+            } catch (SecurityException se) {
+                Simulador.logger.logError("Permisos insuficientes para crear la carpeta: " + carpetaTrimmed + " - " + se.getMessage());
             } catch (Exception e) {
-                Simulador.logger.logError("Ocurrió un error inesperado al intentar crear la carpeta '" + carpeta.trim() + "': " + e.getMessage());
+                Simulador.logger.logError("Error inesperado al intentar crear la carpeta: " + carpetaTrimmed + " - " + e.getMessage());
             }
         }
     }
