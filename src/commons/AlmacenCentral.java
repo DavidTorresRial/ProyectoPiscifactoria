@@ -48,7 +48,7 @@ public class AlmacenCentral {
         if (Simulador.monedas.gastarMonedas(COSTO_MEJORA)) {
             capacidadAlmacen += 50;
             System.out.println("\nCapacidad del almacén central mejorada en 50 unidades hasta " + capacidadAlmacen);
-            Simulador.logger.log("Mejorando el almacen central, aumentando su capacidad de comida en 50 unidades hasta " + capacidadAlmacen);
+            Simulador.logger.log(Simulador.nombreEntidad, "Mejorando el almacen central, aumentando su capacidad de comida en 50 unidades hasta " + capacidadAlmacen);
         } else {
             System.out.println("\nNecesitas " + COSTO_MEJORA + " monedas para aumentar la capacidad.");
         }

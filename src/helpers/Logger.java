@@ -4,95 +4,94 @@ import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import commons.Simulador;
-
-/** Clase para manejar el registro de logs en un archivo. */
+/** Clase para manejar el registro de logs en archivos. */
 public class Logger {
+
+    /** Ruta del archivo de log de errores general. */
+    private static final String ERROR_LOG_PATH = "logs/0_errors.log";
 
     /** Instancia única de la clase Logger. */
     private static Logger instance;
 
-    /** Escritor utilizado para registrar mensajes en el archivo de logs. */
-    private BufferedWriter logWriter;
-
-    /** Escritor utilizado para registrar mensajes en el archivo de logs general. */
+    /** Escritor persistente para el log general de errores. */
     private BufferedWriter errorWriter;
 
     /**
-     * Constructor privado para inicializar los escritores de logs.
-     * 
-     * @param logFileName El nombre del archivo de log.
-     * @param errorFileName El nombre del archivo para los logs de errores.
+     * Constructor privado para inicializar el log general de errores.
      */
-    private Logger(String logFileName) {
+    private Logger() {      //TODO preguntar si guardar como variable la ruta del archivo de log de partida pasandole el nombre como parametro de el constructor de Logger
         try {
-            File logFile = new File("logs/" + logFileName + ".log");
-
-            logWriter = new BufferedWriter(new FileWriter(logFile, true));
-            errorWriter = new BufferedWriter(new FileWriter(Simulador.errorLog, true));
-            
+            File errorLogFile = new File(ERROR_LOG_PATH);
+            if (!errorLogFile.getParentFile().exists()) {
+                errorLogFile.getParentFile().mkdirs();
+            }
+            errorWriter = new BufferedWriter(new FileWriter(errorLogFile, true));
         } catch (IOException e) {
-            Simulador.logger.logError("No se pudo iniciar el Logger: " + e.getMessage());
+            System.err.println("No se pudo iniciar el Logger general de errores: " + e.getMessage());
         }
     }
 
     /**
-     * Obtiene la instancia del Logger.
+     * Obtiene la instancia única del Logger.
      * 
-     * @param logFileName El nombre del archivo de log.
-     * @param errorFileName El nombre del archivo para logs de errores.
      * @return La instancia del Logger.
      */
-    public static Logger getInstance(String logFileName) {
+    public static Logger getInstance() {
         if (instance == null) {
-            instance = new Logger(logFileName);
+            instance = new Logger();
         }
         return instance;
     }
 
     /**
-     * Escribe un mensaje en el archivo de log con un timestamp.
+     * Escribe un mensaje en un archivo de log específico con un timestamp.
+     * Se utiliza un stream temporal para escribir en logs de partida.
      * 
-     * @param message El mensaje a escribir en el log.
+     * @param logFileName El nombre del archivo de log (sin extensión).
+     * @param message El mensaje a escribir.
      */
-    public void log(String message) {
-        try {
+    public void log(String logFileName, String message) {
+        File logFile = new File("logs/" + logFileName + ".log");
+        try (BufferedWriter logWriter = new BufferedWriter(new FileWriter(logFile, true))) {
+            if (!logFile.getParentFile().exists()) {
+                logFile.getParentFile().mkdirs();
+            }
             String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
             logWriter.write("[" + timestamp + "] " + message);
             logWriter.newLine();
-            logWriter.flush();
         } catch (IOException e) {
-            Simulador.logger.logError("Error al escribir en el log: " + e.getMessage());
+            logError("Error al escribir en el log '" + logFileName + "': " + e.getMessage());
         }
     }
 
     /**
-     * Escribe un mensaje de error en el archivo de log de errores con un timestamp.
+     * Escribe un mensaje en el log general de errores con un timestamp.
      * 
-     * @param errorMessage El mensaje de error a escribir en el log.
+     * @param errorMessage El mensaje de error a escribir.
      */
     public void logError(String errorMessage) {
         try {
-            String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-            errorWriter.write("[" + timestamp + "] " + errorMessage);
-            errorWriter.newLine();
-            errorWriter.flush();
+            if (errorWriter != null) {
+                String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+                errorWriter.write("[" + timestamp + "] " + errorMessage);
+                errorWriter.newLine();
+                errorWriter.flush();
+            }
         } catch (IOException e) {
-            Simulador.logger.logError("Error al escribir en el log: " + e.getMessage());
+            System.err.println("Error al escribir en el log general de errores: " + e.getMessage());
         }
     }
 
-    /** Cierra los archivos de log y errores. */
+    /**
+     * Cierra el archivo de log general de errores.
+     */
     public void close() {
         try {
-            if (logWriter != null) {
-                logWriter.close();
-            }
             if (errorWriter != null) {
                 errorWriter.close();
             }
         } catch (IOException e) {
-            Simulador.logger.logError("Error al cerrar los archivos de log: " + e.getMessage());
+            System.err.println("Error al cerrar el archivo de log general de errores: " + e.getMessage());
         }
     }
 }
