@@ -4,8 +4,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
-/** Clase para gestionar transcripciones detalladas de acciones en el sistema. */
-public class Transcriptor {
+/** Clase para gestionar transcripciones detalladas de acciones en el sistema. */public class Transcriptor {
 
     /** Instancia única de la clase Transcriptor. */
     private static Transcriptor instancia;
