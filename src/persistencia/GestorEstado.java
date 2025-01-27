@@ -110,7 +110,7 @@ public class GestorEstado {
         // Guardar el JSON en un archivo
         try (FileWriter writer = new FileWriter("saves/" + simulador.getNombreEntidad() + ".save")) {
             gson.toJson(estado, writer);
-            Simulador.logger.log(Simulador.nombreEntidad, "Sistema guardado.");
+            Simulador.logger.logSistemaGuardado();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -246,7 +246,7 @@ public class GestorEstado {
             }
 
             System.out.println("\nPartida cargada: " + archivoPartida);
-            Simulador.logger.log(Simulador.nombreEntidad, "Sistema cargado.");
+            Simulador.logger.logSistemaCargado();
         } catch (Exception e) {
             System.err.println("Error al cargar el archivo: " + e.getMessage());
         }

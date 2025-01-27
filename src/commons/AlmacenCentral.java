@@ -19,6 +19,9 @@ public class AlmacenCentral {
     /** Costo de mejora fijo para el almacen central. */
     private final int COSTO_MEJORA = 200;
 
+    /** Incremento fijo para la mejora del almacén central. */
+    private static final int INCREMENTO_MEJORA_ALMACEN = 50;
+
     /** Constructor del almacén central. */
     public AlmacenCentral() {
         this.capacidadAlmacen = 200;
@@ -46,9 +49,9 @@ public class AlmacenCentral {
      */
     public void aumentarCapacidad() {
         if (Simulador.monedas.gastarMonedas(COSTO_MEJORA)) {
-            capacidadAlmacen += 50;
+            capacidadAlmacen += INCREMENTO_MEJORA_ALMACEN;
             System.out.println("\nCapacidad del almacén central mejorada en 50 unidades hasta " + capacidadAlmacen);
-            Simulador.logger.log(Simulador.nombreEntidad, "Mejorando el almacen central, aumentando su capacidad de comida en 50 unidades hasta " + capacidadAlmacen);
+            Simulador.logger.logMejorarAlmacenCentral(INCREMENTO_MEJORA_ALMACEN, capacidadAlmacen);
         } else {
             System.out.println("\nNecesitas " + COSTO_MEJORA + " monedas para aumentar la capacidad.");
         }
