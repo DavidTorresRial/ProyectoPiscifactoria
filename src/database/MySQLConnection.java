@@ -1,8 +1,10 @@
-package commons;
+package database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+
+import commons.Simulador;
 
 /** Administra la conexión a una base de datos MySQL. */
 public class MySQLConnection {
