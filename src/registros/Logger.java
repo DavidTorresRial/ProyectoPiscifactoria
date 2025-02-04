@@ -1,4 +1,4 @@
-package helpers;
+package registros;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -8,7 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /** Clase para manejar el registro de logs en un archivo. */
-public class Logger {
+class Logger {
 
     /** Ruta del archivo de log de errores general. */
     private static final String ERROR_LOG_PATH = "logs/0_errors.log";
@@ -152,6 +152,11 @@ public class Logger {
      */
     public void logComprarPeces(String nombre, char sexo, int tanque, String piscifactoria) {
         logPartida(nombre + " (" + sexo + ") comprado. Añadido al tanque " + tanque + " de la piscifactoría " + piscifactoria + ".");
+    }
+
+
+    public void logVenderPeces(int numPecesVen, String nombrePiscifactoria){
+        logPartida("Vendidos " + numPecesVen + " peces de la piscifactoría " + nombrePiscifactoria + " de forma manual.");
     }
 
     /**

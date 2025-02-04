@@ -6,30 +6,35 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import estadisticas.Estadisticas;
 import helpers.FileHelper;
 import helpers.InputHelper;
-import helpers.Logger;
 import helpers.MenuHelper;
-import helpers.Transcriptor;
-
-import propiedades.AlmacenPropiedades;
-import propiedades.PecesDatos;
-import propiedades.PecesProps;
-import estadisticas.Estadisticas;
-
-import recompensas.CrearRecompensa;
-import recompensas.UsarRecompensa;
-
+import peces.Pez;
+import peces.tipos.doble.Dorada;
+import peces.tipos.doble.SalmonAtlantico;
+import peces.tipos.doble.TruchaArcoiris;
+import peces.tipos.mar.ArenqueDelAtlantico;
+import peces.tipos.mar.Besugo;
+import peces.tipos.mar.LenguadoEuropeo;
+import peces.tipos.mar.LubinaRayada;
+import peces.tipos.mar.Robalo;
+import peces.tipos.rio.CarpaPlateada;
+import peces.tipos.rio.Pejerrey;
+import peces.tipos.rio.PercaEuropea;
+import peces.tipos.rio.SalmonChinook;
+import peces.tipos.rio.TilapiaDelNilo;
+import persistencia.GestorEstado;
 import piscifactoria.Piscifactoria;
 import piscifactoria.PiscifactoriaDeMar;
 import piscifactoria.PiscifactoriaDeRio;
+import propiedades.AlmacenPropiedades;
+import propiedades.PecesDatos;
+import propiedades.PecesProps;
+import recompensas.CrearRecompensa;
+import recompensas.UsarRecompensa;
+import registros.Registros;
 import tanque.Tanque;
-
-import peces.Pez;
-import peces.tipos.doble.*;
-import peces.tipos.mar.*;
-import peces.tipos.rio.*;
-import persistencia.GestorEstado;
 
 /**
  * La clase Simulador gestiona la simulación de una piscifactoría,
@@ -79,11 +84,7 @@ public class Simulador {
     /** Almacén central de comida para abastecer las piscifactorías. */
     public static AlmacenCentral almacenCentral;
 
-    /**  Logger para gestionar los registros de eventos y errores del sistema. */
-    public static Logger logger;
-
-    /**  Transcriptor para registrar los eventos de las piscifactorías en archivos. */
-    public static Transcriptor transcriptor;
+    public Registros registro;
 
     /** Metodo que inicializa todo el sistema. */
     public void init() {
@@ -100,8 +101,7 @@ public class Simulador {
                         respuesta = "N";
                         System.out.println();
                     } else {
-                        logger = Logger.getInstance(partida);
-                        transcriptor = Transcriptor.getInstance(partida);
+                        registro = new Registros(nombreEntidad);
 
                         GestorEstado.load(this, partida);
                     }
@@ -111,37 +111,12 @@ public class Simulador {
 
         if (respuesta.equals("N")) {
             nombreEntidad = InputHelper.readString("Ingrese el nombre de la entidad/empresa/partida: ");
-            logger = Logger.getInstance(nombreEntidad);
-            transcriptor = Transcriptor.getInstance(nombreEntidad);
-
-            logger.logInicioPartida(nombreEntidad);
-            transcriptor.transcribir("Inicio de la simulación: " + nombreEntidad);
-            transcriptor.transcribir("Dinero inicial: " + monedas.getMonedas() + " monedas.");
-
-            transcriptor.transcribir("\n========= Peces =========\n" +
-                "Rio:\n" +
-                "  -" + AlmacenPropiedades.CARPA_PLATEADA.getNombre() + "\n" +
-                "  -" + AlmacenPropiedades.PEJERREY.getNombre() + "\n" +
-                "  -" + AlmacenPropiedades.PERCA_EUROPEA.getNombre() + "\n" +
-                "  -" + AlmacenPropiedades.SALMON_CHINOOK.getNombre() + "\n" +
-                "  -" + AlmacenPropiedades.TILAPIA_NILO.getNombre() + "\n" +
-                "\nMar:\n" +
-                "  -" + AlmacenPropiedades.ARENQUE_ATLANTICO.getNombre() + "\n" +
-                "  -" + AlmacenPropiedades.BESUGO.getNombre() + "\n" +
-                "  -" + AlmacenPropiedades.LENGUADO_EUROPEO.getNombre() + "\n" +
-                "  -" + AlmacenPropiedades.LUBINA_RAYADA.getNombre() + "\n" +
-                "  -" + AlmacenPropiedades.ROBALO.getNombre() + "\n" +
-                "\nDoble:\n" +
-                "  -" + AlmacenPropiedades.DORADA.getNombre() + "\n" +
-                "  -" + AlmacenPropiedades.SALMON_ATLANTICO.getNombre() + "\n" +
-                "  -" + AlmacenPropiedades.TRUCHA_ARCOIRIS.getNombre()
-            );
+            registro = new Registros(nombreEntidad);
             estadisticas = new Estadisticas(pecesImplementados);
-            transcriptor.transcribir("-------------------------" + "\n>>> Inicio del día " + (dia + 1) + ".");
 
             nombrePiscifactoria = InputHelper.readString("\nIngrese el nombre de la primera Piscifactoria: ");
-            logger.logPiscifactoriaInicial(nombrePiscifactoria);
-            transcriptor.transcribir("Piscifactoría inicial: " + nombrePiscifactoria + ".");
+            registro.registroInicioPartida(nombreEntidad, monedas.getMonedas(), nombrePiscifactoria, dia);
+
 
             piscifactorias.add(new PiscifactoriaDeRio(nombrePiscifactoria));
             piscifactorias.get(0).añadirComidaAnimal(piscifactorias.get(0).getCapacidadMaximaComida());
@@ -359,7 +334,7 @@ public class Simulador {
         }
         System.out.println("\n" + totalPecesVendidos + " peces vendidos por un total de " + totalMonedasGanadas + " monedas.");
         logger.logFinDelDia(dia);
-        transcriptor.transcribir("Fin del día " + dia + ".");
+   
 
         int pecesDeRio = 0, pecesDeMar = 0;
 
@@ -371,10 +346,6 @@ public class Simulador {
             }
         }
 
-        transcriptor.transcribir("Peces actuales: " + pecesDeRio + " de río y " + pecesDeMar + " de mar.");
-        transcriptor.transcribir(totalMonedasGanadas + " monedas ganadas por un total de " + monedas.getMonedas() + ".");
-
-        transcriptor.transcribir("-------------------------" + "\n>>> Inicio del día " + (dia + 1) + ".");
     }
 
     /** Simula varios días consecutivos en todas las piscifactorías. */
@@ -439,7 +410,6 @@ public class Simulador {
                                                             + piscifactoria.getNombre() + ".");
 
                                             logger.logComprarComida(cantidadComida, "animal", nombrePiscifactoria);
-                                            transcriptor.transcribir(cantidadComida + " de comida de tipo animal comprada por " + costo + " monedas. Se almacena en la piscifactoria " + piscifactoria.getNombre() + ".");
                                         } else {
                                             piscifactoria.añadirComidaVegetal(cantidadComida);
                                             comidaActual += cantidadComida;
@@ -449,7 +419,6 @@ public class Simulador {
                                                             + piscifactoria.getNombre() + ".");
 
                                             logger.logComprarComida(cantidadComida, "vegetal", nombrePiscifactoria);
-                                            transcriptor.transcribir(cantidadComida + " de comida de tipo vegetal comprada por " + costo + " monedas. Se almacena en la piscifactoria " + piscifactoria.getNombre() + ".");
                                         }
                                     }
                                 } else {
@@ -504,7 +473,6 @@ public class Simulador {
                                                         + costo + " monedas. Se almacena en el almacén central.\r");
 
                                         logger.logComprarComida(cantidadComida, "animal", " el almacén central");
-                                        transcriptor.transcribir(cantidadComida + " de comida de tipo animal comprada por " + costo + " monedas. Se almacena en el almacén central.");
                                     } else {
                                         almacenCentral.añadirComidaVegetal(cantidadComida);
                                         comidaActual += cantidadComida;
@@ -513,7 +481,6 @@ public class Simulador {
                                                         + costo + " monedas. Se almacena en el almacén central.\r");
                                         
                                         logger.logComprarComida(cantidadComida, "vegetal", " el almacén central");
-                                        transcriptor.transcribir(cantidadComida + " de comida de tipo animal comprada por " + costo + " monedas. Se almacena en el almacén central.");
                                     }
                                 }
                             } else {
@@ -618,9 +585,6 @@ public class Simulador {
                             + tanqueSeleccionado.getNumeroTanque() + " de la piscifactoría "
                             + selectTank.getKey().getNombre() + ".");
                     logger.logComprarPeces(pezSeleccionado.getNombre(), pezSeleccionado.isSexo() ? 'M' : 'H', tanqueSeleccionado.getNumeroTanque(), nombrePiscifactoria);
-                    transcriptor.transcribir(pezSeleccionado.getNombre() + (pezSeleccionado.isSexo() ? " (M)" : " (H)") + " comprado por " 
-                            + pezSeleccionado.getDatos().getCoste() + " monedas. Añadido al tanque " + tanqueSeleccionado.getNumeroTanque() 
-                            + " de la piscifactoria " + selectTank.getKey().getNombre());
                 }
             }
         }
@@ -648,7 +612,6 @@ public class Simulador {
             }
             System.out.println("\nLimpiado el tanque " + tanque.getNumeroTanque() + " de la piscifactoría " + selectTank.getKey().getNombre() + ".");
             logger.logLimpiarTanque(tanque.getNumeroTanque(), selectTank.getKey().getNombre());
-            transcriptor.transcribir(("Limpiado el tanque " + tanque.getNumeroTanque() + " de la piscifactoría " + selectTank.getKey().getNombre() + "."));
         }
     }
 
@@ -660,7 +623,6 @@ public class Simulador {
             tanque.getPeces().clear();
             System.out.println("\nVaciado el tanque " + tanque.getNumeroTanque() + " de la piscifactoría " + selectTank.getKey().getNombre() + ".");
             logger.logVaciarTanque(tanque.getNumeroTanque(), selectTank.getKey().getNombre());
-            transcriptor.transcribir("Vaciado el tanque " + tanque.getNumeroTanque() + " de la piscifactoría " + selectTank.getKey().getNombre() +".");
         }
     }
 
@@ -708,7 +670,6 @@ public class Simulador {
                         almacenCentral = new AlmacenCentral();
                         System.out.println("\nComprado el almacén central.");
                         logger.logComprarAlmacenCentral();
-                        transcriptor.transcribir("Comprado el almacén central.");
                     } else {
                         System.out.println("\nNecesitas 2000 monedas para construir el almacén central.");
                     }
@@ -826,7 +787,6 @@ public class Simulador {
                 piscifactorias.add(nuevaPiscifactoria);
 
                 logger.logComprarPiscifactoria("río", nombrePiscifactoria);
-                transcriptor.transcribir("Comprada la piscifactoria de rio "  + nombrePiscifactoria + " por " + costoPiscifactoríaRio + " monedas.");
             } else {
                 System.out.println("\nNo tienes suficientes monedas para comprar la piscifactoría de río.");
             }
@@ -837,7 +797,6 @@ public class Simulador {
                 piscifactorias.add(nuevaPiscifactoria);
 
                 logger.logComprarPiscifactoria("mar", nombrePiscifactoria);
-                transcriptor.transcribir("Comprada la piscifactoria de mar "  + nombrePiscifactoria + " por " + costoPiscifactoríaMar + " monedas.");
             } else {
                 System.out.println("\nNo tienes suficientes monedas para comprar la piscifactoría de mar.");
             }
