@@ -1,26 +1,26 @@
 package registros;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
+import java.io.File;
 import java.util.Date;
+import java.text.SimpleDateFormat;
 
 /** Clase para manejar el registro de logs en un archivo. */
 class Logger {
 
     /** Ruta del archivo de log de errores general. */
-    private static final String ERROR_LOG_PATH = "logs/0_errors.log";
+    private final String ERROR_LOG_PATH = "logs/0_errors.log";
 
     /** Escritor persistente para el log general de errores. */
     private BufferedWriter errorWriter;
 
-    /** Ruta del archivo de log específico de la partida. */
-    private String partidaLogPath;
-
-    /** Instancia única de la clase Logger (Singleton). */
+    /** Instancia única de la clase Logger. */
     private static Logger instance;
+
+    /** Ruta del archivo de log específico de la partida. */
+    private String logPath;
 
     /**
      * Constructor privado para inicializar el log general y de la partida.
@@ -29,23 +29,19 @@ class Logger {
      */
     private Logger(String nombrePartida) {
         try {
-            File errorLogFile = new File(ERROR_LOG_PATH);
-            if (!errorLogFile.getParentFile().exists()) {
-                errorLogFile.getParentFile().mkdirs();
-            }
-            errorWriter = new BufferedWriter(new FileWriter(errorLogFile, true));
-
-            this.partidaLogPath = "logs/" + nombrePartida + ".log";
+            errorWriter = new BufferedWriter(new FileWriter(ERROR_LOG_PATH, true));
+            this.logPath = "logs/" + nombrePartida + ".log";
+            
         } catch (IOException e) {
             System.err.println("No se pudo iniciar el Logger: " + e.getMessage());
         }
     }
 
     /**
-     * Obtiene la instancia única del Logger (Singleton).
+     * Obtiene la instancia única del Logger.
      *
      * @param nombrePartida Nombre de la partida para generar la ruta del log de la partida.
-     * @return Instancia del Logger.
+     * @return La instancia única del Logger.
      */
     public static Logger getInstance(String nombrePartida) {
         if (instance == null) {
@@ -57,9 +53,9 @@ class Logger {
     /**
      * Escribe un mensaje en el log general de errores con un timestamp.
      *
-     * @param message Mensaje a escribir.
+     * @param message El mensaje que será registrado en el archivo de logs.
      */
-    public void logError(String message) {
+    void logError(String message) {
         if (errorWriter != null) {
             String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
             String logEntry = "[" + timestamp + "] " + message;
@@ -76,10 +72,10 @@ class Logger {
     /**
      * Escribe un mensaje en el log específico de la partida.
      *
-     * @param message Mensaje a escribir.
+     * @param message El mensaje que será registrado en el archivo de logs.
      */
-    public void logPartida(String message) {
-        File logFile = new File(partidaLogPath);
+    void log(String message) {
+        File logFile = new File(logPath);
         try {
             if (!logFile.getParentFile().exists()) {
                 logFile.getParentFile().mkdirs();
@@ -97,7 +93,7 @@ class Logger {
     }
 
     /** Cierra el escritor persistente del log general. */
-    public void close() {
+    void close() {
         if (errorWriter != null) {
             try {
                 errorWriter.close();
@@ -108,89 +104,170 @@ class Logger {
         }
     }
 
-
-
-
-
-
+    /**
+     * Registra el inicio de la partida y la piscifactoría inicial.
+     * @param nombrePartida Nombre de la partida.
+     * @param nombrePiscifactoria Nombre de la piscifactoría inicial.
+     */
     void logInicioPartida(String nombrePartida, String nombrePiscifactoria) {
-        logPartida("Inicio de la simulación " + nombrePartida + ".");
-        logPartida("Piscifactoría inicial: " + nombrePiscifactoria + ".");
+        log("Inicio de la simulación " + nombrePartida + ".");
+        log("Piscifactoría inicial: " + nombrePiscifactoria + ".");
     }
 
+    /**
+     * Registra la compra de comida para una piscifactoría.
+     * @param cantidadComida Cantidad de comida comprada.
+     * @param tipoComida Tipo de comida comprada.
+     * @param nombrePiscifactoria Nombre de la piscifactoría donde se almacena.
+     */
     void logComprarComidaPiscifactoria(int cantidadComida, String tipoComida, String nombrePiscifactoria) {
-        logPartida(cantidadComida + " de comida de tipo " + tipoComida + " comprada. Se almacena en  en la piscifactoría " + nombrePiscifactoria + ".");
+        log(cantidadComida + " de comida de tipo " + tipoComida + " comprada. Se almacena en  en la piscifactoría " + nombrePiscifactoria + ".");
     }
 
+    /**
+     * Registra la compra de comida para el almacén central.
+     * @param cantidadComida Cantidad de comida comprada.
+     * @param tipoComida Tipo de comida comprada.
+     */
     void logComprarComidaAlmacenCentral(int cantidadComida, String tipoComida) {
-        logPartida(cantidadComida + " de comida de tipo " + tipoComida + " comprada. Se almacena en el almacén central.");
+        log(cantidadComida + " de comida de tipo " + tipoComida + " comprada. Se almacena en el almacén central.");
     }
 
+    /**
+     * Registra la compra de peces y su ubicación.
+     * @param nombrePez Nombre del pez.
+     * @param sexoPez Sexo del pez (true = macho, false = hembra).
+     * @param numeroTanque Número del tanque donde se añade.
+     * @param nombrePiscifactoria Nombre de la piscifactoría destino.
+     */
     void logComprarPeces(String nombrePez, Boolean sexoPez, int numeroTanque, String nombrePiscifactoria) {
-        logPartida(nombrePez + " (" + (sexoPez ? "M" : "H") + ") comprado. Añadido al tanque " + numeroTanque + " de la piscifactoría " + nombrePiscifactoria + ".");
+        log(nombrePez + " (" + (sexoPez ? "M" : "H") + ") comprado. Añadido al tanque " + numeroTanque + " de la piscifactoría " + nombrePiscifactoria + ".");
     }
 
+    /**
+     * Registra la venta de peces desde una piscifactoría.
+     * @param numeroPecesVendidos Cantidad de peces vendidos.
+     * @param nombrePiscifactoria Nombre de la piscifactoría.
+     */
     void logVenderPeces(int numeroPecesVendidos, String nombrePiscifactoria){
-        logPartida("Vendidos " + numeroPecesVendidos + " peces de la piscifactoría " + nombrePiscifactoria + " de forma manual.");
+        log("Vendidos " + numeroPecesVendidos + " peces de la piscifactoría " + nombrePiscifactoria + " de forma manual.");
     }
 
+    /**
+     * Registra la limpieza de un tanque.
+     * @param numeroTanque Número del tanque limpiado.
+     * @param nombrePiscifactoria Nombre de la piscifactoría.
+     */
     void logLimpiarTanque(int numeroTanque, String nombrePiscifactoria) {
-        logPartida("Limpiado el tanque " + numeroTanque + " de la piscifactoría " + nombrePiscifactoria + ".");
+        log("Limpiado el tanque " + numeroTanque + " de la piscifactoría " + nombrePiscifactoria + ".");
     }
 
+    /**
+     * Registra el vaciado de un tanque.
+     * @param numeroTanque Número del tanque vaciado.
+     * @param nombrePiscifactoria Nombre de la piscifactoría.
+     */
     void logVaciarTanque(int numeroTanque, String nombrePiscifactoria) {
-        logPartida("Vaciado el tanque " + numeroTanque + " de la piscifactoría " + nombrePiscifactoria + ".");
+        log("Vaciado el tanque " + numeroTanque + " de la piscifactoría " + nombrePiscifactoria + ".");
     }
 
+    /**
+     * Registra la compra de una nueva piscifactoría.
+     * @param tipoPiscifactoria Tipo de piscifactoría comprada.
+     * @param nombrePiscifactoria Nombre de la nueva piscifactoría.
+     */
     void logComprarPiscifactoria(String tipoPiscifactoria, String nombrePiscifactoria) {
-        logPartida("Comprada la piscifactoría de " + tipoPiscifactoria + " " + nombrePiscifactoria + ".");
+        log("Comprada la piscifactoría de " + tipoPiscifactoria + " " + nombrePiscifactoria + ".");
     }
 
+    /**
+     * Registra la compra de un tanque adicional.
+     * @param nombrePiscifactoria Nombre de la piscifactoría donde se añade el tanque.
+     */
     void logComprarTanque(String nombrePiscifactoria) {
-        logPartida("Comprado un tanque para la piscifactoría " + nombrePiscifactoria + ".");
+        log("Comprado un tanque para la piscifactoría " + nombrePiscifactoria + ".");
     }
 
+    /**
+     * Registra la compra del almacén central.
+     */
     void logComprarAlmacenCentral() {
-        logPartida("Comprado el almacén central.");
+        log("Comprado el almacén central.");
     }
 
+    /**
+     * Registra la mejora de una piscifactoría.
+     * @param nombrePiscifactoria Nombre de la piscifactoría mejorada.
+     */
     void logMejorarPiscifactoria(String nombrePiscifactoria) {
-        logPartida("Mejorada la piscifactoría " + nombrePiscifactoria + " aumentando su capacidad de comida.");
+        log("Mejorada la piscifactoría " + nombrePiscifactoria + " aumentando su capacidad de comida.");
     }
 
+    /**
+     * Registra la mejora del almacén central.
+     * @param incrementoCapacidad Incremento de la capacidad de comida.
+     * @param capacidadComida Nueva capacidad total de comida.
+     */
     void logMejorarAlmacenCentral(int incrementoCapacidad, int capacidadComida) {
-        logPartida("Mejorando el almacén central, aumentando su capacidad de comida en " + incrementoCapacidad + " unidades hasta " + capacidadComida + ".");
+        log("Mejorando el almacén central, aumentando su capacidad de comida en " + incrementoCapacidad + " unidades hasta " + capacidadComida + ".");
     }
 
+    /**
+     * Registra el final del día en la simulación.
+     * @param dia Número del día finalizado.
+     */
     void logFinDelDia(int dia) {
-        logPartida("Fin del día " + dia + ".");
+        log("Fin del día " + dia + ".");
     }
 
+    /**
+     * Registra la adición de peces mediante una opción oculta.
+     * @param nombrePiscifactoria Nombre de la piscifactoría afectada.
+     */
     void logOpcionOcultaPeces(String nombrePiscifactoria) {
-        logPartida("Añadidos peces mediante la opción oculta a la piscifactoría " + nombrePiscifactoria + ".");
+        log("Añadidos peces mediante la opción oculta a la piscifactoría " + nombrePiscifactoria + ".");
     }
 
+    /**
+     * Registra la adición de monedas mediante una opción oculta.
+     */
     void logOpcionOcultaMonedas() {
-        logPartida("Añadidas monedas mediante la opción oculta.");
+        log("Añadidas monedas mediante la opción oculta.");
     }
 
+    /**
+     * Registra el cierre de la partida.
+     */
     void logCierrePartida() {
-        logPartida("Cierre de la partida.");
+        log("Cierre de la partida.");
     }
 
+    /**
+     * Registra la creación de una recompensa.
+     */
     void logCrearRecompensa() {
-        logPartida("Recompensa creada.");
+        log("Recompensa creada.");
     }
 
+    /**
+     * Registra el uso de una recompensa.
+     * @param nombreRecompensa Nombre de la recompensa utilizada.
+     */
     void logUsarRecompensa(String nombreRecompensa) {
-        logPartida("Recompensa " + nombreRecompensa + " usada.");
+        log("Recompensa " + nombreRecompensa + " usada.");
     }
 
+    /**
+     * Registra la acción de guardar el sistema.
+     */
     void logGuardarSistema() {
-        logPartida("Sistema guardado.");
+        log("Sistema guardado.");
     }
 
+    /**
+     * Registra la acción de cargar el sistema.
+     */
     void logCargarSistema() {
-        logPartida("Sistema cargado.");
+        log("Sistema cargado.");
     }
 }
