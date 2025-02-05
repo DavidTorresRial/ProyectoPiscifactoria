@@ -1,14 +1,14 @@
 package recompensas;
 
+import java.io.File;
+import java.io.FileWriter;
+
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
-
-import java.io.File;
-import java.io.FileWriter;
 
 import commons.Simulador;
 
@@ -71,7 +71,7 @@ public class CrearRecompensa {
 
             Simulador.registro.registroCrearRecompensa(name);
         } catch (Exception e) {
-            Simulador.logger.logError("Error al crear la recompensa '" + name + "' en el archivo '" + fileName + "': " + e.getMessage());
+            Simulador.registro.registroLogError("Error al crear la recompensa '" + name + "' en el archivo '" + fileName + "': " + e.getMessage());
         }
     }
 
@@ -128,7 +128,7 @@ public class CrearRecompensa {
 
             Simulador.registro.registroCrearRecompensa(name);
         } catch (Exception e) {
-            Simulador.logger.logError("Error al crear la recompensa '" + name + "' en el archivo '" + fileName + "': " + e.getMessage());
+            Simulador.registro.registroLogError("Error al crear la recompensa '" + name + "' en el archivo '" + fileName + "': " + e.getMessage());
         }
     }
 
@@ -185,7 +185,7 @@ public class CrearRecompensa {
 
             Simulador.registro.registroCrearRecompensa(name);
         } catch (Exception e) {
-            Simulador.logger.logError("Error al crear la recompensa '" + name + "' en el archivo '" + fileName + "': " + e.getMessage());
+            Simulador.registro.registroLogError("Error al crear la recompensa '" + name + "' en el archivo '" + fileName + "': " + e.getMessage());
         }
     }
 
@@ -241,7 +241,7 @@ public class CrearRecompensa {
 
             Simulador.registro.registroCrearRecompensa(name);
         } catch (Exception e) {
-            Simulador.logger.logError("Error al crear la recompensa '" + name + "' en el archivo '" + fileName + "': " + e.getMessage());
+            Simulador.registro.registroLogError("Error al crear la recompensa '" + name + "' en el archivo '" + fileName + "': " + e.getMessage());
         }
     }
     
@@ -302,7 +302,7 @@ public class CrearRecompensa {
 
             Simulador.registro.registroCrearRecompensa(name);
         } catch (Exception e) {
-            Simulador.logger.logError("Error al crear la recompensa '" + name + "' en el archivo '" + fileName + "': " + e.getMessage());
+            Simulador.registro.registroLogError("Error al crear la recompensa '" + name + "' en el archivo '" + fileName + "': " + e.getMessage());
         }
     }
 
@@ -363,7 +363,7 @@ public class CrearRecompensa {
 
             Simulador.registro.registroCrearRecompensa(name);
         } catch (Exception e) {
-            Simulador.logger.logError("Error al crear la recompensa '" + name + "' en el archivo '" + fileName + "': " + e.getMessage());
+            Simulador.registro.registroLogError("Error al crear la recompensa '" + name + "' en el archivo '" + fileName + "': " + e.getMessage());
         }
     }
 
@@ -422,7 +422,7 @@ public class CrearRecompensa {
 
             Simulador.registro.registroCrearRecompensa(name);
         } catch (Exception e) {
-            Simulador.logger.logError("Error al crear la recompensa '" + name + "' en el archivo '" + fileName + "': " + e.getMessage());
+            Simulador.registro.registroLogError("Error al crear la recompensa '" + name + "' en el archivo '" + fileName + "': " + e.getMessage());
         }
     }
 
