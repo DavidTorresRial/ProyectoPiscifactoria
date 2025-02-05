@@ -45,6 +45,21 @@ public abstract class Piscifactoria {
         this.nombre = nombre;
     }
 
+    /**
+     * Constructor para crear una piscifactoría con valores personalizados.
+     *
+     * @param nombre Nombre de la piscifactoría.
+     * @param capacidadMaximaComida Capacidad máxima de comida que puede almacenar.
+     * @param cantidadComidaAnimal Cantidad de comida animal disponible.
+     * @param cantidadComidaVegetal Cantidad de comida vegetal disponible.
+     */
+    public Piscifactoria(String nombre, int capacidadMaximaComida, int cantidadComidaAnimal, int cantidadComidaVegetal) {
+        this.nombre = nombre;
+        this.capacidadMaximaComida = capacidadMaximaComida;
+        this.cantidadComidaAnimal = cantidadComidaAnimal;
+        this.cantidadComidaVegetal = cantidadComidaVegetal;
+    }
+
     /** Muestra toda la información de la piscifactoría. */
     public void showStatus() {
         System.out.println("\n=============== " + nombre + " ===============");
@@ -96,7 +111,7 @@ public abstract class Piscifactoria {
      */
     public void showCapacity(int numeroTanque) {
         Tanque tanque = tanques.get(numeroTanque - 1);
-        tanque.showCapacity();
+        tanque.showCapacity(this);
     }
 
     /** Muestra el estado actual del depósito de comida de la piscifactoría. */
@@ -109,7 +124,11 @@ public abstract class Piscifactoria {
                 + "% de su capacidad. [" + cantidadComidaAnimal + "/" + capacidadMaximaComida + "]");
     }
 
-    /** Hace avanzar el ciclo de vida en la piscifactoría, alimentando a los peces y actualizando sus estados. */
+    /**
+     * Hace avanzar el ciclo de vida en la piscifactoría, alimentando a los peces y actualizando sus estados.
+     * 
+     * @return Un arreglo con el número de peces vendidos y las monedas ganadas durante el día.
+     */
     public int[] nextDay() {
         int pecesVendidos = 0;
         int monedasGanadas = 0;
