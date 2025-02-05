@@ -94,8 +94,7 @@ public class UsarRecompensa {
                     xmlFile.delete();
                 }
     
-                Simulador.logger.logUsarRecompensa(name.getText());
-                Simulador.transcriptor.transcribir("Recompensa " + name.getText() + " usada.");
+                Simulador.registro.registroUsarRecompensa(name.getText());
             } catch (Exception e) {
                 Simulador.logger.logError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
             }
@@ -141,8 +140,7 @@ public class UsarRecompensa {
                     xmlFile.delete();
                 }
 
-                Simulador.logger.logUsarRecompensa(name.getText());
-                Simulador.transcriptor.transcribir("Recompensa " + name.getText() + " usada.");
+                Simulador.registro.registroUsarRecompensa(name.getText());
             } catch (Exception e) {
                 Simulador.logger.logError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
             }
@@ -182,8 +180,7 @@ public class UsarRecompensa {
                     xmlFile.delete();
                 }
     
-                Simulador.logger.logUsarRecompensa(name.getText());
-                Simulador.transcriptor.transcribir("Recompensa " + name.getText() + " usada.");
+                Simulador.registro.registroUsarRecompensa(name.getText());
             } catch (Exception e) {
                 Simulador.logger.logError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
             }
@@ -316,8 +313,7 @@ public class UsarRecompensa {
                             xmlFile.delete();
                         }
                         
-                        Simulador.logger.logUsarRecompensa(name.getText());
-                        Simulador.transcriptor.transcribir("Recompensa " + name.getText() + " usada.");
+                        Simulador.registro.registroUsarRecompensa(name.getText());
                     } catch (Exception e) {
                         Simulador.logger.logError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
                     }
@@ -356,8 +352,7 @@ public class UsarRecompensa {
                             xmlFile.delete();
                         }
 
-                        Simulador.logger.logUsarRecompensa(name.getText());
-                        Simulador.transcriptor.transcribir("Recompensa " + name.getText() + " usada.");
+                        Simulador.registro.registroUsarRecompensa(name.getText());
                     } catch (Exception e) {
                         Simulador.logger.logError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
 
@@ -446,8 +441,7 @@ public class UsarRecompensa {
                             xmlFile.delete();
                         }
 
-                        Simulador.logger.logUsarRecompensa(name.getText());
-                        Simulador.transcriptor.transcribir("Recompensa " + name.getText() + " usada.");
+                        Simulador.registro.registroUsarRecompensa(name.getText());
                     } catch (Exception e) {
                         Simulador.logger.logError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
                     }

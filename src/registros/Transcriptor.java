@@ -53,11 +53,6 @@ class Transcriptor {
 
 
 
-    /**
-     * Registra el inicio de la simulación con el nombre de la partida.
-     *
-     * @param nombrePartida Nombre de la partida.
-     */
     void transcribirInicioPartida(String nombrePartida, int monedas, String nombrePiscifactoria, int dia) {
         transcribir("Inicio de la simulación " + nombrePartida + ".");
         transcribir("Dinero inicial: " + monedas + " monedas.");
@@ -82,70 +77,71 @@ class Transcriptor {
         transcribir("Piscifactoría inicial: " + nombrePiscifactoria + ".");
     }
 
-    void transcribirnextDay(int dia, int pecesDeRio, int pecesDeMar, int totalMonedasGanadas, int monedas){
-        transcribir("Fin del día " + dia + ".");
-        transcribir("Peces actuales: " + pecesDeRio + " de río y " + pecesDeMar + " de mar.");
-        transcribir(totalMonedasGanadas + " monedas ganadas por un total de " + monedas + ".");
-        transcribir("-------------------------" + "\n>>> Inicio del día " + (dia + 1) + ".");
+    void transcribirComprarComidaPiscifactoria(int cantidadComida, String tipoComida, int costoComida, String nombrePiscifactoria) {
+        transcribir(cantidadComida + " de comida de tipo " + tipoComida + " comprada por " + costoComida + " monedas. Se almacena en la piscifactoria " + nombrePiscifactoria + ".");   
     }
 
-    void transcribirAddFoodPiscifactoria(int cantidadComida, String tipoComida, int costo, String piscifactoria) {
-        transcribir(cantidadComida + " de comida de tipo " + tipoComida + " comprada por " + costo + " monedas. Se almacena en la piscifactoria " + piscifactoria + ".");   
+    void transcribirComprarComidaAlmacenCentral(int cantidadComida, String tipoComida, int costoComida) {
+        transcribir(cantidadComida + " de comida de tipo " + tipoComida + " comprada por " + costoComida + " monedas. Se almacena en el almacén central.");
     }
 
-    void transcribirAddFoodAlmacenCentral(int cantidadComida, String tipoComida, int costo) {
-        transcribir(cantidadComida + " de comida de tipo " + tipoComida + " comprada por " + costo + " monedas. Se almacena en el almacén central.");
-    }
-
-    void transcribirAddFish(String pezSeleccionadonombre, Boolean pezSeleccionadoSexo, int coste, int numeroTanque, String nombrePiscifactoria){
-        transcribir(pezSeleccionadonombre + (pezSeleccionadoSexo ? " (M)" : " (H)") + " comprado por " 
-            + coste + " monedas. Añadido al tanque " + numeroTanque 
+    void transcribirComprarPeces(String nombrePez, Boolean sexoPez, int costePez, int numeroTanque, String nombrePiscifactoria){
+        transcribir(nombrePez + (sexoPez ? " (M)" : " (H)") + " comprado por " + costePez + " monedas. Añadido al tanque " + numeroTanque 
             + " de la piscifactoria " + nombrePiscifactoria);
     }
 
-    /**
-     * Registra la limpieza de un tanque en una piscifactoría.
-     *
-     * @param tanque Número del tanque limpiado.
-     * @param piscifactoria Nombre de la piscifactoría.
-     */
-    void transcribirLimpiarTanque(int tanque, String piscifactoria) {
-        transcribir("Limpiado el tanque " + tanque + " de la piscifactoría " + piscifactoria + ".");
+    void transcribirVenderPeces(int numeroPecesVendidos, String nombrePiscifactoria, int monedasGanadas){
+        transcribir("Vendidos " + numeroPecesVendidos + " peces de la piscifactoría " + nombrePiscifactoria + " de forma manual por " + monedasGanadas + " monedas.");
     }
 
-    /**
-     * Registra el vaciado de un tanque en una piscifactoría.
-     *
-     * @param tanque Número del tanque vaciado.
-     * @param piscifactoria Nombre de la piscifactoría.
-     */
-    void transcribirVaciarTanque(int tanque, String piscifactoria) {
-        transcribir("Vaciado el tanque " + tanque + " de la piscifactoría " + piscifactoria + ".");
+    void transcribirLimpiarTanque(int numeroTanque, String nombrePiscifactoria) {
+        transcribir("Limpiado el tanque " + numeroTanque + " de la piscifactoría " + nombrePiscifactoria + ".");
     }
 
-    void transcribirCompraEdificios(){
+    void transcribirVaciarTanque(int numeroTanque, String nombrePiscifactoria) {
+        transcribir("Vaciado el tanque " + numeroTanque + " de la piscifactoría " + nombrePiscifactoria + ".");
+    }
+
+    void transcribirComprarPiscifactoria(String tipoPiscifactoria, String nombrePiscifactoria, int costoPiscifactoria){
+        transcribir("Comprada la piscifactoria de " + tipoPiscifactoria + nombrePiscifactoria + " por " + costoPiscifactoria + " monedas.");
+    }
+
+    void transcribirComprarTanque(int numeroTanque, String nombrePiscifactoria){
+        transcribir("Comprado un tanque número " + numeroTanque + " de la piscifactoría " + nombrePiscifactoria + ".");
+    }
+
+    void transcribirComprarAlmacenCentral(){
         transcribir("Comprado el almacén central.");
-
     }
 
-    void transcribirAddPiscifactoria(String tipoPiscifactoria, String nombrePiscifactoria, int costoPiscifactoría){
-        transcribir("Comprada la piscifactoria de " + tipoPiscifactoria + nombrePiscifactoria + " por " + costoPiscifactoría + " monedas.");
+    void transcribirMejorarPiscifactoria(String nombrePiscifactoria, int capacidadComida, int costoMejoraPiscifactoria){
+        transcribir("Mejorada la piscifactoría " + nombrePiscifactoria + " aumentando su capacidad de comida hasta un total de " + capacidadComida + " por " + costoMejoraPiscifactoria + " monedas.");
     }
 
-    /**
-     * Registra la adición de peces mediante la opción oculta a una piscifactoría.
-     *
-     * @param nombrePiscifactoria Nombre de la piscifactoría a la que se añaden los peces.
-     */
+    void transcribirMejorarAlmacenCentral(int incrementoCapacidad, int capacidadComida, int costoMejoraAlmacenCentral){
+        transcribir("Mejorando el almacén central, aumentando su capacidad de comida en " + incrementoCapacidad + " unidades hasta " + capacidadComida + " por " + costoMejoraAlmacenCentral + " monedas.");
+    }
+
+    void transcribirFinDelDia(int dia, int pecesDeRio, int pecesDeMar, int totalMonedasGanadas, int monedasActuales){
+        transcribir("Fin del día " + dia + ".");
+        transcribir("Peces actuales: " + pecesDeRio + " de río y " + pecesDeMar + " de mar.");
+        transcribir(totalMonedasGanadas + " monedas ganadas por un total de " + monedasActuales + ".");
+        transcribir("-------------------------" + "\n>>> Inicio del día " + (dia + 1) + ".");
+    }
+
     void transcribirOpcionOcultaPeces(String nombrePiscifactoria) {
         transcribir("Añadidos peces mediante la opción oculta a la piscifactoría " + nombrePiscifactoria + ".");
     }
 
-    /**
-     * Registra la adición de monedas mediante la opción oculta.
-     */
-    void transcribirOpcionOcultaMonedas(int monedas) {
-        transcribir("Añadidas 1000 monedas mediante la opción oculta. Monedas Actuales " + monedas);
+    void transcribirOpcionOcultaMonedas(int monedasActuales) {
+        transcribir("Añadidas 1000 monedas mediante la opción oculta. Monedas Actuales " + monedasActuales);
     }
-    
+
+    void transcribirCrearRecompensa(String nombreRecompensa) {
+        transcribir("Recompensa " + nombreRecompensa + " creada.");
+    }
+
+    void transcribirUsarRecompensa(String nombreRecompensa) {
+        transcribir("Recompensa " + nombreRecompensa + " usada.");
+    }
 }
