@@ -84,7 +84,7 @@ public class Simulador {
     /** Almacén central de comida para abastecer las piscifactorías. */
     public static AlmacenCentral almacenCentral;
 
-    public Registros registro;
+    public static Registros registro;
 
     /** Metodo que inicializa todo el sistema. */
     public void init() {

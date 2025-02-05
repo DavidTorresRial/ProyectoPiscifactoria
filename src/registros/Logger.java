@@ -113,222 +113,84 @@ class Logger {
 
 
 
-    /**
-     * Registra el inicio de la simulación con el nombre de la partida.
-     *
-     * @param nombrePartida Nombre de la partida.
-     */
-    public void logInicioPartida(String nombrePartida) {
+    void logInicioPartida(String nombrePartida, String nombrePiscifactoria) {
         logPartida("Inicio de la simulación " + nombrePartida + ".");
-    }
-
-    /**
-     * Registra la configuración inicial de una piscifactoría.
-     *
-     * @param nombrePiscifactoria Nombre de la piscifactoría inicial.
-     */
-    public void logPiscifactoriaInicial(String nombrePiscifactoria) {
         logPartida("Piscifactoría inicial: " + nombrePiscifactoria + ".");
     }
 
-    /**
-     * Registra la compra de comida con detalles de cantidad, tipo y destino.
-     *
-     * @param cantidad Cantidad de comida comprada.
-     * @param tipo Tipo de comida comprada.
-     * @param destino Lugar donde se almacena la comida.
-     */
-    public void logComprarComida(int cantidad, String tipo, String destino) {
-        logPartida(cantidad + " de comida de tipo " + tipo + " comprada. Se almacena en " + destino + ".");
+    void logComprarComidaPiscifactoria(int cantidadComida, String tipoComida, String nombrePiscifactoria) {
+        logPartida(cantidadComida + " de comida de tipo " + tipoComida + " comprada. Se almacena en  en la piscifactoría " + nombrePiscifactoria + ".");
     }
 
-    /**
-     * Registra la compra de un pez y su asignación a un tanque específico.
-     *
-     * @param nombre Nombre del pez comprado.
-     * @param sexo Sexo del pez comprado.
-     * @param tanque Número del tanque donde se asigna el pez.
-     * @param piscifactoria Nombre de la piscifactoría donde se asigna el pez.
-     */
-    public void logComprarPeces(String nombre, char sexo, int tanque, String piscifactoria) {
-        logPartida(nombre + " (" + sexo + ") comprado. Añadido al tanque " + tanque + " de la piscifactoría " + piscifactoria + ".");
+    void logComprarComidaAlmacenCentral(int cantidadComida, String tipoComida) {
+        logPartida(cantidadComida + " de comida de tipo " + tipoComida + " comprada. Se almacena en el almacén central.");
     }
 
-
-    public void logVenderPeces(int numPecesVen, String nombrePiscifactoria){
-        logPartida("Vendidos " + numPecesVen + " peces de la piscifactoría " + nombrePiscifactoria + " de forma manual.");
+    void logComprarPeces(String nombrePez, Boolean sexoPez, int numeroTanque, String nombrePiscifactoria) {
+        logPartida(nombrePez + " (" + (sexoPez ? "M" : "H") + ") comprado. Añadido al tanque " + numeroTanque + " de la piscifactoría " + nombrePiscifactoria + ".");
     }
 
-    /**
-     * Registra la limpieza de un tanque en una piscifactoría.
-     *
-     * @param tanque Número del tanque limpiado.
-     * @param piscifactoria Nombre de la piscifactoría.
-     */
-    public void logLimpiarTanque(int tanque, String piscifactoria) {
-        logPartida("Limpiado el tanque " + tanque + " de la piscifactoría " + piscifactoria + ".");
+    void logVenderPeces(int numeroPecesVendidos, String nombrePiscifactoria){
+        logPartida("Vendidos " + numeroPecesVendidos + " peces de la piscifactoría " + nombrePiscifactoria + " de forma manual.");
     }
 
-    /**
-     * Registra el vaciado de un tanque en una piscifactoría.
-     *
-     * @param tanque Número del tanque vaciado.
-     * @param piscifactoria Nombre de la piscifactoría.
-     */
-    public void logVaciarTanque(int tanque, String piscifactoria) {
-        logPartida("Vaciado el tanque " + tanque + " de la piscifactoría " + piscifactoria + ".");
+    void logLimpiarTanque(int numeroTanque, String nombrePiscifactoria) {
+        logPartida("Limpiado el tanque " + numeroTanque + " de la piscifactoría " + nombrePiscifactoria + ".");
     }
 
-    /**
-     * Registra el fin de un día en la simulación.
-     *
-     * @param dia Número del día finalizado.
-     */
-    public void logFinDelDia(int dia) {
-        logPartida("Fin del día " + dia + ".");
+    void logVaciarTanque(int numeroTanque, String nombrePiscifactoria) {
+        logPartida("Vaciado el tanque " + numeroTanque + " de la piscifactoría " + nombrePiscifactoria + ".");
     }
 
-    /**
-     * Registra el cierre de la partida.
-     */
-    public void logSalirPartida() {
-        logPartida("Cierre de la partida.");
+    void logComprarPiscifactoria(String tipoPiscifactoria, String nombrePiscifactoria) {
+        logPartida("Comprada la piscifactoría de " + tipoPiscifactoria + " " + nombrePiscifactoria + ".");
     }
 
-
-
-
-
-
-
-
-
-    //TODO SISTEMA DE COMPRAS
-    /**
-     * Registra la compra de una piscifactoría especificando su tipo y nombre.
-     *
-     * @param tipoPiscifactoria Tipo de piscifactoría (río/mar).
-     * @param nombre Nombre de la piscifactoría.
-     */
-    public void logComprarPiscifactoria(String tipoPiscifactoria, String nombre) {
-        logPartida("Comprada la piscifactoría de " + tipoPiscifactoria + " " + nombre + ".");
-    }
-
-    /**
-     * Registra la compra de un tanque especificando la piscifactoría a la que pertenece.
-     *
-     * @param nombrePiscifactoria Nombre de la piscifactoría.
-     */
-    public void logComprarTanque(String nombrePiscifactoria) {
+    void logComprarTanque(String nombrePiscifactoria) {
         logPartida("Comprado un tanque para la piscifactoría " + nombrePiscifactoria + ".");
     }
-    
-    /**
-     * Registra la compra del almacén central.
-     */
-    public void logComprarAlmacenCentral() {
+
+    void logComprarAlmacenCentral() {
         logPartida("Comprado el almacén central.");
     }
 
-
-
-
-
-
-
-
-
-
-
-    //TODO SISTEMA DE MEJORAS
-    /**
-     * Registra la mejora de una piscifactoría, especificando su nombre y la mejora realizada.
-     *
-     * @param nombrePiscifactoria Nombre de la piscifactoría mejorada.
-     */
-    public void logMejorarPiscifactoria(String nombrePiscifactoria) {
+    void logMejorarPiscifactoria(String nombrePiscifactoria) {
         logPartida("Mejorada la piscifactoría " + nombrePiscifactoria + " aumentando su capacidad de comida.");
     }
 
-    /**
-     * Registra la mejora del almacén central especificando el incremento y la nueva capacidad.
-     *
-     * @param incrementoCapacidad Incremento en la capacidad del almacén.
-     * @param nuevaCapacidad Capacidad total del almacén después de la mejora.
-     */
-    public void logMejorarAlmacenCentral(int incrementoCapacidad, int nuevaCapacidad) {
-        logPartida("Mejorando el almacén central, aumentando su capacidad de comida en " 
-            + incrementoCapacidad + " unidades hasta " + nuevaCapacidad + ".");
+    void logMejorarAlmacenCentral(int incrementoCapacidad, int capacidadComida) {
+        logPartida("Mejorando el almacén central, aumentando su capacidad de comida en " + incrementoCapacidad + " unidades hasta " + capacidadComida + ".");
     }
 
-
-
-
-
-
-
-
-
-
-
-    //TODO SISTEMA DE RECOMPENSAS
-    /** Registra la creación de una recompensa por parte de una entidad. */
-    public void logCrearRecompensa() {
-        logPartida("Recompensa creada.");
+    void logFinDelDia(int dia) {
+        logPartida("Fin del día " + dia + ".");
     }
 
-    /**
-     * Registra el uso de una recompensa especificando su nombre.
-     *
-     * @param nombreRecompensa Nombre de la recompensa utilizada.
-     */
-    public void logUsarRecompensa(String nombreRecompensa) {
-        logPartida("Recompensa " + nombreRecompensa + " usada.");
-    }
-
-
-
-
-
-
-
-
-
-    //TODO SISTEMA DE GUARDADO Y CARGA
-    /**
-     * Registra el evento de guardar el estado del sistema.
-     */
-    public void logSistemaGuardado() {
-        logPartida("Sistema guardado correctamente.");
-    }
-
-    /**
-     * Registra el evento de cargar el estado del sistema.
-     */
-    public void logSistemaCargado() {
-        logPartida("Sistema cargado correctamente.");
-    }
-
-
-
-
-
-
-
-    //TODO OPCIONES OCULTAS
-    /**
-     * Registra la adición de peces mediante la opción oculta a una piscifactoría.
-     *
-     * @param nombrePiscifactoria Nombre de la piscifactoría a la que se añaden los peces.
-     */
-    public void logOpcionOcultaPeces(String nombrePiscifactoria) {
+    void logOpcionOcultaPeces(String nombrePiscifactoria) {
         logPartida("Añadidos peces mediante la opción oculta a la piscifactoría " + nombrePiscifactoria + ".");
     }
 
-    /**
-     * Registra la adición de monedas mediante la opción oculta.
-     */
-    public void logOpcionOcultaMonedas() {
+    void logOpcionOcultaMonedas() {
         logPartida("Añadidas monedas mediante la opción oculta.");
+    }
+
+    void logCierrePartida() {
+        logPartida("Cierre de la partida.");
+    }
+
+    void logCrearRecompensa() {
+        logPartida("Recompensa creada.");
+    }
+
+    void logUsarRecompensa(String nombreRecompensa) {
+        logPartida("Recompensa " + nombreRecompensa + " usada.");
+    }
+
+    void logGuardarSistema() {
+        logPartida("Sistema guardado.");
+    }
+
+    void logCargarSistema() {
+        logPartida("Sistema cargado.");
     }
 }
