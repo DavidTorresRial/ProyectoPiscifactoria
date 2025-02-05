@@ -78,7 +78,7 @@ class Transcriptor {
                 "  -" + AlmacenPropiedades.DORADA.getNombre() + "\n" +
                 "  -" + AlmacenPropiedades.SALMON_ATLANTICO.getNombre() + "\n" +
                 "  -" + AlmacenPropiedades.TRUCHA_ARCOIRIS.getNombre());
-        transcribir("-------------------------" + "\n>>> Inicio del día " + (dia + 1) + ".");
+        transcribir("\n-------------------------" + "\n>>> Inicio del día " + (dia + 1) + ".");
         transcribir("Piscifactoría inicial: " + nombrePiscifactoria + ".");
     }
 
