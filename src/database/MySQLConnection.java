@@ -38,7 +38,7 @@ public class MySQLConnection {
                 // System.out.println("Conexión exitosa.");
             } catch (SQLException e) {
                 e.printStackTrace();
-                Simulador.logger.logError("Error al conectar: " + e.getMessage());
+                Simulador.registro.registroLogError("Error al conectar: " + e.getMessage());
             }
         }
         return connection;
@@ -52,7 +52,7 @@ public class MySQLConnection {
                 connection = null;
                 // System.out.println("Conexión cerrada.");
             } catch (SQLException e) {
-                Simulador.logger.logError("Error al cerrar conexión: " + e.getMessage());
+                Simulador.registro.registroLogError("Error al cerrar conexión: " + e.getMessage());
             }
         }
     }

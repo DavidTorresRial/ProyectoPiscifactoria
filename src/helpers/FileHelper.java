@@ -1,14 +1,14 @@
 package helpers;
 
-import org.dom4j.Document;
-import org.dom4j.Element;
-import org.dom4j.io.SAXReader;
-
-import java.io.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+
+import org.dom4j.Document;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
 
 import commons.Simulador;
 
@@ -28,13 +28,13 @@ public class FileHelper {
             try {
                 if (!carpetaFile.exists()) {
                     if (!carpetaFile.mkdirs()) {
-                        Simulador.logger.logError("No se pudo crear la carpeta: " + carpetaTrimmed);
+                        Simulador.registro.registroLogError("No se pudo crear la carpeta: " + carpetaTrimmed);
                     }
                 }
             } catch (SecurityException se) {
-                Simulador.logger.logError("Permisos insuficientes para crear la carpeta: " + carpetaTrimmed + " - " + se.getMessage());
+                Simulador.registro.registroLogError("Permisos insuficientes para crear la carpeta: " + carpetaTrimmed + " - " + se.getMessage());
             } catch (Exception e) {
-                Simulador.logger.logError("Error inesperado al intentar crear la carpeta: " + carpetaTrimmed + " - " + e.getMessage());
+                Simulador.registro.registroLogError("Error inesperado al intentar crear la carpeta: " + carpetaTrimmed + " - " + e.getMessage());
             }
         }
     }
@@ -55,7 +55,7 @@ public class FileHelper {
                 return false;
             }
         } else {
-            Simulador.logger.logError("El directorio no existe: " + rutaDirectorio);
+            Simulador.registro.registroLogError("El directorio no existe: " + rutaDirectorio);
             return false;
         }
     }
@@ -102,11 +102,11 @@ public class FileHelper {
                 }
 
             } else {
-                Simulador.logger.logError("No hay archivos en el directorio: " + rutaDirectorio);
+                Simulador.registro.registroLogError("No hay archivos en el directorio: " + rutaDirectorio);
                 return null;
             }
         } else {
-            Simulador.logger.logError("El directorio no existe o no es un directorio válido: "  + rutaDirectorio);
+            Simulador.registro.registroLogError("El directorio no existe o no es un directorio válido: "  + rutaDirectorio);
             return null;
         }
     }
@@ -136,11 +136,11 @@ public class FileHelper {
                 }
                 return nombresArchivos.toArray(new String[0]);
             } else {
-                Simulador.logger.logError("No hay archivos en el directorio: " + rutaDirectorio);
+                Simulador.registro.registroLogError("No hay archivos en el directorio: " + rutaDirectorio);
                 return new String[0];
             }
         } else {
-            Simulador.logger.logError("El directorio no existe o no es un directorio válido: " + rutaDirectorio);
+            Simulador.registro.registroLogError("El directorio no existe o no es un directorio válido: " + rutaDirectorio);
             return new String[0];
         }
     }
@@ -255,7 +255,7 @@ public class FileHelper {
                         }
                     }
                 } catch (Exception e) {
-                    Simulador.logger.logError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
+                    Simulador.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
                 }
             }
         }

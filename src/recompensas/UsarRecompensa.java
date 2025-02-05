@@ -1,20 +1,18 @@
 package recompensas;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.util.List;
+
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.util.List;
-
 import commons.Simulador;
-
 import helpers.FileHelper;
 import helpers.InputHelper;
-
 import piscifactoria.Piscifactoria;
 import piscifactoria.PiscifactoriaDeMar;
 import piscifactoria.PiscifactoriaDeRio;
@@ -96,7 +94,7 @@ public class UsarRecompensa {
     
                 Simulador.registro.registroUsarRecompensa(name.getText());
             } catch (Exception e) {
-                Simulador.logger.logError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
+                Simulador.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
             }
         }
     }
@@ -142,7 +140,7 @@ public class UsarRecompensa {
 
                 Simulador.registro.registroUsarRecompensa(name.getText());
             } catch (Exception e) {
-                Simulador.logger.logError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
+                Simulador.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
             }
         }
     }
@@ -182,7 +180,7 @@ public class UsarRecompensa {
     
                 Simulador.registro.registroUsarRecompensa(name.getText());
             } catch (Exception e) {
-                Simulador.logger.logError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
+                Simulador.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
             }
             return true;
         } else {
@@ -236,10 +234,10 @@ public class UsarRecompensa {
                             }
                         }
                     } else {
-                        Simulador.logger.logError("El archivo '" + fileName + "' no contiene la etiqueta <name>.");
+                        Simulador.registro.registroLogError("El archivo '" + fileName + "' no contiene la etiqueta <name>.");
                     }
                 } catch (Exception e) {
-                    Simulador.logger.logError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
+                    Simulador.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
                 }
             } else {
                 if (fileName.startsWith("piscifactoria_m") && fileName.endsWith(".xml")) {
@@ -274,10 +272,10 @@ public class UsarRecompensa {
                                 }
                             }
                         } else {
-                            Simulador.logger.logError("El archivo '" + fileName + "' no contiene la etiqueta <name>.");
+                            Simulador.registro.registroLogError("El archivo '" + fileName + "' no contiene la etiqueta <name>.");
                         }
                     } catch (Exception e) {
-                        Simulador.logger.logError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
+                        Simulador.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
                     }
                 }
             }
@@ -315,7 +313,7 @@ public class UsarRecompensa {
                         
                         Simulador.registro.registroUsarRecompensa(name.getText());
                     } catch (Exception e) {
-                        Simulador.logger.logError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
+                        Simulador.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
                     }
                 }
             }
@@ -354,7 +352,7 @@ public class UsarRecompensa {
 
                         Simulador.registro.registroUsarRecompensa(name.getText());
                     } catch (Exception e) {
-                        Simulador.logger.logError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
+                        Simulador.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
 
                     }
                 }
@@ -403,10 +401,10 @@ public class UsarRecompensa {
                             }
                         }
                     } else {
-                        Simulador.logger.logError("El archivo '" + fileName + "' no contiene la etiqueta <name>.");
+                        Simulador.registro.registroLogError("El archivo '" + fileName + "' no contiene la etiqueta <name>.");
                     }
                 } catch (Exception e) {
-                    Simulador.logger.logError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
+                    Simulador.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
                 }
             }
         }
@@ -443,7 +441,7 @@ public class UsarRecompensa {
 
                         Simulador.registro.registroUsarRecompensa(name.getText());
                     } catch (Exception e) {
-                        Simulador.logger.logError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
+                        Simulador.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
                     }
                 }
             }

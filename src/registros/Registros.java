@@ -105,4 +105,20 @@ public class Registros {
     }
 
     //TODO Métodos logCierrePartida, logGuardarSistema y logCargarSistema no tienen trancripción.
+
+    public void registroLogError(String message) {
+        logger.logError(message);
+    }
+
+    public void closeLogError() {
+        logger.close();
+    }
+
+    public void registroGuardarSistema() {
+        logger.logGuardarSistema();
+    }
+
+    public void registroCargarSistema() {
+        logger.logCargarSistema();
+    }
 }
