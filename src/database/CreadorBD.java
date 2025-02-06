@@ -120,9 +120,10 @@ public class CreadorBD {
                 pstm.setString(1, nombres[i]);
                 pstm.setString(2, nifs[i]);
                 pstm.setString(3, telefonos[i]);
-                pstm.executeUpdate();
+                pstm.addBatch();
             }
 
+            pstm.executeBatch();
             System.out.println("10 clientes insertados correctamente.");
 
         } catch (SQLException e) {
