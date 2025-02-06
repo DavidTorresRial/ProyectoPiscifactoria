@@ -7,18 +7,20 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Scanner;
 
 /**
- * DAO para la tabla Pedido, que implementa el sistema de pedidos.
+ * DAO para la tabla Pedido.
+ * Provee métodos para generar, listar, enviar y borrar pedidos.
  */
 public class DAOPedidos {
 
     private Random random = new Random();
 
     /**
-     * Genera un nuevo pedido de forma automática.
-     * Se selecciona un cliente y un pez de forma aleatoria, y se asigna
-     * una cantidad aleatoria entre 10 y 50. La referencia se genera de forma única.
+     * Genera un pedido de forma automática.
+     * Selecciona un cliente y un pez aleatoriamente, asigna una cantidad (entre 10 y 50)
+     * y genera una referencia única para insertar el pedido en la base de datos.
      */
     public void generarPedidoAutomatico() {
         Connection conn = null;
@@ -26,24 +28,24 @@ public class DAOPedidos {
         try {
             conn = Conexion.getConnection();
 
-            // Selecciona un cliente al azar
+            // Obtener un cliente aleatorio
             Integer idCliente = getRandomId(conn, "Cliente");
             if (idCliente == null) {
                 System.out.println("No hay clientes registrados.");
                 return;
             }
 
-            // Selecciona un pez al azar
+            // Obtener un pez aleatorio
             Integer idPez = getRandomId(conn, "Pez");
             if (idPez == null) {
                 System.out.println("No hay peces registrados.");
                 return;
             }
 
-            // Cantidad aleatoria entre 10 y 50
+            // Definir cantidad aleatoria entre 10 y 50
             int cantidad = 10 + random.nextInt(41);
 
-            // Genera una referencia única, por ejemplo utilizando la hora actual y un número aleatorio
+            // Generar referencia única
             String numeroReferencia = "PED" + System.currentTimeMillis() + random.nextInt(1000);
 
             String sql = "INSERT INTO Pedido (numero_referencia, id_cliente, id_pez, cantidad, cantidad_enviada) VALUES (?, ?, ?, ?, 0)";
@@ -57,24 +59,26 @@ public class DAOPedidos {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            try { if (pstm != null) pstm.close(); } catch (SQLException e) {}
+            try { 
+                if (pstm != null) 
+                    pstm.close(); 
+            } catch (SQLException e) {}
             Conexion.closeConnection();
         }
     }
 
     /**
-     * Lista los pedidos pendientes (no completados) en el formato:
-     * [ref] Nombre cliente: nombre pez enviado/solicitado (X%)
-     * Ordenados por el nombre del pez.
+     * Lista los pedidos pendientes.
+     * Extrae de la base de datos los pedidos que no han sido completados y los muestra en el formato:
+     * [ref] Nombre cliente: nombre pez enviado/solicitado (X%), ordenados por el nombre del pez.
      *
-     * @return una lista de cadenas con la información de los pedidos pendientes.
+     * @return Lista de cadenas con la información de los pedidos pendientes.
      */
     public List<String> listarPedidosPendientes() {
         List<String> pedidos = new ArrayList<>();
         Connection conn = null;
         PreparedStatement pstm = null;
         ResultSet rs = null;
-        // Se utiliza JOIN para obtener datos de Cliente y Pez
         String sql = "SELECT p.numero_referencia, c.nombre AS cliente, " +
                      "pe.nombre AS pez, p.cantidad, p.cantidad_enviada " +
                      "FROM Pedido p " +
@@ -100,20 +104,27 @@ public class DAOPedidos {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            try { if (rs != null) rs.close(); } catch (SQLException e) {}
-            try { if (pstm != null) pstm.close(); } catch (SQLException e) {}
+            try { 
+                if (rs != null) 
+                    rs.close(); 
+            } catch (SQLException e) {}
+            try { 
+                if (pstm != null) 
+                    pstm.close(); 
+            } catch (SQLException e) {}
             Conexion.closeConnection();
         }
         return pedidos;
     }
 
     /**
-     * Envía un pedido seleccionado, simulando el envío de peces maduros.
-     * Se envían tantos peces como se puedan, sin exceder la cantidad pendiente.
+     * Envía un pedido.
+     * Actualiza la cantidad enviada de un pedido, incrementándola según la cantidad disponible
+     * en el tanque sin superar la cantidad solicitada.
      *
-     * @param numeroReferencia la referencia del pedido a enviar.
-     * @param cantidadDisponible la cantidad de peces disponibles en el tanque.
-     * @return true si el pedido se completó con este envío, false en caso contrario.
+     * @param numeroReferencia La referencia del pedido a enviar.
+     * @param cantidadDisponible La cantidad de peces disponibles para enviar.
+     * @return true si el pedido queda completo, false en caso contrario.
      */
     public boolean enviarPedido(String numeroReferencia, int cantidadDisponible) {
         Connection conn = null;
@@ -122,7 +133,6 @@ public class DAOPedidos {
         ResultSet rs = null;
         try {
             conn = Conexion.getConnection();
-            // Selecciona el pedido
             String selectSql = "SELECT id, cantidad, cantidad_enviada FROM Pedido WHERE numero_referencia = ?";
             pstmSelect = conn.prepareStatement(selectSql);
             pstmSelect.setString(1, numeroReferencia);
@@ -132,7 +142,6 @@ public class DAOPedidos {
                 int cantidad = rs.getInt("cantidad");
                 int enviada = rs.getInt("cantidad_enviada");
                 int pendiente = cantidad - enviada;
-                // Calcula la cantidad a enviar: lo que se pueda enviar sin exceder la cantidad pendiente
                 int enviar = Math.min(pendiente, cantidadDisponible);
                 int nuevaCantidadEnviada = enviada + enviar;
 
@@ -151,17 +160,25 @@ public class DAOPedidos {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            try { if (rs != null) rs.close(); } catch (SQLException e) {}
-            try { if (pstmSelect != null) pstmSelect.close(); } catch (SQLException e) {}
-            try { if (pstmUpdate != null) pstmUpdate.close(); } catch (SQLException e) {}
+            try { 
+                if (rs != null) 
+                    rs.close(); 
+            } catch (SQLException e) {}
+            try { 
+                if (pstmSelect != null) 
+                    pstmSelect.close(); 
+            } catch (SQLException e) {}
+            try { 
+                if (pstmUpdate != null) 
+                    pstmUpdate.close(); 
+            } catch (SQLException e) {}
             Conexion.closeConnection();
         }
         return false;
     }
 
     /**
-     * Borra todos los pedidos de la tabla Pedido.
-     * Esta opción se utiliza para pruebas.
+     * Borra todos los pedidos de la base de datos.
      */
     public void borrarPedidos() {
         Connection conn = null;
@@ -175,17 +192,21 @@ public class DAOPedidos {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            try { if (pstm != null) pstm.close(); } catch (SQLException e) {}
+            try { 
+                if (pstm != null) 
+                    pstm.close(); 
+            } catch (SQLException e) {}
             Conexion.closeConnection();
         }
     }
 
     /**
-     * Lista los pedidos completados (aquellos en los que la cantidad enviada es igual o superior a la solicitada)
-     * en el formato: [ref] Nombre cliente: nombre pez enviado/solicitado (X%)
-     * Ordenados por el id (orden de inserción).
+     * Lista los pedidos completados.
+     * Extrae los pedidos donde la cantidad enviada es mayor o igual a la cantidad solicitada,
+     * y los muestra en el formato: [ref] Nombre cliente: nombre pez enviado/solicitado (X%),
+     * ordenados por el id.
      *
-     * @return una lista de cadenas con la información de los pedidos completados.
+     * @return Lista de cadenas con la información de los pedidos completados.
      */
     public List<String> listarPedidosCompletados() {
         List<String> pedidos = new ArrayList<>();
@@ -217,26 +238,32 @@ public class DAOPedidos {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            try { if (rs != null) rs.close(); } catch (SQLException e) {}
-            try { if (pstm != null) pstm.close(); } catch (SQLException e) {}
+            try { 
+                if (rs != null) 
+                    rs.close(); 
+            } catch (SQLException e) {}
+            try { 
+                if (pstm != null) 
+                    pstm.close(); 
+            } catch (SQLException e) {}
             Conexion.closeConnection();
         }
         return pedidos;
     }
 
     /**
-     * Método auxiliar para obtener un id aleatorio de una tabla dada (Cliente o Pez).
+     * Obtiene un ID aleatorio de la tabla especificada.
+     * Selecciona un registro al azar de la tabla (Cliente o Pez) y retorna su ID.
      *
-     * @param conn la conexión activa.
-     * @param tabla el nombre de la tabla ("Cliente" o "Pez").
-     * @return un id aleatorio o null si no se encontró ninguno.
-     * @throws SQLException
+     * @param conn Conexión activa.
+     * @param tabla Nombre de la tabla ("Cliente" o "Pez").
+     * @return Un ID aleatorio o null si no se encuentra ninguno.
+     * @throws SQLException Si ocurre un error en la consulta.
      */
     private Integer getRandomId(Connection conn, String tabla) throws SQLException {
         PreparedStatement pstm = null;
         ResultSet rs = null;
         try {
-            // Se utiliza ORDER BY RAND() para obtener un registro aleatorio.
             String sql = "SELECT id FROM " + tabla + " ORDER BY RAND() LIMIT 1";
             pstm = conn.prepareStatement(sql);
             rs = pstm.executeQuery();
@@ -244,9 +271,57 @@ public class DAOPedidos {
                 return rs.getInt("id");
             }
         } finally {
-            try { if (rs != null) rs.close(); } catch (SQLException e) {}
-            try { if (pstm != null) pstm.close(); } catch (SQLException e) {}
+            try { 
+                if (rs != null) 
+                    rs.close(); 
+            } catch (SQLException e) {}
+            try { 
+                if (pstm != null) 
+                    pstm.close(); 
+            } catch (SQLException e) {}
         }
         return null;
+    }
+
+    /**
+     * Envía un pedido de forma manual.
+     * Muestra los pedidos pendientes, solicita al usuario la referencia del pedido y la cantidad
+     * de peces disponibles en el tanque, y actualiza el pedido en la base de datos.
+     */
+    public void enviarPedidoManual() { //TODO Cambiar para que implemente InputHelper, Logger y mejorar la manera de introducir las referencias de los pedidos (Quitar ID a la tabla pedidos)
+        Scanner sc = new Scanner(System.in);
+
+        // Listar pedidos pendientes
+        List<String> pedidosPendientes = listarPedidosPendientes();
+        if (pedidosPendientes.isEmpty()) {
+            System.out.println("No hay pedidos pendientes.");
+            return;
+        }
+        System.out.println("Pedidos pendientes:");
+        for (String pedido : pedidosPendientes) {
+            System.out.println(pedido);
+        }
+
+        // Solicitar la referencia del pedido a enviar
+        System.out.print("Introduce la referencia del pedido que deseas enviar: ");
+        String refPedido = sc.nextLine().trim();
+
+        // Solicitar la cantidad de peces disponibles en el tanque
+        System.out.print("Introduce la cantidad de peces disponibles en el tanque: ");
+        int cantidadDisponible;
+        try {
+            cantidadDisponible = Integer.parseInt(sc.nextLine().trim());
+        } catch (NumberFormatException e) {
+            System.out.println("La cantidad debe ser un número entero.");
+            return;
+        }
+
+        // Actualizar el pedido
+        boolean completado = enviarPedido(refPedido, cantidadDisponible);
+        if (completado) {
+            System.out.println("El pedido ha sido completado.");
+        } else {
+            System.out.println("El pedido no se completó completamente. Aún quedan peces pendientes.");
+        }
     }
 }
