@@ -34,7 +34,7 @@ public class MySQLConnection {
     public static Connection getConnection() {
         if (connection == null) {
             try {
-                connection = DriverManager.getConnection("jdbc:mysql://" + SERVER + ":" + PORT + "/" + DATABASE, USER, PASSWORD);
+                connection = DriverManager.getConnection("jdbc:mysql://" + SERVER + ":" + PORT + "/" + DATABASE, USER, PASSWORD + "? rewriteBatchedStatements=true");
                 // System.out.println("Conexión exitosa.");
             } catch (SQLException e) {
                 e.printStackTrace();
