@@ -22,19 +22,18 @@ public class FileHelper {
      */
     public static void crearCarpetas(String[] carpetas) {
         for (String carpeta : carpetas) {
-            String carpetaTrimmed = carpeta.trim();
-            File carpetaFile = new File(carpetaTrimmed);
+            File carpetaFile = new File(carpeta.trim());
             
             try {
                 if (!carpetaFile.exists()) {
                     if (!carpetaFile.mkdirs()) {
-                        Simulador.registro.registroLogError("No se pudo crear la carpeta: " + carpetaTrimmed);
+                        Simulador.registro.registroLogError("No se pudo crear la carpeta: " + carpetaFile);
                     }
                 }
             } catch (SecurityException se) {
-                Simulador.registro.registroLogError("Permisos insuficientes para crear la carpeta: " + carpetaTrimmed + " - " + se.getMessage());
+                Simulador.registro.registroLogError("Permisos insuficientes para crear la carpeta: " + carpetaFile + " - " + se.getMessage());
             } catch (Exception e) {
-                Simulador.registro.registroLogError("Error inesperado al intentar crear la carpeta: " + carpetaTrimmed + " - " + e.getMessage());
+                Simulador.registro.registroLogError("Error inesperado al intentar crear la carpeta: " + carpetaFile + " - " + e.getMessage());
             }
         }
     }
@@ -49,11 +48,8 @@ public class FileHelper {
         File directorio = new File(rutaDirectorio);
 
         if (directorio.exists()) {
-            if (directorio.list().length > 0) {
-                return true;
-            } else {
-                return false;
-            }
+            return directorio.list().length > 0;
+            
         } else {
             Simulador.registro.registroLogError("El directorio no existe: " + rutaDirectorio);
             return false;

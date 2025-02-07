@@ -117,7 +117,7 @@ public class GeneradorBD {
         try {
             
             conn = Conexion.getConnection();
-            pstm = conn.prepareStatement("INSERT INTO clientes (nombre, nif, telefono) VALUES (?, ?, ?)");
+            pstm = conn.prepareStatement("INSERT INTO Cliente (nombre, nif, telefono) VALUES (?, ?, ?)");
 
             for (int i = 0; i < nombres.length; i++) {
                 pstm.setString(1, nombres[i]);
