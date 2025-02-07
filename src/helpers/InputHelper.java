@@ -97,7 +97,7 @@ public class InputHelper {
                 scanner.close();
             }
         } catch (IllegalStateException e) {
-            Simulador.logger.logError("El Scanner ya fue cerrado previamente: \n" + e);
+            Simulador.registro.registroLogError("El Scanner ya fue cerrado previamente: \n" + e);
         }
     }
 }
