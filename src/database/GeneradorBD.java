@@ -5,11 +5,14 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import commons.Simulador;
+import propiedades.AlmacenPropiedades;
+
 /**
  * Clase que se encarga de crear las tablas de la base de datos.
  * Representa un sistema de pedidos de peces.
  */
-public class CreadorBD {
+public class GeneradorBD {
 
     /**
      * Crea la tabla Cliente si no existe.
@@ -133,6 +136,34 @@ public class CreadorBD {
                 try {
                     pstm.close();
                 } catch (SQLException e) {
+                }
+            }
+            Conexion.closeConnection();
+        }
+    }
+
+    public static void agregarPeces() {
+        Connection conn = null;
+        PreparedStatement pstm = null;
+        try {
+            conn = Conexion.getConnection();
+            pstm = conn.prepareStatement("INSERT INTO Pez (nombre, nombre_cientifico) VALUES (?, ?)");
+
+            for (String pez : Simulador.pecesImplementados) {
+                pstm.setString(1, pez);
+                pstm.setString(2, AlmacenPropiedades.getPropByName(pez).getCientifico());
+                pstm.addBatch();
+            }
+            pstm.executeBatch();
+            System.out.println("Peces registrados correctamente en la tabla Pez.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (pstm != null) {
+                try {
+                    pstm.close();
+                } catch (SQLException e) {
+                    Simulador.registro.registroLogError("Error al cerrar PreparedStatement: " + e.getMessage());
                 }
             }
             Conexion.closeConnection();
