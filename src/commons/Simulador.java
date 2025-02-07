@@ -59,7 +59,7 @@ public class Simulador {
     private String nombrePiscifactoria;
 
     /** Lista de nombres de peces implementados. */
-    private final static String[] pecesImplementados = {
+    public final static String[] pecesImplementados = {
         AlmacenPropiedades.DORADA.getNombre(),
         AlmacenPropiedades.SALMON_ATLANTICO.getNombre(),
         AlmacenPropiedades.TRUCHA_ARCOIRIS.getNombre(),
