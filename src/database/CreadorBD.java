@@ -18,7 +18,7 @@ public class CreadorBD {
         Connection conn = null;
         Statement stm = null;
         try {
-            conn = MySQLConnection.getConnection();
+            conn = Conexion.getConnection();
             String query = "CREATE TABLE IF NOT EXISTS Cliente (" +
                     "id INT AUTO_INCREMENT," +
                     "nombre VARCHAR(100) NOT NULL," +
@@ -33,7 +33,7 @@ public class CreadorBD {
             e.printStackTrace();
         } finally {
             try { if (stm != null) { stm.close(); } } catch (SQLException e) {}
-            MySQLConnection.closeConnection();
+            Conexion.closeConnection();
         }
     }
 
@@ -44,7 +44,7 @@ public class CreadorBD {
         Connection conn = null;
         Statement stm = null;
         try {
-            conn = MySQLConnection.getConnection();
+            conn = Conexion.getConnection();
             String query = "CREATE TABLE IF NOT EXISTS Pez (" +
                     "id INT AUTO_INCREMENT," +
                     "nombre VARCHAR(50) NOT NULL," +
@@ -58,7 +58,7 @@ public class CreadorBD {
             e.printStackTrace();
         } finally {
             try { if (stm != null) { stm.close(); } } catch (SQLException e) {}
-            MySQLConnection.closeConnection();
+            Conexion.closeConnection();
         }
     }
 
@@ -69,7 +69,7 @@ public class CreadorBD {
         Connection conn = null;
         Statement stm = null;
         try {
-            conn = MySQLConnection.getConnection();
+            conn = Conexion.getConnection();
             String query = "CREATE TABLE IF NOT EXISTS Pedido (" +
                     "id INT AUTO_INCREMENT," +
                     "numero_referencia VARCHAR(50) UNIQUE NOT NULL," +
@@ -88,7 +88,7 @@ public class CreadorBD {
             e.printStackTrace();
         } finally {
             try { if (stm != null) { stm.close(); } } catch (SQLException e) {}
-            MySQLConnection.closeConnection();
+            Conexion.closeConnection();
         }
     }
 
@@ -113,7 +113,7 @@ public class CreadorBD {
 
         try {
             
-            conn = MySQLConnection.getConnection();
+            conn = Conexion.getConnection();
             pstm = conn.prepareStatement("INSERT INTO clientes (nombre, nif, telefono) VALUES (?, ?, ?)");
 
             for (int i = 0; i < nombres.length; i++) {
@@ -135,7 +135,7 @@ public class CreadorBD {
                 } catch (SQLException e) {
                 }
             }
-            MySQLConnection.closeConnection();
+            Conexion.closeConnection();
         }
     }
 }
