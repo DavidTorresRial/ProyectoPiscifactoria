@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import commons.Simulador;
 
 /** Administra la conexión a una base de datos MySQL. */
-public class MySQLConnection {
+public class Conexion {
 
     /** Usuario de la base de datos. */
     private static final String USER = " "; 
