@@ -802,16 +802,17 @@ public class Simulador {
         }
     }
 
+    /** Muestra un menú con las recompensas disponibles y permite al usuario seleccionar una. */
     private void recompensas() {
         int opcion;
         do {
             System.out.println("\n================== Recompensas Disponibles =================");
             String[] opciones = FileHelper.getRewards();
             String[] opcionesSinCorchete = FileHelper.getRewardsWithoutBrackets(opciones);
-    
+
             MenuHelper.mostrarMenuCancelar(opciones);
             opcion = InputHelper.solicitarNumero(0, opciones.length) - 1;
-    
+
             if (opcion >= 0 && opcion < opciones.length) {
                 String seleccion = opcionesSinCorchete[opcion];
 
@@ -838,11 +839,11 @@ public class Simulador {
                     case "Algas", "Comida", "Pienso":
                         UsarRecompensa.readFood(tipo.toLowerCase() + "_" + nivel + ".xml");
                         break;
-    
+
                     case "Monedas":
                         UsarRecompensa.readCoins("monedas_" + nivel + ".xml");
                         break;
-    
+
                     case "Tanque de rio":
                         Piscifactoria selectPiscRio = selectPisc();
                         if (selectPiscRio instanceof PiscifactoriaDeRio) {
@@ -857,7 +858,7 @@ public class Simulador {
                             System.out.println("\nNo puedes añadir el tanque a una Piscifactoria de Rio.");
                         }
                         break;
-    
+
                     case "Tanque de mar":
                         Piscifactoria selectPiscMar = selectPisc();
                         if (selectPiscMar instanceof PiscifactoriaDeMar) {
@@ -872,21 +873,21 @@ public class Simulador {
                             System.out.println("\nNo puedes añadir el tanque a una Piscifactoria de Mar.");
                         }
                         break;
-    
+
                     case "Piscifactoria de rio":
                         Piscifactoria pr = UsarRecompensa.readPiscifactoria(true);
                         if (pr != null) {
                             piscifactorias.add(pr);
                         }
                         break;
-    
+
                     case "Piscifactoria de mar":
                         Piscifactoria pm = UsarRecompensa.readPiscifactoria(false);
                         if (pm != null) {
                             piscifactorias.add(pm);
                         }
                         break;
-    
+
                     case "Almacen central":
                         if (almacenCentral == null) {
                             if (UsarRecompensa.readAlmacenCentral()) {
@@ -896,14 +897,13 @@ public class Simulador {
                             System.out.println("\nYa dispones de un Almacen Central.");
                         }
                         break;
-    
+                    
                     default:
                         System.out.println("\nOpción no válida.");
                 }
             }
         } while (opcion != -1);
     }
-    
 
     /** Genera diversas recompensas. */
     private void generarRecompensas() {
@@ -1112,7 +1112,19 @@ public class Simulador {
         boolean completado = pedidos.enviarPedido(refPedido, cantidadDisponible);
         if (completado) {
             System.out.println("El pedido ha sido completado.");
-            //TODO meter logica de recompensas por pedido
+
+            Random random = new Random();
+            int probabilidad = random.nextInt(100);
+
+            if (probabilidad < 50) {
+                int nivel = random.nextInt(100) < 60 ? 1 : random.nextInt(100) < 90 ? 2 : 3;
+                CrearRecompensa.createComidaReward(nivel);
+            } else if (probabilidad < 90) {
+                int nivel = random.nextInt(100) < 60 ? 1 : random.nextInt(100) < 90 ? 2 : 3;
+                CrearRecompensa.createMonedasReward(nivel);
+            } else {
+                CrearRecompensa.createTanqueReward(random.nextInt(100) < 60 ? 1 : 2);
+            }
         } else {
             System.out.println("El pedido no se completó completamente. Aún quedan peces pendientes.");
         }
