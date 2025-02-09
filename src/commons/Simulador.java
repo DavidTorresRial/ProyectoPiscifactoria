@@ -1109,7 +1109,7 @@ public class Simulador {
             cantidadDisponible = 0;
         }
 
-        boolean completado = pedidos.enviarPedido(refPedido, 100);
+        boolean completado = pedidos.enviarPedido(refPedido, cantidadDisponible);
         if (completado) {
             System.out.println("El pedido ha sido completado.");
 
