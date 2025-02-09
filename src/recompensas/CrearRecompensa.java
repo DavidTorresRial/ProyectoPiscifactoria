@@ -252,7 +252,7 @@ public class CrearRecompensa {
      * @param type el tipo de tanque (1-5).
      * @param part la parte del tanque (A o B).
      */
-    public static void createTanqueReward(int type, String part) {
+    public static void createTanqueReward(int type) {
         String tipo = getTypeAmount(type) == 'r' ? "rio" : "mar";
         String fileName = REWARDS_DIRECTORY + "tanque_" + getTypeAmount(type) + ".xml";
         String name = "Tanque de " + tipo;
@@ -289,7 +289,7 @@ public class CrearRecompensa {
                     .addAttribute("code", getTypeAmount(type) == 'r' ? "2" : "3")
                     .addText("Tanque de " + tipo);
                 give.addElement("part")
-                    .addText(part);
+                    .addText("A");
                 give.addElement("total")
                     .addText("A");
 
