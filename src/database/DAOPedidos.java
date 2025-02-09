@@ -86,7 +86,7 @@ public class DAOPedidos {
                 pstm.setInt(3, idPez);
                 pstm.setInt(4, cantidad);
                 pstm.executeUpdate();
-                System.out.println("Pedido generado: " + numeroReferencia);
+                System.out.println("\nPedido generado: " + numeroReferencia);
             }
         } catch (SQLException e) {
             e.printStackTrace();
