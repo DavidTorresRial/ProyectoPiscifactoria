@@ -802,43 +802,53 @@ public class Simulador {
         }
     }
 
-    /** Muestra un menú con las recompensas disponibles y permite al usuario seleccionar una. */
     private void recompensas() {
         int opcion;
         do {
             System.out.println("\n================== Recompensas Disponibles =================");
             String[] opciones = FileHelper.getRewards();
             String[] opcionesSinCorchete = FileHelper.getRewardsWithoutBrackets(opciones);
-
+    
             MenuHelper.mostrarMenuCancelar(opciones);
             opcion = InputHelper.solicitarNumero(0, opciones.length) - 1;
-
+    
             if (opcion >= 0 && opcion < opciones.length) {
                 String seleccion = opcionesSinCorchete[opcion];
 
-                switch (seleccion) {
-                    case "Algas I":
-                        UsarRecompensa.readFood("algas_1.xml");
+                String[] partes = seleccion.split(" ");
+                String tipo = seleccion;
+                int nivel = 1;
+    
+                if (partes.length > 1) {
+                    String posibleNivel = partes[partes.length - 1];
+                    if (posibleNivel.equals("I") || posibleNivel.equals("II") || posibleNivel.equals("III")) {
+                        nivel = posibleNivel.equals("I") ? 1 : posibleNivel.equals("II") ? 2 : 3;
+                        StringBuilder sb = new StringBuilder();
+                        for (int i = 0; i < partes.length - 1; i++) {
+                            if (i > 0) {
+                                sb.append(" ");
+                            }
+                            sb.append(partes[i]);
+                        }
+                        tipo = sb.toString();
+                    }
+                }
+    
+                switch (tipo) {
+                    case "Algas", "Comida", "Pienso":
+                        UsarRecompensa.readFood(tipo.toLowerCase() + "_" + nivel + ".xml");
                         break;
-
-                    case "Comida I":
-                        UsarRecompensa.readFood("comida_1.xml"); 
+    
+                    case "Monedas":
+                        UsarRecompensa.readCoins("monedas_" + nivel + ".xml");
                         break;
-
-                    case "Pienso I":
-                        UsarRecompensa.readFood("pienso_1.xml"); 
-                        break;
-
-                    case "Monedas I":
-                        UsarRecompensa.readCoins("monedas_1.xml"); 
-                        break;
-
+    
                     case "Tanque de rio":
                         Piscifactoria selectPiscRio = selectPisc();
                         if (selectPiscRio instanceof PiscifactoriaDeRio) {
                             if (selectPiscRio.getTanques().size() < selectPiscRio.getNumeroMaximoTanques()) {
                                 if (UsarRecompensa.readTank("tanque_r.xml")) {
-                                    selectPiscRio.getTanques().add(new Tanque(selectPiscRio.getTanques().size() + 1, 100));
+                                    selectPiscRio.getTanques().add(new Tanque(selectPiscRio.getTanques().size() + 1, 25));
                                 }
                             } else {
                                 System.out.println("\nCapacidad máxima alcanzada: no se pueden añadir más tanques a \"" + selectPiscRio.getNombre() + "\".");
@@ -847,7 +857,7 @@ public class Simulador {
                             System.out.println("\nNo puedes añadir el tanque a una Piscifactoria de Rio.");
                         }
                         break;
-
+    
                     case "Tanque de mar":
                         Piscifactoria selectPiscMar = selectPisc();
                         if (selectPiscMar instanceof PiscifactoriaDeMar) {
@@ -862,21 +872,21 @@ public class Simulador {
                             System.out.println("\nNo puedes añadir el tanque a una Piscifactoria de Mar.");
                         }
                         break;
-
+    
                     case "Piscifactoria de rio":
                         Piscifactoria pr = UsarRecompensa.readPiscifactoria(true);
                         if (pr != null) {
                             piscifactorias.add(pr);
                         }
                         break;
-
+    
                     case "Piscifactoria de mar":
                         Piscifactoria pm = UsarRecompensa.readPiscifactoria(false);
                         if (pm != null) {
                             piscifactorias.add(pm);
                         }
                         break;
-
+    
                     case "Almacen central":
                         if (almacenCentral == null) {
                             if (UsarRecompensa.readAlmacenCentral()) {
@@ -886,13 +896,14 @@ public class Simulador {
                             System.out.println("\nYa dispones de un Almacen Central.");
                         }
                         break;
-                    
+    
                     default:
                         System.out.println("\nOpción no válida.");
                 }
             }
         } while (opcion != -1);
     }
+    
 
     /** Genera diversas recompensas. */
     private void generarRecompensas() {
@@ -902,8 +913,8 @@ public class Simulador {
 
         CrearRecompensa.createMonedasReward(1);
 
-        CrearRecompensa.createTanqueReward(1, "A");
-        CrearRecompensa.createTanqueReward(2, "A");
+        CrearRecompensa.createTanqueReward(1);
+        CrearRecompensa.createTanqueReward(2);
 
         CrearRecompensa.createPiscifactoriaReward(1, "A");
         CrearRecompensa.createPiscifactoriaReward(1, "B");
