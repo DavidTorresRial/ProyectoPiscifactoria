@@ -20,7 +20,7 @@ public class AlmacenCentral {
     private final int COSTO_MEJORA = 200;
 
     /** Incremento fijo para la mejora del almacén central. */
-    private static final int INCREMENTO_MEJORA_ALMACEN = 50;
+    private final int INCREMENTO_MEJORA_ALMACEN = 50;
 
     /** Constructor del almacén central. */
     public AlmacenCentral() {
