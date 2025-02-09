@@ -40,8 +40,8 @@ public abstract class Pez {
     /**
      * Constructor que inicializa un Pez con su sexo y datos asociados.
      *
-     * @param sexo  true para macho, false para hembra
-     * @param datos contiene las propiedades del pez
+     * @param sexo  True para macho, false para hembra.
+     * @param datos Contiene las propiedades del pez.
      */
     public Pez(boolean sexo, PecesDatos datos) {
         this.nombre = datos.getNombre();
@@ -49,6 +49,29 @@ public abstract class Pez {
         this.sexo = sexo;
         this.datos = datos;
         this.ciclo = datos.getCiclo();
+    }
+
+    /**
+     * Constructor que inicializa un Pez con valores personalizados.
+     *
+     * @param sexo        El sexo del pez, true para macho, false para hembra.
+     * @param edad        La edad en días del pez.
+     * @param vivo        Estado de vida del pez, true si está vivo, false si no.
+     * @param fertil      Estado de fertilidad, true si es fértil, false si no.
+     * @param ciclo       Ciclo reproductivo, determina el tiempo hasta la reproducción.
+     * @param alimentado  Si ha sido alimentado, true si lo ha sido, false si no.
+     * @param datos       Contiene las propiedades del pez.
+     */
+    public Pez(boolean sexo, int edad, boolean vivo, boolean fertil, int ciclo, boolean alimentado, PecesDatos datos) {
+        this.nombre = datos.getNombre();
+        this.nombreCientifico = datos.getCientifico();
+        this.sexo = sexo;
+        this.edad = edad;
+        this.vivo = vivo;
+        this.fertil = fertil;
+        this.ciclo = ciclo;
+        this.alimentado = alimentado;
+        this.datos = datos;
     }
 
     /** Muestra el estado actual del pez. */
@@ -89,6 +112,7 @@ public abstract class Pez {
                     }
                 } else if (edad >= datos.getMadurez()) {
                     fertil = true;
+                    maduro = true;
                 }
 
                 if (edad < datos.getMadurez() && edad % 2 == 0) {

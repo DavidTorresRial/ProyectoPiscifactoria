@@ -19,11 +19,27 @@ public class AlmacenCentral {
     /** Costo de mejora fijo para el almacen central. */
     private final int COSTO_MEJORA = 200;
 
+    /** Incremento fijo para la mejora del almacén central. */
+    private final int INCREMENTO_MEJORA_ALMACEN = 50;
+
     /** Constructor del almacén central. */
     public AlmacenCentral() {
         this.capacidadAlmacen = 200;
         this.cantidadComidaAnimal = 0;
         this.cantidadComidaVegetal = 0;
+    }
+
+    /**
+     * Constructor del almacén central con valores personalizados.
+     *
+     * @param capacidadAlmacen la capacidad total del almacén.
+     * @param cantidadComidaAnimal la cantidad de comida animal en el almacén.
+     * @param cantidadComidaVegetal la cantidad de comida vegetal en el almacén.
+     */
+    public AlmacenCentral(int capacidadAlmacen, int cantidadComidaAnimal, int cantidadComidaVegetal) {
+        this.capacidadAlmacen = capacidadAlmacen;
+        this.cantidadComidaAnimal = cantidadComidaAnimal;
+        this.cantidadComidaVegetal = cantidadComidaVegetal;
     }
 
     /**
@@ -33,9 +49,9 @@ public class AlmacenCentral {
      */
     public void aumentarCapacidad() {
         if (Simulador.monedas.gastarMonedas(COSTO_MEJORA)) {
-            capacidadAlmacen += 50;
+            capacidadAlmacen += INCREMENTO_MEJORA_ALMACEN;
             System.out.println("\nCapacidad del almacén central mejorada en 50 unidades hasta " + capacidadAlmacen);
-            Simulador.logger.log("Mejorando el almacen central, aumentando su capacidad de comida en 50 unidades hasta " + capacidadAlmacen);
+            Simulador.registro.registroMejorarAlmacenCentral(INCREMENTO_MEJORA_ALMACEN, cantidadComidaAnimal, COSTO_MEJORA);
         } else {
             System.out.println("\nNecesitas " + COSTO_MEJORA + " monedas para aumentar la capacidad.");
         }
