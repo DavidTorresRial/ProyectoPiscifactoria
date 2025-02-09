@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Random;
 
 import database.DAOPedidos;
+import database.dtos.DTOPedido;
 import helpers.FileHelper;
 import helpers.InputHelper;
 import helpers.MenuHelper;
@@ -1084,67 +1085,85 @@ public class Simulador {
      * y actualiza el pedido en la base de datos.
      */
     public void enviarPedidoManual() {
-        String[] pedidosPendientes = pedidos.listarPedidosPendientes().toArray(new String[0]);
-        MenuHelper.mostrarMenu(pedidosPendientes);
+        List<DTOPedido> pedidosPendientes = pedidos.listarPedidosPendientes();
+    
+        if (!pedidosPendientes.isEmpty()) {
+            String[] opciones = new String[pedidosPendientes.size()];
+            for (int i = 0; i < pedidosPendientes.size(); i++) {
+                DTOPedido pedido = pedidosPendientes.get(i);
+                opciones[i] = String.format("[%s] Cliente ID: %d - Pez ID: %d - %d/%d enviados",
+                        pedido.getNumero_referencia(),
+                        pedido.getId_cliente(),
+                        pedido.getId_pez(),
+                        pedido.getCantidad_enviada(),
+                        pedido.getCantidad());
+            }
+    
+            int numeroPedido;
+            
+            MenuHelper.mostrarMenuCancelar(opciones);
+            numeroPedido = InputHelper.solicitarNumero(0, pedidosPendientes.size());
 
-        int numeroPedido = InputHelper.readInt("Introduce la referencia del pedido que deseas enviar: ");
-        String refPedidoCompleto = pedidosPendientes[numeroPedido - 1]; 
-        String refPedido = refPedidoCompleto.substring(refPedidoCompleto.indexOf("[") + 1, refPedidoCompleto.indexOf("]"));
-
-        Tanque tanque = selectTank().getValue();
-
-        int cantidadDisponible;
-        if (tanque != null) {
-            cantidadDisponible = tanque.getMaduros();
+            if (numeroPedido != 0) {
+                DTOPedido pedidoSeleccionado = pedidosPendientes.get(numeroPedido -1);
+                String refPedido = pedidoSeleccionado.getNumero_referencia();
         
-            if (cantidadDisponible > 0) {
-                List<Pez> peces = tanque.getPeces();
-                for (int i = peces.size() - 1; i >= 0; i--) {
-                    if (peces.get(i).isMaduro()) {
-                        peces.remove(i);
-                    }
+
+                Tanque tanque = selectTank().getValue();
+                int cantidadDisponible = (tanque != null) ? tanque.getMaduros() : 0;
+        
+                if (cantidadDisponible > 0) {
+                    List<Pez> peces = tanque.getPeces();
+                    peces.removeIf(Pez::isMaduro);
                 }
-            }
+        
+                boolean completado = pedidos.enviarPedido(refPedido, cantidadDisponible);
+                if (completado) {
+                    System.out.println("El pedido ha sido completado.");
+        
+                    Random random = new Random();
+                    int probabilidad = random.nextInt(100);
+        
+                    if (probabilidad < 50) {
+                        int nivel = (random.nextInt(100) < 60) ? 1 : (random.nextInt(100) < 90) ? 2 : 3;
+                        CrearRecompensa.createComidaReward(nivel);
+                    } else if (probabilidad < 90) {
+                        int nivel = (random.nextInt(100) < 60) ? 1 : (random.nextInt(100) < 90) ? 2 : 3;
+                        CrearRecompensa.createMonedasReward(nivel);
+                    } else {
+                        CrearRecompensa.createTanqueReward(random.nextInt(100) < 60 ? 1 : 2);
+                    }
+                } else {
+                    System.out.println("El pedido no se completó completamente. Aún quedan peces pendientes.");
+                }    
+            } 
         } else {
-            cantidadDisponible = 0;
-        }
-
-        boolean completado = pedidos.enviarPedido(refPedido, cantidadDisponible);
-        if (completado) {
-            System.out.println("El pedido ha sido completado.");
-
-            Random random = new Random();
-            int probabilidad = random.nextInt(100);
-
-            if (probabilidad < 50) {
-                int nivel = random.nextInt(100) < 60 ? 1 : random.nextInt(100) < 90 ? 2 : 3;
-                CrearRecompensa.createComidaReward(nivel);
-            } else if (probabilidad < 90) {
-                int nivel = random.nextInt(100) < 60 ? 1 : random.nextInt(100) < 90 ? 2 : 3;
-                CrearRecompensa.createMonedasReward(nivel);
-            } else {
-                CrearRecompensa.createTanqueReward(random.nextInt(100) < 60 ? 1 : 2);
-            }
-        } else {
-            System.out.println("El pedido no se completó completamente. Aún quedan peces pendientes.");
+            System.out.println("No hay pedidos disponibles.");
         }
     }
+    
+    
 
     public void borrarPedidos() {
         pedidos.borrarPedidos();
     }
 
     public void listarPedidosCompletados() {
-        List<String> pedidosCompletados = pedidos.listarPedidosCompletados();
+        List<DTOPedido> pedidosCompletados = pedidos.listarPedidosCompletados();
         System.out.println("\n");
-        if (pedidosCompletados != null && pedidosCompletados.size() > 0) {
-            for (String pedido : pedidosCompletados) {
-                System.out.println(pedido);
+    
+        if (pedidosCompletados != null && !pedidosCompletados.isEmpty()) {
+            for (DTOPedido pedido : pedidosCompletados) {
+                System.out.println("Pedido #" + pedido.getId() + " [" + pedido.getNumero_referencia() + "]: " +
+                        "Cliente ID " + pedido.getId_cliente() + " - " +
+                        "Pez ID " + pedido.getId_pez() + " - " +
+                        pedido.getCantidad_enviada() + "/" + pedido.getCantidad() + " enviados");
             }
         } else {
             System.out.println("Aún no has completado ningún pedido.");
         }
     }
+    
 
     /**
      * Método principal que gestiona el flujo del simulador, 
