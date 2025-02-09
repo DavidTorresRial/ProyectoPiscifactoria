@@ -73,7 +73,7 @@ public class Tanque {
      * 
      * @param piscifactoria la piscifactoría a la que pertenece el tanque.
      */
-    public void showCapacity(Piscifactoria piscifactoria) {                     // TODO Preguntar si pasar todo el objeto o solo el nombre. Y preguntar que tan optimo es el String.format.
+    public void showCapacity(Piscifactoria piscifactoria) {
         int porcentajeCapacidad = (peces.size() * 100) / capacidadMaxima;
         String mensaje = String.format(
             "Tanque %d de la %s al %d%% de capacidad. [%d/%d]",
@@ -99,7 +99,6 @@ public class Tanque {
         return sellFish();
     }
     
-
     /** Método que maneja la reproducción de los peces en el tanque. */
     public void reproduccion() {
         boolean hayMachoFertil = false;
