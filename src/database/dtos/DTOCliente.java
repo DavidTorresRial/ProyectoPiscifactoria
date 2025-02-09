@@ -1,4 +1,4 @@
-package dtos;
+package database.dtos;
 
 /**
  * Clase DTOCliente que representa un objeto de transferencia de datos para un cliente.
