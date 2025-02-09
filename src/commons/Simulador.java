@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import database.DAOPedidos;
 import helpers.FileHelper;
 import helpers.InputHelper;
 import helpers.MenuHelper;
@@ -82,6 +83,8 @@ public class Simulador {
 
     public static Registros registro;
 
+    public  DAOPedidos pedidos = new DAOPedidos();
+
     /** Metodo que inicializa todo el sistema. */
     public void init() {
         FileHelper.crearCarpetas(new String[] {"transcripciones", "logs", "saves", "rewards"});
@@ -137,6 +140,7 @@ public class Simulador {
                 "Mejorar",
                 "Recompensas",
                 "Pasar varios días",
+                "Enviar pedido",
                 "Salir"
         });
     }
@@ -335,6 +339,10 @@ public class Simulador {
             } else if (piscifactoria instanceof PiscifactoriaDeMar) {
                 pecesDeMar += piscifactoria.getTotalVivos();
             }
+        }
+
+        if (dia % 10 == 0) {
+            pedidos.generarPedidoAutomatico();
         }
         registro.registroFinDelDia(dia, pecesDeRio, pecesDeMar, totalMonedasGanadas, monedas.getMonedas());
     }
@@ -1060,6 +1068,62 @@ public class Simulador {
     }
 
     /**
+     * Envía un pedido de forma manual.
+     * Muestra los pedidos pendientes, solicita la referencia del pedido y la cantidad de peces disponibles,
+     * y actualiza el pedido en la base de datos.
+     */
+    public void enviarPedidoManual() {
+        String[] pedidosPendientes = pedidos.listarPedidosPendientes().toArray(new String[0]);
+        MenuHelper.mostrarMenu(pedidosPendientes);
+
+        int numeroPedido = InputHelper.readInt("Introduce la referencia del pedido que deseas enviar: ");
+        String refPedidoCompleto = pedidosPendientes[numeroPedido - 1]; 
+        String refPedido = refPedidoCompleto.substring(refPedidoCompleto.indexOf("[") + 1, refPedidoCompleto.indexOf("]"));
+
+        Tanque tanque = selectTank().getValue();
+
+        int cantidadDisponible;
+        if (tanque != null) {
+            cantidadDisponible = tanque.getMaduros();
+        
+            if (cantidadDisponible > 0) {
+                List<Pez> peces = tanque.getPeces();
+                for (int i = peces.size() - 1; i >= 0; i--) {
+                    if (peces.get(i).isMaduro()) {
+                        peces.remove(i);
+                    }
+                }
+            }
+        } else {
+            cantidadDisponible = 0;
+        }
+
+        boolean completado = pedidos.enviarPedido(refPedido, cantidadDisponible);
+        if (completado) {
+            System.out.println("El pedido ha sido completado.");
+            //TODO meter logica de recompensas por pedido
+        } else {
+            System.out.println("El pedido no se completó completamente. Aún quedan peces pendientes.");
+        }
+    }
+
+    public void borrarPedidos() {
+        pedidos.borrarPedidos();
+    }
+
+    public void listarPedidosCompletados() {
+        List<String> pedidosCompletados = pedidos.listarPedidosCompletados();
+        System.out.println("\n");
+        if (pedidosCompletados != null && pedidosCompletados.size() > 0) {
+            for (String pedido : pedidosCompletados) {
+                System.out.println(pedido);
+            }
+        } else {
+            System.out.println("Aún no has completado ningún pedido.");
+        }
+    }
+
+    /**
      * Método principal que gestiona el flujo del simulador, 
      * mostrando el menú y procesando las opciones del usuario.
      * El ciclo continúa hasta que el usuario decide salir.
@@ -1105,6 +1169,9 @@ public class Simulador {
                         int dias = InputHelper.readInt("\nIngrese los días para avanzar en el simulador: ");
                         simulador.nextDay(dias);
                         break;
+                    case 15: simulador.enviarPedidoManual(); break;
+                    case 95: simulador.borrarPedidos(); break;
+                    case 96: simulador.listarPedidosCompletados();
                     case 97: simulador.generarRecompensas(); break;
                     case 98: simulador.pecesRandom(); break;
                     case 99:
@@ -1112,7 +1179,7 @@ public class Simulador {
                         System.out.println("\nAñadidas 1000 monedas mediante la opción oculta. Monedas actuales, " + monedas.getMonedas());
                         registro.registroOpcionOcultaMonedas(monedas.getMonedas());
                         break;
-                    case 15: 
+                    case 16: 
                         running = false;
                         registro.registroCierrePartida();
                         GestorEstado.guardarEstado(simulador);
