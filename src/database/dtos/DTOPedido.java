@@ -1,4 +1,4 @@
-package dtos;
+package database.dtos;
 
 /**
  * Clase DTOPedido que representa un objeto de transferencia de datos para un pedido.

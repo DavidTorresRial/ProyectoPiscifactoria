@@ -1,9 +1,9 @@
-package dtos;
+package database.dtos;
 
 /**
  * Clase DTOPeZ que representa un objeto de transferencia de datos para un pez.
  */
-public class DTOPeZ {
+public class DTOPez {
 
     /**
      * Identificador único del pez.
@@ -27,7 +27,7 @@ public class DTOPeZ {
      * @param nombre Nombre común del pez.
      * @param nombre_cientifico Nombre científico del pez.
      */
-    public DTOPeZ(int id, String nombre, String nombre_cientifico) {
+    public DTOPez(int id, String nombre, String nombre_cientifico) {
         this.id = id;
         this.nombre = nombre;
         this.nombre_cientifico = nombre_cientifico;
