@@ -196,7 +196,7 @@ public class Registros {
         transcriptor.transcribirUsarRecompensa(nombreRecompensa);
     }
 
-    //TODO ↓↓↓ Métodos que no tienen trancripción. ↓↓↓
+    /* ↓↓↓ Métodos que no tienen trancripción. ↓↓↓ */
 
     /**
      * Registra un mensaje de error en el sistema de logs.
