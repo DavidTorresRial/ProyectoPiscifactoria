@@ -196,6 +196,36 @@ public class Registros {
         transcriptor.transcribirUsarRecompensa(nombreRecompensa);
     }
 
+    /**
+     * Registra y transcribe la generación de un pedido.
+     * @param referenciaPedido Referencia única del pedido generado.
+     */
+    public void registroGenerarPedidos(String referenciaPedido) {
+        logger.logGenerarPedidos(referenciaPedido);
+        transcriptor.transcribirGenerarPedidos(referenciaPedido);
+    }
+
+    /**
+     * Registra y transcribe el envío de un pedido.
+     * @param nombrePez Nombre del pez enviado.
+     * @param referenciaPedido Referencia única del pedido enviado.
+     */
+    public void registroPedidoEnviado(String nombrePez, String referenciaPedido) {
+        logger.logPedidoEnviado(nombrePez, referenciaPedido);
+        transcriptor.transcribirPedidoEnviado(nombrePez, referenciaPedido);
+    }
+
+    /**
+     * Registra y transcribe el envío de una cantidad de peces de un tipo determinado con una referencia de pedido.
+     * @param cantidadPeces Cantidad de peces enviados.
+     * @param nombrePez Nombre del pez enviado.
+     * @param referenciaPedido Referencia única del pedido enviado.
+     */
+    public void registroEnviadosConReferencia(int cantidadPeces, String nombrePez, String referenciaPedido) {
+        logger.logEnviadosConReferencia(cantidadPeces, nombrePez, referenciaPedido);
+        transcriptor.transcribirEnviadosConReferencia(cantidadPeces, nombrePez, referenciaPedido);
+    }
+
     /* ↓↓↓ Métodos que no tienen trancripción. ↓↓↓ */
 
     /**
