@@ -35,7 +35,13 @@ public class GeneradorBD {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            try { if (stm != null) { stm.close(); } } catch (SQLException e) {}
+            try { 
+                if (stm != null) { 
+                    stm.close(); 
+                } 
+            } catch (SQLException e) {
+
+            }
             Conexion.closeConnection();
         }
     }
@@ -60,7 +66,12 @@ public class GeneradorBD {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            try { if (stm != null) { stm.close(); } } catch (SQLException e) {}
+            try { 
+                if (stm != null) {
+                    stm.close(); } 
+                } catch (SQLException e) {
+
+                }
             Conexion.closeConnection();
         }
     }
@@ -90,7 +101,12 @@ public class GeneradorBD {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            try { if (stm != null) { stm.close(); } } catch (SQLException e) {}
+            try { 
+                if (stm != null) { 
+                    stm.close(); } 
+                } catch (SQLException e) {
+                    
+                }
             Conexion.closeConnection();
         }
     }
@@ -133,6 +149,7 @@ public class GeneradorBD {
                     Simulador.registro.registroLogError("Error al cerrar PreparedStatement: " + e.getMessage());
                 }
             }
+            Conexion.closeConnection();
         }
     }
 
@@ -164,6 +181,7 @@ public class GeneradorBD {
                     Simulador.registro.registroLogError("Error al cerrar PreparedStatement: " + e.getMessage());
                 }
             }
+            Conexion.closeConnection();
         }
     }
 }
