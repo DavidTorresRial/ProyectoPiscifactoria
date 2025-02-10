@@ -2,6 +2,7 @@ package recompensas;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.util.Random;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
@@ -251,7 +252,7 @@ public class CrearRecompensa {
      * @param type el tipo de tanque (1-5).
      * @param part la parte del tanque (A o B).
      */
-    public static void createTanqueReward(int type, String part) {
+    public static void createTanqueReward(int type) {
         String tipo = getTypeAmount(type) == 'r' ? "rio" : "mar";
         String fileName = REWARDS_DIRECTORY + "tanque_" + getTypeAmount(type) + ".xml";
         String name = "Tanque de " + tipo;
@@ -288,7 +289,7 @@ public class CrearRecompensa {
                     .addAttribute("code", getTypeAmount(type) == 'r' ? "2" : "3")
                     .addText("Tanque de " + tipo);
                 give.addElement("part")
-                    .addText(part);
+                    .addText("A");
                 give.addElement("total")
                     .addText("A");
 
@@ -501,4 +502,33 @@ public class CrearRecompensa {
             default: throw new IllegalArgumentException("Tipo inválido: " + type);
         }
     }
+    
+
+    public void recompensa() {
+        Random random = new Random();
+        double prob = random.nextDouble();
+
+        if (prob < 0.5) {
+            System.out.println("Recompensa: Comida de nivel " + nivelRecompensa(random));
+        } else if (prob < 0.9) {
+            System.out.println("Recompensa: Dinero de nivel " + nivelRecompensa(random));
+        } else {
+            System.out.println("Recompensa: Tanque de tipo " + tipoTanque(random));
+        }
+    }
+
+    private int nivelRecompensa(Random random) {
+        double prob = random.nextDouble();
+        if (prob < 0.6) return 1;  // 60% nivel 1
+        if (prob < 0.9) return 2;  // 30% nivel 2
+        return 3;                  // 10% nivel 3
+    }
+
+    private String tipoTanque(Random random) {
+        double prob = random.nextDouble();
+        if (prob < 0.6) return "Río"; // 60% río
+        return "Mar";                 // 40% mar
+    }
+
+
 }

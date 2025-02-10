@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import database.DAOPedidos;
+import database.dtos.DTOPedido;
 import helpers.FileHelper;
 import helpers.InputHelper;
 import helpers.MenuHelper;
@@ -55,7 +57,7 @@ public class Simulador {
     private String nombrePiscifactoria;
 
     /** Lista de nombres de peces implementados. */
-    private final static String[] pecesImplementados = {
+    public final static String[] pecesImplementados = {
         AlmacenPropiedades.DORADA.getNombre(),
         AlmacenPropiedades.SALMON_ATLANTICO.getNombre(),
         AlmacenPropiedades.TRUCHA_ARCOIRIS.getNombre(),
@@ -81,6 +83,8 @@ public class Simulador {
     public static AlmacenCentral almacenCentral;
 
     public static Registros registro;
+
+    public  DAOPedidos pedidos = new DAOPedidos();
 
     /** Metodo que inicializa todo el sistema. */
     public void init() {
@@ -137,6 +141,7 @@ public class Simulador {
                 "Mejorar",
                 "Recompensas",
                 "Pasar varios días",
+                "Enviar pedido",
                 "Salir"
         });
     }
@@ -335,6 +340,10 @@ public class Simulador {
             } else if (piscifactoria instanceof PiscifactoriaDeMar) {
                 pecesDeMar += piscifactoria.getTotalVivos();
             }
+        }
+
+        if (dia % 10 == 0) {
+            pedidos.generarPedidoAutomatico();
         }
         registro.registroFinDelDia(dia, pecesDeRio, pecesDeMar, totalMonedasGanadas, monedas.getMonedas());
     }
@@ -808,21 +817,32 @@ public class Simulador {
             if (opcion >= 0 && opcion < opciones.length) {
                 String seleccion = opcionesSinCorchete[opcion];
 
-                switch (seleccion) {
-                    case "Algas I":
-                        UsarRecompensa.readFood("algas_1.xml");
+                String[] partes = seleccion.split(" ");
+                String tipo = seleccion;
+                int nivel = 1;
+    
+                if (partes.length > 1) {
+                    String posibleNivel = partes[partes.length - 1];
+                    if (posibleNivel.equals("I") || posibleNivel.equals("II") || posibleNivel.equals("III")) {
+                        nivel = posibleNivel.equals("I") ? 1 : posibleNivel.equals("II") ? 2 : 3;
+                        StringBuilder sb = new StringBuilder();
+                        for (int i = 0; i < partes.length - 1; i++) {
+                            if (i > 0) {
+                                sb.append(" ");
+                            }
+                            sb.append(partes[i]);
+                        }
+                        tipo = sb.toString();
+                    }
+                }
+    
+                switch (tipo) {
+                    case "Algas", "Comida", "Pienso":
+                        UsarRecompensa.readFood(tipo.toLowerCase() + "_" + nivel + ".xml");
                         break;
 
-                    case "Comida I":
-                        UsarRecompensa.readFood("comida_1.xml"); 
-                        break;
-
-                    case "Pienso I":
-                        UsarRecompensa.readFood("pienso_1.xml"); 
-                        break;
-
-                    case "Monedas I":
-                        UsarRecompensa.readCoins("monedas_1.xml"); 
+                    case "Monedas":
+                        UsarRecompensa.readCoins("monedas_" + nivel + ".xml");
                         break;
 
                     case "Tanque de rio":
@@ -830,7 +850,7 @@ public class Simulador {
                         if (selectPiscRio instanceof PiscifactoriaDeRio) {
                             if (selectPiscRio.getTanques().size() < selectPiscRio.getNumeroMaximoTanques()) {
                                 if (UsarRecompensa.readTank("tanque_r.xml")) {
-                                    selectPiscRio.getTanques().add(new Tanque(selectPiscRio.getTanques().size() + 1, 100));
+                                    selectPiscRio.getTanques().add(new Tanque(selectPiscRio.getTanques().size() + 1, 25));
                                 }
                             } else {
                                 System.out.println("\nCapacidad máxima alcanzada: no se pueden añadir más tanques a \"" + selectPiscRio.getNombre() + "\".");
@@ -894,8 +914,8 @@ public class Simulador {
 
         CrearRecompensa.createMonedasReward(1);
 
-        CrearRecompensa.createTanqueReward(1, "A");
-        CrearRecompensa.createTanqueReward(2, "A");
+        CrearRecompensa.createTanqueReward(1);
+        CrearRecompensa.createTanqueReward(2);
 
         CrearRecompensa.createPiscifactoriaReward(1, "A");
         CrearRecompensa.createPiscifactoriaReward(1, "B");
@@ -1060,6 +1080,92 @@ public class Simulador {
     }
 
     /**
+     * Envía un pedido de forma manual.
+     * Muestra los pedidos pendientes, solicita la referencia del pedido y la cantidad de peces disponibles,
+     * y actualiza el pedido en la base de datos.
+     */
+    public void enviarPedidoManual() {
+        List<DTOPedido> pedidosPendientes = pedidos.listarPedidosPendientes();
+    
+        if (!pedidosPendientes.isEmpty()) {
+            String[] opciones = new String[pedidosPendientes.size()];
+            for (int i = 0; i < pedidosPendientes.size(); i++) {
+                DTOPedido pedido = pedidosPendientes.get(i);
+                opciones[i] = String.format("[%s] Cliente ID: %d - Pez ID: %d - %d/%d enviados",
+                        pedido.getNumero_referencia(),
+                        pedido.getId_cliente(),
+                        pedido.getId_pez(),
+                        pedido.getCantidad_enviada(),
+                        pedido.getCantidad());
+            }
+    
+            int numeroPedido;
+            
+            MenuHelper.mostrarMenuCancelar(opciones);
+            numeroPedido = InputHelper.solicitarNumero(0, pedidosPendientes.size());
+
+            if (numeroPedido != 0) {
+                DTOPedido pedidoSeleccionado = pedidosPendientes.get(numeroPedido -1);
+                String refPedido = pedidoSeleccionado.getNumero_referencia();
+        
+
+                Tanque tanque = selectTank().getValue();
+                int cantidadDisponible = (tanque != null) ? tanque.getMaduros() : 0;
+        
+                if (cantidadDisponible > 0) {
+                    List<Pez> peces = tanque.getPeces();
+                    peces.removeIf(Pez::isMaduro);
+                }
+        
+                boolean completado = pedidos.enviarPedido(refPedido, cantidadDisponible);
+                if (completado) {
+                    System.out.println("El pedido ha sido completado.");
+        
+                    Random random = new Random();
+                    int probabilidad = random.nextInt(100);
+        
+                    if (probabilidad < 50) {
+                        int nivel = (random.nextInt(100) < 60) ? 1 : (random.nextInt(100) < 90) ? 2 : 3;
+                        CrearRecompensa.createComidaReward(nivel);
+                    } else if (probabilidad < 90) {
+                        int nivel = (random.nextInt(100) < 60) ? 1 : (random.nextInt(100) < 90) ? 2 : 3;
+                        CrearRecompensa.createMonedasReward(nivel);
+                    } else {
+                        CrearRecompensa.createTanqueReward(random.nextInt(100) < 60 ? 1 : 2);
+                    }
+                } else {
+                    System.out.println("El pedido no se completó completamente. Aún quedan peces pendientes.");
+                }    
+            } 
+        } else {
+            System.out.println("No hay pedidos disponibles.");
+        }
+    }
+    
+    
+
+    public void borrarPedidos() {
+        pedidos.borrarPedidos();
+    }
+
+    public void listarPedidosCompletados() {
+        List<DTOPedido> pedidosCompletados = pedidos.listarPedidosCompletados();
+        System.out.println("\n");
+    
+        if (pedidosCompletados != null && !pedidosCompletados.isEmpty()) {
+            for (DTOPedido pedido : pedidosCompletados) {
+                System.out.println("Pedido #" + pedido.getId() + " [" + pedido.getNumero_referencia() + "]: " +
+                        "Cliente ID " + pedido.getId_cliente() + " - " +
+                        "Pez ID " + pedido.getId_pez() + " - " +
+                        pedido.getCantidad_enviada() + "/" + pedido.getCantidad() + " enviados");
+            }
+        } else {
+            System.out.println("Aún no has completado ningún pedido.");
+        }
+    }
+    
+
+    /**
      * Método principal que gestiona el flujo del simulador, 
      * mostrando el menú y procesando las opciones del usuario.
      * El ciclo continúa hasta que el usuario decide salir.
@@ -1105,6 +1211,9 @@ public class Simulador {
                         int dias = InputHelper.readInt("\nIngrese los días para avanzar en el simulador: ");
                         simulador.nextDay(dias);
                         break;
+                    case 15: simulador.enviarPedidoManual(); break;
+                    case 95: simulador.borrarPedidos(); break;
+                    case 96: simulador.listarPedidosCompletados();
                     case 97: simulador.generarRecompensas(); break;
                     case 98: simulador.pecesRandom(); break;
                     case 99:
@@ -1112,7 +1221,7 @@ public class Simulador {
                         System.out.println("\nAñadidas 1000 monedas mediante la opción oculta. Monedas actuales, " + monedas.getMonedas());
                         registro.registroOpcionOcultaMonedas(monedas.getMonedas());
                         break;
-                    case 15: 
+                    case 16: 
                         running = false;
                         registro.registroCierrePartida();
                         GestorEstado.guardarEstado(simulador);
