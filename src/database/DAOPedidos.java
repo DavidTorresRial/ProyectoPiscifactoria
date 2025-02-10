@@ -1,6 +1,8 @@
 package database;
 
+import database.dtos.DTOCliente;
 import database.dtos.DTOPedido;
+import database.dtos.DTOPez;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,12 +10,14 @@ import java.util.Random;
 
 /**
  * DAO para la tabla Pedido.
- * Provee métodos para generar, listar, enviar y borrar pedidos.
+ * Utiliza DTOs para gestionar la información, devolviendo y actualizando objetos
+ * de transferencia en cada operación.
  */
 public class DAOPedidos {
 
     private Random random = new Random();
 
+    // --- Queries para la tabla Pedido ---
     private static final String QUERY_INSERT_PEDIDO = 
         "INSERT INTO Pedido (numero_referencia, id_cliente, id_pez, cantidad, cantidad_enviada) VALUES (?, ?, ?, ?, 0)";
     private static final String QUERY_LISTAR_PEDIDOS_COMPLETADOS =
@@ -21,15 +25,18 @@ public class DAOPedidos {
     private static final String QUERY_LISTAR_PEDIDOS_PENDIENTES =
         "SELECT id, numero_referencia, id_cliente, id_pez, cantidad, cantidad_enviada FROM Pedido WHERE cantidad_enviada < cantidad ORDER BY id";
     private static final String QUERY_SELECCIONAR_PEDIDO_POR_REFERENCIA =
-        "SELECT id, cantidad, cantidad_enviada FROM Pedido WHERE numero_referencia = ?";
+        "SELECT id, numero_referencia, id_cliente, id_pez, cantidad, cantidad_enviada FROM Pedido WHERE numero_referencia = ?";
     private static final String QUERY_ACTUALIZAR_PEDIDO =
         "UPDATE Pedido SET cantidad_enviada = ? WHERE id = ?";
     private static final String QUERY_BORRAR_PEDIDOS = "DELETE FROM Pedido";
-    
-    private static final String QUERY_RANDOM_CLIENTE = "SELECT id FROM Cliente ORDER BY RAND() LIMIT 1";
-    private static final String QUERY_RANDOM_PEZ = "SELECT id FROM Pez ORDER BY RAND() LIMIT 1";
 
-    // Conexión y PreparedStatements como variables de instancia
+    // --- Queries para obtener un Cliente o un Pez aleatorio ---
+    private static final String QUERY_RANDOM_CLIENTE =
+        "SELECT id, nombre, nif, telefono FROM Cliente ORDER BY RAND() LIMIT 1";
+    private static final String QUERY_RANDOM_PEZ =
+        "SELECT id, nombre, nombre_cientifico FROM Pez ORDER BY RAND() LIMIT 1";
+
+    // --- Variables de conexión y PreparedStatement ---
     private Connection connection;
     private PreparedStatement pstInsertPedido;
     private PreparedStatement pstListarPedidosPendientes;
@@ -46,7 +53,8 @@ public class DAOPedidos {
     public DAOPedidos() {
         try {
             connection = Conexion.getConnection();
-            pstInsertPedido = connection.prepareStatement(QUERY_INSERT_PEDIDO);
+            // Se usa Statement.RETURN_GENERATED_KEYS para recuperar el id generado al insertar
+            pstInsertPedido = connection.prepareStatement(QUERY_INSERT_PEDIDO, Statement.RETURN_GENERATED_KEYS);
             pstListarPedidosPendientes = connection.prepareStatement(QUERY_LISTAR_PEDIDOS_PENDIENTES);
             pstListarPedidosCompletados = connection.prepareStatement(QUERY_LISTAR_PEDIDOS_COMPLETADOS);
             pstSeleccionarPedidoPorReferencia = connection.prepareStatement(QUERY_SELECCIONAR_PEDIDO_POR_REFERENCIA);
@@ -60,34 +68,48 @@ public class DAOPedidos {
     }
 
     /**
-     * Genera un pedido automático seleccionando un cliente y un pez aleatorio.
+     * Genera un pedido automático seleccionando un Cliente y un Pez aleatorios.
+     * Se devuelve el objeto DTOPedido generado o null si ocurre algún error.
+     *
+     * @return DTOPedido generado.
      */
-    public void generarPedidoAutomatico() {
+    public DTOPedido generarPedidoAutomatico() {
         try {
-            Integer idPez = getRandomId("Pez");
-            Integer idCliente = getRandomId("Cliente");
+            // Obtener Cliente y Pez aleatorios (DTOs)
+            DTOCliente cliente = getRandomCliente();
+            DTOPez pez = getRandomPez();
 
-            if (idCliente != null && idPez != null) {
+            if (cliente != null && pez != null) {
                 int cantidad = 10 + random.nextInt(41);
                 String numeroReferencia = "PED-" + System.currentTimeMillis();
 
                 pstInsertPedido.clearParameters();
                 pstInsertPedido.setString(1, numeroReferencia);
-                pstInsertPedido.setInt(2, idCliente);
-                pstInsertPedido.setInt(3, idPez);
+                pstInsertPedido.setInt(2, cliente.getId());
+                pstInsertPedido.setInt(3, pez.getId());
                 pstInsertPedido.setInt(4, cantidad);
-                pstInsertPedido.executeUpdate();
-                System.out.println("Pedido generado: " + numeroReferencia);
-            }
 
+                int affected = pstInsertPedido.executeUpdate();
+                if (affected > 0) {
+                    // Recuperar el id generado para crear el DTOPedido
+                    try (ResultSet rs = pstInsertPedido.getGeneratedKeys()) {
+                        if (rs.next()) {
+                            int id = rs.getInt(1);
+                            return new DTOPedido(id, numeroReferencia, cliente.getId(), pez.getId(), cantidad, 0);
+                        }
+                    }
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return null;
     }
 
     /**
-     * Lista los pedidos pendientes.
-     * @return Lista de objetos DTOPedido.
+     * Lista los pedidos pendientes (aquellos en los que la cantidad enviada es menor que la solicitada).
+     *
+     * @return Lista de DTOPedido pendientes.
      */
     public List<DTOPedido> listarPedidosPendientes() {
         List<DTOPedido> pedidos = new ArrayList<>();
@@ -109,8 +131,9 @@ public class DAOPedidos {
     }
 
     /**
-     * Lista los pedidos completados.
-     * @return Lista de objetos DTOPedido.
+     * Lista los pedidos completados (aquellos en los que la cantidad enviada es igual o mayor que la solicitada).
+     *
+     * @return Lista de DTOPedido completados.
      */
     public List<DTOPedido> listarPedidosCompletados() {
         List<DTOPedido> pedidos = new ArrayList<>();
@@ -132,33 +155,46 @@ public class DAOPedidos {
     }
 
     /**
-     * Envía un pedido actualizando la cantidad enviada sin superar la cantidad solicitada.
-     * @param numeroReferencia Referencia del pedido.
-     * @param cantidadDisponible Cantidad disponible para enviar.
-     * @return true si el pedido se completó, false en caso contrario.
+     * Obtiene un pedido a partir de su número de referencia.
+     *
+     * @param numeroReferencia Referencia única del pedido.
+     * @return DTOPedido encontrado o null si no se encuentra.
      */
-    public boolean enviarPedido(String numeroReferencia, int cantidadDisponible) {
+    public DTOPedido obtenerPedidoPorReferencia(String numeroReferencia) {
         try {
             pstSeleccionarPedidoPorReferencia.clearParameters();
             pstSeleccionarPedidoPorReferencia.setString(1, numeroReferencia);
             try (ResultSet rs = pstSeleccionarPedidoPorReferencia.executeQuery()) {
                 if (rs.next()) {
-                    int id = rs.getInt("id");
-                    int cantidad = rs.getInt("cantidad");
-                    int enviada = rs.getInt("cantidad_enviada");
-
-                    int pendiente = cantidad - enviada;
-                    int enviar = Math.min(pendiente, cantidadDisponible);
-                    int nuevaCantidadEnviada = enviada + enviar;
-
-                    pstActualizarPedido.clearParameters();
-                    pstActualizarPedido.setInt(1, nuevaCantidadEnviada);
-                    pstActualizarPedido.setInt(2, id);
-                    pstActualizarPedido.executeUpdate();
-
-                    return nuevaCantidadEnviada >= cantidad;
+                    return new DTOPedido(
+                            rs.getInt("id"),
+                            rs.getString("numero_referencia"),
+                            rs.getInt("id_cliente"),
+                            rs.getInt("id_pez"),
+                            rs.getInt("cantidad"),
+                            rs.getInt("cantidad_enviada")
+                    );
                 }
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * Actualiza un pedido en la base de datos utilizando el DTOPedido proporcionado.
+     *
+     * @param pedido DTOPedido con la información actualizada.
+     * @return true si la actualización fue exitosa; false en caso contrario.
+     */
+    public boolean actualizarPedido(DTOPedido pedido) {
+        try {
+            pstActualizarPedido.clearParameters();
+            pstActualizarPedido.setInt(1, pedido.getCantidad_enviada());
+            pstActualizarPedido.setInt(2, pedido.getId());
+            int affected = pstActualizarPedido.executeUpdate();
+            return affected > 0;
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -166,34 +202,85 @@ public class DAOPedidos {
     }
 
     /**
-     * Borra todos los pedidos de la base de datos.
+     * Envía una cantidad de peces para un pedido, actualizando la cantidad enviada.
+     * Se utiliza el DTOPedido recibido para calcular la cantidad pendiente y se actualiza
+     * tanto la base de datos como el objeto DTO.
+     *
+     * @param pedido           DTOPedido del pedido a enviar.
+     * @param cantidadDisponible Cantidad de peces disponibles para enviar.
+     * @return El DTOPedido actualizado o null si ocurre algún error.
      */
-    public void borrarPedidos() {
-        try {
-            System.out.println("Se han borrado " + pstBorrarPedidos.executeUpdate() + " pedidos.");
-        } catch (SQLException e) {
-            e.printStackTrace();
+    public DTOPedido enviarPedido(DTOPedido pedido, int cantidadDisponible) {
+        int pendiente = pedido.getCantidad() - pedido.getCantidad_enviada();
+        int enviar = Math.min(pendiente, cantidadDisponible);
+        int nuevaCantidadEnviada = pedido.getCantidad_enviada() + enviar;
+
+        // Se crea un nuevo objeto DTOPedido con la cantidad enviada actualizada
+        DTOPedido pedidoActualizado = new DTOPedido(
+                pedido.getId(),
+                pedido.getNumero_referencia(),
+                pedido.getId_cliente(),
+                pedido.getId_pez(),
+                pedido.getCantidad(),
+                nuevaCantidadEnviada
+        );
+
+        if (actualizarPedido(pedidoActualizado)) {
+            return pedidoActualizado;
         }
+        return null;
     }
 
     /**
-     * Obtiene un ID aleatorio de la tabla especificada.
-     * @param tabla Nombre de la tabla ("Cliente" o "Pez").
-     * @return Un ID aleatorio o null si no hay registros.
+     * Borra todos los pedidos de la base de datos.
+     *
+     * @return Número de pedidos borrados.
+     */
+    public int borrarPedidos() {
+        try {
+            return pstBorrarPedidos.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    // --- Métodos privados para obtener DTOCliente y DTOPez aleatorios ---
+
+    /**
+     * Obtiene un DTOCliente aleatorio de la base de datos.
+     *
+     * @return DTOCliente obtenido o null si no hay registros.
      * @throws SQLException
      */
-    private Integer getRandomId(String tabla) throws SQLException {
-        PreparedStatement pst;
-        if ("Cliente".equalsIgnoreCase(tabla)) {
-            pst = pstRandomCliente;
-        } else if ("Pez".equalsIgnoreCase(tabla)) {
-            pst = pstRandomPez;
-        } else {
-            throw new IllegalArgumentException("Tabla no soportada: " + tabla);
-        }
-        try (ResultSet rs = pst.executeQuery()) {
+    private DTOCliente getRandomCliente() throws SQLException {
+        try (ResultSet rs = pstRandomCliente.executeQuery()) {
             if (rs.next()) {
-                return rs.getInt("id");
+                return new DTOCliente(
+                        rs.getInt("id"),
+                        rs.getString("nombre"),
+                        rs.getString("nif"),
+                        rs.getInt("telefono")
+                );
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Obtiene un DTOPez aleatorio de la base de datos.
+     *
+     * @return DTOPez obtenido o null si no hay registros.
+     * @throws SQLException
+     */
+    private DTOPez getRandomPez() throws SQLException {
+        try (ResultSet rs = pstRandomPez.executeQuery()) {
+            if (rs.next()) {
+                return new DTOPez(
+                        rs.getInt("id"),
+                        rs.getString("nombre"),
+                        rs.getString("nombre_cientifico")
+                );
             }
         }
         return null;
