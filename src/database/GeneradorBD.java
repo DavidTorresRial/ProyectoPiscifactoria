@@ -14,14 +14,34 @@ import propiedades.AlmacenPropiedades;
  */
 public class GeneradorBD {
 
+    private static final String QUERY_AGREGAR_CLIENTES = 
+            "INSERT INTO Cliente (nombre, nif, telefono) SELECT ?, ?, ? WHERE NOT EXISTS (SELECT 1 FROM Cliente WHERE nif = ?)";
+
+    private static final String QUERY_AGREGAR_PEZ = 
+            "INSERT INTO Pez (nombre, nombre_cientifico) SELECT ?, ? WHERE NOT EXISTS (SELECT 1 FROM Pez WHERE nombre = ?)";
+
+    private Connection connection;
+    private PreparedStatement agregarClientes;
+    private PreparedStatement agregarPeces;
+
+    
+
+    public GeneradorBD() {
+        try {
+            connection = Conexion.getConnection();
+            agregarClientes = connection.prepareStatement(QUERY_AGREGAR_CLIENTES);
+            agregarPeces = connection.prepareStatement(QUERY_AGREGAR_PEZ);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Crea la tabla Cliente si no existe.
      */
-    public static void crearTablaCliente() {
-        Connection conn = null;
+    public void crearTablaCliente() {
         Statement stm = null;
         try {
-            conn = Conexion.getConnection();
             String query = "CREATE TABLE IF NOT EXISTS Cliente (" +
                     "id INT AUTO_INCREMENT," +
                     "nombre VARCHAR(100) NOT NULL," +
@@ -29,7 +49,7 @@ public class GeneradorBD {
                     "telefono VARCHAR(15) NOT NULL," +
                     "PRIMARY KEY(id)" +
                     ")";
-            stm = conn.createStatement();
+            stm = connection.createStatement();
             stm.executeUpdate(query);
             System.out.println("Tabla Cliente creada o ya existe");
         } catch (SQLException e) {
@@ -42,25 +62,22 @@ public class GeneradorBD {
             } catch (SQLException e) {
 
             }
-            Conexion.closeConnection();
         }
     }
 
     /**
      * Crea la tabla Pez si no existe.
      */
-    public static void crearTablaPez() {
-        Connection conn = null;
+    public void crearTablaPez() {
         Statement stm = null;
         try {
-            conn = Conexion.getConnection();
             String query = "CREATE TABLE IF NOT EXISTS Pez (" +
                     "id INT AUTO_INCREMENT," +
                     "nombre VARCHAR(50) NOT NULL," +
                     "nombre_cientifico VARCHAR(100) NOT NULL," +
                     "PRIMARY KEY(id)" +
                     ")";
-            stm = conn.createStatement();
+            stm = connection.createStatement();
             stm.executeUpdate(query);
             System.out.println("Tabla Pez creada o ya existe");
         } catch (SQLException e) {
@@ -68,22 +85,21 @@ public class GeneradorBD {
         } finally {
             try { 
                 if (stm != null) {
-                    stm.close(); } 
-                } catch (SQLException e) {
+                    stm.close(); 
+                } 
+            } catch (SQLException e) {
 
-                }
-            Conexion.closeConnection();
+            }
         }
     }
 
     /**
      * Crea la tabla Pedido si no existe.
      */
-    public static void crearTablaPedido() {
-        Connection conn = null;
+    public void crearTablaPedido() {
         Statement stm = null;
         try {
-            conn = Conexion.getConnection();
+            connection = Conexion.getConnection();
             String query = "CREATE TABLE IF NOT EXISTS Pedido (" +
                     "id INT AUTO_INCREMENT," +
                     "numero_referencia VARCHAR(50) UNIQUE NOT NULL," +
@@ -95,7 +111,7 @@ public class GeneradorBD {
                     "FOREIGN KEY(id_cliente) REFERENCES Cliente(id) ON DELETE CASCADE," +
                     "FOREIGN KEY(id_pez) REFERENCES Pez(id) ON DELETE CASCADE" +
                     ")";
-            stm = conn.createStatement();
+            stm = connection.createStatement();
             stm.executeUpdate(query);
             System.out.println("Tabla Pedido creada o ya existe");
         } catch (SQLException e) {
@@ -103,23 +119,20 @@ public class GeneradorBD {
         } finally {
             try { 
                 if (stm != null) { 
-                    stm.close(); } 
-                } catch (SQLException e) {
+                    stm.close(); 
+                } 
+            } catch (SQLException e) {
                     
-                }
-            Conexion.closeConnection();
+            }
         }
     }
 
     /**
      * Agrega clientes a la base de datos verificando si ya existen.
      */
-    public static void agregarClientes() {
-        Connection conn = null;
-        PreparedStatement pstm = null;
+    public void agregarClientes() {
+
         try {
-            conn = Conexion.getConnection();
-            pstm = conn.prepareStatement("INSERT INTO Cliente (nombre, nif, telefono) SELECT ?, ?, ? WHERE NOT EXISTS (SELECT 1 FROM Cliente WHERE nif = ?)");
             
             String[] nombres = { "Juan Pérez", "María García", "Carlos López", "Ana Fernández", "Pedro Sánchez",
                     "Lucía Martínez", "José Ramírez", "Carmen Gómez", "David Herrera", "Laura Díaz" };
@@ -131,57 +144,73 @@ public class GeneradorBD {
                     "666789012", "677890123", "688901234", "699012345" };
 
             for (int i = 0; i < nombres.length; i++) {
-                pstm.setString(1, nombres[i]);
-                pstm.setString(2, nifs[i]);
-                pstm.setString(3, telefonos[i]);
-                pstm.setString(4, nifs[i]);
-                pstm.addBatch();
+                agregarClientes.setString(1, nombres[i]);
+                agregarClientes.setString(2, nifs[i]);
+                agregarClientes.setString(3, telefonos[i]);
+                agregarClientes.setString(4, nifs[i]);
+                agregarClientes.addBatch();
             }
-            pstm.executeBatch();
+            agregarClientes.executeBatch();
             System.out.println("Clientes insertados correctamente.");
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            if (pstm != null) {
+            if (agregarClientes != null) {
                 try {
-                    pstm.close();
+                    agregarClientes.close();
                 } catch (SQLException e) {
                     Simulador.registro.registroLogError("Error al cerrar PreparedStatement: " + e.getMessage());
                 }
             }
-            Conexion.closeConnection();
         }
     }
 
     /**
      * Agrega peces a la base de datos verificando si ya existen.
      */
-    public static void agregarPeces() {
-        Connection conn = null;
-        PreparedStatement pstm = null;
+    public void agregarPeces() {
         try {
-            conn = Conexion.getConnection();
-            pstm = conn.prepareStatement("INSERT INTO Pez (nombre, nombre_cientifico) SELECT ?, ? WHERE NOT EXISTS (SELECT 1 FROM Pez WHERE nombre = ?)");
             
             for (String pez : Simulador.pecesImplementados) {
-                pstm.setString(1, pez);
-                pstm.setString(2, AlmacenPropiedades.getPropByName(pez).getCientifico());
-                pstm.setString(3, pez);
-                pstm.addBatch();
+                agregarPeces.setString(1, pez);
+                agregarPeces.setString(2, AlmacenPropiedades.getPropByName(pez).getCientifico());
+                agregarPeces.setString(3, pez);
+                agregarPeces.addBatch();
             }
-            pstm.executeBatch();
+            agregarPeces.executeBatch();
             System.out.println("Peces registrados correctamente en la tabla Pez.");
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            if (pstm != null) {
+            if (agregarPeces != null) {
                 try {
-                    pstm.close();
+                    agregarPeces.close();
                 } catch (SQLException e) {
                     Simulador.registro.registroLogError("Error al cerrar PreparedStatement: " + e.getMessage());
                 }
             }
-            Conexion.closeConnection();
         }
+    }
+
+    /**
+     * Cierra la conexión y todos los PreparedStatement abiertos.
+     */
+    public void close() {
+        try {
+            if (agregarClientes != null) agregarClientes.close();
+            if (agregarPeces != null) agregarPeces.close();
+            if (connection != null) connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void crearTablas() {
+        crearTablaCliente();
+        crearTablaPedido();
+        crearTablaPez();
+        agregarClientes();
+        agregarPeces();
+        close();
     }
 }
