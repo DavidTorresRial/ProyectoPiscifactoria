@@ -44,6 +44,8 @@ import registros.Registros;
  */
 public class Simulador {
 
+    public Simulador instance = null; //TODO Getter
+
     /** Días transcurridos en la simulación. */
     private int dia = 0;
 
@@ -1101,7 +1103,7 @@ public class Simulador {
                 opciones[i] = String.format("[%s] %s: %s %d/%d (%d%%)",
                         pedido.getNumero_referencia(),
                         pedido.getId_cliente(),
-                        pedido.getId_pez(),
+                        pedido.getId(),
                         cantidadEnviada,
                         cantidadSolicitada,
                         porcentaje);
@@ -1115,7 +1117,6 @@ public class Simulador {
             if (numeroPedido != 0) {
                 // Se obtiene el pedido seleccionado (se resta 1 por el índice de la lista)
                 DTOPedido pedidoSeleccionado = pedidosPendientes.get(numeroPedido - 1);
-                String refPedido = pedidoSeleccionado.getNumero_referencia();
 
                 // Selección de tanque y obtención de la cantidad disponible
                 Tanque tanque = selectTank().getValue();
@@ -1128,8 +1129,8 @@ public class Simulador {
                 }
 
                 // Envío del pedido según la cantidad disponible en el tanque
-                boolean completado = pedidos.enviarPedido(refPedido, cantidadDisponible);
-                if (completado) {
+                DTOPedido pedido = pedidos.enviarPedido(pedidoSeleccionado, cantidadDisponible);
+                if (pedido != null) {
                     System.out.println("El pedido ha sido completado.");
 
                     // Generación de recompensa aleatoria
@@ -1159,6 +1160,10 @@ public class Simulador {
         pedidos.borrarPedidos();
     }
 
+    public void cerrarPedidos() {
+        pedidos.close();
+    }
+
     /**
      * Lista los pedidos que han sido completados y los muestra en consola.
      * Si no hay pedidos completados, se informa al usuario.
@@ -1171,7 +1176,7 @@ public class Simulador {
             for (DTOPedido pedido : pedidosCompletados) {
                 System.out.println("Pedido #" + pedido.getId() + " [" + pedido.getNumero_referencia() + "]: " +
                         "Cliente ID " + pedido.getId_cliente() + " - " +
-                        "Pez ID " + pedido.getId_pez() + " - " +
+                        "Pez ID " + pedido.getId() + " - " +
                         pedido.getCantidad_enviada() + "/" + pedido.getCantidad() + " enviados");
             }
         } else {
@@ -1187,8 +1192,9 @@ public class Simulador {
      * @param args Argumentos de línea de comandos, no utilizados.
      */
     public static void main(String[] args) {
+        Simulador simulador = null;
         try {
-            Simulador simulador = new Simulador();
+            simulador = new Simulador();
             simulador.init();
     
             boolean running = true;
@@ -1250,6 +1256,7 @@ public class Simulador {
         } finally {
             InputHelper.close();
             registro.closeLogError();
+            simulador.cerrarPedidos();
         }
     }
 
