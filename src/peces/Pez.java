@@ -112,6 +112,7 @@ public abstract class Pez {
                     }
                 } else if (edad >= datos.getMadurez()) {
                     fertil = true;
+                    maduro = true;
                 }
 
                 if (edad < datos.getMadurez() && edad % 2 == 0) {

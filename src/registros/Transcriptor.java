@@ -236,4 +236,31 @@ class Transcriptor {
     void transcribirUsarRecompensa(String nombreRecompensa) {
         transcribir("Recompensa " + nombreRecompensa + " usada.");
     }
+
+    /**
+     * Registra la generación de un pedido.
+     * @param referenciaPedido Referencia del pedido generado.
+     */
+    void transcribirGenerarPedidos(String referenciaPedido) {
+        transcribir("Generando el pedido con referencia " + referenciaPedido + ".");
+    }
+
+    /**
+     * Registra el envío de un pedido.
+     * @param nombre Nombre del cliente que realizó el pedido.
+     * @param referenciaPedido Referencia del pedido enviado.
+     */
+    void transcribirPedidoEnviado(String nombrePez, String referenciaPedido) {
+        transcribir("Pedido de " + nombrePez + " con referencia " + referenciaPedido + " enviado.");
+    }
+
+    /**
+     * Registra la cantidad de peces enviados a un pedido con su referencia.
+     * @param cantidadPeces Cantidad de peces enviados.
+     * @param nombrePez Nombre del pez enviado.
+     * @param referenciaPedido Referencia del pedido al que se envían los peces.
+     */
+    void transcribirEnviadosConReferencia(int cantidadPeces, String nombrePez, String referenciaPedido) {
+        transcribir("Enviados " + cantidadPeces + " peces al pedido de " + nombrePez + " con referencia " + referenciaPedido + ".");
+    }
 }
