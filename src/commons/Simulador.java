@@ -7,7 +7,10 @@ import java.util.Map;
 import java.util.Random;
 
 import database.DAOPedidos;
+import database.GeneradorBD;
+import database.dtos.DTOCliente;
 import database.dtos.DTOPedido;
+import database.dtos.DTOPez;
 import helpers.FileHelper;
 import helpers.InputHelper;
 import helpers.MenuHelper;
@@ -88,6 +91,8 @@ public class Simulador {
 
     public  DAOPedidos pedidos = new DAOPedidos();
 
+    public GeneradorBD generador = new  GeneradorBD();
+
     /** Metodo que inicializa todo el sistema. */
     public void init() {
         FileHelper.crearCarpetas(new String[] {"transcripciones", "logs", "saves", "rewards"});
@@ -123,6 +128,8 @@ public class Simulador {
             
             GestorEstado.guardarEstado(this);
         }
+
+        generador.crearTablas();
     }
 
     /** Método que muestra el texto del menú. */
@@ -1103,7 +1110,6 @@ public class Simulador {
                 opciones[i] = String.format("[%s] %s: %s %d/%d (%d%%)",
                         pedido.getNumero_referencia(),
                         pedido.getId_cliente(),
-                        pedido.getId(),
                         cantidadEnviada,
                         cantidadSolicitada,
                         porcentaje);
@@ -1165,6 +1171,7 @@ public class Simulador {
 
     public void cerrarPedidos() {
         pedidos.close();
+        generador.close();
     }
 
     /**
@@ -1174,18 +1181,25 @@ public class Simulador {
     public void listarPedidosCompletados() {
         List<DTOPedido> pedidosCompletados = pedidos.listarPedidosCompletados();
         System.out.println("\n");
-    
+
         if (pedidosCompletados != null && !pedidosCompletados.isEmpty()) {
             for (DTOPedido pedido : pedidosCompletados) {
-                System.out.println("Pedido #" + pedido.getId() + " [" + pedido.getNumero_referencia() + "]: " +
-                        "Cliente ID " + pedido.getId_cliente() + " - " +
-                        "Pez ID " + pedido.getId() + " - " +
+                // Usamos los nuevos métodos para obtener el DTO del cliente y del pez
+                DTOCliente cliente = pedidos.obtenerClientePorId(pedido.getId_cliente());
+                DTOPez pez = pedidos.obtenerPezPorId(pedido.getId_pez());
+
+                String nombreCliente = (cliente != null) ? cliente.getNombre() : "Desconocido";
+                String nombrePez = (pez != null) ? pez.getNombre() : "Desconocido";
+
+                System.out.println("Pedido - [" + pedido.getNumero_referencia() + "]: " +
+                        nombreCliente + " - " + nombrePez + " - " +
                         pedido.getCantidad_enviada() + "/" + pedido.getCantidad() + " enviados");
             }
         } else {
             System.out.println("Aún no has completado ningún pedido.");
         }
     }
+
     
     /**
      * Método principal que gestiona el flujo del simulador, 
