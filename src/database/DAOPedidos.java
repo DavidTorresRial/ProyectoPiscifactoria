@@ -283,7 +283,7 @@ public class DAOPedidos {
         return 0;
     }
 
-    public DTOCliente obtenerClientePorId(int idCliente) {
+    public DTOCliente obtenerClientePorId(int idCliente) {  //TODO Hacer DTOInfoPedido y quitar método.
         DTOCliente cliente = null;
         try {
             ptsObtenerNombre.setInt(1, idCliente);
@@ -303,7 +303,7 @@ public class DAOPedidos {
         return cliente;
     }
 
-    public DTOPez obtenerPezPorId(int idPez) {
+    public DTOPez obtenerPezPorId(int idPez) {              //TODO Hacer DTOInfoPedido y quitar método.
         DTOPez pez = null;
         try {
             ptsObtenerPez.setInt(1, idPez);
@@ -325,10 +325,9 @@ public class DAOPedidos {
     /**
      * Obtiene un DTOCliente aleatorio de la base de datos.
      *
-     * @return DTOCliente obtenido o null si no hay registros.
-     * @throws SQLException
+     * @return DTOCliente obtenido o null si no hay registros o se produce un error.
      */
-    private DTOCliente getRandomCliente() throws SQLException {
+    private DTOCliente getRandomCliente() {
         try (ResultSet rs = pstRandomCliente.executeQuery()) {
             if (rs.next()) {
                 return new DTOCliente(
@@ -338,6 +337,8 @@ public class DAOPedidos {
                         rs.getInt("telefono")
                 );
             }
+        } catch (SQLException e) {
+            Simulador.registro.registroLogError("Error al obtener un cliente aleatorio: " + e.getMessage());
         }
         return null;
     }
@@ -345,10 +346,9 @@ public class DAOPedidos {
     /**
      * Obtiene un DTOPez aleatorio de la base de datos.
      *
-     * @return DTOPez obtenido o null si no hay registros.
-     * @throws SQLException
+     * @return DTOPez obtenido o null si no hay registros o se produce un error.
      */
-    private DTOPez getRandomPez() throws SQLException {
+    private DTOPez getRandomPez() {
         try (ResultSet rs = pstRandomPez.executeQuery()) {
             if (rs.next()) {
                 return new DTOPez(
@@ -357,9 +357,12 @@ public class DAOPedidos {
                         rs.getString("nombre_cientifico")
                 );
             }
+        } catch (SQLException e) {
+            Simulador.registro.registroLogError("Error al obtener un pez aleatorio: " + e.getMessage());
         }
         return null;
     }
+
 
     /** Cierra la conexión y todos los PreparedStatement abiertos. */
     public void close() {

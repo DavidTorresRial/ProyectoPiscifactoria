@@ -1,28 +1,18 @@
 package database.dtos;
 
-/**
- * Clase DTOCliente que representa un objeto de transferencia de datos para un cliente.
- */
+/** Clase DTOCliente que representa un objeto de transferencia de datos para un cliente. */
 public class DTOCliente {
 
-    /**
-     * Identificador único del cliente.
-     */
+    /** Identificador único del cliente. */
     private int id;
 
-    /**
-     * Nombre del cliente.
-     */
+    /** Nombre del cliente. */
     private String nombre;
 
-    /**
-     * Número de identificación fiscal (NIF) del cliente.
-     */
+    /** Número de identificación fiscal (NIF) del cliente. */
     private String nif;
 
-    /**
-     * Número de teléfono del cliente.
-     */
+    /** Número de teléfono del cliente. */
     private int telefono;
 
     /**
