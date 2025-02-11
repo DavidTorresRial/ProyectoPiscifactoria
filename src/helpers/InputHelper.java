@@ -58,7 +58,7 @@ public class InputHelper {
                         numero = Integer.parseInt(input);
                         entradaValida = true;
                     } catch (NumberFormatException e) {
-                        System.out.println("\nEntrada no válida. Por favor, ingrese un número entero.");
+                        System.out.println("\nEntrada no válida. Por favor, ingrese un número válido.");
                     }
                 } else {
                     System.out.println("\nLa entrada no puede tener más de dos dígitos.");
