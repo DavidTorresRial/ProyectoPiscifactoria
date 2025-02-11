@@ -15,17 +15,19 @@ import propiedades.AlmacenPropiedades;
 public class GeneradorBD {
 
     private static final String QUERY_AGREGAR_CLIENTES = 
-            "INSERT INTO Cliente (nombre, nif, telefono) SELECT ?, ?, ? WHERE NOT EXISTS (SELECT 1 FROM Cliente WHERE nif = ?)";
-
+            "INSERT INTO Cliente (nombre, nif, telefono) " +
+            "SELECT ?, ?, ? " +
+            "WHERE NOT EXISTS (SELECT 1 FROM Cliente WHERE nif = ?)";
+    
     private static final String QUERY_AGREGAR_PEZ = 
-            "INSERT INTO Pez (nombre, nombre_cientifico) SELECT ?, ? WHERE NOT EXISTS (SELECT 1 FROM Pez WHERE nombre = ?)";
-
+            "INSERT INTO Pez (nombre, nombre_cientifico) " +
+            "SELECT ?, ? " +
+            "WHERE NOT EXISTS (SELECT 1 FROM Pez WHERE nombre = ?)";
+    
     private Connection connection;
     private PreparedStatement agregarClientes;
     private PreparedStatement agregarPeces;
-
     
-
     public GeneradorBD() {
         try {
             connection = Conexion.getConnection();
@@ -35,7 +37,7 @@ public class GeneradorBD {
             e.printStackTrace();
         }
     }
-
+    
     /**
      * Crea la tabla Cliente si no existe.
      */
@@ -58,13 +60,13 @@ public class GeneradorBD {
             try { 
                 if (stm != null) { 
                     stm.close(); 
-                } 
+                }
             } catch (SQLException e) {
 
             }
         }
     }
-
+    
     /**
      * Crea la tabla Pez si no existe.
      */
@@ -86,28 +88,27 @@ public class GeneradorBD {
             try { 
                 if (stm != null) {
                     stm.close(); 
-                } 
+                }
             } catch (SQLException e) {
-
+                // Manejo del error al cerrar el Statement (opcional)
             }
         }
     }
-
+    
     /**
      * Crea la tabla Pedido si no existe.
+     * Se utiliza el campo numero_referencia como clave primaria.
      */
     public void crearTablaPedido() {
         Statement stm = null;
         try {
-            connection = Conexion.getConnection();
             String query = "CREATE TABLE IF NOT EXISTS Pedido (" +
-                    "id INT AUTO_INCREMENT," +
                     "numero_referencia VARCHAR(50) UNIQUE NOT NULL," +
                     "id_cliente INT NOT NULL," +
                     "id_pez INT NOT NULL," +
                     "cantidad INT NOT NULL," +
                     "cantidad_enviada INT NOT NULL DEFAULT 0," +
-                    "PRIMARY KEY(id)," +
+                    "PRIMARY KEY(numero_referencia)," +
                     "FOREIGN KEY(id_cliente) REFERENCES Cliente(id) ON DELETE CASCADE," +
                     "FOREIGN KEY(id_pez) REFERENCES Pez(id) ON DELETE CASCADE" +
                     ")";
@@ -120,29 +121,25 @@ public class GeneradorBD {
             try { 
                 if (stm != null) { 
                     stm.close(); 
-                } 
+                }
             } catch (SQLException e) {
-                    
+
             }
         }
     }
-
+    
     /**
      * Agrega clientes a la base de datos verificando si ya existen.
      */
     public void agregarClientes() {
-
         try {
-            
             String[] nombres = { "Juan Pérez", "María García", "Carlos López", "Ana Fernández", "Pedro Sánchez",
                     "Lucía Martínez", "José Ramírez", "Carmen Gómez", "David Herrera", "Laura Díaz" };
-            
             String[] nifs = { "12345678A", "23456789B", "34567890C", "45678901D", "56789012E", "67890123F",
                     "78901234G", "89012345H", "90123456J", "01234567K" };
-            
             String[] telefonos = { "600123456", "611234567", "622345678", "633456789", "644567890", "655678901",
                     "666789012", "677890123", "688901234", "699012345" };
-
+            
             for (int i = 0; i < nombres.length; i++) {
                 agregarClientes.setString(1, nombres[i]);
                 agregarClientes.setString(2, nifs[i]);
@@ -164,13 +161,12 @@ public class GeneradorBD {
             }
         }
     }
-
+    
     /**
      * Agrega peces a la base de datos verificando si ya existen.
      */
     public void agregarPeces() {
         try {
-            
             for (String pez : Simulador.pecesImplementados) {
                 agregarPeces.setString(1, pez);
                 agregarPeces.setString(2, AlmacenPropiedades.getPropByName(pez).getCientifico());
@@ -191,7 +187,7 @@ public class GeneradorBD {
             }
         }
     }
-
+    
     /**
      * Cierra la conexión y todos los PreparedStatement abiertos.
      */
@@ -204,13 +200,15 @@ public class GeneradorBD {
             e.printStackTrace();
         }
     }
-
+    
+    /**
+     * Método que crea todas las tablas y agrega los datos iniciales.
+     */
     public void crearTablas() {
         crearTablaCliente();
-        crearTablaPedido();
         crearTablaPez();
+        crearTablaPedido();
         agregarClientes();
         agregarPeces();
-        close();
     }
 }

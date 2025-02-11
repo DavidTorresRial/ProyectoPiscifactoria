@@ -4,11 +4,6 @@ package database.dtos;
  * Clase DTOPedido que representa un objeto de transferencia de datos para un pedido.
  */
 public class DTOPedido {
-    
-    /**
-     * Identificador único del pedido.
-     */
-    private int id;
 
     /**
      * Número de referencia del pedido.
@@ -38,29 +33,18 @@ public class DTOPedido {
     /**
      * Constructor de la clase DTOPedido.
      * 
-     * @param id Identificador único del pedido.
      * @param numero_referencia Número de referencia del pedido.
      * @param id_cliente Identificador del cliente asociado al pedido.
      * @param id_pez Identificador del pez asociado al pedido.
      * @param cantidad Cantidad total pedida.
      * @param cantidad_enviada Cantidad enviada hasta el momento.
      */
-    public DTOPedido(int id, String numero_referencia, int id_cliente, int id_pez, int cantidad, int cantidad_enviada) {
-        this.id = id;
+    public DTOPedido(String numero_referencia, int id_cliente, int id_pez, int cantidad, int cantidad_enviada) {
         this.numero_referencia = numero_referencia;
         this.id_cliente = id_cliente;
         this.id_pez = id_pez;
         this.cantidad = cantidad;
         this.cantidad_enviada = cantidad_enviada;
-    }
-
-    /**
-     * Obtiene el identificador del pedido.
-     * 
-     * @return El identificador del pedido.
-     */
-    public int getId() {
-        return id;
     }
 
     /**
