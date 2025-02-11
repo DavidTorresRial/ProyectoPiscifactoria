@@ -1130,21 +1130,24 @@ public class Simulador {
 
                 // Envío del pedido según la cantidad disponible en el tanque
                 DTOPedido pedido = pedidos.enviarPedido(pedidoSeleccionado, cantidadDisponible);
-                if (pedido != null) {
+                if (pedido != null && pedido.getCantidad_enviada() == pedido.getCantidad()) {
                     System.out.println("El pedido ha sido completado.");
 
-                    // Generación de recompensa aleatoria
                     Random random = new Random();
                     int probabilidad = random.nextInt(100);
 
                     if (probabilidad < 50) {
                         int nivel = (random.nextInt(100) < 60) ? 1 : (random.nextInt(100) < 90) ? 2 : 3;
                         CrearRecompensa.createComidaReward(nivel);
+                        System.out.println("\n¡Felicidades! Has recibido una recompensa de comida de nivel " + nivel + " por completar el pedido.");
                     } else if (probabilidad < 90) {
                         int nivel = (random.nextInt(100) < 60) ? 1 : (random.nextInt(100) < 90) ? 2 : 3;
                         CrearRecompensa.createMonedasReward(nivel);
+                        System.out.println("\n¡Felicidades! Has recibido una recompensa de monedas de nivel " + nivel + " por completar el pedido.");
                     } else {
-                        CrearRecompensa.createTanqueReward(random.nextInt(100) < 60 ? 1 : 2);
+                        int tipoTanque = random.nextInt(100) < 60 ? 1 : 2;
+                        CrearRecompensa.createTanqueReward(tipoTanque);
+                        System.out.println("\n¡Felicidades! Has recibido una recompensa de tanque de " + (tipoTanque == 1 ? "río" : "mar") + " por completar el pedido.");
                     }
                 } else {
                     System.out.println("El pedido no se completó completamente. Aún quedan peces pendientes.");
@@ -1230,6 +1233,7 @@ public class Simulador {
                     case 14:
                         int dias = InputHelper.readInt("\nIngrese los días para avanzar en el simulador: ");
                         simulador.nextDay(dias);
+                        GestorEstado.guardarEstado(simulador);
                         break;
                     case 15: simulador.enviarPedidoManual(); break;
                     case 95: simulador.borrarPedidos(); break;
