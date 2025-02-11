@@ -30,9 +30,9 @@ public class DAOPedidos {
     "UPDATE Pedido SET cantidad_enviada = ? WHERE numero_referencia = ?";
     private static final String QUERY_BORRAR_PEDIDOS = "DELETE FROM Pedido";
     
-    private static final String QUERY_OBTENER_PEZ = "SELECT id, nombre, nif, telefono FROM Cliente WHERE id = ?";
+    private static final String QUERY_OBTENER_PEZ = "SELECT id, nombre, nombre_cientifico FROM Pez WHERE id = ?";
 
-    private static final String QUERY_OBTENER_NOMBRE = "SELECT id, nombre, nombre_cientifico FROM Pez WHERE id = ?";
+    private static final String QUERY_OBTENER_NOMBRE = "SELECT id, nombre, nif, telefono FROM Cliente WHERE id = ?";
 
 
     // --- Queries para obtener un Cliente o un Pez aleatorio ---
@@ -67,7 +67,7 @@ public class DAOPedidos {
             pstActualizarPedido = connection.prepareStatement(QUERY_ACTUALIZAR_PEDIDO);
             pstBorrarPedidos = connection.prepareStatement(QUERY_BORRAR_PEDIDOS);
             ptsObtenerPez = connection.prepareStatement(QUERY_OBTENER_PEZ);
-            ptsObtenerPez = connection.prepareStatement(QUERY_OBTENER_NOMBRE);
+            ptsObtenerNombre = connection.prepareStatement(QUERY_OBTENER_NOMBRE);
             pstRandomCliente = connection.prepareStatement(QUERY_RANDOM_CLIENTE);
             pstRandomPez = connection.prepareStatement(QUERY_RANDOM_PEZ);
         } catch (SQLException e) {
@@ -207,7 +207,7 @@ public class DAOPedidos {
      * Se utiliza el DTOPedido recibido para calcular la cantidad pendiente y se actualiza
      * tanto la base de datos como el objeto DTO.
      *
-     * @param pedido           DTOPedido del pedido a enviar.
+     * @param pedido DTOPedido del pedido a enviar.
      * @param cantidadDisponible Cantidad de peces disponibles para enviar.
      * @return El DTOPedido actualizado o null si ocurre algún error.
      */

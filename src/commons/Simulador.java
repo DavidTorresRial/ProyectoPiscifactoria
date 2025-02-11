@@ -1096,7 +1096,7 @@ public class Simulador {
     public void enviarPedidoManual() {
         // Se obtiene la lista de pedidos pendientes (suponiendo que ya están filtrados para no incluir los completados)
         List<DTOPedido> pedidosPendientes = pedidos.listarPedidosPendientes();
-
+    
         if (!pedidosPendientes.isEmpty()) {
             String[] opciones = new String[pedidosPendientes.size()];
             for (int i = 0; i < pedidosPendientes.size(); i++) {
@@ -1105,43 +1105,50 @@ public class Simulador {
                 int cantidadEnviada = pedido.getCantidad_enviada();
                 int cantidadSolicitada = pedido.getCantidad();
                 int porcentaje = cantidadSolicitada > 0 ? (cantidadEnviada * 100 / cantidadSolicitada) : 0;
-
-                // [ref] Nombre cliente: nombre pez enviado/solicitado (X%)
+                
+                // Se obtienen los nombres del cliente y del pez usando los métodos del DAO
+                DTOCliente cliente = pedidos.obtenerClientePorId(pedido.getId_cliente());
+                DTOPez pez = pedidos.obtenerPezPorId(pedido.getId_pez());
+                
+                String nombreCliente = (cliente != null) ? cliente.getNombre() : "Desconocido";
+                String nombrePez = (pez != null) ? pez.getNombre() : "Desconocido";
+                
+                // Formato: [numero_referencia] NombreCliente: NombrePez cantidadEnviada/cantidadSolicitada (porcentaje%)
                 opciones[i] = String.format("[%s] %s: %s %d/%d (%d%%)",
                         pedido.getNumero_referencia(),
-                        pedido.getId_cliente(),
+                        nombreCliente,
+                        nombrePez,
                         cantidadEnviada,
                         cantidadSolicitada,
                         porcentaje);
             }
-
-            int numeroPedido;
+    
             // Muestra el menú (incluyendo la opción de cancelar)
             MenuHelper.mostrarMenuCancelar(opciones);
-            numeroPedido = InputHelper.solicitarNumero(0, pedidosPendientes.size());
-
+            int numeroPedido = InputHelper.solicitarNumero(0, pedidosPendientes.size());
+    
             if (numeroPedido != 0) {
                 // Se obtiene el pedido seleccionado (se resta 1 por el índice de la lista)
                 DTOPedido pedidoSeleccionado = pedidosPendientes.get(numeroPedido - 1);
-
+    
                 // Selección de tanque y obtención de la cantidad disponible
                 Tanque tanque = selectTank().getValue();
                 int cantidadDisponible = (tanque != null) ? tanque.getMaduros() : 0;
-
+    
                 if (cantidadDisponible > 0) {
                     // Se eliminan los peces que ya han alcanzado la madurez
                     List<Pez> peces = tanque.getPeces();
                     peces.removeIf(Pez::isMaduro);
                 }
-
+    
                 // Envío del pedido según la cantidad disponible en el tanque
-                DTOPedido pedido = pedidos.enviarPedido(pedidoSeleccionado, cantidadDisponible);
-                if (pedido != null && pedido.getCantidad_enviada() == pedido.getCantidad()) {
+                DTOPedido pedidoActualizado = pedidos.enviarPedido(pedidoSeleccionado, cantidadDisponible);
+                if (pedidoActualizado != null && pedidoActualizado.getCantidad_enviada() == pedidoActualizado.getCantidad()) {
                     System.out.println("El pedido ha sido completado.");
-
+    
                     Random random = new Random();
                     int probabilidad = random.nextInt(100);
-
+    
                     if (probabilidad < 50) {
                         int nivel = (random.nextInt(100) < 60) ? 1 : (random.nextInt(100) < 90) ? 2 : 3;
                         CrearRecompensa.createComidaReward(nivel);
@@ -1163,6 +1170,7 @@ public class Simulador {
             System.out.println("No hay pedidos disponibles.");
         }
     }
+    
     
     /** Borra todos los pedidos almacenados. */
     public void borrarPedidos() {
