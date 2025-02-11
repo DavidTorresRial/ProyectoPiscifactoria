@@ -1,23 +1,15 @@
 package database.dtos;
 
-/**
- * Clase DTOPeZ que representa un objeto de transferencia de datos para un pez.
- */
+/** Clase DTOPeZ que representa un objeto de transferencia de datos para un pez. */
 public class DTOPez {
 
-    /**
-     * Identificador único del pez.
-     */
+    /** Identificador único del pez. */
     private int id;
 
-    /**
-     * Nombre común del pez.
-     */
+    /** Nombre común del pez. */
     private String nombre;
 
-    /**
-     * Nombre científico del pez.
-     */
+    /** Nombre científico del pez. */
     private String nombre_cientifico;
 
     /**

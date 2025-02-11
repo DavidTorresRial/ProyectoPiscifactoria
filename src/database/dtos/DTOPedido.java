@@ -1,33 +1,21 @@
 package database.dtos;
 
-/**
- * Clase DTOPedido que representa un objeto de transferencia de datos para un pedido.
- */
+/** Clase DTOPedido que representa un objeto de transferencia de datos para un pedido. */
 public class DTOPedido {
 
-    /**
-     * Número de referencia del pedido.
-     */
+    /** Número de referencia del pedido. */
     private String numero_referencia;
 
-    /**
-     * Identificador del cliente asociado al pedido.
-     */
+    /** Identificador del cliente asociado al pedido. */
     private int id_cliente;
 
-    /**
-     * Identificador del pez asociado al pedido.
-     */
+    /** Identificador del pez asociado al pedido. */
     private int id_pez;
 
-    /**
-     * Cantidad total pedida.
-     */
+    /** Cantidad total pedida. */
     private int cantidad;
 
-    /**
-     * Cantidad enviada hasta el momento.
-     */
+    /** Cantidad enviada hasta el momento. */
     private int cantidad_enviada;
 
     /**
