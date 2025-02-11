@@ -1181,7 +1181,10 @@ public class Simulador {
     
     /** Borra todos los pedidos almacenados. */
     public void borrarPedidos() {
-        pedidos.borrarPedidos();
+        int pedidosBorrados = pedidos.borrarPedidos();
+        System.out.println(pedidosBorrados > 0 
+            ? "\nSe han eliminado correctamente " + pedidosBorrados + " pedidos de la base de datos." 
+            : "\nNo se encontraron pedidos para eliminar.");
     }
 
     public void cerrarPedidos() {
