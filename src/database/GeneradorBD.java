@@ -53,7 +53,6 @@ public class GeneradorBD {
                     ")";
             stm = connection.createStatement();
             stm.executeUpdate(query);
-            System.out.println("Tabla Cliente creada o ya existe");
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -81,7 +80,6 @@ public class GeneradorBD {
                     ")";
             stm = connection.createStatement();
             stm.executeUpdate(query);
-            System.out.println("Tabla Pez creada o ya existe");
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -89,9 +87,7 @@ public class GeneradorBD {
                 if (stm != null) {
                     stm.close(); 
                 }
-            } catch (SQLException e) {
-                // Manejo del error al cerrar el Statement (opcional)
-            }
+            } catch (SQLException e) {}
         }
     }
     
@@ -114,7 +110,6 @@ public class GeneradorBD {
                     ")";
             stm = connection.createStatement();
             stm.executeUpdate(query);
-            System.out.println("Tabla Pedido creada o ya existe");
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -148,7 +143,6 @@ public class GeneradorBD {
                 agregarClientes.addBatch();
             }
             agregarClientes.executeBatch();
-            System.out.println("Clientes insertados correctamente.");
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -174,7 +168,6 @@ public class GeneradorBD {
                 agregarPeces.addBatch();
             }
             agregarPeces.executeBatch();
-            System.out.println("Peces registrados correctamente en la tabla Pez.");
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {

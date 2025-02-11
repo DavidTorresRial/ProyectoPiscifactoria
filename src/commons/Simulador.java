@@ -1097,6 +1097,12 @@ public class Simulador {
         // Se obtiene la lista de pedidos pendientes (suponiendo que ya están filtrados para no incluir los completados)
         List<DTOPedido> pedidosPendientes = pedidos.listarPedidosPendientes();
     
+        DTOCliente cliente = null; 
+        DTOPez pez = null;
+
+        String nombreCliente = "";
+        String nombrePez = "";
+
         if (!pedidosPendientes.isEmpty()) {
             String[] opciones = new String[pedidosPendientes.size()];
             for (int i = 0; i < pedidosPendientes.size(); i++) {
@@ -1107,11 +1113,11 @@ public class Simulador {
                 int porcentaje = cantidadSolicitada > 0 ? (cantidadEnviada * 100 / cantidadSolicitada) : 0;
                 
                 // Se obtienen los nombres del cliente y del pez usando los métodos del DAO
-                DTOCliente cliente = pedidos.obtenerClientePorId(pedido.getId_cliente());
-                DTOPez pez = pedidos.obtenerPezPorId(pedido.getId_pez());
+                cliente = pedidos.obtenerClientePorId(pedido.getId_cliente());
+                pez = pedidos.obtenerPezPorId(pedido.getId_pez());
                 
-                String nombreCliente = (cliente != null) ? cliente.getNombre() : "Desconocido";
-                String nombrePez = (pez != null) ? pez.getNombre() : "Desconocido";
+                nombreCliente = (cliente != null) ? cliente.getNombre() : "Desconocido";
+                nombrePez = (pez != null) ? pez.getNombre() : "Desconocido";
                 
                 // Formato: [numero_referencia] NombreCliente: NombrePez cantidadEnviada/cantidadSolicitada (porcentaje%)
                 opciones[i] = String.format("[%s] %s: %s %d/%d (%d%%)",
@@ -1142,9 +1148,10 @@ public class Simulador {
                 }
     
                 // Envío del pedido según la cantidad disponible en el tanque
-                DTOPedido pedidoActualizado = pedidos.enviarPedido(pedidoSeleccionado, cantidadDisponible);
+                DTOPedido pedidoActualizado = pedidos.enviarPedido(pedidoSeleccionado, 50);
                 if (pedidoActualizado != null && pedidoActualizado.getCantidad_enviada() == pedidoActualizado.getCantidad()) {
                     System.out.println("El pedido ha sido completado.");
+                    registro.registroPedidoEnviado(nombrePez, pedidoActualizado.getNumero_referencia());
     
                     Random random = new Random();
                     int probabilidad = random.nextInt(100);
@@ -1163,7 +1170,7 @@ public class Simulador {
                         System.out.println("\n¡Felicidades! Has recibido una recompensa de tanque de " + (tipoTanque == 1 ? "río" : "mar") + " por completar el pedido.");
                     }
                 } else {
-                    System.out.println("El pedido no se completó completamente. Aún quedan peces pendientes.");
+                    System.out.println("\nEl pedido no se completó completamente. Aún quedan peces pendientes.");
                 }
             }
         } else {
@@ -1259,7 +1266,7 @@ public class Simulador {
                         break;
                     case 15: simulador.enviarPedidoManual(); break;
                     case 95: simulador.borrarPedidos(); break;
-                    case 96: simulador.listarPedidosCompletados();
+                    case 96: simulador.listarPedidosCompletados(); break;
                     case 97: simulador.generarRecompensas(); break;
                     case 98: simulador.pecesRandom(); break;
                     case 99:
