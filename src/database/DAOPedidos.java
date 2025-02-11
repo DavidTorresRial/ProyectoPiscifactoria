@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import commons.Simulador;
+
 /**
  * DAO para la tabla Pedido.
  * Utiliza DTOs para gestionar la información, devolviendo y actualizando objetos
@@ -99,7 +101,10 @@ public class DAOPedidos {
     
                 int affected = pstInsertPedido.executeUpdate();
                 if (affected > 0) {
-                    return new DTOPedido(numeroReferencia, cliente.getId(), pez.getId(), cantidad, 0);
+                    DTOPedido pedido = new DTOPedido(numeroReferencia, cliente.getId(), pez.getId(), cantidad, 0);
+                    System.out.println("Se ha generado el pedido con número de referencia: " + pedido.getNumero_referencia() + ".");
+                    Simulador.registro.registroGenerarPedidos(pedido.getNumero_referencia());
+                    return pedido;
                 }
             }
         } catch (SQLException e) {
@@ -189,17 +194,18 @@ public class DAOPedidos {
      * @return true si la actualización fue exitosa; false en caso contrario.
      */
     public boolean actualizarPedido(DTOPedido pedido) {
-    try {
-        pstActualizarPedido.clearParameters();
-        pstActualizarPedido.setInt(1, pedido.getCantidad_enviada());
-        pstActualizarPedido.setString(2, pedido.getNumero_referencia());
-        int affected = pstActualizarPedido.executeUpdate();
-        return affected > 0;
-    } catch (SQLException e) {
-        e.printStackTrace();
+        try {
+            pstActualizarPedido.clearParameters();
+            pstActualizarPedido.setInt(1, pedido.getCantidad_enviada());
+            pstActualizarPedido.setString(2, pedido.getNumero_referencia());
+            int affected = pstActualizarPedido.executeUpdate();
+            Simulador.registro.registroEnviadosConReferencia(pedido.getCantidad_enviada(), obtenerPezPorId(pedido.getId_pez()).getNombre(), pedido.getNumero_referencia());
+            return affected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
-    return false;
-}
 
 
     /**
