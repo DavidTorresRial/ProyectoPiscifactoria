@@ -24,19 +24,7 @@ public class GeneradorBD {
             "SELECT ?, ? " +
             "WHERE NOT EXISTS (SELECT 1 FROM Pez WHERE nombre = ?)";
     
-    private Connection connection;
-    private PreparedStatement agregarClientes;
-    private PreparedStatement agregarPeces;
-    
-    public GeneradorBD() {
-        try {
-            connection = Conexion.getConnection();
-            agregarClientes = connection.prepareStatement(QUERY_AGREGAR_CLIENTES);
-            agregarPeces = connection.prepareStatement(QUERY_AGREGAR_PEZ);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
+    private Connection connection = Conexion.getConnection();
     
     /**
      * Crea la tabla Cliente si no existe.
@@ -127,7 +115,10 @@ public class GeneradorBD {
      * Agrega clientes a la base de datos verificando si ya existen.
      */
     public void agregarClientes() {
-        try {
+
+        try (PreparedStatement pstm = connection.prepareStatement(QUERY_AGREGAR_CLIENTES)){
+
+
             String[] nombres = { "Juan Pérez", "María García", "Carlos López", "Ana Fernández", "Pedro Sánchez",
                     "Lucía Martínez", "José Ramírez", "Carmen Gómez", "David Herrera", "Laura Díaz" };
             String[] nifs = { "12345678A", "23456789B", "34567890C", "45678901D", "56789012E", "67890123F",
@@ -136,62 +127,31 @@ public class GeneradorBD {
                     "666789012", "677890123", "688901234", "699012345" };
             
             for (int i = 0; i < nombres.length; i++) {
-                agregarClientes.setString(1, nombres[i]);
-                agregarClientes.setString(2, nifs[i]);
-                agregarClientes.setString(3, telefonos[i]);
-                agregarClientes.setString(4, nifs[i]);
-                agregarClientes.addBatch();
+                pstm.setString(1, nombres[i]);
+                pstm.setString(2, nifs[i]);
+                pstm.setString(3, telefonos[i]);
+                pstm.addBatch();
             }
-            agregarClientes.executeBatch();
+            pstm.executeBatch();
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            if (agregarClientes != null) {
-                try {
-                    agregarClientes.close();
-                } catch (SQLException e) {
-                    Simulador.registro.registroLogError("Error al cerrar PreparedStatement: " + e.getMessage());
-                }
-            }
-        }
+        } 
     }
     
     /**
      * Agrega peces a la base de datos verificando si ya existen.
      */
     public void agregarPeces() {
-        try {
+        try (PreparedStatement pstm = connection.prepareStatement(QUERY_AGREGAR_PEZ)) {
             for (String pez : Simulador.pecesImplementados) {
-                agregarPeces.setString(1, pez);
-                agregarPeces.setString(2, AlmacenPropiedades.getPropByName(pez).getCientifico());
-                agregarPeces.setString(3, pez);
-                agregarPeces.addBatch();
+                pstm.setString(1, pez);
+                pstm.setString(2, AlmacenPropiedades.getPropByName(pez).getCientifico());
+                pstm.addBatch();
             }
-            agregarPeces.executeBatch();
+            pstm.executeBatch();
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            if (agregarPeces != null) {
-                try {
-                    agregarPeces.close();
-                } catch (SQLException e) {
-                    Simulador.registro.registroLogError("Error al cerrar PreparedStatement: " + e.getMessage());
-                }
-            }
-        }
-    }
-    
-    /**
-     * Cierra la conexión y todos los PreparedStatement abiertos.
-     */
-    public void close() {
-        try {
-            if (agregarClientes != null) agregarClientes.close();
-            if (agregarPeces != null) agregarPeces.close();
-            if (connection != null) connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        } 
     }
     
     /**

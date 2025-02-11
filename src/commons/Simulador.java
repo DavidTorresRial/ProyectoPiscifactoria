@@ -47,7 +47,7 @@ import registros.Registros;
  */
 public class Simulador {
 
-    public Simulador instance = null; //TODO Getter
+    public Simulador instance = null;
 
     /** Días transcurridos en la simulación. */
     private int dia = 0;
@@ -89,13 +89,14 @@ public class Simulador {
 
     public static Registros registro;
 
-    public  DAOPedidos pedidos = new DAOPedidos();
+    public DAOPedidos pedidos = new DAOPedidos();
 
     public GeneradorBD generador = new  GeneradorBD();
 
     /** Metodo que inicializa todo el sistema. */
     public void init() {
         FileHelper.crearCarpetas(new String[] {"transcripciones", "logs", "saves", "rewards"});
+        generador.crearTablas();
 
         String respuesta = "N";
 
@@ -128,8 +129,6 @@ public class Simulador {
             
             GestorEstado.guardarEstado(this);
         }
-
-        generador.crearTablas();
     }
 
     /** Método que muestra el texto del menú. */
@@ -1187,9 +1186,8 @@ public class Simulador {
             : "\nNo se encontraron pedidos para eliminar.");
     }
 
-    public void cerrarPedidos() {
+    public void cerrarConexion() {
         pedidos.close();
-        generador.close();
     }
 
     /**
@@ -1292,7 +1290,7 @@ public class Simulador {
         } finally {
             InputHelper.close();
             registro.closeLogError();
-            simulador.cerrarPedidos();
+            simulador.cerrarConexion();
         }
     }
 
