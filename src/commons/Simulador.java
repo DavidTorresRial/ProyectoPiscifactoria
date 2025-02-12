@@ -45,7 +45,8 @@ import registros.Registros;
  */
 public class Simulador {
 
-    public Simulador instance = null;
+    /** Instancia del simulador. */
+    public Simulador instance = null; // ¿Debería ser estática, no?
 
     /** Días transcurridos en la simulación. */
     private int dia = 0;
@@ -1201,6 +1202,7 @@ public class Simulador {
         Simulador simulador = null;
         try {
             simulador = new Simulador();
+            simulador.instance = simulador;
             simulador.init();
     
             boolean running = true;
@@ -1258,12 +1260,16 @@ public class Simulador {
                         System.out.println("\nEntrada no válida. Por favor, ingrese un número entero.");
                 }
             }
+        } catch (NullPointerException e) {
+            Simulador.registro.registroLogError("Error: Un elemento no fue inicializado correctamente. " + e.getMessage());
         } catch (Exception e) {
-            Simulador.registro.registroLogError("Error en el Main: " + e.getMessage());
+            Simulador.registro.registroLogError("Error inesperado en el Main: " + e.getMessage());
         } finally {
             InputHelper.close();
             registro.closeLogError();
-            simulador.cerrarConexion();
+            if (simulador != null) {
+                simulador.cerrarConexion();
+            }
         }
     }
 
