@@ -73,7 +73,6 @@ public class InputHelper {
     /**
      * Solicita un número al usuario dentro de un rango específico.
      *
-     * @param prompt Mensaje mostrado al usuario.
      * @param min    Valor mínimo permitido (incluido).
      * @param max    Valor máximo permitido (incluido).
      * @return Un número dentro del rango especificado.

@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.dom4j.Document;
+import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
@@ -250,8 +251,12 @@ public class FileHelper {
                             }
                         }
                     }
+                } catch (DocumentException e) {
+                    Simulador.registro.registroLogError("Error al leer el archivo XML: " + fileName + " - " + e.getMessage());
+                } catch (NullPointerException e) {
+                    Simulador.registro.registroLogError("Error: Elemento faltante en el XML (" + fileName + ") - " + e.getMessage());
                 } catch (Exception e) {
-                    Simulador.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
+                    Simulador.registro.registroLogError("Error desconocido al procesar la recompensa del archivo: " + fileName + " - " + e.getMessage());
                 }
             }
         }

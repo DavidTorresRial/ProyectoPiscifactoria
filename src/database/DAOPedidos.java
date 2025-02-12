@@ -74,6 +74,12 @@ public class DAOPedidos {
     /** Query para obtener un pez aleatorio (sólo id y nombre). */
     private static final String QUERY_RANDOM_PEZ =
         "SELECT id, nombre FROM Pez ORDER BY RAND() LIMIT 1";
+    
+    /** Query para obtener el nombre de un cliente dado su ID. */
+    private static final String QUERY_OBTENER_CLIENTE = "SELECT nombre FROM Cliente WHERE id = ?";
+
+    /** Query para obtener el nombre de un pez dado su ID. */
+    private static final String QUERY_OBTENER_PEZ = "SELECT nombre FROM Pez WHERE id = ?";
 
     /** Conexión a la base de datos. */
     private Connection connection = Conexion.getConnection();
@@ -102,6 +108,12 @@ public class DAOPedidos {
     /** PreparedStatement para obtener un pez aleatorio. */
     private PreparedStatement pstRandomPez;
 
+    /** PreparedStatement para obtener el nombre de un cliente. */
+    private PreparedStatement pstObtenerCliente;
+
+    /** PreparedStatement para obtener el nombre de un pez. */
+    private PreparedStatement pstObtenerPez;
+
     /** Constructor DAOPedidos que prepara los statements. */
     public DAOPedidos() {
         try {
@@ -113,6 +125,8 @@ public class DAOPedidos {
             pstBorrarPedidos = connection.prepareStatement(QUERY_BORRAR_PEDIDOS);
             pstRandomCliente = connection.prepareStatement(QUERY_RANDOM_CLIENTE);
             pstRandomPez = connection.prepareStatement(QUERY_RANDOM_PEZ);
+            pstObtenerCliente = connection.prepareStatement(QUERY_OBTENER_CLIENTE);
+            pstObtenerPez = connection.prepareStatement(QUERY_OBTENER_PEZ);
         } catch (SQLException e) {
             Simulador.registro.registroLogError("Error al inicializar DAOPedidos: " + e.getMessage());
         }
@@ -144,7 +158,7 @@ public class DAOPedidos {
                 int affected = pstInsertPedido.executeUpdate();
                 if (affected > 0) {
                     DTOPedido pedido = new DTOPedido(numeroReferencia, nombreCliente, nombrePez, 0, cantidad);
-                    System.out.println("Se ha generado el pedido: " + pedido);
+                    System.out.println("\nSe ha generado el pedido: " + pedido.getNumeroReferencia());
                     Simulador.registro.registroGenerarPedidos(pedido.getNumeroReferencia());
                     return pedido;
                 }
@@ -300,11 +314,12 @@ public class DAOPedidos {
      * @return ID obtenido o -1 en caso de error.
      */
     private int getRandomClienteId() {
-        String query = "SELECT id FROM Cliente ORDER BY RAND() LIMIT 1";
-        try (PreparedStatement pst = connection.prepareStatement(query);
-             ResultSet rs = pst.executeQuery()) {
-            if (rs.next()) {
-                return rs.getInt("id");
+        try {
+            pstRandomCliente.clearParameters();
+            try (ResultSet rs = pstRandomCliente.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("id");
+                }
             }
         } catch (SQLException e) {
             Simulador.registro.registroLogError("Error al obtener ID de cliente aleatorio: " + e.getMessage());
@@ -318,11 +333,12 @@ public class DAOPedidos {
      * @return ID obtenido o -1 en caso de error.
      */
     private int getRandomPezId() {
-        String query = "SELECT id FROM Pez ORDER BY RAND() LIMIT 1";
-        try (PreparedStatement pst = connection.prepareStatement(query);
-             ResultSet rs = pst.executeQuery()) {
-            if (rs.next()) {
-                return rs.getInt("id");
+        try {
+            pstRandomPez.clearParameters();
+            try (ResultSet rs = pstRandomPez.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("id");
+                }
             }
         } catch (SQLException e) {
             Simulador.registro.registroLogError("Error al obtener ID de pez aleatorio: " + e.getMessage());
@@ -337,10 +353,10 @@ public class DAOPedidos {
      * @return Nombre del cliente o null.
      */
     public String obtenerNombreClientePorId(int id) {
-        String query = "SELECT nombre FROM Cliente WHERE id = ?";
-        try (PreparedStatement pst = connection.prepareStatement(query)) {
-            pst.setInt(1, id);
-            try (ResultSet rs = pst.executeQuery()) {
+        try {
+            pstObtenerCliente.clearParameters();
+            pstObtenerCliente.setInt(1, id);
+            try (ResultSet rs = pstObtenerCliente.executeQuery()) {
                 if (rs.next()) {
                     return rs.getString("nombre");
                 }
@@ -358,10 +374,10 @@ public class DAOPedidos {
      * @return Nombre del pez o null.
      */
     public String obtenerNombrePezPorId(int id) {
-        String query = "SELECT nombre FROM Pez WHERE id = ?";
-        try (PreparedStatement pst = connection.prepareStatement(query)) {
-            pst.setInt(1, id);
-            try (ResultSet rs = pst.executeQuery()) {
+        try {
+            pstObtenerPez.clearParameters();
+            pstObtenerPez.setInt(1, id);
+            try (ResultSet rs = pstObtenerPez.executeQuery()) {
                 if (rs.next()) {
                     return rs.getString("nombre");
                 }
@@ -383,9 +399,11 @@ public class DAOPedidos {
             if (pstBorrarPedidos != null) pstBorrarPedidos.close();
             if (pstRandomCliente != null) pstRandomCliente.close();
             if (pstRandomPez != null) pstRandomPez.close();
+            if (pstObtenerCliente != null) pstObtenerCliente.close();
+            if (pstObtenerPez != null) pstObtenerPez.close();
             if (connection != null) connection.close();
         } catch (SQLException e) {
             Simulador.registro.registroLogError("Error al cerrar recursos: " + e.getMessage());
         }
-    }
+    }    
 }
