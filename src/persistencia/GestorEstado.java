@@ -56,7 +56,7 @@ public class GestorEstado {
         estado.put("monedas", Simulador.monedas.getMonedas());
         estado.put("orca", Simulador.estadisticas.exportarDatos(simulador.getPecesImplementados()));
 
-        // Edificios - Almacén
+        // Almacén
         Map<String, Object> almacenMap = new LinkedHashMap<>();
         AlmacenCentral almacenCentral = Simulador.almacenCentral;
         almacenMap.put("disponible", almacenCentral != null && almacenCentral.getCapacidadAlmacen() > 0);
@@ -115,7 +115,6 @@ public class GestorEstado {
         }
         estado.put("piscifactorias", piscifactoriasList);
 
-        // Guardar el JSON en un archivo
         try (FileWriter writer = new FileWriter("saves/" + simulador.getNombreEntidad() + ".save")) {
             gson.toJson(estado, writer);
             Simulador.registro.registroGuardarSistema();
@@ -255,7 +254,7 @@ public class GestorEstado {
 
             System.out.println("\nPartida cargada: " + archivoPartida);
             Simulador.registro.registroCargarSistema();
-        } catch (Exception e) {
+        } catch (IOException e) {
             System.err.println("Error al cargar el archivo: " + e.getMessage());
         }
     }

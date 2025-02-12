@@ -1,194 +1,409 @@
 package database;
 
 import database.dtos.DTOPedido;
-import java.sql.*;
+import commons.Simulador;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-/**
- * DAO para la tabla Pedido.
- * Provee métodos para generar, listar, enviar y borrar pedidos.
- */
+/** DAO para la tabla Pedido. */
 public class DAOPedidos {
 
+    /** Generador de números aleatorios. */
     private Random random = new Random();
 
-    // Query para insertar un pedido
-    private static final String QUERY_INSERT_PEDIDO = 
-        "INSERT INTO Pedido (numero_referencia, id_cliente, id_pez, cantidad, cantidad_enviada) VALUES (?, ?, ?, ?, 0)";
+    /** Query para insertar un pedido en la tabla Pedido. */
+    private static final String QUERY_INSERT_PEDIDO =
+        "INSERT INTO Pedido (numero_referencia, id_cliente, id_pez, cantidad, cantidad_enviada) " +
+        "VALUES (?, ?, ?, ?, 0)";
 
-    private static final String QUERY_LISTAR_PEDIDOS_COMPLETADOS =
-        "SELECT id, numero_referencia, id_cliente, id_pez, cantidad, cantidad_enviada FROM Pedido WHERE cantidad_enviada >= cantidad ORDER BY id";
-
+    /** Query para listar los pedidos pendientes con la información de Cliente y Pez. */
     private static final String QUERY_LISTAR_PEDIDOS_PENDIENTES =
-        "SELECT id, numero_referencia, id_cliente, id_pez, cantidad, cantidad_enviada FROM Pedido WHERE cantidad_enviada < cantidad ORDER BY id";
+        "SELECT p.numero_referencia AS numeroReferencia, " +
+        "       c.nombre AS nombreCliente, " +
+        "       pe.nombre AS nombrePez, " +
+        "       p.cantidad AS cantidadTotal, " +
+        "       p.cantidad_enviada AS cantidadEnviada " +
+        "FROM Pedido p " +
+        "JOIN Cliente c ON p.id_cliente = c.id " +
+        "JOIN Pez pe ON p.id_pez = pe.id " +
+        "WHERE p.cantidad_enviada < p.cantidad " +
+        "ORDER BY pe.nombre";
 
+    /** Query para listar los pedidos completados con la información de Cliente y Pez. */
+    private static final String QUERY_LISTAR_PEDIDOS_COMPLETADOS =
+        "SELECT p.numero_referencia AS numeroReferencia, " +
+        "       c.nombre AS nombreCliente, " +
+        "       pe.nombre AS nombrePez, " +
+        "       p.cantidad AS cantidadTotal, " +
+        "       p.cantidad_enviada AS cantidadEnviada " +
+        "FROM Pedido p " +
+        "JOIN Cliente c ON p.id_cliente = c.id " +
+        "JOIN Pez pe ON p.id_pez = pe.id " +
+        "WHERE p.cantidad_enviada = p.cantidad " +
+        "ORDER BY pe.nombre";
+
+    /** Query para seleccionar un pedido por su número de referencia. */
     private static final String QUERY_SELECCIONAR_PEDIDO_POR_REFERENCIA =
-        "SELECT id, cantidad, cantidad_enviada FROM Pedido WHERE numero_referencia = ?";
+        "SELECT p.numero_referencia AS numeroReferencia, " +
+        "       c.nombre AS nombreCliente, " +
+        "       pe.nombre AS nombrePez, " +
+        "       p.cantidad AS cantidadTotal, " +
+        "       p.cantidad_enviada AS cantidadEnviada " +
+        "FROM Pedido p " +
+        "JOIN Cliente c ON p.id_cliente = c.id " +
+        "JOIN Pez pe ON p.id_pez = pe.id " +
+        "WHERE p.numero_referencia = ?";
 
+    /** Query para actualizar la cantidad enviada de un pedido. */
     private static final String QUERY_ACTUALIZAR_PEDIDO =
-        "UPDATE Pedido SET cantidad_enviada = ? WHERE id = ?";
+        "UPDATE Pedido SET cantidad_enviada = ? WHERE numero_referencia = ?";
 
+    /** Query para borrar todos los pedidos de la tabla Pedido. */
     private static final String QUERY_BORRAR_PEDIDOS = "DELETE FROM Pedido";
 
-    private static final String QUERY_RANDOM_ID_PATTERN = "SELECT id FROM %s ORDER BY RAND() LIMIT 1";
+    /** Query para obtener un cliente aleatorio (sólo id y nombre). */
+    private static final String QUERY_RANDOM_CLIENTE =
+        "SELECT id, nombre FROM Cliente ORDER BY RAND() LIMIT 1";
+
+    /** Query para obtener un pez aleatorio (sólo id y nombre). */
+    private static final String QUERY_RANDOM_PEZ =
+        "SELECT id, nombre FROM Pez ORDER BY RAND() LIMIT 1";
+    
+    /** Query para obtener el nombre de un cliente dado su ID. */
+    private static final String QUERY_OBTENER_CLIENTE = "SELECT nombre FROM Cliente WHERE id = ?";
+
+    /** Query para obtener el nombre de un pez dado su ID. */
+    private static final String QUERY_OBTENER_PEZ = "SELECT nombre FROM Pez WHERE id = ?";
+
+    /** Conexión a la base de datos. */
+    private Connection connection = Conexion.getConnection();
+
+    /** PreparedStatement para ejecutar la inserción de un pedido. */
+    private PreparedStatement pstInsertPedido;
+
+    /** PreparedStatement para listar los pedidos pendientes. */
+    private PreparedStatement pstListarPedidosPendientes;
+
+    /** PreparedStatement para listar los pedidos completados. */
+    private PreparedStatement pstListarPedidosCompletados;
+
+    /** PreparedStatement para seleccionar un pedido por su número de referencia. */
+    private PreparedStatement pstSeleccionarPedidoPorReferencia;
+
+    /** PreparedStatement para actualizar un pedido. */
+    private PreparedStatement pstActualizarPedido;
+
+    /** PreparedStatement para borrar todos los pedidos. */
+    private PreparedStatement pstBorrarPedidos;
+
+    /** PreparedStatement para obtener un cliente aleatorio. */
+    private PreparedStatement pstRandomCliente;
+
+    /** PreparedStatement para obtener un pez aleatorio. */
+    private PreparedStatement pstRandomPez;
+
+    /** PreparedStatement para obtener el nombre de un cliente. */
+    private PreparedStatement pstObtenerCliente;
+
+    /** PreparedStatement para obtener el nombre de un pez. */
+    private PreparedStatement pstObtenerPez;
+
+    /** Constructor DAOPedidos que prepara los statements. */
+    public DAOPedidos() {
+        try {
+            pstInsertPedido = connection.prepareStatement(QUERY_INSERT_PEDIDO);
+            pstListarPedidosPendientes = connection.prepareStatement(QUERY_LISTAR_PEDIDOS_PENDIENTES);
+            pstListarPedidosCompletados = connection.prepareStatement(QUERY_LISTAR_PEDIDOS_COMPLETADOS);
+            pstSeleccionarPedidoPorReferencia = connection.prepareStatement(QUERY_SELECCIONAR_PEDIDO_POR_REFERENCIA);
+            pstActualizarPedido = connection.prepareStatement(QUERY_ACTUALIZAR_PEDIDO);
+            pstBorrarPedidos = connection.prepareStatement(QUERY_BORRAR_PEDIDOS);
+            pstRandomCliente = connection.prepareStatement(QUERY_RANDOM_CLIENTE);
+            pstRandomPez = connection.prepareStatement(QUERY_RANDOM_PEZ);
+            pstObtenerCliente = connection.prepareStatement(QUERY_OBTENER_CLIENTE);
+            pstObtenerPez = connection.prepareStatement(QUERY_OBTENER_PEZ);
+        } catch (SQLException e) {
+            Simulador.registro.registroLogError("Error al inicializar DAOPedidos: " + e.getMessage());
+        }
+    }
 
     /**
-     * Genera un pedido automático seleccionando un cliente y un pez aleatorio.
+     * Genera un pedido automático con un cliente y pez aleatorio.
+     * 
+     * @return Un objeto DTOPedido si se genera correctamente, o null si ocurre un error.
      */
-    public void generarPedidoAutomatico() {
-        Connection conn = null;
-        
+    public DTOPedido generarPedidoAutomatico() {
         try {
-            conn = Conexion.getConnection();
-            Integer idPez = getRandomId(conn, "Pez");
-            Integer idCliente = getRandomId(conn, "Cliente");
+            int idCliente = getRandomClienteId();
+            int idPez = getRandomPezId();
 
-            if (idCliente != null && idPez != null) {
+            String nombreCliente = obtenerNombreClientePorId(idCliente);
+            String nombrePez = obtenerNombrePezPorId(idPez);
+
+            if (idCliente != -1 && idPez != -1 && nombreCliente != null && nombrePez != null) {
                 int cantidad = 10 + random.nextInt(41);
                 String numeroReferencia = "PED-" + System.currentTimeMillis();
 
-                try (PreparedStatement pstm = conn.prepareStatement(QUERY_INSERT_PEDIDO)) {
-                    pstm.setString(1, numeroReferencia);
-                    pstm.setInt(2, idCliente);
-                    pstm.setInt(3, idPez);
-                    pstm.setInt(4, cantidad);
-                    pstm.executeUpdate();
-                    System.out.println("Pedido generado: " + numeroReferencia);
+                pstInsertPedido.clearParameters();
+                pstInsertPedido.setString(1, numeroReferencia);
+                pstInsertPedido.setInt(2, idCliente);
+                pstInsertPedido.setInt(3, idPez);
+                pstInsertPedido.setInt(4, cantidad);
+
+                int affected = pstInsertPedido.executeUpdate();
+                if (affected > 0) {
+                    DTOPedido pedido = new DTOPedido(numeroReferencia, nombreCliente, nombrePez, 0, cantidad);
+                    System.out.println("\nSe ha generado el pedido: " + pedido.getNumeroReferencia());
+                    Simulador.registro.registroGenerarPedidos(pedido.getNumeroReferencia());
+                    return pedido;
                 }
             }
-
         } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            Conexion.closeConnection();
+            Simulador.registro.registroLogError("Error al generar pedido automático: " + e.getMessage());
         }
+        return null;
     }
 
     /**
-     * Lista los pedidos pendientes.
-     * @return Lista de objetos DTOPedido.
+     * Lista los pedidos pendientes (donde la cantidad enviada es menor que la solicitada).
+     *
+     * @return Lista de DTOPedido pendientes.
      */
     public List<DTOPedido> listarPedidosPendientes() {
         List<DTOPedido> pedidos = new ArrayList<>();
-        try (Connection conn = Conexion.getConnection();
-             PreparedStatement pstm = conn.prepareStatement(QUERY_LISTAR_PEDIDOS_PENDIENTES);
-             ResultSet rs = pstm.executeQuery()) {
-
+        try (ResultSet rs = pstListarPedidosPendientes.executeQuery()) {
             while (rs.next()) {
-                pedidos.add(new DTOPedido(
-                        rs.getInt("id"),
-                        rs.getString("numero_referencia"),
-                        rs.getInt("id_cliente"),
-                        rs.getInt("id_pez"),
-                        rs.getInt("cantidad"),
-                        rs.getInt("cantidad_enviada")
-                ));
+                DTOPedido pedido = new DTOPedido(
+                        rs.getString("numeroReferencia"),
+                        rs.getString("nombreCliente"),
+                        rs.getString("nombrePez"),
+                        rs.getInt("cantidadEnviada"),
+                        rs.getInt("cantidadTotal")
+                );
+                pedidos.add(pedido);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            Conexion.closeConnection();
+            Simulador.registro.registroLogError("Error al listar pedidos pendientes: " + e.getMessage());
         }
         return pedidos;
     }
 
     /**
-     * Lista los pedidos completados.
-     * @return Lista de objetos DTOPedido.
+     * Lista los pedidos completados (donde la cantidad enviada es igual a la solicitada).
+     *
+     * @return Lista de DTOPedido completados.
      */
     public List<DTOPedido> listarPedidosCompletados() {
         List<DTOPedido> pedidos = new ArrayList<>();
-        try (Connection conn = Conexion.getConnection();
-             PreparedStatement pstm = conn.prepareStatement(QUERY_LISTAR_PEDIDOS_COMPLETADOS);
-             ResultSet rs = pstm.executeQuery()) {
-
+        try (ResultSet rs = pstListarPedidosCompletados.executeQuery()) {
             while (rs.next()) {
-                pedidos.add(new DTOPedido(
-                        rs.getInt("id"),
-                        rs.getString("numero_referencia"),
-                        rs.getInt("id_cliente"),
-                        rs.getInt("id_pez"),
-                        rs.getInt("cantidad"),
-                        rs.getInt("cantidad_enviada")
-                ));
+                DTOPedido pedido = new DTOPedido(
+                        rs.getString("numeroReferencia"),
+                        rs.getString("nombreCliente"),
+                        rs.getString("nombrePez"),
+                        rs.getInt("cantidadEnviada"),
+                        rs.getInt("cantidadTotal")
+                );
+                pedidos.add(pedido);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            Conexion.closeConnection();
+            Simulador.registro.registroLogError("Error al listar pedidos completados: " + e.getMessage());
         }
         return pedidos;
     }
 
     /**
-     * Envía un pedido actualizando la cantidad enviada sin superar la cantidad solicitada.
+     * Busca un pedido en la base de datos por su número de referencia.
+     *
+     * @param numeroReferencia El número de referencia del pedido.
+     * @return Un objeto DTOPedido si se encuentra, o null si no existe o ocurre un error.
      */
-    public boolean enviarPedido(String numeroReferencia, int cantidadDisponible) {
-        try (Connection conn = Conexion.getConnection();
-             PreparedStatement pstmSelect = conn.prepareStatement(QUERY_SELECCIONAR_PEDIDO_POR_REFERENCIA)) {
-
-            pstmSelect.setString(1, numeroReferencia);
-            try (ResultSet rs = pstmSelect.executeQuery()) {
+    public DTOPedido obtenerPedidoPorReferencia(String numeroReferencia) {
+        try {
+            pstSeleccionarPedidoPorReferencia.clearParameters();
+            pstSeleccionarPedidoPorReferencia.setString(1, numeroReferencia);
+            try (ResultSet rs = pstSeleccionarPedidoPorReferencia.executeQuery()) {
                 if (rs.next()) {
-                    int id = rs.getInt("id");
-                    int cantidad = rs.getInt("cantidad");
-                    int enviada = rs.getInt("cantidad_enviada");
-
-                    int pendiente = cantidad - enviada;
-                    int enviar = Math.min(pendiente, cantidadDisponible);
-                    int nuevaCantidadEnviada = enviada + enviar;
-
-                    try (PreparedStatement pstmUpdate = conn.prepareStatement(QUERY_ACTUALIZAR_PEDIDO)) {
-                        pstmUpdate.setInt(1, nuevaCantidadEnviada);
-                        pstmUpdate.setInt(2, id);
-                        pstmUpdate.executeUpdate();
-                    }
-
-                    return nuevaCantidadEnviada >= cantidad;
+                    return new DTOPedido(
+                            rs.getString("numeroReferencia"),
+                            rs.getString("nombreCliente"),
+                            rs.getString("nombrePez"),
+                            rs.getInt("cantidadEnviada"),
+                            rs.getInt("cantidadTotal")
+                    );
                 }
             }
-
         } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            Conexion.closeConnection();
+            Simulador.registro.registroLogError("Error al obtener pedido por referencia: " + e.getMessage());
+        }
+        return null;
+    }
+
+    /**
+     * Actualiza la cantidad enviada de un pedido en la base de datos.
+     *
+     * @param pedido El pedido a actualizar.
+     * @return true si la actualización fue exitosa, false si ocurrió un error.
+     */
+    public boolean actualizarPedido(DTOPedido pedido) {
+        try {
+            pstActualizarPedido.clearParameters();
+            pstActualizarPedido.setInt(1, pedido.getCantidadEnviada());
+            pstActualizarPedido.setString(2, pedido.getNumeroReferencia());
+            int affected = pstActualizarPedido.executeUpdate();
+            Simulador.registro.registroEnviadosConReferencia(
+                    pedido.getCantidadEnviada(),
+                    pedido.getNombrePez(),
+                    pedido.getNumeroReferencia()
+            );
+            return affected > 0;
+        } catch (SQLException e) {
+            Simulador.registro.registroLogError("Error al actualizar pedido: " + e.getMessage());
         }
         return false;
     }
 
     /**
-     * Borra todos los pedidos de la base de datos.
+     * Envía una cantidad de un pedido, actualizando la cantidad enviada.
+     *
+     * @param pedido El pedido a actualizar.
+     * @param cantidadDisponible La cantidad disponible para enviar.
+     * @return El pedido actualizado si se realizó el envío, o null si hubo un error.
      */
-    public void borrarPedidos() {
-        try (Connection conn = Conexion.getConnection();
-             PreparedStatement pstm = conn.prepareStatement(QUERY_BORRAR_PEDIDOS)) {
-            
-            int filas = pstm.executeUpdate();
-            System.out.println("Se han borrado " + filas + " pedidos.");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            Conexion.closeConnection();
+    public DTOPedido enviarPedido(DTOPedido pedido, int cantidadDisponible) {
+        int pendiente = pedido.getCantidadTotal() - pedido.getCantidadEnviada();
+        int enviar = Math.min(pendiente, cantidadDisponible);
+        int nuevaCantidadEnviada = pedido.getCantidadEnviada() + enviar;
+
+        DTOPedido pedidoActualizado = new DTOPedido(
+                pedido.getNumeroReferencia(),
+                pedido.getNombreCliente(),
+                pedido.getNombrePez(),
+                nuevaCantidadEnviada,
+                pedido.getCantidadTotal()
+        );
+
+        if (actualizarPedido(pedidoActualizado)) {
+            return pedidoActualizado;
         }
+        return null;
     }
 
     /**
-     * Obtiene un ID aleatorio de la tabla especificada.
-     * @param conn Conexión activa.
-     * @param tabla Nombre de la tabla ("Cliente" o "Pez").
-     * @return Un ID aleatorio o null si no hay registros.
+     * Borra todos los pedidos de la base de datos.
+     *
+     * @return Número de pedidos borrados.
      */
-    private Integer getRandomId(Connection conn, String tabla) throws SQLException {
-        String sql = String.format(QUERY_RANDOM_ID_PATTERN, tabla);
-        try (PreparedStatement pstm = conn.prepareStatement(sql);
-             ResultSet rs = pstm.executeQuery()) {
+    public int borrarPedidos() {
+        try {
+            return pstBorrarPedidos.executeUpdate();
+        } catch (SQLException e) {
+            Simulador.registro.registroLogError("Error al borrar pedidos: " + e.getMessage());
+        }
+        return 0;
+    }
 
-            if (rs.next()) {
-                return rs.getInt("id");
+    /**
+     * Obtiene un ID aleatorio de la tabla Cliente.
+     *
+     * @return ID obtenido o -1 en caso de error.
+     */
+    private int getRandomClienteId() {
+        try {
+            pstRandomCliente.clearParameters();
+            try (ResultSet rs = pstRandomCliente.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("id");
+                }
             }
-        }notify();
+        } catch (SQLException e) {
+            Simulador.registro.registroLogError("Error al obtener ID de cliente aleatorio: " + e.getMessage());
+        }
+        return -1;
+    }
+
+    /**
+     * Obtiene un ID aleatorio de la tabla Pez.
+     *
+     * @return ID obtenido o -1 en caso de error.
+     */
+    private int getRandomPezId() {
+        try {
+            pstRandomPez.clearParameters();
+            try (ResultSet rs = pstRandomPez.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("id");
+                }
+            }
+        } catch (SQLException e) {
+            Simulador.registro.registroLogError("Error al obtener ID de pez aleatorio: " + e.getMessage());
+        }
+        return -1;
+    }
+
+    /**
+     * Obtiene el nombre de un cliente dado su ID.
+     *
+     * @param id ID del cliente.
+     * @return Nombre del cliente o null.
+     */
+    public String obtenerNombreClientePorId(int id) {
+        try {
+            pstObtenerCliente.clearParameters();
+            pstObtenerCliente.setInt(1, id);
+            try (ResultSet rs = pstObtenerCliente.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("nombre");
+                }
+            }
+        } catch (SQLException e) {
+            Simulador.registro.registroLogError("Error al obtener el nombre del cliente: " + e.getMessage());
+        }
         return null;
     }
+
+    /**
+     * Obtiene el nombre de un pez dado su ID.
+     *
+     * @param id ID del pez.
+     * @return Nombre del pez o null.
+     */
+    public String obtenerNombrePezPorId(int id) {
+        try {
+            pstObtenerPez.clearParameters();
+            pstObtenerPez.setInt(1, id);
+            try (ResultSet rs = pstObtenerPez.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("nombre");
+                }
+            }
+        } catch (SQLException e) {
+            Simulador.registro.registroLogError("Error al obtener el nombre del pez: " + e.getMessage());
+        }
+        return null;
+    }
+
+    /** Cierra la conexión y todos los PreparedStatements. */
+    public void close() {
+        try {
+            if (pstInsertPedido != null) pstInsertPedido.close();
+            if (pstListarPedidosPendientes != null) pstListarPedidosPendientes.close();
+            if (pstListarPedidosCompletados != null) pstListarPedidosCompletados.close();
+            if (pstSeleccionarPedidoPorReferencia != null) pstSeleccionarPedidoPorReferencia.close();
+            if (pstActualizarPedido != null) pstActualizarPedido.close();
+            if (pstBorrarPedidos != null) pstBorrarPedidos.close();
+            if (pstRandomCliente != null) pstRandomCliente.close();
+            if (pstRandomPez != null) pstRandomPez.close();
+            if (pstObtenerCliente != null) pstObtenerCliente.close();
+            if (pstObtenerPez != null) pstObtenerPez.close();
+            if (connection != null) connection.close();
+        } catch (SQLException e) {
+            Simulador.registro.registroLogError("Error al cerrar recursos: " + e.getMessage());
+        }
+    }    
 }

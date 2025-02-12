@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Random;
 
 import database.DAOPedidos;
+import database.GeneradorBD;
 import database.dtos.DTOPedido;
 import helpers.FileHelper;
 import helpers.InputHelper;
@@ -43,6 +44,9 @@ import registros.Registros;
  * @author David, Fran, Marcos.
  */
 public class Simulador {
+
+    /** Instancia del simulador. */
+    public Simulador instance = null; // ¿Debería ser estática, no?
 
     /** Días transcurridos en la simulación. */
     private int dia = 0;
@@ -82,13 +86,19 @@ public class Simulador {
     /** Almacén central de comida para abastecer las piscifactorías. */
     public static AlmacenCentral almacenCentral;
 
+    /** Registro de logs y eventos del sistema. */
     public static Registros registro;
 
-    public  DAOPedidos pedidos = new DAOPedidos();
+    /** DAO para gestionar los pedidos en la base de datos. */
+    public DAOPedidos pedidos = new DAOPedidos();
+
+    /** Generador de la base de datos. */
+    public GeneradorBD generador = new GeneradorBD();
 
     /** Metodo que inicializa todo el sistema. */
     public void init() {
         FileHelper.crearCarpetas(new String[] {"transcripciones", "logs", "saves", "rewards"});
+        generador.crearTablas();
 
         String respuesta = "N";
 
@@ -1086,85 +1096,101 @@ public class Simulador {
      */
     public void enviarPedidoManual() {
         List<DTOPedido> pedidosPendientes = pedidos.listarPedidosPendientes();
-    
+
         if (!pedidosPendientes.isEmpty()) {
             String[] opciones = new String[pedidosPendientes.size()];
             for (int i = 0; i < pedidosPendientes.size(); i++) {
                 DTOPedido pedido = pedidosPendientes.get(i);
-                opciones[i] = String.format("[%s] Cliente ID: %d - Pez ID: %d - %d/%d enviados",
-                        pedido.getNumero_referencia(),
-                        pedido.getId_cliente(),
-                        pedido.getId_pez(),
-                        pedido.getCantidad_enviada(),
-                        pedido.getCantidad());
+                
+                int cantidadEnviada = pedido.getCantidadEnviada();
+                int cantidadSolicitada = pedido.getCantidadTotal();
+                int porcentaje = cantidadSolicitada > 0 ? (cantidadEnviada * 100 / cantidadSolicitada) : 0;
+                
+                // [numero_referencia] NombreCliente: NombrePez cantidadEnviada/cantidadSolicitada (porcentaje%)
+                opciones[i] = String.format("[%s] %s: %s %d/%d (%d%%)",
+                        pedido.getNumeroReferencia(),
+                        pedido.getNombreCliente(),
+                        pedido.getNombrePez(),
+                        cantidadEnviada,
+                        cantidadSolicitada,
+                        porcentaje);
             }
-    
-            int numeroPedido;
-            
+            System.out.println("\n=================== Selecciona un pedido ===================");
             MenuHelper.mostrarMenuCancelar(opciones);
-            numeroPedido = InputHelper.solicitarNumero(0, pedidosPendientes.size());
-
+            int numeroPedido = InputHelper.solicitarNumero(0, pedidosPendientes.size());
+    
             if (numeroPedido != 0) {
-                DTOPedido pedidoSeleccionado = pedidosPendientes.get(numeroPedido -1);
-                String refPedido = pedidoSeleccionado.getNumero_referencia();
-        
-
+                DTOPedido pedidoSeleccionado = pedidosPendientes.get(numeroPedido - 1);
+    
                 Tanque tanque = selectTank().getValue();
                 int cantidadDisponible = (tanque != null) ? tanque.getMaduros() : 0;
-        
+    
                 if (cantidadDisponible > 0) {
                     List<Pez> peces = tanque.getPeces();
                     peces.removeIf(Pez::isMaduro);
                 }
-        
-                boolean completado = pedidos.enviarPedido(refPedido, cantidadDisponible);
-                if (completado) {
+
+                DTOPedido pedidoActualizado = pedidos.enviarPedido(pedidoSeleccionado, cantidadDisponible);
+                if (pedidoActualizado != null && pedidoActualizado.getCantidadEnviada() == pedidoActualizado.getCantidadTotal()) {
                     System.out.println("El pedido ha sido completado.");
-        
+                    registro.registroPedidoEnviado(pedidoActualizado.getNombrePez(), pedidoActualizado.getNumeroReferencia());
+    
                     Random random = new Random();
                     int probabilidad = random.nextInt(100);
-        
+    
                     if (probabilidad < 50) {
                         int nivel = (random.nextInt(100) < 60) ? 1 : (random.nextInt(100) < 90) ? 2 : 3;
                         CrearRecompensa.createComidaReward(nivel);
+                        System.out.println("\n¡Felicidades! Has recibido una recompensa de comida de nivel " + nivel + " por completar el pedido.");
                     } else if (probabilidad < 90) {
                         int nivel = (random.nextInt(100) < 60) ? 1 : (random.nextInt(100) < 90) ? 2 : 3;
                         CrearRecompensa.createMonedasReward(nivel);
+                        System.out.println("\n¡Felicidades! Has recibido una recompensa de monedas de nivel " + nivel + " por completar el pedido.");
                     } else {
-                        CrearRecompensa.createTanqueReward(random.nextInt(100) < 60 ? 1 : 2);
+                        int tipoTanque = random.nextInt(100) < 60 ? 1 : 2;
+                        CrearRecompensa.createTanqueReward(tipoTanque);
+                        System.out.println("\n¡Felicidades! Has recibido una recompensa de tanque de " + (tipoTanque == 1 ? "río" : "mar") + " por completar el pedido.");
                     }
                 } else {
-                    System.out.println("El pedido no se completó completamente. Aún quedan peces pendientes.");
-                }    
-            } 
+                    System.out.println("\nEl pedido no se ha completado. Aún faltan " + (pedidoActualizado.getCantidadTotal() - pedidoActualizado.getCantidadEnviada()) + " unidades de " + pedidoActualizado.getNombrePez() + " por enviar.");
+                }
+            }
         } else {
-            System.out.println("No hay pedidos disponibles.");
+            System.out.println("\nNo hay pedidos disponibles.");
         }
     }
     
-    
-
+    /** Borra todos los pedidos almacenados. */
     public void borrarPedidos() {
-        pedidos.borrarPedidos();
+        int pedidosBorrados = pedidos.borrarPedidos();
+        System.out.println(pedidosBorrados > 0 
+            ? "\nSe han eliminado correctamente " + pedidosBorrados + " pedidos de la base de datos." 
+            : "\nNo se encontraron pedidos para eliminar.");
     }
 
+    public void cerrarConexion() {
+        pedidos.close();
+    }
+
+    /**
+     * Lista los pedidos que han sido completados y los muestra en consola.
+     * Si no hay pedidos completados, se informa al usuario.
+     */
     public void listarPedidosCompletados() {
         List<DTOPedido> pedidosCompletados = pedidos.listarPedidosCompletados();
-        System.out.println("\n");
-    
+        System.out.println();
+
         if (pedidosCompletados != null && !pedidosCompletados.isEmpty()) {
             for (DTOPedido pedido : pedidosCompletados) {
-                System.out.println("Pedido #" + pedido.getId() + " [" + pedido.getNumero_referencia() + "]: " +
-                        "Cliente ID " + pedido.getId_cliente() + " - " +
-                        "Pez ID " + pedido.getId_pez() + " - " +
-                        pedido.getCantidad_enviada() + "/" + pedido.getCantidad() + " enviados");
+                System.out.println("[" + pedido.getNumeroReferencia() + "]: " +
+                        pedido.getNombreCliente() + " - " + pedido.getNombrePez() + " - " +
+                        pedido.getCantidadEnviada() + "/" + pedido.getCantidadTotal() + " enviados");
             }
         } else {
             System.out.println("Aún no has completado ningún pedido.");
         }
     }
     
-
     /**
      * Método principal que gestiona el flujo del simulador, 
      * mostrando el menú y procesando las opciones del usuario.
@@ -1173,8 +1199,10 @@ public class Simulador {
      * @param args Argumentos de línea de comandos, no utilizados.
      */
     public static void main(String[] args) {
+        Simulador simulador = null;
         try {
-            Simulador simulador = new Simulador();
+            simulador = new Simulador();
+            simulador.instance = simulador;
             simulador.init();
     
             boolean running = true;
@@ -1210,10 +1238,11 @@ public class Simulador {
                     case 14:
                         int dias = InputHelper.readInt("\nIngrese los días para avanzar en el simulador: ");
                         simulador.nextDay(dias);
+                        GestorEstado.guardarEstado(simulador);
                         break;
                     case 15: simulador.enviarPedidoManual(); break;
                     case 95: simulador.borrarPedidos(); break;
-                    case 96: simulador.listarPedidosCompletados();
+                    case 96: simulador.listarPedidosCompletados(); break;
                     case 97: simulador.generarRecompensas(); break;
                     case 98: simulador.pecesRandom(); break;
                     case 99:
@@ -1231,11 +1260,16 @@ public class Simulador {
                         System.out.println("\nEntrada no válida. Por favor, ingrese un número entero.");
                 }
             }
+        } catch (NullPointerException e) {
+            Simulador.registro.registroLogError("Error: Un elemento no fue inicializado correctamente. " + e.getMessage());
         } catch (Exception e) {
-            Simulador.registro.registroLogError("Error en el Main: " + e.getMessage());
+            Simulador.registro.registroLogError("Error inesperado en el Main: " + e.getMessage());
         } finally {
             InputHelper.close();
             registro.closeLogError();
+            if (simulador != null) {
+                simulador.cerrarConexion();
+            }
         }
     }
 

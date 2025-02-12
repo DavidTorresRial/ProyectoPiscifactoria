@@ -41,4 +41,3 @@ public class Dorada extends Omnivoro {
         return new Dorada(nuevoSexo);
     }
 }
-

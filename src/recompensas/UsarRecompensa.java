@@ -2,9 +2,11 @@ package recompensas;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 
 import org.dom4j.Document;
+import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
@@ -93,7 +95,7 @@ public class UsarRecompensa {
                 }
     
                 Simulador.registro.registroUsarRecompensa(name.getText());
-            } catch (Exception e) {
+            } catch (IOException | DocumentException e) {
                 Simulador.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
             }
         }
@@ -139,7 +141,7 @@ public class UsarRecompensa {
                 }
 
                 Simulador.registro.registroUsarRecompensa(name.getText());
-            } catch (Exception e) {
+            } catch (IOException | DocumentException e) {
                 Simulador.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
             }
         }
@@ -179,7 +181,7 @@ public class UsarRecompensa {
                 }
     
                 Simulador.registro.registroUsarRecompensa(name.getText());
-            } catch (Exception e) {
+            } catch (IOException | DocumentException e) {
                 Simulador.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
             }
             return true;
@@ -236,7 +238,7 @@ public class UsarRecompensa {
                     } else {
                         Simulador.registro.registroLogError("El archivo '" + fileName + "' no contiene la etiqueta <name>.");
                     }
-                } catch (Exception e) {
+                } catch (DocumentException e) {
                     Simulador.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
                 }
             } else {
@@ -274,7 +276,7 @@ public class UsarRecompensa {
                         } else {
                             Simulador.registro.registroLogError("El archivo '" + fileName + "' no contiene la etiqueta <name>.");
                         }
-                    } catch (Exception e) {
+                    } catch (DocumentException e) {
                         Simulador.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
                     }
                 }
@@ -312,7 +314,7 @@ public class UsarRecompensa {
                         }
                         
                         Simulador.registro.registroUsarRecompensa(name.getText());
-                    } catch (Exception e) {
+                    } catch (IOException | DocumentException e) {
                         Simulador.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
                     }
                 }
@@ -351,7 +353,7 @@ public class UsarRecompensa {
                         }
 
                         Simulador.registro.registroUsarRecompensa(name.getText());
-                    } catch (Exception e) {
+                    } catch (IOException | DocumentException e) {
                         Simulador.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
 
                     }
@@ -403,7 +405,7 @@ public class UsarRecompensa {
                     } else {
                         Simulador.registro.registroLogError("El archivo '" + fileName + "' no contiene la etiqueta <name>.");
                     }
-                } catch (Exception e) {
+                } catch (DocumentException e) {
                     Simulador.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
                 }
             }
@@ -440,7 +442,7 @@ public class UsarRecompensa {
                         }
 
                         Simulador.registro.registroUsarRecompensa(name.getText());
-                    } catch (Exception e) {
+                    } catch (IOException | DocumentException e) {
                         Simulador.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
                     }
                 }

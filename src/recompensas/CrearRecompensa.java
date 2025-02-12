@@ -2,9 +2,10 @@ package recompensas;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.util.Random;
+import java.io.IOException;
 
 import org.dom4j.Document;
+import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
@@ -71,7 +72,7 @@ public class CrearRecompensa {
             writer.close();
 
             Simulador.registro.registroCrearRecompensa(name);
-        } catch (Exception e) {
+        } catch (IOException | DocumentException e) {
             Simulador.registro.registroLogError("Error al crear la recompensa '" + name + "' en el archivo '" + fileName + "': " + e.getMessage());
         }
     }
@@ -128,7 +129,7 @@ public class CrearRecompensa {
             writer.close();
 
             Simulador.registro.registroCrearRecompensa(name);
-        } catch (Exception e) {
+        } catch (IOException | DocumentException e) {
             Simulador.registro.registroLogError("Error al crear la recompensa '" + name + "' en el archivo '" + fileName + "': " + e.getMessage());
         }
     }
@@ -185,7 +186,7 @@ public class CrearRecompensa {
             writer.close();
 
             Simulador.registro.registroCrearRecompensa(name);
-        } catch (Exception e) {
+        } catch (IOException | DocumentException e) {
             Simulador.registro.registroLogError("Error al crear la recompensa '" + name + "' en el archivo '" + fileName + "': " + e.getMessage());
         }
     }
@@ -241,7 +242,7 @@ public class CrearRecompensa {
             writer.close();
 
             Simulador.registro.registroCrearRecompensa(name);
-        } catch (Exception e) {
+        } catch (IOException | DocumentException e) {
             Simulador.registro.registroLogError("Error al crear la recompensa '" + name + "' en el archivo '" + fileName + "': " + e.getMessage());
         }
     }
@@ -302,7 +303,7 @@ public class CrearRecompensa {
             writer.close();
 
             Simulador.registro.registroCrearRecompensa(name);
-        } catch (Exception e) {
+        } catch (IOException | DocumentException e) {
             Simulador.registro.registroLogError("Error al crear la recompensa '" + name + "' en el archivo '" + fileName + "': " + e.getMessage());
         }
     }
@@ -363,7 +364,7 @@ public class CrearRecompensa {
             writer.close();
 
             Simulador.registro.registroCrearRecompensa(name);
-        } catch (Exception e) {
+        } catch (IOException | DocumentException e) {
             Simulador.registro.registroLogError("Error al crear la recompensa '" + name + "' en el archivo '" + fileName + "': " + e.getMessage());
         }
     }
@@ -422,7 +423,7 @@ public class CrearRecompensa {
             writer.close();
 
             Simulador.registro.registroCrearRecompensa(name);
-        } catch (Exception e) {
+        } catch (IOException | DocumentException e) {
             Simulador.registro.registroLogError("Error al crear la recompensa '" + name + "' en el archivo '" + fileName + "': " + e.getMessage());
         }
     }
@@ -502,33 +503,4 @@ public class CrearRecompensa {
             default: throw new IllegalArgumentException("Tipo inválido: " + type);
         }
     }
-    
-
-    public void recompensa() {
-        Random random = new Random();
-        double prob = random.nextDouble();
-
-        if (prob < 0.5) {
-            System.out.println("Recompensa: Comida de nivel " + nivelRecompensa(random));
-        } else if (prob < 0.9) {
-            System.out.println("Recompensa: Dinero de nivel " + nivelRecompensa(random));
-        } else {
-            System.out.println("Recompensa: Tanque de tipo " + tipoTanque(random));
-        }
-    }
-
-    private int nivelRecompensa(Random random) {
-        double prob = random.nextDouble();
-        if (prob < 0.6) return 1;  // 60% nivel 1
-        if (prob < 0.9) return 2;  // 30% nivel 2
-        return 3;                  // 10% nivel 3
-    }
-
-    private String tipoTanque(Random random) {
-        double prob = random.nextDouble();
-        if (prob < 0.6) return "Río"; // 60% río
-        return "Mar";                 // 40% mar
-    }
-
-
 }
