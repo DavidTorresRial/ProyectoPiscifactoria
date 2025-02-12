@@ -1,93 +1,100 @@
 package database;
 
-import database.dtos.DTOCliente;
 import database.dtos.DTOPedido;
-import database.dtos.DTOPez;
+import commons.Simulador;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.sql.ResultSet;
-
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import commons.Simulador;
-
-/**
- * DAO para la tabla Pedido.
- * Utiliza DTOs para gestionar la información, devolviendo y actualizando objetos
- * de transferencia en cada operación.
- */
+/** DAO para la tabla Pedido. */
 public class DAOPedidos {
 
     /** Generador de números aleatorios. */
     private Random random = new Random();
 
-    /** Consulta SQL para insertar un nuevo pedido en la base de datos. */
-    private static final String QUERY_INSERT_PEDIDO = 
-        "INSERT INTO Pedido (numero_referencia, id_cliente, id_pez, cantidad, cantidad_enviada) VALUES (?, ?, ?, ?, 0)";
-    
-    /** Consulta SQL para listar los pedidos completados. */
-    private static final String QUERY_LISTAR_PEDIDOS_COMPLETADOS =
-        "SELECT numero_referencia, id_cliente, id_pez, cantidad, cantidad_enviada FROM Pedido WHERE cantidad_enviada >= cantidad ORDER BY numero_referencia";
-    
-    /** Consulta SQL para listar los pedidos pendientes. */
+    /** Query para insertar un pedido en la tabla Pedido. */
+    private static final String QUERY_INSERT_PEDIDO =
+        "INSERT INTO Pedido (numero_referencia, id_cliente, id_pez, cantidad, cantidad_enviada) " +
+        "VALUES (?, ?, ?, ?, 0)";
+
+    /** Query para listar los pedidos pendientes con la información de Cliente y Pez. */
     private static final String QUERY_LISTAR_PEDIDOS_PENDIENTES =
-        "SELECT numero_referencia, id_cliente, id_pez, cantidad, cantidad_enviada FROM Pedido WHERE cantidad_enviada < cantidad ORDER BY numero_referencia";
-    
-    /** Consulta SQL para seleccionar un pedido por su número de referencia. */
+        "SELECT p.numero_referencia AS numeroReferencia, " +
+        "       c.nombre AS nombreCliente, " +
+        "       pe.nombre AS nombrePez, " +
+        "       p.cantidad AS cantidadTotal, " +
+        "       p.cantidad_enviada AS cantidadEnviada " +
+        "FROM Pedido p " +
+        "JOIN Cliente c ON p.id_cliente = c.id " +
+        "JOIN Pez pe ON p.id_pez = pe.id " +
+        "WHERE p.cantidad_enviada < p.cantidad " +
+        "ORDER BY pe.nombre";
+
+    /** Query para listar los pedidos completados con la información de Cliente y Pez. */
+    private static final String QUERY_LISTAR_PEDIDOS_COMPLETADOS =
+        "SELECT p.numero_referencia AS numeroReferencia, " +
+        "       c.nombre AS nombreCliente, " +
+        "       pe.nombre AS nombrePez, " +
+        "       p.cantidad AS cantidadTotal, " +
+        "       p.cantidad_enviada AS cantidadEnviada " +
+        "FROM Pedido p " +
+        "JOIN Cliente c ON p.id_cliente = c.id " +
+        "JOIN Pez pe ON p.id_pez = pe.id " +
+        "WHERE p.cantidad_enviada = p.cantidad " +
+        "ORDER BY pe.nombre";
+
+    /** Query para seleccionar un pedido por su número de referencia. */
     private static final String QUERY_SELECCIONAR_PEDIDO_POR_REFERENCIA =
-        "SELECT numero_referencia, id_cliente, id_pez, cantidad, cantidad_enviada FROM Pedido WHERE numero_referencia = ?";
-    
-    /** Consulta SQL para actualizar la cantidad enviada de un pedido. */
+        "SELECT p.numero_referencia AS numeroReferencia, " +
+        "       c.nombre AS nombreCliente, " +
+        "       pe.nombre AS nombrePez, " +
+        "       p.cantidad AS cantidadTotal, " +
+        "       p.cantidad_enviada AS cantidadEnviada " +
+        "FROM Pedido p " +
+        "JOIN Cliente c ON p.id_cliente = c.id " +
+        "JOIN Pez pe ON p.id_pez = pe.id " +
+        "WHERE p.numero_referencia = ?";
+
+    /** Query para actualizar la cantidad enviada de un pedido. */
     private static final String QUERY_ACTUALIZAR_PEDIDO =
         "UPDATE Pedido SET cantidad_enviada = ? WHERE numero_referencia = ?";
-    
-    /** Consulta SQL para eliminar todos los pedidos de la base de datos. */
+
+    /** Query para borrar todos los pedidos de la tabla Pedido. */
     private static final String QUERY_BORRAR_PEDIDOS = "DELETE FROM Pedido";
 
-    /** Consulta SQL para obtener un cliente aleatorio de la base de datos. */
+    /** Query para obtener un cliente aleatorio (sólo id y nombre). */
     private static final String QUERY_RANDOM_CLIENTE =
-        "SELECT id, nombre, nif, telefono FROM Cliente ORDER BY RAND() LIMIT 1";
+        "SELECT id, nombre FROM Cliente ORDER BY RAND() LIMIT 1";
 
-    /** Consulta SQL para obtener un pez aleatorio de la base de datos. */
+    /** Query para obtener un pez aleatorio (sólo id y nombre). */
     private static final String QUERY_RANDOM_PEZ =
-        "SELECT id, nombre, nombre_cientifico FROM Pez ORDER BY RAND() LIMIT 1";
-    
-    /** Consulta SQL para obtener los datos de un pez por su ID. */
-    private static final String QUERY_OBTENER_PEZ = "SELECT id, nombre, nombre_cientifico FROM Pez WHERE id = ?";
-
-    /** Consulta SQL para obtener los datos de un cliente por su ID. */
-    private static final String QUERY_OBTENER_NOMBRE = "SELECT id, nombre, nif, telefono FROM Cliente WHERE id = ?";
+        "SELECT id, nombre FROM Pez ORDER BY RAND() LIMIT 1";
 
     /** Conexión a la base de datos. */
     private Connection connection = Conexion.getConnection();
-    
-    /** PreparedStatement para insertar un pedido. */
+
+    /** PreparedStatement para ejecutar la inserción de un pedido. */
     private PreparedStatement pstInsertPedido;
 
-    /** PreparedStatement para listar pedidos pendientes. */
+    /** PreparedStatement para listar los pedidos pendientes. */
     private PreparedStatement pstListarPedidosPendientes;
 
-    /** PreparedStatement para listar pedidos completados. */
+    /** PreparedStatement para listar los pedidos completados. */
     private PreparedStatement pstListarPedidosCompletados;
 
-    /** PreparedStatement para seleccionar un pedido por referencia. */
+    /** PreparedStatement para seleccionar un pedido por su número de referencia. */
     private PreparedStatement pstSeleccionarPedidoPorReferencia;
 
-    /** PreparedStatement para actualizar la cantidad enviada de un pedido. */
+    /** PreparedStatement para actualizar un pedido. */
     private PreparedStatement pstActualizarPedido;
 
     /** PreparedStatement para borrar todos los pedidos. */
     private PreparedStatement pstBorrarPedidos;
-
-    /** PreparedStatement para obtener los datos de un pez por su ID. */
-    private PreparedStatement ptsObtenerPez;
-
-    /** PreparedStatement para obtener los datos de un cliente por su ID. */
-    private PreparedStatement ptsObtenerNombre;
 
     /** PreparedStatement para obtener un cliente aleatorio. */
     private PreparedStatement pstRandomCliente;
@@ -95,7 +102,7 @@ public class DAOPedidos {
     /** PreparedStatement para obtener un pez aleatorio. */
     private PreparedStatement pstRandomPez;
 
-    /** Constructor que prepara los statements. */
+    /** Constructor DAOPedidos que prepara los statements. */
     public DAOPedidos() {
         try {
             pstInsertPedido = connection.prepareStatement(QUERY_INSERT_PEDIDO);
@@ -104,52 +111,52 @@ public class DAOPedidos {
             pstSeleccionarPedidoPorReferencia = connection.prepareStatement(QUERY_SELECCIONAR_PEDIDO_POR_REFERENCIA);
             pstActualizarPedido = connection.prepareStatement(QUERY_ACTUALIZAR_PEDIDO);
             pstBorrarPedidos = connection.prepareStatement(QUERY_BORRAR_PEDIDOS);
-            ptsObtenerPez = connection.prepareStatement(QUERY_OBTENER_PEZ);
-            ptsObtenerNombre = connection.prepareStatement(QUERY_OBTENER_NOMBRE);
             pstRandomCliente = connection.prepareStatement(QUERY_RANDOM_CLIENTE);
             pstRandomPez = connection.prepareStatement(QUERY_RANDOM_PEZ);
         } catch (SQLException e) {
-            Simulador.registro.registroLogError("Error al inicializar DAOPedidos y preparar los statements: " + e.getMessage());
+            Simulador.registro.registroLogError("Error al inicializar DAOPedidos: " + e.getMessage());
         }
     }
 
     /**
-     * Genera un pedido automático seleccionando un Cliente y un Pez aleatorios.
-     * Se devuelve el objeto DTOPedido generado o null si ocurre algún error.
-     *
-     * @return DTOPedido generado.
+     * Genera un pedido automático con un cliente y pez aleatorio.
+     * 
+     * @return Un objeto DTOPedido si se genera correctamente, o null si ocurre un error.
      */
     public DTOPedido generarPedidoAutomatico() {
         try {
-            DTOCliente cliente = getRandomCliente();
-            DTOPez pez = getRandomPez();
-    
-            if (cliente != null && pez != null) {
+            int idCliente = getRandomClienteId();
+            int idPez = getRandomPezId();
+
+            String nombreCliente = obtenerNombreClientePorId(idCliente);
+            String nombrePez = obtenerNombrePezPorId(idPez);
+
+            if (idCliente != -1 && idPez != -1 && nombreCliente != null && nombrePez != null) {
                 int cantidad = 10 + random.nextInt(41);
                 String numeroReferencia = "PED-" + System.currentTimeMillis();
-    
+
                 pstInsertPedido.clearParameters();
                 pstInsertPedido.setString(1, numeroReferencia);
-                pstInsertPedido.setInt(2, cliente.getId());
-                pstInsertPedido.setInt(3, pez.getId());
+                pstInsertPedido.setInt(2, idCliente);
+                pstInsertPedido.setInt(3, idPez);
                 pstInsertPedido.setInt(4, cantidad);
-    
+
                 int affected = pstInsertPedido.executeUpdate();
                 if (affected > 0) {
-                    DTOPedido pedido = new DTOPedido(numeroReferencia, cliente.getId(), pez.getId(), cantidad, 0);
-                    System.out.println("Se ha generado el pedido con número de referencia: " + pedido.getNumero_referencia() + ".");
-                    Simulador.registro.registroGenerarPedidos(pedido.getNumero_referencia());
+                    DTOPedido pedido = new DTOPedido(numeroReferencia, nombreCliente, nombrePez, 0, cantidad);
+                    System.out.println("Se ha generado el pedido: " + pedido);
+                    Simulador.registro.registroGenerarPedidos(pedido.getNumeroReferencia());
                     return pedido;
                 }
             }
         } catch (SQLException e) {
-            Simulador.registro.registroLogError("Error al generar un pedido automático: " + e.getMessage());
-        }        
+            Simulador.registro.registroLogError("Error al generar pedido automático: " + e.getMessage());
+        }
         return null;
     }
 
     /**
-     * Lista los pedidos pendientes (aquellos en los que la cantidad enviada es menor que la solicitada).
+     * Lista los pedidos pendientes (donde la cantidad enviada es menor que la solicitada).
      *
      * @return Lista de DTOPedido pendientes.
      */
@@ -157,22 +164,23 @@ public class DAOPedidos {
         List<DTOPedido> pedidos = new ArrayList<>();
         try (ResultSet rs = pstListarPedidosPendientes.executeQuery()) {
             while (rs.next()) {
-                pedidos.add(new DTOPedido(
-                        rs.getString("numero_referencia"),
-                        rs.getInt("id_cliente"),
-                        rs.getInt("id_pez"),
-                        rs.getInt("cantidad"),
-                        rs.getInt("cantidad_enviada")
-                ));
+                DTOPedido pedido = new DTOPedido(
+                        rs.getString("numeroReferencia"),
+                        rs.getString("nombreCliente"),
+                        rs.getString("nombrePez"),
+                        rs.getInt("cantidadEnviada"),
+                        rs.getInt("cantidadTotal")
+                );
+                pedidos.add(pedido);
             }
         } catch (SQLException e) {
-            Simulador.registro.registroLogError("Error al listar los pedidos pendientes: " + e.getMessage());
+            Simulador.registro.registroLogError("Error al listar pedidos pendientes: " + e.getMessage());
         }
         return pedidos;
     }
-    
+
     /**
-     * Lista los pedidos completados (aquellos en los que la cantidad enviada es igual o mayor que la solicitada).
+     * Lista los pedidos completados (donde la cantidad enviada es igual a la solicitada).
      *
      * @return Lista de DTOPedido completados.
      */
@@ -180,25 +188,26 @@ public class DAOPedidos {
         List<DTOPedido> pedidos = new ArrayList<>();
         try (ResultSet rs = pstListarPedidosCompletados.executeQuery()) {
             while (rs.next()) {
-                pedidos.add(new DTOPedido(
-                        rs.getString("numero_referencia"),
-                        rs.getInt("id_cliente"),
-                        rs.getInt("id_pez"),
-                        rs.getInt("cantidad"),
-                        rs.getInt("cantidad_enviada")
-                ));
+                DTOPedido pedido = new DTOPedido(
+                        rs.getString("numeroReferencia"),
+                        rs.getString("nombreCliente"),
+                        rs.getString("nombrePez"),
+                        rs.getInt("cantidadEnviada"),
+                        rs.getInt("cantidadTotal")
+                );
+                pedidos.add(pedido);
             }
         } catch (SQLException e) {
-            Simulador.registro.registroLogError("Error al listar los pedidos completados: " + e.getMessage());
+            Simulador.registro.registroLogError("Error al listar pedidos completados: " + e.getMessage());
         }
         return pedidos;
     }
 
     /**
-     * Obtiene un pedido a partir de su número de referencia.
+     * Busca un pedido en la base de datos por su número de referencia.
      *
-     * @param numeroReferencia Referencia única del pedido.
-     * @return DTOPedido encontrado o null si no se encuentra.
+     * @param numeroReferencia El número de referencia del pedido.
+     * @return Un objeto DTOPedido si se encuentra, o null si no existe o ocurre un error.
      */
     public DTOPedido obtenerPedidoPorReferencia(String numeroReferencia) {
         try {
@@ -207,60 +216,62 @@ public class DAOPedidos {
             try (ResultSet rs = pstSeleccionarPedidoPorReferencia.executeQuery()) {
                 if (rs.next()) {
                     return new DTOPedido(
-                            rs.getString("numero_referencia"),
-                            rs.getInt("id_cliente"),
-                            rs.getInt("id_pez"),
-                            rs.getInt("cantidad"),
-                            rs.getInt("cantidad_enviada")
+                            rs.getString("numeroReferencia"),
+                            rs.getString("nombreCliente"),
+                            rs.getString("nombrePez"),
+                            rs.getInt("cantidadEnviada"),
+                            rs.getInt("cantidadTotal")
                     );
                 }
             }
         } catch (SQLException e) {
-            Simulador.registro.registroLogError("Error al obtener un pedido por referencia: " + e.getMessage());
+            Simulador.registro.registroLogError("Error al obtener pedido por referencia: " + e.getMessage());
         }
         return null;
     }
 
     /**
-     * Actualiza un pedido en la base de datos utilizando el DTOPedido proporcionado.
+     * Actualiza la cantidad enviada de un pedido en la base de datos.
      *
-     * @param pedido DTOPedido con la información actualizada.
-     * @return true si la actualización fue exitosa; false en caso contrario.
+     * @param pedido El pedido a actualizar.
+     * @return true si la actualización fue exitosa, false si ocurrió un error.
      */
     public boolean actualizarPedido(DTOPedido pedido) {
         try {
             pstActualizarPedido.clearParameters();
-            pstActualizarPedido.setInt(1, pedido.getCantidad_enviada());
-            pstActualizarPedido.setString(2, pedido.getNumero_referencia());
+            pstActualizarPedido.setInt(1, pedido.getCantidadEnviada());
+            pstActualizarPedido.setString(2, pedido.getNumeroReferencia());
             int affected = pstActualizarPedido.executeUpdate();
-            Simulador.registro.registroEnviadosConReferencia(pedido.getCantidad_enviada(), obtenerPezPorId(pedido.getId_pez()).getNombre(), pedido.getNumero_referencia());
+            Simulador.registro.registroEnviadosConReferencia(
+                    pedido.getCantidadEnviada(),
+                    pedido.getNombrePez(),
+                    pedido.getNumeroReferencia()
+            );
             return affected > 0;
         } catch (SQLException e) {
-            Simulador.registro.registroLogError("Error al actualizar un pedido: " + e.getMessage());
+            Simulador.registro.registroLogError("Error al actualizar pedido: " + e.getMessage());
         }
         return false;
     }
 
     /**
-     * Envía una cantidad de peces para un pedido, actualizando la cantidad enviada.
-     * Se utiliza el DTOPedido recibido para calcular la cantidad pendiente y se actualiza
-     * tanto la base de datos como el objeto DTO.
+     * Envía una cantidad de un pedido, actualizando la cantidad enviada.
      *
-     * @param pedido DTOPedido del pedido a enviar.
-     * @param cantidadDisponible Cantidad de peces disponibles para enviar.
-     * @return El DTOPedido actualizado o null si ocurre algún error.
+     * @param pedido El pedido a actualizar.
+     * @param cantidadDisponible La cantidad disponible para enviar.
+     * @return El pedido actualizado si se realizó el envío, o null si hubo un error.
      */
     public DTOPedido enviarPedido(DTOPedido pedido, int cantidadDisponible) {
-        int pendiente = pedido.getCantidad() - pedido.getCantidad_enviada();
+        int pendiente = pedido.getCantidadTotal() - pedido.getCantidadEnviada();
         int enviar = Math.min(pendiente, cantidadDisponible);
-        int nuevaCantidadEnviada = pedido.getCantidad_enviada() + enviar;
+        int nuevaCantidadEnviada = pedido.getCantidadEnviada() + enviar;
 
         DTOPedido pedidoActualizado = new DTOPedido(
-                pedido.getNumero_referencia(),
-                pedido.getId_cliente(),
-                pedido.getId_pez(),
-                pedido.getCantidad(),
-                nuevaCantidadEnviada
+                pedido.getNumeroReferencia(),
+                pedido.getNombreCliente(),
+                pedido.getNombrePez(),
+                nuevaCantidadEnviada,
+                pedido.getCantidadTotal()
         );
 
         if (actualizarPedido(pedidoActualizado)) {
@@ -278,93 +289,90 @@ public class DAOPedidos {
         try {
             return pstBorrarPedidos.executeUpdate();
         } catch (SQLException e) {
-            Simulador.registro.registroLogError("Error al borrar los pedidos de la base de datos: " + e.getMessage());
+            Simulador.registro.registroLogError("Error al borrar pedidos: " + e.getMessage());
         }
         return 0;
     }
 
-    public DTOCliente obtenerClientePorId(int idCliente) {  //TODO Hacer DTOInfoPedido y quitar método.
-        DTOCliente cliente = null;
-        try {
-            ptsObtenerNombre.setInt(1, idCliente);
-            try (ResultSet rs = ptsObtenerNombre.executeQuery()) {
-                if (rs.next()) {
-                    cliente = new DTOCliente(
-                        rs.getInt("id"),
-                        rs.getString("nombre"),
-                        rs.getString("nif"),
-                        rs.getInt("telefono")
-                    );
-                }
+    /**
+     * Obtiene un ID aleatorio de la tabla Cliente.
+     *
+     * @return ID obtenido o -1 en caso de error.
+     */
+    private int getRandomClienteId() {
+        String query = "SELECT id FROM Cliente ORDER BY RAND() LIMIT 1";
+        try (PreparedStatement pst = connection.prepareStatement(query);
+             ResultSet rs = pst.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt("id");
             }
         } catch (SQLException e) {
-            Simulador.registro.registroLogError("Error al obtener un cliente por ID: " + e.getMessage());
+            Simulador.registro.registroLogError("Error al obtener ID de cliente aleatorio: " + e.getMessage());
         }
-        return cliente;
+        return -1;
     }
 
-    public DTOPez obtenerPezPorId(int idPez) {              //TODO Hacer DTOInfoPedido y quitar método.
-        DTOPez pez = null;
-        try {
-            ptsObtenerPez.setInt(1, idPez);
-            try (ResultSet rs = ptsObtenerPez.executeQuery()) {
+    /**
+     * Obtiene un ID aleatorio de la tabla Pez.
+     *
+     * @return ID obtenido o -1 en caso de error.
+     */
+    private int getRandomPezId() {
+        String query = "SELECT id FROM Pez ORDER BY RAND() LIMIT 1";
+        try (PreparedStatement pst = connection.prepareStatement(query);
+             ResultSet rs = pst.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt("id");
+            }
+        } catch (SQLException e) {
+            Simulador.registro.registroLogError("Error al obtener ID de pez aleatorio: " + e.getMessage());
+        }
+        return -1;
+    }
+
+    /**
+     * Obtiene el nombre de un cliente dado su ID.
+     *
+     * @param id ID del cliente.
+     * @return Nombre del cliente o null.
+     */
+    public String obtenerNombreClientePorId(int id) {
+        String query = "SELECT nombre FROM Cliente WHERE id = ?";
+        try (PreparedStatement pst = connection.prepareStatement(query)) {
+            pst.setInt(1, id);
+            try (ResultSet rs = pst.executeQuery()) {
                 if (rs.next()) {
-                    pez = new DTOPez(
-                        rs.getInt("id"),
-                        rs.getString("nombre"),
-                        rs.getString("nombre_cientifico")
-                    );
+                    return rs.getString("nombre");
                 }
             }
         } catch (SQLException e) {
-            Simulador.registro.registroLogError("Error al obtener un pez por ID: " + e.getMessage());
-        }
-        return pez;
-    }
-    
-    /**
-     * Obtiene un DTOCliente aleatorio de la base de datos.
-     *
-     * @return DTOCliente obtenido o null si no hay registros o se produce un error.
-     */
-    private DTOCliente getRandomCliente() {
-        try (ResultSet rs = pstRandomCliente.executeQuery()) {
-            if (rs.next()) {
-                return new DTOCliente(
-                        rs.getInt("id"),
-                        rs.getString("nombre"),
-                        rs.getString("nif"),
-                        rs.getInt("telefono")
-                );
-            }
-        } catch (SQLException e) {
-            Simulador.registro.registroLogError("Error al obtener un cliente aleatorio: " + e.getMessage());
+            Simulador.registro.registroLogError("Error al obtener el nombre del cliente: " + e.getMessage());
         }
         return null;
     }
 
     /**
-     * Obtiene un DTOPez aleatorio de la base de datos.
+     * Obtiene el nombre de un pez dado su ID.
      *
-     * @return DTOPez obtenido o null si no hay registros o se produce un error.
+     * @param id ID del pez.
+     * @return Nombre del pez o null.
      */
-    private DTOPez getRandomPez() {
-        try (ResultSet rs = pstRandomPez.executeQuery()) {
-            if (rs.next()) {
-                return new DTOPez(
-                        rs.getInt("id"),
-                        rs.getString("nombre"),
-                        rs.getString("nombre_cientifico")
-                );
+    public String obtenerNombrePezPorId(int id) {
+        String query = "SELECT nombre FROM Pez WHERE id = ?";
+        try (PreparedStatement pst = connection.prepareStatement(query)) {
+            pst.setInt(1, id);
+            try (ResultSet rs = pst.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("nombre");
+                }
             }
         } catch (SQLException e) {
-            Simulador.registro.registroLogError("Error al obtener un pez aleatorio: " + e.getMessage());
+            Simulador.registro.registroLogError("Error al obtener el nombre del pez: " + e.getMessage());
         }
         return null;
     }
 
-
-    /** Cierra la conexión y todos los PreparedStatement abiertos. */
+    /** Cierra la conexión y todos los PreparedStatements. */
     public void close() {
         try {
             if (pstInsertPedido != null) pstInsertPedido.close();
@@ -377,7 +385,7 @@ public class DAOPedidos {
             if (pstRandomPez != null) pstRandomPez.close();
             if (connection != null) connection.close();
         } catch (SQLException e) {
-            Simulador.registro.registroLogError("Error al cerrar recursos de base de datos: " + e.getMessage());
-        }        
+            Simulador.registro.registroLogError("Error al cerrar recursos: " + e.getMessage());
+        }
     }
 }

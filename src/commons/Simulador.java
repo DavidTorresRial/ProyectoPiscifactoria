@@ -8,9 +8,7 @@ import java.util.Random;
 
 import database.DAOPedidos;
 import database.GeneradorBD;
-import database.dtos.DTOCliente;
 import database.dtos.DTOPedido;
-import database.dtos.DTOPez;
 import helpers.FileHelper;
 import helpers.InputHelper;
 import helpers.MenuHelper;
@@ -1093,64 +1091,45 @@ public class Simulador {
      * y actualiza el pedido en la base de datos.
      */
     public void enviarPedidoManual() {
-        // Se obtiene la lista de pedidos pendientes (suponiendo que ya están filtrados para no incluir los completados)
         List<DTOPedido> pedidosPendientes = pedidos.listarPedidosPendientes();
-    
-        DTOCliente cliente = null; 
-        DTOPez pez = null;
-
-        String nombreCliente = "";
-        String nombrePez = "";
 
         if (!pedidosPendientes.isEmpty()) {
             String[] opciones = new String[pedidosPendientes.size()];
             for (int i = 0; i < pedidosPendientes.size(); i++) {
                 DTOPedido pedido = pedidosPendientes.get(i);
                 
-                int cantidadEnviada = pedido.getCantidad_enviada();
-                int cantidadSolicitada = pedido.getCantidad();
+                int cantidadEnviada = pedido.getCantidadEnviada();
+                int cantidadSolicitada = pedido.getCantidadTotal();
                 int porcentaje = cantidadSolicitada > 0 ? (cantidadEnviada * 100 / cantidadSolicitada) : 0;
                 
-                // Se obtienen los nombres del cliente y del pez usando los métodos del DAO
-                cliente = pedidos.obtenerClientePorId(pedido.getId_cliente());
-                pez = pedidos.obtenerPezPorId(pedido.getId_pez());
-                
-                nombreCliente = (cliente != null) ? cliente.getNombre() : "Desconocido";
-                nombrePez = (pez != null) ? pez.getNombre() : "Desconocido";
-                
-                // Formato: [numero_referencia] NombreCliente: NombrePez cantidadEnviada/cantidadSolicitada (porcentaje%)
+                // [numero_referencia] NombreCliente: NombrePez cantidadEnviada/cantidadSolicitada (porcentaje%)
                 opciones[i] = String.format("[%s] %s: %s %d/%d (%d%%)",
-                        pedido.getNumero_referencia(),
-                        nombreCliente,
-                        nombrePez,
+                        pedido.getNumeroReferencia(),
+                        pedido.getNombreCliente(),
+                        pedido.getNombrePez(),
                         cantidadEnviada,
                         cantidadSolicitada,
                         porcentaje);
             }
-    
-            // Muestra el menú (incluyendo la opción de cancelar)
+            System.out.println("\n=================== Selecciona un pedido ===================");
             MenuHelper.mostrarMenuCancelar(opciones);
             int numeroPedido = InputHelper.solicitarNumero(0, pedidosPendientes.size());
     
             if (numeroPedido != 0) {
-                // Se obtiene el pedido seleccionado (se resta 1 por el índice de la lista)
                 DTOPedido pedidoSeleccionado = pedidosPendientes.get(numeroPedido - 1);
     
-                // Selección de tanque y obtención de la cantidad disponible
                 Tanque tanque = selectTank().getValue();
                 int cantidadDisponible = (tanque != null) ? tanque.getMaduros() : 0;
     
                 if (cantidadDisponible > 0) {
-                    // Se eliminan los peces que ya han alcanzado la madurez
                     List<Pez> peces = tanque.getPeces();
                     peces.removeIf(Pez::isMaduro);
                 }
-    
-                // Envío del pedido según la cantidad disponible en el tanque
-                DTOPedido pedidoActualizado = pedidos.enviarPedido(pedidoSeleccionado, 50);
-                if (pedidoActualizado != null && pedidoActualizado.getCantidad_enviada() == pedidoActualizado.getCantidad()) {
+                
+                DTOPedido pedidoActualizado = pedidos.enviarPedido(pedidoSeleccionado, cantidadDisponible);
+                if (pedidoActualizado != null && pedidoActualizado.getCantidadEnviada() == pedidoActualizado.getCantidadTotal()) {
                     System.out.println("El pedido ha sido completado.");
-                    registro.registroPedidoEnviado(nombrePez, pedidoActualizado.getNumero_referencia());
+                    registro.registroPedidoEnviado(pedidoActualizado.getNombrePez(), pedidoActualizado.getNumeroReferencia());
     
                     Random random = new Random();
                     int probabilidad = random.nextInt(100);
@@ -1196,26 +1175,18 @@ public class Simulador {
      */
     public void listarPedidosCompletados() {
         List<DTOPedido> pedidosCompletados = pedidos.listarPedidosCompletados();
-        System.out.println("\n");
+        System.out.println();
 
         if (pedidosCompletados != null && !pedidosCompletados.isEmpty()) {
             for (DTOPedido pedido : pedidosCompletados) {
-                // Usamos los nuevos métodos para obtener el DTO del cliente y del pez
-                DTOCliente cliente = pedidos.obtenerClientePorId(pedido.getId_cliente());
-                DTOPez pez = pedidos.obtenerPezPorId(pedido.getId_pez());
-
-                String nombreCliente = (cliente != null) ? cliente.getNombre() : "Desconocido";
-                String nombrePez = (pez != null) ? pez.getNombre() : "Desconocido";
-
-                System.out.println("Pedido - [" + pedido.getNumero_referencia() + "]: " +
-                        nombreCliente + " - " + nombrePez + " - " +
-                        pedido.getCantidad_enviada() + "/" + pedido.getCantidad() + " enviados");
+                System.out.println("[" + pedido.getNumeroReferencia() + "]: " +
+                        pedido.getNombreCliente() + " - " + pedido.getNombrePez() + " - " +
+                        pedido.getCantidadEnviada() + "/" + pedido.getCantidadTotal() + " enviados");
             }
         } else {
             System.out.println("Aún no has completado ningún pedido.");
         }
     }
-
     
     /**
      * Método principal que gestiona el flujo del simulador, 
