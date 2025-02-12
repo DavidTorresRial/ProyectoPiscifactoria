@@ -36,7 +36,6 @@ public class Conexion {
             try {
                 connection = DriverManager.getConnection("jdbc:mysql://" + SERVER + ":" + PORT + "/" + DATABASE + "?rewriteBatchedStatements=true", USER, PASSWORD);
             } catch (SQLException e) {
-                e.printStackTrace();
                 Simulador.registro.registroLogError("Error al conectar: " + e.getMessage());
             }
         }

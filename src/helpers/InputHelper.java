@@ -53,11 +53,15 @@ public class InputHelper {
             String input = scanner.nextLine();
 
             if (!input.isEmpty()) {
-                try {
-                    numero = Integer.parseInt(input);
-                    entradaValida = true;
-                } catch (NumberFormatException e) {
-                    System.out.println("\nEntrada no válida. Por favor, ingrese un número entero.");
+                if (input.length() <= 2) {
+                    try {
+                        numero = Integer.parseInt(input);
+                        entradaValida = true;
+                    } catch (NumberFormatException e) {
+                        System.out.println("\nEntrada no válida. Por favor, ingrese un número válido.");
+                    }
+                } else {
+                    System.out.println("\nLa entrada no puede tener más de dos dígitos.");
                 }
             } else {
                 System.out.println("\nLa entrada no puede estar vacía. Por favor, ingrese un número entero.");
@@ -69,7 +73,6 @@ public class InputHelper {
     /**
      * Solicita un número al usuario dentro de un rango específico.
      *
-     * @param prompt Mensaje mostrado al usuario.
      * @param min    Valor mínimo permitido (incluido).
      * @param max    Valor máximo permitido (incluido).
      * @return Un número dentro del rango especificado.
