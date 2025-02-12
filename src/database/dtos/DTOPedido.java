@@ -1,82 +1,110 @@
 package database.dtos;
 
-/** Clase DTOPedido que representa un objeto de transferencia de datos para un pedido. */
+/** DTO que representa un pedido con información resumida. */
 public class DTOPedido {
 
-    /** Número de referencia del pedido. */
-    private String numero_referencia;
+    /** Número de referencia único del pedido. */
+    private String numeroReferencia;
 
-    /** Identificador del cliente asociado al pedido. */
-    private int id_cliente;
+    /** Nombre del cliente que realizó el pedido. */
+    private String nombreCliente;
 
-    /** Identificador del pez asociado al pedido. */
-    private int id_pez;
+    /** Nombre del pez solicitado en el pedido. */
+    private String nombrePez;
 
-    /** Cantidad total pedida. */
-    private int cantidad;
+    /** Cantidad de peces enviados hasta el momento. */
+    private int cantidadEnviada;
 
-    /** Cantidad enviada hasta el momento. */
-    private int cantidad_enviada;
+    /** Cantidad total de peces solicitados en el pedido. */
+    private int cantidadTotal;
 
     /**
-     * Constructor de la clase DTOPedido.
+     * Construye un objeto DTOPedido con los datos proporcionados.
      * 
-     * @param numero_referencia Número de referencia del pedido.
-     * @param id_cliente Identificador del cliente asociado al pedido.
-     * @param id_pez Identificador del pez asociado al pedido.
-     * @param cantidad Cantidad total pedida.
-     * @param cantidad_enviada Cantidad enviada hasta el momento.
+     * @param numeroReferencia Número de referencia del pedido.
+     * @param nombreCliente Nombre del cliente que realizó el pedido.
+     * @param nombrePez Nombre del pez solicitado.
+     * @param cantidadEnviada Cantidad de peces enviados.
+     * @param cantidadTotal Cantidad total de peces solicitados.
      */
-    public DTOPedido(String numero_referencia, int id_cliente, int id_pez, int cantidad, int cantidad_enviada) {
-        this.numero_referencia = numero_referencia;
-        this.id_cliente = id_cliente;
-        this.id_pez = id_pez;
-        this.cantidad = cantidad;
-        this.cantidad_enviada = cantidad_enviada;
+    public DTOPedido(String numeroReferencia, String nombreCliente, String nombrePez, int cantidadEnviada, int cantidadTotal) {
+        this.numeroReferencia = numeroReferencia;
+        this.nombreCliente = nombreCliente;
+        this.nombrePez = nombrePez;
+        this.cantidadEnviada = cantidadEnviada;
+        this.cantidadTotal = cantidadTotal;
     }
 
     /**
      * Obtiene el número de referencia del pedido.
      * 
-     * @return El número de referencia del pedido.
+     * @return Número de referencia del pedido.
      */
-    public String getNumero_referencia() {
-        return numero_referencia;
+    public String getNumeroReferencia() {
+        return numeroReferencia;
     }
 
     /**
-     * Obtiene el identificador del cliente asociado al pedido.
+     * Obtiene el nombre del cliente.
      * 
-     * @return El identificador del cliente.
+     * @return Nombre del cliente.
      */
-    public int getId_cliente() {
-        return id_cliente;
+    public String getNombreCliente() {
+        return nombreCliente;
     }
 
     /**
-     * Obtiene el identificador del pez asociado al pedido.
+     * Obtiene el nombre del pez solicitado en el pedido.
      * 
-     * @return El identificador del pez.
+     * @return Nombre del pez.
      */
-    public int getId_pez() {
-        return id_pez;
+    public String getNombrePez() {
+        return nombrePez;
     }
 
     /**
-     * Obtiene la cantidad total pedida.
+     * Obtiene la cantidad de peces enviados hasta el momento.
      * 
-     * @return La cantidad total pedida.
+     * @return Cantidad de peces enviados.
      */
-    public int getCantidad() {
-        return cantidad;
+    public int getCantidadEnviada() {
+        return cantidadEnviada;
     }
 
     /**
-     * Obtiene la cantidad enviada hasta el momento.
+     * Obtiene la cantidad total de peces solicitados en el pedido.
      * 
-     * @return La cantidad enviada.
+     * @return Cantidad total solicitada.
      */
-    public int getCantidad_enviada() {
-        return cantidad_enviada;
+    public int getCantidadTotal() {
+        return cantidadTotal;
+    }
+
+    /**
+     * Calcula el porcentaje de peces enviados en relación con la cantidad total.
+     * 
+     * @return Porcentaje de peces enviados. Si la cantidad total es 0, devuelve 0.
+     */
+    public int getPorcentajeEnviado() {
+        if (cantidadTotal > 0) {
+            return (cantidadEnviada * 100) / cantidadTotal;
+        }
+        return 0;
+    }
+
+    /**
+     * Devuelve una representación en cadena del pedido.
+     * 
+     * @return una cadena que describe los detalles del pedido.
+     */
+    @Override
+    public String toString() {
+        return "\nInformación del Pedido:" +
+                "\n  Número de Referencia  : " + numeroReferencia +
+                "\n  Cliente               : " + nombreCliente +
+                "\n  Pez                   : " + nombrePez +
+                "\n  Cantidad Total        : " + cantidadTotal +
+                "\n  Cantidad Enviada      : " + cantidadEnviada +
+                " (" + (cantidadTotal > 0 ? ((cantidadEnviada * 100.0) / cantidadTotal) : "0") + "% enviado)";
     }
 }
