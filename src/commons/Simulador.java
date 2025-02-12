@@ -85,11 +85,14 @@ public class Simulador {
     /** Almacén central de comida para abastecer las piscifactorías. */
     public static AlmacenCentral almacenCentral;
 
+    /** Registro de logs y eventos del sistema. */
     public static Registros registro;
 
+    /** DAO para gestionar los pedidos en la base de datos. */
     public DAOPedidos pedidos = new DAOPedidos();
 
-    public GeneradorBD generador = new  GeneradorBD();
+    /** Generador de la base de datos. */
+    public GeneradorBD generador = new GeneradorBD();
 
     /** Metodo que inicializa todo el sistema. */
     public void init() {
@@ -1125,7 +1128,7 @@ public class Simulador {
                     List<Pez> peces = tanque.getPeces();
                     peces.removeIf(Pez::isMaduro);
                 }
-                
+
                 DTOPedido pedidoActualizado = pedidos.enviarPedido(pedidoSeleccionado, cantidadDisponible);
                 if (pedidoActualizado != null && pedidoActualizado.getCantidadEnviada() == pedidoActualizado.getCantidadTotal()) {
                     System.out.println("El pedido ha sido completado.");
@@ -1148,14 +1151,13 @@ public class Simulador {
                         System.out.println("\n¡Felicidades! Has recibido una recompensa de tanque de " + (tipoTanque == 1 ? "río" : "mar") + " por completar el pedido.");
                     }
                 } else {
-                    System.out.println("\nEl pedido no se completó completamente. Aún quedan peces pendientes.");
+                    System.out.println("\nEl pedido no se ha completado. Aún faltan " + (pedidoActualizado.getCantidadTotal() - pedidoActualizado.getCantidadEnviada()) + " unidades de " + pedidoActualizado.getNombrePez() + " por enviar.");
                 }
             }
         } else {
-            System.out.println("No hay pedidos disponibles.");
+            System.out.println("\nNo hay pedidos disponibles.");
         }
     }
-    
     
     /** Borra todos los pedidos almacenados. */
     public void borrarPedidos() {

@@ -42,11 +42,7 @@ public class AlmacenCentral {
         this.cantidadComidaVegetal = cantidadComidaVegetal;
     }
 
-    /**
-     * Aumenta la capacidad del almacén central en 50 unidades si hay monedas suficientes.
-     * 
-     * @return true si se aumentó la capacidad exitosamente, false en caso contrario.
-     */
+    /** Aumenta la capacidad del almacén central en 50 unidades si hay monedas suficientes. */
     public void aumentarCapacidad() {
         if (Simulador.monedas.gastarMonedas(COSTO_MEJORA)) {
             capacidadAlmacen += INCREMENTO_MEJORA_ALMACEN;
@@ -61,7 +57,6 @@ public class AlmacenCentral {
      * Método para añadir comida animal al almacén.
      * 
      * @param cantidad La cantidad de comida animal a añadir. Debe ser positiva.
-     * @return true si se añadió la comida, false si no se pudo añadir.
      */
     public void añadirComidaAnimal(int cantidad) {
         int nuevaCantidad = cantidadComidaAnimal + cantidad;
@@ -76,7 +71,6 @@ public class AlmacenCentral {
      * Método para añadir comida vegetal al almacén.
      * 
      * @param cantidad La cantidad de comida vegetal a añadir. Debe ser positiva.
-     * @return true si se añadió la comida, false si no se pudo añadir.
      */
     public void añadirComidaVegetal(int cantidad) {
         int nuevaCantidad = cantidadComidaVegetal + cantidad;
