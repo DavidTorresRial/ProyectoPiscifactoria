@@ -1,57 +1,151 @@
 package commons;
 
-/** Representa una granja de langostinos, donde se crían y producen langostinos en tanques. */
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+/** Representa una granja de langostinos. */
 public class GranjaLangostinos {
 
-    /** Número de tanques en la granja. */
-    private int numeroTanques;
-
-    /** Producción actual de langostinos. */
+    /** Producción total (pienso generado). */
     private int produccion;
+    
+    /** Raciones disponibles por retroalimentación (1 ración = 50 unidades). */
+    private int racionesRetroalimentacion;
 
-    /** Cantidad de peces muertos disponibles para retroalimentación. */
-    private int pecesMuertos;
+    /** Lista de tanques de langostinos. */
+    private List<TanqueLangostinos> tanques;
 
     /** Costo de compra de la granja. */
     public static final int COSTO_COMPRA = 3000;
 
-    /** Costo de mejora para añadir un tanque. */
+    /** Costo para añadir un tanque. */
     public static final int COSTO_MEJORA = 1500;
 
-    /** Constructor que inicializa la granja sin tanques y sin producción. */
+    /** Crea una granja con un tanque inicial y sin producción. */
     public GranjaLangostinos() {
-        this.numeroTanques = 0;
         this.produccion = 0;
-        this.pecesMuertos = 0;
+        this.racionesRetroalimentacion = 0;
+        this.tanques = new ArrayList<>();
+        tanques.add(new TanqueLangostinos());
     }
 
-    /** Agrega un langostino muerto a la granja, usado para retroalimentación. */
+    /** 
+     * Registra la muerte de un pez y suma una ración.
+     */
     public void agregarPezMuerto() {
-        pecesMuertos++;
-        System.out.println("Se ha agregado un pez muerto a la granja de langostinos. Total muertos: " + pecesMuertos);
+        racionesRetroalimentacion++;
+        System.out.println("Se ha agregado un pez muerto. Raciones disponibles: " + racionesRetroalimentacion);
     }
 
-    /** Mejora la granja añadiendo un nuevo tanque si hay suficientes monedas disponibles. */
+    /** Añade un tanque si hay suficientes monedas. */
     public void mejorar() {
         if (Simulador.monedas.gastarMonedas(COSTO_MEJORA)) {
-            numeroTanques++;
-            System.out.println("\nMejorada la granja de langostinos: Añadido un nuevo tanque. Total: " + numeroTanques + " tanques.");
-            Simulador.registro.registroMejoradaGranjaLangostinos(numeroTanques);
+            TanqueLangostinos nuevoTanque = new TanqueLangostinos();
+            tanques.add(nuevoTanque);
+            System.out.println("Granja de fitoplancton mejorada: Nuevo tanque añadido. Total: " + tanques.size() + " tanques.");
+            Simulador.registro.registroMejoradaGranjaLangostinos(tanques.size());
         } else {
             System.out.println("\nNo tienes suficientes monedas para mejorar la granja de langostinos.");
         }
     }
-
+    
     /**
-     * Devuelve una representación en cadena del estado de la granja de langostinos.
-     * 
-     * @return Una cadena que describe el estado actual de la granja.
+     * Reparte alimento a los tanques desde el almacén central.
+     * Cada tanque recibe raciones de 50 unidades hasta tener 3.
      */
+    private void recargarTanques() {
+        boolean recargoPosible = true;
+        while (recargoPosible) {
+            recargoPosible = false;
+            for (TanqueLangostinos tanque : tanques) {
+                if (tanque.racionesLocal < 3) {
+                    if (Simulador.almacenCentral.getCantidadComidaAnimal() >= 50) {
+                        int nuevaCantidad = Simulador.almacenCentral.getCantidadComidaAnimal() - 50;
+                        Simulador.almacenCentral.setCantidadComidaAnimal(nuevaCantidad);
+                        tanque.racionesLocal++;
+                        recargoPosible = true;
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
+     * Simula un día en la granja:
+     * recarga tanques y produce alimento según disponibilidad.
+     */
+    public void simularDia() {
+        recargarTanques();
+        for (TanqueLangostinos tanque : tanques) {
+            int prodDia = tanque.simularDia();
+            produccion += prodDia;
+        }
+        if (produccion > 0) {
+            System.out.println("Granja de Fitoplancton produce " + produccion + " de comida vegetal.");
+        }
+        if (Simulador.almacenCentral != null) {
+            Simulador.almacenCentral.añadirComidaAnimal(produccion);
+        }
+    }
+
+    /** Devuelve el estado de la granja. */
     @Override
     public String toString() {
-        return "\nInformación de la Granja de Langostinos:" +
-               "\n  Número de tanques        : " + numeroTanques +
-               "\n  Producción actual        : " + produccion +
-               "\n  Peces muertos            : " + pecesMuertos;
+        return "\nGranja de Langostinos:" +
+               "\n  Tanques: " + tanques.size() +
+               "\n  Producción: " + produccion +
+               "\n  Raciones retroalimentación: " + racionesRetroalimentacion;
+    }
+
+    /**
+     * Representa un tanque de langostinos.
+     * Cada tanque produce entre 100 y 200 unidades tras 3 días de espera.
+     */
+    private class TanqueLangostinos {
+
+        /** Días para iniciar la producción. */
+        private int diasParaProduccion = 3;
+
+        /** Días de penalización por falta de alimento (máx. 3 días). */
+        private int diasPenalizacion = 0;
+
+        /** Raciones disponibles en el tanque. */
+        private int racionesLocal = 3;
+
+        /** Generador de números aleatorios. */
+        private Random random = new Random();
+
+        /**
+         * Simula un día en el tanque: consume alimento y produce si es posible.
+         * @return la cantidad producida en el día o 0 si no produce.
+         */
+        public int simularDia() {
+            boolean alimentado = false;
+            if (racionesRetroalimentacion > 0) {
+                racionesRetroalimentacion--;
+                alimentado = true;
+            } else if (racionesLocal > 0) {
+                racionesLocal--;
+                alimentado = true;
+            }
+            
+            if (alimentado) {
+                if (diasPenalizacion > 0) {
+                    diasPenalizacion--;
+                    return 0;
+                }
+                if (diasParaProduccion > 0) {
+                    diasParaProduccion--;
+                    return 0;
+                }
+                return random.nextInt(101) + 100;
+            } else {
+                if (diasPenalizacion < 3) {
+                    diasPenalizacion++;
+                }
+                return 0;
+            }
+        }
     }
 }
