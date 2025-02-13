@@ -1,8 +1,10 @@
-package commons;
+package edificios;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import commons.Simulador;
 
 /** Representa una granja de langostinos. */
 public class GranjaLangostinos {
@@ -43,7 +45,7 @@ public class GranjaLangostinos {
         if (Simulador.monedas.gastarMonedas(COSTO_MEJORA)) {
             TanqueLangostinos nuevoTanque = new TanqueLangostinos();
             tanques.add(nuevoTanque);
-            System.out.println("Granja de fitoplancton mejorada: Nuevo tanque añadido. Total: " + tanques.size() + " tanques.");
+            System.out.println("Granja de langostinos mejorada: Nuevo tanque añadido. Total: " + tanques.size() + " tanques.");
             Simulador.registro.registroMejoradaGranjaLangostinos(tanques.size());
         } else {
             System.out.println("\nNo tienes suficientes monedas para mejorar la granja de langostinos.");
