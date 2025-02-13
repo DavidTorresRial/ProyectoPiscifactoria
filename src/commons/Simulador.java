@@ -367,8 +367,12 @@ public class Simulador {
             }
         }
 
-        granjaFitoplancton.actualizarCiclo(almacenCentral);
-        granjaLangostinos.simularDia();
+        if (granjaFitoplancton != null) {
+            granjaFitoplancton.actualizarCiclo(almacenCentral);
+        }
+        if (granjaLangostinos != null) {
+            granjaLangostinos.simularDia();
+        }
 
         if (dia % 10 == 0) {
             pedidos.generarPedidoAutomatico();

@@ -11,7 +11,7 @@ public class SistemaMonedas {
 
     /** Constructor privado que inicializa el saldo con 100 monedas. */
     private SistemaMonedas() {
-        this.monedas = 100000;
+        this.monedas = 100;
     }
 
     /**
