@@ -2,6 +2,7 @@ package commons;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -38,19 +39,13 @@ import recompensas.CrearRecompensa;
 import recompensas.UsarRecompensa;
 import registros.Registros;
 import tanque.Tanque;
+import tanque.TanqueDeCria;
+import tanque.TanqueDeHuevos;
 
-/**
- * La clase Simulador gestiona la simulación de una piscifactoría,
- * permitiendo realizar diversas operaciones de administración de peces,
- * tanques y recursos monetarios. Incluye un menú interactivo para la
- * navegación entre las diferentes opciones de gestión de la piscifactoría.
- * 
- * @author David, Fran, Marcos.
- */
 public class Simulador {
 
     /** Instancia del simulador. */
-    public Simulador instance = null; // ¿Debería ser estática, no?
+    public Simulador instance = null;
 
     /** Días transcurridos en la simulación. */
     private int dia = 0;
@@ -99,7 +94,7 @@ public class Simulador {
     /** Generador de la base de datos. */
     public GeneradorBD generador = new GeneradorBD();
 
-    /** Metodo que inicializa todo el sistema. */
+    /** Método que inicializa todo el sistema. */
     public void init() {
         FileHelper.crearCarpetas(new String[] {"transcripciones", "logs", "saves", "rewards"});
         generador.crearTablas();
@@ -156,7 +151,7 @@ public class Simulador {
                 "Recompensas",
                 "Pasar varios días",
                 "Enviar pedido",
-                "Gestionar piscifactoria",
+                "Gestionar piscifactoría",
                 "Salir"
         });
     }
@@ -336,6 +331,9 @@ public class Simulador {
 
         dia++;
 
+        // Actualizar la reproducción en tanques de cría y transferir crías desde tanques de huevos
+        updateReproduccion();
+
         System.out.println("\nFin del día " + dia + ".\n");
         for (Piscifactoria piscifactoria : piscifactorias) {
             int[] resultadoPiscifactoria = piscifactoria.nextDay();
@@ -367,6 +365,20 @@ public class Simulador {
     public void nextDay(int dias) {
         for (int i = 0; i < dias; i++) {
             nextDay();
+        }
+    }
+
+    /** Actualiza la reproducción en tanques de cría y transfiere crías desde tanques de huevos. */
+    private void updateReproduccion() {
+        for (Piscifactoria pisc : piscifactorias) {
+            // Actualizar cada tanque de cría; aquí asumimos que se alimentaron correctamente (true)
+            if (pisc.getTanquesCria() != null) {
+                for (TanqueDeCria tc : pisc.getTanquesCria()) {
+                    tc.nextDay(true);
+                }
+            }
+            // Transferir las crías desde los tanques de huevos al tanque regular (método implementado en Piscifactoria)
+            pisc.transferirCriasDesdeHuevos();
         }
     }
 
@@ -641,7 +653,7 @@ public class Simulador {
         }
     }
 
-    /** Método que muestra un menú de que permite al usuario comprar o mejorar edificios. */
+    /** Método que muestra un menú que permite al usuario comprar o mejorar edificios. */
     public void upgrade() {
         boolean salir = false;
 
@@ -1195,38 +1207,247 @@ public class Simulador {
             System.out.println("Aún no has completado ningún pedido.");
         }
     }
-    
-
+ 
+    /**
+     * Permite al usuario gestionar una piscifactoría seleccionada:
+     * - Gestionar tanques de cría.
+     * - Gestionar tanques de huevos.
+     * - Salir del menú.
+     */
     private void gestionarPiscifactoria() {
+        Piscifactoria pisc = selectPisc();
+        if (pisc == null) {
+            System.out.println("No se seleccionó ninguna piscifactoría.");
+            return;
+        }
         boolean salir = false;
-
         while (!salir) {
-            System.out.println("\n=================== Gestionar Piscifactoria ===================");
-            String[] opcionesMenuPrincipal = { "Tanques de cría", "Tanque de huevos" };
-            MenuHelper.mostrarMenuCancelar(opcionesMenuPrincipal);
-
-            int opcionPrincipal = InputHelper.solicitarNumero(0, opcionesMenuPrincipal.length);
-
-            switch (opcionPrincipal) {
+            System.out.println("\n--- Gestión de Piscifactoría: " + pisc.getNombre() + " ---");
+            String[] opciones = { "Tanques de Cría", "Tanques de Huevos", "Salir" };
+            MenuHelper.mostrarMenu(opciones);
+            int opcion = InputHelper.solicitarNumero(0, opciones.length);
+            switch (opcion) {
                 case 1:
-                    //TODO;
+                    gestionarTanquesCria(pisc);
                     break;
                 case 2:
-                    //TODO;
+                    gestionarTanquesHuevos(pisc);
                     break;
                 case 0:
+                case 3:
                     salir = true;
+                    break;
+                default:
+                    System.out.println("Opción no válida.");
             }
         }
     }
-    
+
+/**
+ * Gestiona las operaciones relacionadas con los tanques de cría en una piscifactoría.
+ * Permite al usuario realizar acciones como mostrar el estado de los tanques, 
+ * comprar nuevos tanques de cría, y vaciar tanques existentes.
+ *
+ * @param pisc La piscifactoría en la que se administrarán los tanques de cría.
+ */
+
+    private void gestionarTanquesCria(Piscifactoria pisc) {
+        boolean salir = false;
+        while (!salir) {
+            System.out.println("\n--- Gestión de Tanques de Cría ---");
+            String[] opciones = { "Mostrar estado", "Comprar tanque de cría (" + tanque.TanqueDeCria.COSTO_TANQUE_CRIAS + " monedas)", "Vaciar tanque de cría", "Salir" };
+            MenuHelper.mostrarMenu(opciones);
+            int opcion = InputHelper.solicitarNumero(0, opciones.length);
+
+            switch (opcion) {
+                case 1:
+                    if (pisc.getTanquesCria().isEmpty()) {
+                        System.out.println("No hay tanques de cría.");
+                    } else {
+                        int idx = 1;
+                        for (tanque.TanqueDeCria tc : pisc.getTanquesCria()) {
+                            System.out.println("Tanque " + idx + ": " + tc.estado());
+                            idx++;
+                        }
+                    }
+                    break;
+
+                case 2:
+                    if (pisc.getTanquesCria().size() < 3) {
+                        int precio = tanque.TanqueDeCria.COSTO_TANQUE_CRIAS;
+                        if (Simulador.monedas.getMonedas() < precio) {
+                            System.out.println("No tienes suficientes monedas para comprar un tanque de cría.");
+                        } else {
+                            String especie = InputHelper.readString("Ingrese la especie para el nuevo tanque de cría: ");
+                            tanque.TanqueDeCria nuevoTanque = new tanque.TanqueDeCria(especie);
+
+                            System.out.println("Comprando pareja para el tanque de cría de " + especie);
+                            Pez macho = new Dorada(true);
+                            Pez hembra = new Dorada(false);
+                            
+                            boolean comprada = nuevoTanque.comprarPareja(macho, hembra);
+                            if (comprada) {
+                                pisc.getTanquesCria().add(nuevoTanque);
+                                Simulador.monedas.gastarMonedas(precio);
+                                System.out.println("Tanque de cría para " + especie + " creado y pareja asignada por " + precio + " monedas.");
+                            } else {
+                                System.out.println("No se pudo asignar la pareja en el tanque de cría.");
+                            }
+                        }
+                    } else {
+                        System.out.println("Ya se han alcanzado los 3 tanques de cría permitidos.");
+                    }
+                    break;
+
+                case 3:
+                    if (pisc.getTanquesCria().isEmpty()) {
+                        System.out.println("No hay tanques de cría para vaciar.");
+                    } else {
+                        int idx = 1;
+                        for (tanque.TanqueDeCria tc : pisc.getTanquesCria()) {
+                            System.out.println(idx + ". " + tc.estado());
+                            idx++;
+                        }
+                        int seleccion = InputHelper.solicitarNumero(1, pisc.getTanquesCria().size());
+                        String confirm = InputHelper.readString("¿Está seguro que desea vaciar este tanque? (S/N): ").toUpperCase();
+                        if (confirm.equals("S")) {
+                            pisc.getTanquesCria().get(seleccion - 1).vaciarTanque();
+                            System.out.println("Tanque de cría vaciado.");
+                        } else {
+                            System.out.println("Operación cancelada.");
+                        }
+                    }
+                    break;
+
+                case 0:
+                case 4:
+                    salir = true;
+                    break;
+
+                default:
+                    System.out.println("Opción no válida.");
+            }
+        }
+    }
+
+/**
+ * Gestiona las operaciones relacionadas con los tanques de huevos en una piscifactoría.
+ * 
+ * Permite al usuario:
+ *  - Listar el contenido de los tanques de huevos.
+ *  - Vaciar todos los tanques de huevos dentro de una piscifactoría seleccionada.
+ *  - Comprar un nuevo tanque de huevos si tiene suficiente dinero (usa el precio de la clase `TanqueDeHuevos`).
+ * 
+ * @param pisc la piscifactoría cuyos tanques de huevos se van a gestionar.
+ */
+private void gestionarTanquesHuevos(Piscifactoria pisc) {
+    boolean salir = false;
+    while (!salir) {
+        System.out.println("\n--- Gestión de Tanques de Huevos ---");
+        String[] opciones = { "Listar contenido", "Vaciar tanques de huevos", "Comprar tanque de huevos (" + tanque.TanqueDeHuevos.COSTO_TANQUE_HUEVOS + " monedas)", "Salir" };
+        MenuHelper.mostrarMenu(opciones);
+        
+        int opcion = InputHelper.solicitarNumero(0, opciones.length);
+        switch (opcion) {
+            case 1:
+                listarContenidoTanquesHuevos(pisc); break;
+            case 2:
+                vaciarTanquesHuevos(pisc); break;
+            case 3:
+                comprarTanqueHuevos(pisc); break;
+            case 0:
+            case 4:
+                salir = true; break;
+            default:
+                System.out.println("Opción no válida.");
+        }
+    }
+}
+
+/**
+ * Lista el contenido de los tanques de huevos de la piscifactoría.
+ * Muestra cuántos peces hay de cada especie en todos los tanques de huevos.
+ * 
+ * @param pisc Piscifactoría cuyos tanques de huevos se van a listar.
+ */
+private void listarContenidoTanquesHuevos(Piscifactoria pisc) {
+    if (pisc.getTanquesHuevos().isEmpty()) {
+        System.out.println("No hay tanques de huevos en esta piscifactoría.");
+        return;
+    }
+
+    ArrayList<String> especies = new ArrayList<>();
+    ArrayList<Integer> cantidades = new ArrayList<>();
+
+    for (tanque.TanqueDeHuevos th : pisc.getTanquesHuevos()) {
+        Map<String, Integer> especiesTanque = th.listarEspecies();
+
+        for (String especie : especiesTanque.keySet()) {
+            int cantidad = especiesTanque.get(especie);
+            int indice = especies.indexOf(especie);
+
+            if (indice == -1) {
+                especies.add(especie);
+                cantidades.add(cantidad);
+            } else {
+                cantidades.set(indice, cantidades.get(indice) + cantidad);
+            }
+        }
+    }
+
+    if (especies.isEmpty()) {
+        System.out.println("Los tanques de huevos están vacíos.");
+    } else {
+        System.out.println("Contenido de tanques de huevos:");
+        for (int i = 0; i < especies.size(); i++) {
+            System.out.println(especies.get(i) + ": " + cantidades.get(i));
+        }
+    }
+}
 
 
+/**
+ * Vacía todos los tanques de huevos de la piscifactoría si el usuario lo confirma.
+ * 
+ * @param pisc Piscifactoría cuyos tanques de huevos se van a vaciar.
+ */
+private void vaciarTanquesHuevos(Piscifactoria pisc) {
+    if (pisc.getTanquesHuevos().isEmpty()) {
+        System.out.println("No hay tanques de huevos para vaciar.");
+        return;
+    }
+
+    String confirm = InputHelper.readString("¿Está seguro de vaciar TODOS los tanques de huevos? (S/N): ").toUpperCase();
+    if (confirm.equals("S")) {
+        for (tanque.TanqueDeHuevos th : pisc.getTanquesHuevos()) {
+            th.vaciarTanque();
+        }
+        System.out.println("Todos los tanques de huevos han sido vaciados.");
+    } else {
+        System.out.println("Operación cancelada.");
+    }
+}
+
+/**
+ * Permite comprar un nuevo tanque de huevos si el jugador tiene suficientes monedas.
+ * 
+ * @param pisc Piscifactoría donde se comprará el tanque de huevos.
+ */
+private void comprarTanqueHuevos(Piscifactoria pisc) {
+    int precio = tanque.TanqueDeHuevos.COSTO_TANQUE_HUEVOS; // Se usa el precio definido en la clase
+
+    if (Simulador.monedas.getMonedas() < precio) {
+        System.out.println("No tienes suficientes monedas para comprar un tanque de huevos.");
+        return;
+    }
+
+    Simulador.monedas.gastarMonedas(precio);
+    pisc.getTanquesHuevos().add(new tanque.TanqueDeHuevos());
+    System.out.println("Se ha comprado un nuevo tanque de huevos por " + precio + " monedas.");
+}
 
 
-
-    /**
-     * Método principal que gestiona el flujo del simulador, 
+    /** Método principal que gestiona el flujo del simulador, 
      * mostrando el menú y procesando las opciones del usuario.
      * El ciclo continúa hasta que el usuario decide salir.
      *

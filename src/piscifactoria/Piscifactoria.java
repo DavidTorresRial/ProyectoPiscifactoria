@@ -14,6 +14,9 @@ import peces.propiedades.CarnivoroActivo;
 
 import peces.Pez;
 import tanque.Tanque;
+import tanque.TanqueDeCria;
+import tanque.TanqueDeHuevos;
+
 
 /** Clase abstracta que representa una piscifactoría que gestiona tanques de peces. */
 public abstract class Piscifactoria {
@@ -35,6 +38,11 @@ public abstract class Piscifactoria {
 
     /** Capacidad máxima para ambos tipos de comida. */
     protected int capacidadMaximaComida;
+
+    /**  Agrega las listas para almacenar los tanques de cría y de huevos */
+    protected List<TanqueDeCria> tanquesCria = new ArrayList<>();
+
+    protected List<TanqueDeHuevos> tanquesHuevos = new ArrayList<>();
 
     /**
      * Constructor para crear una nueva piscifactoría.
@@ -140,6 +148,14 @@ public abstract class Piscifactoria {
             monedasGanadas += resultadoTanque[1];
         }
     
+
+        // Actualizar tanques de cría
+        for (TanqueDeCria tc : tanquesCria) {
+            tc.nextDay(true);
+        }
+        // Transferir crías desde tanques de huevos a tanques
+        transferirCriasDesdeHuevos();
+
         return new int[]{pecesVendidos, monedasGanadas};
     }
     
@@ -434,6 +450,51 @@ public abstract class Piscifactoria {
             totalMaduros += tanque.getMaduros();
         }
         return totalMaduros;
+    }
+   
+    /**
+     * Devuelve la lista de tanques de cría.
+     *
+     * @return una lista de objetos de tipo TanqueDeCria.
+     */
+    public List<TanqueDeCria> getTanquesCria() {
+        return tanquesCria;
+    }
+
+    /**
+     * Devuelve la lista de tanques de huevos.
+     *
+     * @return una lista de objetos de tipo TanqueDeHuevos.
+     */
+    public List<TanqueDeHuevos> getTanquesHuevos() {
+        return tanquesHuevos;
+    }
+    
+    /**
+     * Transfiere las crías de los tanques de huevos a los tanques de cría si
+     * hay espacio disponible en los tanques de cría. Las crías se transfieren
+     * solamente si el primer pez del tanque de cría tiene el mismo nombre que
+     * la cría. Si no se puede transferir, la cría permanece en el tanque de
+     * huevos.
+     */
+    public void transferirCriasDesdeHuevos() {
+        for (TanqueDeHuevos th : tanquesHuevos) {
+            // Crear copia para evitar problemas de concurrencia
+            List<Pez> criasPendientes = new ArrayList<>(th.getCrias());
+            for (Pez cria : criasPendientes) {
+                boolean transferido = false;
+                for (Tanque t : tanques) {
+                    if (!t.getPeces().isEmpty() &&
+                        t.getPeces().get(0).getNombre().equals(cria.getNombre()) &&
+                        t.getPeces().size() < t.getCapacidad()) {
+                        t.getPeces().add(cria);
+                        th.getCrias().remove(cria);
+                        transferido = true;
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     /**
