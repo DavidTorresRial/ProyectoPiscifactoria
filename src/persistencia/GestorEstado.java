@@ -15,8 +15,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import commons.AlmacenCentral;
 import commons.Simulador;
+import edificios.AlmacenCentral;
 import estadisticas.Estadisticas;
 import peces.Pez;
 import peces.tipos.doble.Dorada;

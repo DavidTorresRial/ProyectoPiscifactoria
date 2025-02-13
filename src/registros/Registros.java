@@ -284,7 +284,7 @@ public class Registros {
     }
 
     /** Cierra el sistema de logs de errores, liberando los recursos utilizados. */
-     public void closeLogError() {
+    public void closeLogError() {
         logger.close();
     }
 }

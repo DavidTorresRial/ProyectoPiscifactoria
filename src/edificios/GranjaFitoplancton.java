@@ -1,4 +1,6 @@
-package commons;
+package edificios;
+
+import commons.Simulador;
 
 /** Representa una granja de fitoplancton que produce comida vegetal en ciclos de días. */
 public class GranjaFitoplancton {

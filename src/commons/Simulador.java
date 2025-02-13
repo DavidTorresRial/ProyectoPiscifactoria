@@ -9,6 +9,11 @@ import java.util.Random;
 import database.DAOPedidos;
 import database.GeneradorBD;
 import database.dtos.DTOPedido;
+
+import edificios.AlmacenCentral;
+import edificios.GranjaFitoplancton;
+import edificios.GranjaLangostinos;
+
 import helpers.FileHelper;
 import helpers.InputHelper;
 import helpers.MenuHelper;
@@ -1222,12 +1227,13 @@ public class Simulador {
                 Tanque tanque = selectTank().getValue();
                 int cantidadDisponible = (tanque != null) ? tanque.getMaduros() : 0;
     
-                if (cantidadDisponible > 0) {
+                DTOPedido pedidoActualizado = pedidos.enviarPedido(pedidoSeleccionado, cantidadDisponible);
+
+                if (cantidadDisponible > 0 && (tanque.getPeces().get(1).getNombre() == pedidoActualizado.getNombrePez())) { //TODO
                     List<Pez> peces = tanque.getPeces();
                     peces.removeIf(Pez::isMaduro);
                 }
 
-                DTOPedido pedidoActualizado = pedidos.enviarPedido(pedidoSeleccionado, cantidadDisponible);
                 if (pedidoActualizado != null && pedidoActualizado.getCantidadEnviada() == pedidoActualizado.getCantidadTotal()) {
                     System.out.println("El pedido ha sido completado.");
                     registro.registroPedidoEnviado(pedidoActualizado.getNombrePez(), pedidoActualizado.getNumeroReferencia());

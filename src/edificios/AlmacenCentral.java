@@ -1,7 +1,8 @@
-package commons;
+package edificios;
 
 import java.util.List;
 
+import commons.Simulador;
 import piscifactoria.Piscifactoria;
 
 /** Representa un almacén central con capacidad para almacenar comida animal y vegetal. */
