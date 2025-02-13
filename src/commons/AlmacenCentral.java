@@ -54,30 +54,47 @@ public class AlmacenCentral {
     }
 
     /**
-     * Método para añadir comida animal al almacén.
+     * Método para añadir comida animal al almacén. Si se intenta añadir más
+     * de lo que cabe, se añade hasta llenar la capacidad y se pierde el excedente.
      * 
      * @param cantidad La cantidad de comida animal a añadir. Debe ser positiva.
      */
     public void añadirComidaAnimal(int cantidad) {
-        int nuevaCantidad = cantidadComidaAnimal + cantidad;
-        if (cantidad >= 0 && nuevaCantidad <= capacidadAlmacen) {
-            cantidadComidaAnimal = nuevaCantidad;
-        } else {
-            System.out.println("\nNo se puede añadir la cantidad de comida animal: excede la capacidad.");
-        }
+        cantidadComidaAnimal = agregarComida(cantidadComidaAnimal, cantidad, "comida animal");
     }
 
     /**
-     * Método para añadir comida vegetal al almacén.
+     * Método para añadir comida vegetal al almacén. Si se intenta añadir más
+     * de lo que cabe, se añade hasta llenar la capacidad y se pierde el excedente.
      * 
      * @param cantidad La cantidad de comida vegetal a añadir. Debe ser positiva.
      */
     public void añadirComidaVegetal(int cantidad) {
-        int nuevaCantidad = cantidadComidaVegetal + cantidad;
-        if (cantidad >= 0 && nuevaCantidad <= capacidadAlmacen) {
-            cantidadComidaVegetal = nuevaCantidad;
+        cantidadComidaVegetal = agregarComida(cantidadComidaVegetal, cantidad, "comida vegetal");
+    }
+
+    /**
+     * Método privado auxiliar para sumar la comida al almacén. Si la suma excede
+     * la capacidad, se ajusta al máximo permitido y se informa de la cantidad perdida.
+     *
+     * @param cantidadActual la cantidad actual de comida.
+     * @param cantidadAgregar la cantidad a agregar.
+     * @param tipoComida una cadena que identifica el tipo de comida.
+     * @return la nueva cantidad de comida, ajustada a la capacidad.
+     */
+    private int agregarComida(int cantidadActual, int cantidadAgregar, String tipoComida) {
+        if (cantidadAgregar > 0) {
+            int nuevaCantidad = cantidadActual + cantidadAgregar;
+            if (nuevaCantidad > capacidadAlmacen) {
+                int perdida = nuevaCantidad - capacidadAlmacen;
+                nuevaCantidad = capacidadAlmacen;
+                System.out.println("\n[Almacén Central] Capacidad máxima alcanzada para " 
+                        + tipoComida + ". " + perdida + " unidades no pudieron ser almacenadas.");
+            }
+            return nuevaCantidad;
         } else {
-            System.out.println("\nNo se puede añadir la cantidad de comida vegetal: excede la capacidad.");
+            System.out.println("\nLa cantidad a añadir debe ser positiva para " + tipoComida + ".");
+            return cantidadActual;
         }
     }
 

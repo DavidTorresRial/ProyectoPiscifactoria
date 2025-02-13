@@ -86,6 +86,9 @@ public class Simulador {
     /** Almacén central de comida para abastecer las piscifactorías. */
     public static AlmacenCentral almacenCentral;
 
+    public static GranjaFitoplancton granjaFitoplancton;
+    public static GranjaLangostinos granjaLangostinos;
+
     /** Registro de logs y eventos del sistema. */
     public static Registros registro;
 
@@ -235,6 +238,18 @@ public class Simulador {
         } else {
             System.out.println("\nNo hay Almacén Central disponible.");
         }
+
+        if (granjaFitoplancton != null) {
+            System.out.println(granjaFitoplancton.toString());
+        } else {
+            System.out.println("\nNo hay granja de fitoplancton disponible.");
+        }
+
+        if (granjaLangostinos != null) {
+            System.out.println(granjaLangostinos.toString());
+        } else {
+            System.out.println("\nNo hay granja de langostinos disponible.");
+        }
     }
 
     /** Muestra el estado de una piscifactoría seleccionada por el usuario. */
@@ -351,6 +366,8 @@ public class Simulador {
                 pecesDeMar += piscifactoria.getTotalVivos();
             }
         }
+
+        granjaFitoplancton.actualizarCiclo(almacenCentral);
 
         if (dia % 10 == 0) {
             pedidos.generarPedidoAutomatico();
@@ -662,33 +679,78 @@ public class Simulador {
 
     /** Método que gestiona la compra de edificios. */
     private void gestionarCompraEdificios() {
-        boolean salir = false;
+        final int COSTO_ALMACEN = 2000;
+        final int COSTO_GRANJA_FITOPLANCTON = 5000;
+        final int COSTO_GRANJA_LANGOSTINOS = 3000;
 
+        boolean salir = false;
+    
         while (!salir) {
             System.out.println("\n===================== Comprar Edificio =====================");
-            String[] opcionesCompra = (almacenCentral == null) ? new String[] { "Piscifactoría", "Almacén central" } : new String[] { "Piscifactoría" };
+            List<String> opcionesCompra = new ArrayList<>();
+    
+            opcionesCompra.add("Piscifactoría");
+    
+            if (almacenCentral == null) {
+                opcionesCompra.add("Almacén Central");
+            }
+            if (granjaFitoplancton == null && almacenCentral != null) {
+                opcionesCompra.add("Granja de Fitoplancton");
+            }
+            if (granjaLangostinos == null && almacenCentral != null) {
+                opcionesCompra.add("Granja de Langostinos");
+            }
+    
             MenuHelper.mostrarMenuCancelar(opcionesCompra);
-
-            int opcionCompra = InputHelper.solicitarNumero(0, opcionesCompra.length);
-
-            switch (opcionCompra) {
-                case 1:
-                    addPiscifactoria();
-                    break;
-                case 2:
-                    if (monedas.gastarMonedas(2000)) {
-                        almacenCentral = new AlmacenCentral();
-                        System.out.println("\nComprado el almacén central.");
-                        registro.registroComprarAlmacenCentral();
-                    } else {
-                        System.out.println("\nNecesitas 2000 monedas para construir el almacén central.");
-                    }
-                    break;
-                case 0:
-                    salir = true;
+    
+            int opcionIndex = InputHelper.solicitarNumero(0, opcionesCompra.size()) - 1;
+    
+            if (opcionIndex != -1) {
+                String opcionSeleccionada = opcionesCompra.get(opcionIndex);
+    
+                switch (opcionSeleccionada) {
+                    case "Piscifactoría":
+                        addPiscifactoria();
+                        break;
+        
+                    case "Almacén Central":
+                        if (monedas.gastarMonedas(COSTO_ALMACEN)) {
+                            almacenCentral = new AlmacenCentral();
+                            System.out.println("\nComprado el almacén central.");
+                            registro.registroComprarAlmacenCentral();
+                        } else {
+                            System.out.println("\nNecesitas " + COSTO_ALMACEN + " monedas para construir el almacén central.");
+                        }
+                        break;
+        
+                    case "Granja de Fitoplancton":
+                        if (monedas.gastarMonedas(COSTO_GRANJA_FITOPLANCTON)) {
+                            granjaFitoplancton = new GranjaFitoplancton();
+                            System.out.println("\nComprada la granja de fitoplancton.");
+                            registro.registroCompradaGranjaFitoplancton();
+                        } else {
+                            System.out.println("\nNecesitas " + COSTO_GRANJA_FITOPLANCTON + " monedas para construir la granja de fitoplancton.");
+                        }
+                        break;
+        
+                    case "Granja de Langostinos":
+                        if (monedas.gastarMonedas(COSTO_GRANJA_LANGOSTINOS)) {
+                            granjaLangostinos = new GranjaLangostinos();
+                            System.out.println("\nComprada la granja de langostinos.");
+                            registro.registroCompradaGranjaLangostinos();
+                        } else {
+                            System.out.println("\nNecesitas " + COSTO_GRANJA_LANGOSTINOS + " monedas para construir la granja de langostinos.");
+                        }
+                        break;
+        
+                    default:
+                        System.out.println("\nOpción no válida. Intenta nuevamente.");
+                }
+            } else {
+                salir = true;
             }
         }
-    }
+    }    
 
     /** Método que gestiona la mejora de edificios. */
     private void gestionarMejoraEdificios() {
@@ -696,21 +758,49 @@ public class Simulador {
 
         while (!salir) {
             System.out.println("\n===================== Mejorar Edificio =====================");
-            String[] opcionesMejora = (almacenCentral != null) ? new String[] { "Piscifactoría", "Almacén central" } : new String[] { "Piscifactoría" };
-
+            List<String> opcionesMejora = new ArrayList<>();
+    
+            opcionesMejora.add("Piscifactoría");
+    
+            if (almacenCentral != null) {
+                opcionesMejora.add("Almacén Central");
+            }
+            if (granjaFitoplancton != null && almacenCentral != null) {
+                opcionesMejora.add("Granja de Fitoplancton");
+            }
+            if (granjaLangostinos != null && almacenCentral != null) {
+                opcionesMejora.add("Granja de Langostinos");
+            }
+    
             MenuHelper.mostrarMenuCancelar(opcionesMejora);
-
-            int opcionMejora = InputHelper.solicitarNumero(0, opcionesMejora.length);
-
-            switch (opcionMejora) {
-                case 1:
-                    upgradePiscifactoria();
-                    break;
-                case 2:
-                    almacenCentral.aumentarCapacidad();
-                    break;
-                case 0:
-                    salir = true;
+    
+            int opcionIndex = InputHelper.solicitarNumero(0, opcionesMejora.size()) - 1;
+    
+            if (opcionIndex != -1) {
+                String opcionSeleccionada = opcionesMejora.get(opcionIndex);
+    
+                switch (opcionSeleccionada) {
+                    case "Piscifactoría":
+                        upgradePiscifactoria();
+                        break;
+        
+                    case "Almacén Central":
+                        almacenCentral.aumentarCapacidad();
+                        break;
+        
+                    case "Granja de Fitoplancton":
+                        granjaFitoplancton.mejorar();
+                        break;
+        
+                    case "Granja de Langostinos":
+                        granjaLangostinos.mejorar();
+                        break;
+        
+                    default:
+                        System.out.println("\nOpción no válida. Intenta nuevamente.");
+                }
+            } else {
+                salir = true;
             }
         }
     }
@@ -726,21 +816,23 @@ public class Simulador {
 
             int mejoraPiscifactoria = InputHelper.solicitarNumero(0, opcionesMejoraPiscifactoria.length);
 
-            Piscifactoria piscifactoriaSeleccionada = selectPisc();
-
-            if (piscifactoriaSeleccionada != null) {
-                switch (mejoraPiscifactoria) {
-                    case 1:
-                        piscifactoriaSeleccionada.addTanque();
-                        break;
-                    case 2:
-                        piscifactoriaSeleccionada.upgradeFood();
-                        break;
-                    case 0:
-                        salir = true;
+            if (mejoraPiscifactoria != -1) {
+                Piscifactoria piscifactoriaSeleccionada = selectPisc();
+    
+                if (piscifactoriaSeleccionada != null) {
+                    switch (mejoraPiscifactoria) {
+                        case 1:
+                            piscifactoriaSeleccionada.addTanque();
+                            break;
+                        case 2:
+                            piscifactoriaSeleccionada.upgradeFood();
+                            break;
+                        case 0:
+                            salir = true;
+                    }
                 }
+                salir = true;
             }
-            salir = true;
         }
     }
 

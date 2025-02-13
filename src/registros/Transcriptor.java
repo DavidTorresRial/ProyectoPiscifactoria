@@ -263,4 +263,32 @@ class Transcriptor {
     void transcribirEnviadosConReferencia(int cantidadPeces, String nombrePez, String referenciaPedido) {
         transcribir("Enviados " + cantidadPeces + " peces al pedido de " + nombrePez + " con referencia " + referenciaPedido + ".");
     }
+
+    /** Registra la compra de una granja de fitoplancton. */
+    void transcribirCompraGranjaFitoplancton() {
+        transcribir("Comprada la granja de fitoplancton.");
+    }
+
+    /** Registra la compra de una granja de langostinos. */
+    void transcribirCompraGranjaLangostinos() {
+        transcribir("Comprada la granja de langostinos.");
+    }
+
+    /**
+     * Registra la mejora de la granja de fitoplancton añadiendo un nuevo tanque.
+     * 
+     * @param totalTanques Número total de tanques después de la mejora.
+     */
+    void transcribirMejoraGranjaFitoplancton(int totalTanques) {
+        transcribir("Mejorada la granja de fitoplancton añadiendo un tanque por un total de " + totalTanques + " tanques.");
+    }
+
+    /**
+     * Registra la mejora de la granja de langostinos añadiendo un nuevo tanque.
+     * 
+     * @param totalTanques Número total de tanques después de la mejora.
+     */
+    void transcribirMejoraGranjaLangostinos(int totalTanques) {
+        transcribir("Mejorada la granja de langostinos añadiendo un tanque por un total de " + totalTanques + " tanques.");
+    }
 }

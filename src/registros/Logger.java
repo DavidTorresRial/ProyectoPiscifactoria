@@ -297,4 +297,32 @@ class Logger {
     void logEnviadosConReferencia(int cantidadPeces, String nombrePez, String referenciaPedido) {
         log("Enviados " + cantidadPeces + " peces al pedido de " + nombrePez + " con referencia " + referenciaPedido + ".");
     }
+
+    /** Registra la compra de una granja de fitoplancton. */
+    void logCompraGranjaFitoplancton() {
+        log("Comprada la granja de fitoplancton.");
+    }
+
+    /** Registra la compra de una granja de langostinos. */
+    void logCompraGranjaLangostinos() {
+        log("Comprada la granja de langostinos.");
+    }
+
+    /**
+     * Registra la mejora de la granja de fitoplancton añadiendo un nuevo tanque.
+     * 
+     * @param totalTanques Número total de tanques después de la mejora.
+     */
+    void logMejoraGranjaFitoplancton(int totalTanques) {
+        log("Mejorada la granja de fitoplancton añadiendo un tanque por un total de " + totalTanques + " tanques.");
+    }
+
+    /**
+     * Registra la mejora de la granja de langostinos añadiendo un nuevo tanque.
+     * 
+     * @param totalTanques Número total de tanques después de la mejora.
+     */
+    void logMejoraGranjaLangostinos(int totalTanques) {
+        log("Mejorada la granja de langostinos añadiendo un tanque por un total de " + totalTanques + " tanques.");
+    }
 }
