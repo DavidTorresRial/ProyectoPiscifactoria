@@ -90,6 +90,7 @@ public class Tanque {
         for (Pez pez : peces) {
             pez.grow();
         }
+        retroalimentacionMuertos();
         reproduccion();
         return sellFish();
     }
@@ -191,6 +192,21 @@ public class Tanque {
             }
         }
         return new int[] { pecesVendidos, monedasGanadas };
+    }
+
+    /** Recolecta los peces muertos, eliminándolos de la lista y agregándolos a la granja de langostinos. */
+    public void retroalimentacionMuertos() {
+        Iterator<Pez> iterator = peces.iterator();
+
+        while (iterator.hasNext()) {
+            Pez pez = iterator.next();
+            if (!pez.isVivo()) {
+                iterator.remove();
+                if (Simulador.granjaLangostinos != null) {
+                    Simulador.granjaLangostinos.agregarPezMuerto();
+                }
+            }
+        }
     }
 
     /**
