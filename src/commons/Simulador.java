@@ -368,6 +368,7 @@ public class Simulador {
         }
 
         granjaFitoplancton.actualizarCiclo(almacenCentral);
+        granjaLangostinos.simularDia();
 
         if (dia % 10 == 0) {
             pedidos.generarPedidoAutomatico();
