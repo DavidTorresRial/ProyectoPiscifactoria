@@ -1,7 +1,11 @@
 package tanque;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import commons.Simulador;
 import peces.Pez;
 
 /**
@@ -9,7 +13,7 @@ import peces.Pez;
  * cuando no hay espacio en otros tanques de la piscifactoría.
  */
 public class TanqueDeHuevos {
-    private List<Pez> crias;
+    private static List<Pez> crias;
     private final int capacidad = 25;
     public static final int COSTO_TANQUE_HUEVOS = 1500;
 
@@ -34,41 +38,20 @@ public class TanqueDeHuevos {
         return false;
     }
 
-    /**
-     * Lista las especies de peces en el tanque de huevos.
-     * 
-     * @return Lista de nombres de especies en el tanque.
-     */
-    public List<String> listarEspecies() {
-        List<String> especies = new ArrayList<>();
+    public Map<String, Integer> contarEspecies() {
+        Map<String, Integer> especies = new HashMap<>();
         for (Pez p : crias) {
-            if (!especies.contains(p.getNombre())) {
-                especies.add(p.getNombre());
+            // Si la especie ya está en el mapa, incrementa el contador.
+            if (especies.containsKey(p.getNombre())) {
+                especies.put(p.getNombre(), especies.get(p.getNombre()) + 1);
+            } else {
+                // Si no existe, la agrega con valor 1.
+                especies.put(p.getNombre(), 1);
             }
         }
         return especies;
     }
-
-    /**
-     * Lista la cantidad de peces por especie en el tanque de huevos.
-     * 
-     * @return Lista con las cantidades correspondientes a cada especie.
-     */
-    public List<Integer> listarCantidades() {
-        List<String> especies = listarEspecies();
-        List<Integer> cantidades = new ArrayList<>();
-
-        for (String especie : especies) {
-            int count = 0;
-            for (Pez p : crias) {
-                if (p.getNombre().equals(especie)) {
-                    count++;
-                }
-            }
-            cantidades.add(count);
-        }
-        return cantidades;
-    }
+    
 
     /**
      * Vacía el tanque de huevos eliminando todas las crías almacenadas.
@@ -84,5 +67,28 @@ public class TanqueDeHuevos {
      */
     public List<Pez> getCrias() {
         return crias;
+    }
+    
+    public boolean addFish(Pez pez) {
+
+        if (crias.size() < capacidad) {
+            if (Simulador.monedas.gastarMonedas(pez.getDatos().getCoste())) {
+                if (crias.isEmpty() || crias.get(0).getNombre().equals(pez.getNombre())) {
+                    crias.add(pez);
+                    return true;
+                } else {
+                    System.out.println("\nTipo de pez incompatible. Solo se pueden agregar peces de tipo: "
+                            + crias.get(0).getNombre());
+                    return false;
+                }
+            } else {
+                System.out.println("\nNecesitas " + pez.getDatos().getCoste() + " monedas para comprar un "
+                        + pez.getNombre() + ".");
+                return false;
+            }
+        } else {
+            System.out.println("\nEl tanque está lleno. Capacidad máxima alcanzada.");
+            return false;
+        }
     }
 }

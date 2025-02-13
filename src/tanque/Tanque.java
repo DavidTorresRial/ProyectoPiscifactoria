@@ -1,14 +1,12 @@
 package tanque;
 
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import commons.Simulador;
-
-import piscifactoria.Piscifactoria;
-
 import peces.Pez;
+import piscifactoria.Piscifactoria;
 
 /** Representa un tanque para almacenar peces con capacidades de gestión y reproducción. */
 public class Tanque {
