@@ -44,6 +44,7 @@ public class Tanque {
         int hembras = getHembras();
         int machos = getMachos();
         int fertiles = getFertiles();
+        int enfermos = getEnfermos();
 
         int porcentajeOcupacion = (ocupacion * 100 / capacidadMaxima);
         int porcentajeVivos = (ocupacion > 0 ? (vivos * 100 / ocupacion) : 0);
@@ -56,6 +57,7 @@ public class Tanque {
         System.out.println("Peces adultos: " + adultos + " / " + vivos + " (" + porcentajeAdultos + "%)");
         System.out.println("Hembras / Machos: " + hembras + " / " + machos);
         System.out.println("Fértiles: " + fertiles + " / " + vivos);
+        System.out.println("Enfermos: " + enfermos + " / " + vivos);
     }
 
     /** Muestra el estado de todos los peces del tanque. */
@@ -90,6 +92,7 @@ public class Tanque {
         for (Pez pez : peces) {
             pez.grow();
         }
+        propagarEnfermedad();
         reproduccion();
         return sellFish();
     }
@@ -193,6 +196,69 @@ public class Tanque {
         return new int[] { pecesVendidos, monedasGanadas };
     }
 
+
+
+    private void propagarEnfermedad() {
+        boolean hayPezMuerto = false;
+        boolean hayPezEnfermo = false;
+    
+        for (Pez pez : peces) {
+            if (!pez.isVivo()) {
+                hayPezMuerto = true;
+            } else {
+                if (pez.isEnfermo()) {
+                    hayPezEnfermo = true;
+                }
+            }
+        }
+    
+        for (Pez pez : peces) {
+            if (pez.isVivo()) {
+                if (!pez.isEnfermo()) {
+                    double posEnfermar = 0.0;
+                    if (hayPezEnfermo) {
+                        posEnfermar = 0.10; 
+                    } else {
+                        if (hayPezMuerto) {
+                            posEnfermar = 0.05; 
+                        }
+                    }
+                    if (Math.random() < posEnfermar) {
+                        pez.setEnfermo(true);
+                    }
+                }
+            }
+        }
+
+        for (Pez pez : peces) {
+            if (pez.isVivo()) {
+                if (pez.isEnfermo()) {
+                    double posMuerte;
+                    if (pez.isMaduro()) {
+                        posMuerte = 0.10;
+                    } else {
+                        posMuerte = 0.25;
+                    }
+                    if (Math.random() < posMuerte) {
+                        pez.setVivo(false);
+                    }
+                }
+            }
+        }
+
+        for (Pez pez : peces) {
+            if (pez.isVivo()) {
+                if (pez.isEnfermo()) {
+                    if (pez.isAlimentado()) {
+                        if (Math.random() < 0.10) {
+                            pez.setEnfermo(false);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
     /**
      * Devuelve la lista de peces en el tanque.
      * 
@@ -308,6 +374,21 @@ public class Tanque {
             }
         }
         return maduros;
+    }
+
+    /**
+     * Cuenta y devuelve el número de peces enfermos en el tanque.
+     *
+     * @return número de peces enfermos en el tanque.
+     */
+    public int getEnfermos() {
+        int enfermos = 0;
+        for (Pez pez : peces) {
+            if (pez.isEnfermo()) {
+                enfermos++;
+            }
+        }
+        return enfermos;
     }
 
     /**

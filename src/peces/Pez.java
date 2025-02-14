@@ -37,6 +37,9 @@ public abstract class Pez {
     /** Datos específicos del pez extraídos de PecesDatos. */
     private PecesDatos datos;
 
+    /** Estado que indica si el pez esta enfermo: true si el pez esta emfermo, false si no */
+    private boolean enfermo = false;
+
     /**
      * Constructor que inicializa un Pez con su sexo y datos asociados.
      *
@@ -83,6 +86,7 @@ public abstract class Pez {
         System.out.println("Alimentado: " + (alimentado ? "Si" : "No"));
         System.out.println("Adulto: " + (edad >= datos.getMadurez() ? "Si" : "No"));
         System.out.println("Fértil: " + (fertil ? "Si" : "No"));
+        System.out.println("Enfermo: " + (enfermo ? "Si" : "No"));
     }
 
     /** Hace crecer un día el pez, realizando toda la lógica. */
@@ -223,6 +227,13 @@ public abstract class Pez {
         return datos;
     }
 
+     /**
+     * @return true si el pez esta enfermo, false si no.
+     */
+    public boolean isEnfermo() {
+        return enfermo;
+    }
+
     /**
      * Establece la edad del pez.
      * 
@@ -278,6 +289,15 @@ public abstract class Pez {
     }
 
     /**
+     * Establece si el pez esta enfermo.
+     * 
+     * @param enfermo true si el pez esta enfermo, false si no.
+     */
+    public void setEnfermo(boolean enfermo) {
+        this.enfermo = enfermo;
+    }
+
+    /**
      * Devuelve una representación en cadena del estado de un pez.
      *
      * @return una cadena con la información detallada del pez.
@@ -293,6 +313,7 @@ public abstract class Pez {
                 "\n  Alimentado         : " + (alimentado ? "Sí" : "No") +
                 "\n  Adulto             : " + (maduro ? "Sí" : "No") +
                 "\n  Fértil             : " + (fertil ? "Sí" : "No") +
-                "\n  Ciclo              : " + ciclo;
+                "\n  Ciclo              : " + ciclo +
+                "\n  Enfermo            : " + (enfermo ? "Sí" : "No");         
     }
 }
