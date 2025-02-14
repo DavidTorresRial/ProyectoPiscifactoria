@@ -2,6 +2,7 @@ package commons;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -927,34 +928,36 @@ public class Simulador {
             opcion = InputHelper.solicitarNumero(0, opciones.length) - 1;
 
             if (opcion >= 0 && opcion < opciones.length) {
-                String seleccion = opcionesSinCorchete[opcion];
+                String tipo = opcionesSinCorchete[opcion];
 
-                String[] partes = seleccion.split(" ");
-                String tipo = seleccion;
+                String[] partes = tipo.split(" ");
                 int nivel = 1;
-    
+
                 if (partes.length > 1) {
-                    String posibleNivel = partes[partes.length - 1];
+                String posibleNivel = partes[partes.length - 1];
                     if (posibleNivel.equals("I") || posibleNivel.equals("II") || posibleNivel.equals("III")) {
-                        nivel = posibleNivel.equals("I") ? 1 : posibleNivel.equals("II") ? 2 : 3;
-                        StringBuilder sb = new StringBuilder();
-                        for (int i = 0; i < partes.length - 1; i++) {
-                            if (i > 0) {
-                                sb.append(" ");
-                            }
-                            sb.append(partes[i]);
+                        switch (posibleNivel) {
+                            case "I" -> nivel = 1;
+                            case "II" -> nivel = 2;
+                            case "III" -> nivel = 3;
                         }
-                        tipo = sb.toString();
+                        tipo = String.join(" ", Arrays.copyOf(partes, partes.length - 1));
                     }
                 }
-    
+
+                if (tipo.equalsIgnoreCase("Comida general")) {
+                    tipo = "Comida";
+                }
+
                 switch (tipo) {
-                    case "Algas", "Comida", "Pienso":
+                    case "Algas", "Pienso", "Comida":
                         UsarRecompensa.readFood(tipo.toLowerCase() + "_" + nivel + ".xml");
+                        System.out.println("\n¡La recompensa de " + tipo + " ha sido aplicada exitosamente!");
                         break;
 
                     case "Monedas":
                         UsarRecompensa.readCoins("monedas_" + nivel + ".xml");
+                        System.out.println("\n¡Felicidades! Tus monedas han sido sumadas a tu monedero.");
                         break;
 
                     case "Tanque de rio":
@@ -963,6 +966,7 @@ public class Simulador {
                             if (selectPiscRio.getTanques().size() < selectPiscRio.getNumeroMaximoTanques()) {
                                 if (UsarRecompensa.readTank("tanque_r.xml")) {
                                     selectPiscRio.getTanques().add(new Tanque(selectPiscRio.getTanques().size() + 1, 25));
+                                    System.out.println("\n¡Excelente! Se ha añadido un nuevo tanque de río a " + selectPiscRio.getNombre() + ".");
                                 }
                             } else {
                                 System.out.println("\nCapacidad máxima alcanzada: no se pueden añadir más tanques a \"" + selectPiscRio.getNombre() + "\".");
@@ -978,6 +982,7 @@ public class Simulador {
                             if (selectPiscMar.getTanques().size() < selectPiscMar.getNumeroMaximoTanques()) {
                                 if (UsarRecompensa.readTank("tanque_m.xml")) {
                                     selectPiscMar.getTanques().add(new Tanque(selectPiscMar.getTanques().size() + 1, 100));
+                                    System.out.println("\n¡Excelente! Se ha añadido un nuevo tanque de mar a " + selectPiscMar.getNombre() + ".");
                                 }
                             } else {
                                 System.out.println("\nCapacidad máxima alcanzada: no se pueden añadir más tanques a \"" + selectPiscMar.getNombre() + "\".");
@@ -991,6 +996,7 @@ public class Simulador {
                         Piscifactoria pr = UsarRecompensa.readPiscifactoria(true);
                         if (pr != null) {
                             piscifactorias.add(pr);
+                            System.out.println("\n¡Fantástico! Has completado la Piscifactoria de Río.");
                         }
                         break;
 
@@ -998,6 +1004,7 @@ public class Simulador {
                         Piscifactoria pm = UsarRecompensa.readPiscifactoria(false);
                         if (pm != null) {
                             piscifactorias.add(pm);
+                            System.out.println("\n¡Increíble! Has completado la Piscifactoria de Mar.");
                         }
                         break;
 
@@ -1005,12 +1012,43 @@ public class Simulador {
                         if (almacenCentral == null) {
                             if (UsarRecompensa.readAlmacenCentral()) {
                                 almacenCentral = new AlmacenCentral();
+                                System.out.println("\n¡Estupendo! Has completado el Almacén Central.");
                             }
                         } else {
                             System.out.println("\nYa dispones de un Almacen Central.");
                         }
                         break;
-                    
+                        
+                    case "Granja de fitoplancton":
+                        if (almacenCentral != null) {
+                            if (granjaFitoplancton == null) {
+                                if (UsarRecompensa.readGranjaFitoplancton()) {
+                                    System.out.println("\n¡Magnífico! Has completado la Granja de Fitoplancton.");
+                                    granjaFitoplancton = new GranjaFitoplancton();
+                                }
+                            } else {
+                                System.out.println("\nYa dispones de una granja de fitoplancton.");
+                            }
+                        } else {
+                            System.out.println("\nNecesitas tener un almacen central para poder tener una granja de fitoplancton.");
+                        }
+                        break;
+
+                    case "Granja de langostinos":
+                        if (almacenCentral != null) {
+                            if (granjaLangostinos == null) {
+                                if (UsarRecompensa.readGranjaLangostinos()) {
+                                    System.out.println("\n¡Excepcional! Has completado la Granja de Langostinos.");
+                                    granjaLangostinos = new GranjaLangostinos();
+                                }
+                            } else {
+                                System.out.println("\nYa dispones de una granja de langostinos.");
+                            }
+                        } else {
+                            System.out.println("\nNecesitas tener un almacen central para poder tener una granja de langostinos.");
+                        }
+                        break;
+                        
                     default:
                         System.out.println("\nOpción no válida.");
                 }
@@ -1038,6 +1076,16 @@ public class Simulador {
         CrearRecompensa.createAlmacenReward("B");
         CrearRecompensa.createAlmacenReward("C");
         CrearRecompensa.createAlmacenReward("D");
+
+        CrearRecompensa.createGranjaFitoplanctonReward("A");
+        CrearRecompensa.createGranjaFitoplanctonReward("B");
+        CrearRecompensa.createGranjaFitoplanctonReward("C");
+        CrearRecompensa.createGranjaFitoplanctonReward("D");
+
+        CrearRecompensa.createGranjaLangostinosReward("A");
+        CrearRecompensa.createGranjaLangostinosReward("B");
+        CrearRecompensa.createGranjaLangostinosReward("C");
+        CrearRecompensa.createGranjaLangostinosReward("D");
     }
 
     /** Añade 4 peces al primer tanque de la piscifactoría seleccionada que tenga espacio suficiente. */
