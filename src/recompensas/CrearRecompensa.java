@@ -141,7 +141,7 @@ public class CrearRecompensa {
      */
     public static void createComidaReward(int type) {
         String fileName = REWARDS_DIRECTORY + "comida_" + type + ".xml";
-        String name = "Comida " + romanize(type);
+        String name = "Comida general " + romanize(type);
         int rarity = type - 1;
         int foodAmount = getSharedFoodAmount(type);
         String description = foodAmount + " unidades de pienso multipropósito para todo tipo de peces.";
@@ -315,9 +315,9 @@ public class CrearRecompensa {
      * @param part la parte de la piscifactoría (A o B).
      */
     public static void createPiscifactoriaReward(int type, String part) {
-        String tipo = getTypeAmount(type) == 'r' ? "rio" : "mar";
-        String fileName = REWARDS_DIRECTORY + "piscifactoria_" + getTypeAmount(type) + "_" +  part.toLowerCase() + ".xml";
-        String name = "Piscifactoria de " + tipo + " [" + part + "]";
+        char tipo = getTypeAmount(type);
+        String fileName = REWARDS_DIRECTORY + "pisci_" + tipo + "_" + part.toLowerCase() + ".xml";
+        String name = "Piscifactoria de " + (tipo == 'r' ? "rio" : "mar") + " [" + part + "]";
         String description = "Materiales para la construcción de una piscifactoría de " + tipo + ". Con la parte A y B, puedes obtenerla de forma gratuita.";
 
         try {
@@ -349,7 +349,7 @@ public class CrearRecompensa {
                 Element give = root.addElement("give");
                 give.addElement("building")
                     .addAttribute("code", getTypeAmount(type) == 'r' ? "0" : "1")
-                    .addText("Piscifactoria de " + tipo);
+                    .addText("Piscifactoria de " + (tipo == 'r' ? "rio" : "mar"));
                 give.addElement("part")
                     .addText(part);
                 give.addElement("total")
@@ -425,6 +425,126 @@ public class CrearRecompensa {
             Simulador.registro.registroCrearRecompensa(name);
         } catch (IOException | DocumentException e) {
             Simulador.registro.registroLogError("Error al crear la recompensa '" + name + "' en el archivo '" + fileName + "': " + e.getMessage());
+        }
+    }
+
+    /**
+     * Crea o actualiza la recompensa de Granja de fitoplancton para la parte indicada.
+     *
+     * @param part la parte de la granja (A, B, C o D).
+     */
+    public static void createGranjaFitoplanctonReward(String part) {
+        String fileName = REWARDS_DIRECTORY + "fitoplancton_" + part.toLowerCase() + ".xml";
+        String name = "Granja de fitoplancton [" + part + "]";
+        String description = "Materiales para la construcción de una granja de fitoplancton. "
+                           + "Con la parte A, B, C y D, puedes obtenerla de forma gratuita.";
+        String rarity = "3";
+
+        try {
+            File file = new File(fileName);
+            Document document;
+
+            if (file.exists()) {
+                SAXReader reader = new SAXReader();
+                document = reader.read(file);
+
+                Element root = document.getRootElement();
+                Element quantityElement = root.element("quantity");
+                if (quantityElement != null) {
+                    int currentQuantity = Integer.parseInt(quantityElement.getText());
+                    quantityElement.setText(String.valueOf(currentQuantity + 1));
+                } else {
+                    root.addElement("quantity").addText("1");
+                }
+
+            } else {
+                document = DocumentHelper.createDocument();
+                Element root = document.addElement("reward");
+
+                root.addElement("name").addText(name);
+                root.addElement("origin").addText(Simulador.nombreEntidad);
+                root.addElement("desc").addText(description);
+                root.addElement("rarity").addText(rarity);
+
+                Element give = root.addElement("give");
+                give.addElement("building")
+                    .addAttribute("code", "5")
+                    .addText("Granja de fitoplancton");
+                give.addElement("part").addText(part);
+                give.addElement("total").addText("ABCD");
+
+                root.addElement("quantity").addText("1");
+            }
+
+            OutputFormat format = OutputFormat.createPrettyPrint();
+            XMLWriter writer = new XMLWriter(new FileWriter(file), format);
+            writer.write(document);
+            writer.close();
+
+            Simulador.registro.registroCrearRecompensa(name);
+        } catch (IOException | DocumentException e) {
+            Simulador.registro.registroLogError("Error al crear la recompensa '" + name +
+                "' en el archivo '" + fileName + "': " + e.getMessage());
+        }
+    }
+
+    /**
+     * Crea o actualiza la recompensa de Granja de langostinos para la parte indicada.
+     *
+     * @param part la parte de la granja (A, B, C o D).
+     */
+    public static void createGranjaLangostinosReward(String part) {
+        String fileName = REWARDS_DIRECTORY + "langostinos_" + part.toLowerCase() + ".xml";
+        String name = "Granja de langostinos [" + part + "]";
+        String description = "Materiales para la construcción de una granja de langostinos. "
+                           + "Con la parte A, B, C y D, puedes obtenerla de forma gratuita.";
+        String rarity = "3";
+
+        try {
+            File file = new File(fileName);
+            Document document;
+
+            if (file.exists()) {
+                SAXReader reader = new SAXReader();
+                document = reader.read(file);
+
+                Element root = document.getRootElement();
+                Element quantityElement = root.element("quantity");
+                if (quantityElement != null) {
+                    int currentQuantity = Integer.parseInt(quantityElement.getText());
+                    quantityElement.setText(String.valueOf(currentQuantity + 1));
+                } else {
+                    root.addElement("quantity").addText("1");
+                }
+
+            } else {
+                document = DocumentHelper.createDocument();
+                Element root = document.addElement("reward");
+
+                root.addElement("name").addText(name);
+                root.addElement("origin").addText(Simulador.nombreEntidad);
+                root.addElement("desc").addText(description);
+                root.addElement("rarity").addText(rarity);
+
+                Element give = root.addElement("give");
+                give.addElement("building")
+                    .addAttribute("code", "6")
+                    .addText("Granja de langostinos");
+                give.addElement("part").addText(part);
+                give.addElement("total").addText("ABCD");
+
+                root.addElement("quantity").addText("1");
+            }
+
+            OutputFormat format = OutputFormat.createPrettyPrint();
+            XMLWriter writer = new XMLWriter(new FileWriter(file), format);
+            writer.write(document);
+            writer.close();
+
+            Simulador.registro.registroCrearRecompensa(name);
+        } catch (IOException | DocumentException e) {
+            Simulador.registro.registroLogError("Error al crear la recompensa '" + name +
+                "' en el archivo '" + fileName + "': " + e.getMessage());
         }
     }
 
