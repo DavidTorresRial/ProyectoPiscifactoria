@@ -1059,16 +1059,35 @@ public class Simulador {
     /** Genera diversas recompensas. */
     private void generarRecompensas() {
         CrearRecompensa.createAlgasReward(1);
+        CrearRecompensa.createAlgasReward(2);
+        CrearRecompensa.createAlgasReward(3);
+        CrearRecompensa.createAlgasReward(4);
+        CrearRecompensa.createAlgasReward(5);
+
         CrearRecompensa.createPiensoReward(1);
+        CrearRecompensa.createPiensoReward(2);
+        CrearRecompensa.createPiensoReward(3);
+        CrearRecompensa.createPiensoReward(4);
+        CrearRecompensa.createPiensoReward(5);
+
         CrearRecompensa.createComidaReward(1);
+        CrearRecompensa.createComidaReward(2);
+        CrearRecompensa.createComidaReward(3);
+        CrearRecompensa.createComidaReward(4);
+        CrearRecompensa.createComidaReward(5);
 
         CrearRecompensa.createMonedasReward(1);
+        CrearRecompensa.createMonedasReward(2);
+        CrearRecompensa.createMonedasReward(3);
+        CrearRecompensa.createMonedasReward(4);
+        CrearRecompensa.createMonedasReward(5);
 
         CrearRecompensa.createTanqueReward(1);
         CrearRecompensa.createTanqueReward(2);
 
         CrearRecompensa.createPiscifactoriaReward(1, "A");
         CrearRecompensa.createPiscifactoriaReward(1, "B");
+
         CrearRecompensa.createPiscifactoriaReward(2, "A");
         CrearRecompensa.createPiscifactoriaReward(2, "B");
 
