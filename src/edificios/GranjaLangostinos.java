@@ -32,6 +32,12 @@ public class GranjaLangostinos {
         tanques.add(new TanqueLangostinos());
     }
 
+    public GranjaLangostinos(int produccion, int racionesRetroalimentacion, List<TanqueLangostinos> tanques) {
+        this.produccion = produccion;
+        this.racionesRetroalimentacion =racionesRetroalimentacion;
+        this.tanques = tanques;
+    }
+
     /** 
      * Registra la muerte de un pez y suma una ración.
      */
@@ -149,5 +155,29 @@ public class GranjaLangostinos {
                 return 0;
             }
         }
+    }
+
+    public int getProduccion() { //TODO Vaya horas para tener que pensar...
+        return produccion;
+    }
+
+    public void setProduccion(int produccion) {
+        this.produccion = produccion;
+    }
+
+    public int getRacionesRetroalimentacion() {
+        return racionesRetroalimentacion;
+    }
+
+    public void setRacionesRetroalimentacion(int racionesRetroalimentacion) {
+        this.racionesRetroalimentacion = racionesRetroalimentacion;
+    }
+
+    public List<TanqueLangostinos> getTanques() {
+        return tanques;
+    }
+
+    public void setTanques(List<TanqueLangostinos> tanques) {
+        this.tanques = tanques;
     }
 }
