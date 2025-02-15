@@ -3,10 +3,10 @@ package persistencia;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -15,15 +15,23 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import commons.AlmacenCentral;
 import commons.Simulador;
+import edificios.AlmacenCentral;
 import estadisticas.Estadisticas;
-
 import peces.Pez;
-import peces.tipos.doble.*;
-import peces.tipos.mar.*;
-import peces.tipos.rio.*;
-
+import peces.tipos.doble.Dorada;
+import peces.tipos.doble.SalmonAtlantico;
+import peces.tipos.doble.TruchaArcoiris;
+import peces.tipos.mar.ArenqueDelAtlantico;
+import peces.tipos.mar.Besugo;
+import peces.tipos.mar.LenguadoEuropeo;
+import peces.tipos.mar.LubinaRayada;
+import peces.tipos.mar.Robalo;
+import peces.tipos.rio.CarpaPlateada;
+import peces.tipos.rio.Pejerrey;
+import peces.tipos.rio.PercaEuropea;
+import peces.tipos.rio.SalmonChinook;
+import peces.tipos.rio.TilapiaDelNilo;
 import piscifactoria.Piscifactoria;
 import piscifactoria.PiscifactoriaDeMar;
 import piscifactoria.PiscifactoriaDeRio;
@@ -48,7 +56,7 @@ public class GestorEstado {
         estado.put("monedas", Simulador.monedas.getMonedas());
         estado.put("orca", Simulador.estadisticas.exportarDatos(simulador.getPecesImplementados()));
 
-        // Edificios - Almacén
+        // Almacén
         Map<String, Object> almacenMap = new LinkedHashMap<>();
         AlmacenCentral almacenCentral = Simulador.almacenCentral;
         almacenMap.put("disponible", almacenCentral != null && almacenCentral.getCapacidadAlmacen() > 0);
@@ -107,10 +115,9 @@ public class GestorEstado {
         }
         estado.put("piscifactorias", piscifactoriasList);
 
-        // Guardar el JSON en un archivo
         try (FileWriter writer = new FileWriter("saves/" + simulador.getNombreEntidad() + ".save")) {
             gson.toJson(estado, writer);
-            Simulador.logger.log(Simulador.nombreEntidad, "Sistema guardado.");
+            Simulador.registro.registroGuardarSistema();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -246,8 +253,8 @@ public class GestorEstado {
             }
 
             System.out.println("\nPartida cargada: " + archivoPartida);
-            Simulador.logger.log(Simulador.nombreEntidad, "Sistema cargado.");
-        } catch (Exception e) {
+            Simulador.registro.registroCargarSistema();
+        } catch (IOException e) {
             System.err.println("Error al cargar el archivo: " + e.getMessage());
         }
     }

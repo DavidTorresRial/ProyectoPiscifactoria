@@ -44,7 +44,7 @@ public class Tanque {
         int hembras = getHembras();
         int machos = getMachos();
         int fertiles = getFertiles();
-        
+
         int porcentajeOcupacion = (ocupacion * 100 / capacidadMaxima);
         int porcentajeVivos = (ocupacion > 0 ? (vivos * 100 / ocupacion) : 0);
         int porcentajeAlimentados = (vivos > 0 ? (alimentados * 100 / vivos) : 0);
@@ -73,19 +73,14 @@ public class Tanque {
      * 
      * @param piscifactoria la piscifactoría a la que pertenece el tanque.
      */
-    public void showCapacity(Piscifactoria piscifactoria) {                     // TODO Preguntar si pasar todo el objeto o solo el nombre. Y preguntar que tan optimo es el String.format.
+    public void showCapacity(Piscifactoria piscifactoria) {
         int porcentajeCapacidad = (peces.size() * 100) / capacidadMaxima;
         String mensaje = String.format(
-            "Tanque %d de la %s al %d%% de capacidad. [%d/%d]",
-            numeroTanque,
-            piscifactoria.getNombre(),
-            porcentajeCapacidad,
-            peces.size(),
-            capacidadMaxima
-        );
+                "Tanque %d de la %s al %d%% de capacidad. [%d/%d]",
+                numeroTanque, piscifactoria.getNombre(), porcentajeCapacidad, peces.size(), capacidadMaxima);
         System.out.println(mensaje);
     }
-    
+
     /**
      * Avanza un día en el tanque, haciendo crecer los peces y ejecutando la reproducción.
      * 
@@ -95,15 +90,15 @@ public class Tanque {
         for (Pez pez : peces) {
             pez.grow();
         }
+        retroalimentacionMuertos();
         reproduccion();
         return sellFish();
     }
-    
 
     /** Método que maneja la reproducción de los peces en el tanque. */
     public void reproduccion() {
         boolean hayMachoFertil = false;
-        
+
         for (Pez pez : peces) {
             if (pez.isSexo() && pez.isFertil()) {
                 hayMachoFertil = true;
@@ -161,11 +156,13 @@ public class Tanque {
                     peces.add(pez);
                     return true;
                 } else {
-                    System.out.println("\nTipo de pez incompatible. Solo se pueden agregar peces de tipo: " + peces.get(0).getNombre());
+                    System.out.println("\nTipo de pez incompatible. Solo se pueden agregar peces de tipo: "
+                            + peces.get(0).getNombre());
                     return false;
                 }
             } else {
-                System.out.println("\nNecesitas " + pez.getDatos().getCoste() + " monedas para comprar un " + pez.getNombre() + ".");
+                System.out.println("\nNecesitas " + pez.getDatos().getCoste() + " monedas para comprar un "
+                        + pez.getNombre() + ".");
                 return false;
             }
         } else {
@@ -181,20 +178,35 @@ public class Tanque {
      */
     public int[] sellFish() {
         int pecesVendidos = 0, monedasGanadas = 0;
-    
+
         Iterator<Pez> iterator = peces.iterator();
         while (iterator.hasNext()) {
             Pez pez = iterator.next();
             if (pez.getEdad() >= pez.getDatos().getOptimo() && pez.isVivo()) {
                 Simulador.monedas.ganarMonedas(pez.getDatos().getMonedas());
                 Simulador.estadisticas.registrarVenta(pez.getNombre(), pez.getDatos().getMonedas());
-    
+
                 monedasGanadas += pez.getDatos().getMonedas();
                 pecesVendidos++;
                 iterator.remove();
             }
         }
-        return new int[]{pecesVendidos, monedasGanadas};
+        return new int[] { pecesVendidos, monedasGanadas };
+    }
+
+    /** Recolecta los peces muertos, eliminándolos de la lista y agregándolos a la granja de langostinos. */
+    public void retroalimentacionMuertos() {
+        Iterator<Pez> iterator = peces.iterator();
+
+        while (iterator.hasNext()) {
+            Pez pez = iterator.next();
+            if (!pez.isVivo()) {
+                iterator.remove();
+                if (Simulador.granjaLangostinos != null) {
+                    Simulador.granjaLangostinos.agregarPezMuerto();
+                }
+            }
+        }
     }
 
     /**

@@ -1,26 +1,28 @@
-package commons;
+package database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import commons.Simulador;
+
 /** Administra la conexión a una base de datos MySQL. */
-public class MySQLConnection {
+public class Conexion {
 
     /** Usuario de la base de datos. */
-    private static final String USER = " "; 
+    private static final String USER = "admin_pisc"; 
 
     /** Contraseña del usuario de la base de datos. */
-    private static final String PASSWORD = " ";
+    private static final String PASSWORD = "adminpisc";
 
     /** Dirección del servidor de la base de datos. */
-    private static final String SERVER = " .iescotarelo.es";
+    private static final String SERVER = "fmiser.iescotarelo.es";
 
     /** Puerto del servidor de la base de datos. */
-    private static final String PORT = " ";
+    private static final String PORT = "3344";
 
     /** Nombre de la base de datos. */
-    private static final String DATABASE = " ";
+    private static final String DATABASE = "piscifactoria";
 
     /** Objeto de conexión a la base de datos. */
     private static Connection connection;
@@ -32,11 +34,9 @@ public class MySQLConnection {
     public static Connection getConnection() {
         if (connection == null) {
             try {
-                connection = DriverManager.getConnection("jdbc:mysql://" + SERVER + ":" + PORT + "/" + DATABASE, USER, PASSWORD);
-                // System.out.println("Conexión exitosa.");
+                connection = DriverManager.getConnection("jdbc:mysql://" + SERVER + ":" + PORT + "/" + DATABASE + "?rewriteBatchedStatements=true", USER, PASSWORD);
             } catch (SQLException e) {
-                e.printStackTrace();
-                Simulador.logger.logError("Error al conectar: " + e.getMessage());
+                Simulador.registro.registroLogError("Error al conectar: " + e.getMessage());
             }
         }
         return connection;
@@ -48,21 +48,9 @@ public class MySQLConnection {
             try {
                 connection.close();
                 connection = null;
-                // System.out.println("Conexión cerrada.");
             } catch (SQLException e) {
-                Simulador.logger.logError("Error al cerrar conexión: " + e.getMessage());
+                Simulador.registro.registroLogError("Error al cerrar conexión: " + e.getMessage());
             }
         }
     }
-
-    /*
-
-
-    public static void main(String[] args) {
-    connection = MySQLConnection.getConnection(); // TODO Pruebas
-    MySQLConnection.closeConnection();
-    }
-
-    
-    */
 }
