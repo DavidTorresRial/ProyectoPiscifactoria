@@ -935,11 +935,18 @@ public class Simulador {
 
                 if (partes.length > 1) {
                 String posibleNivel = partes[partes.length - 1];
-                    if (posibleNivel.equals("I") || posibleNivel.equals("II") || posibleNivel.equals("III")) {
+                    if (posibleNivel.equals("I") || 
+                        posibleNivel.equals("II") || 
+                        posibleNivel.equals("III") || 
+                        posibleNivel.equals("IV") ||
+                        posibleNivel.equals("V")) {
+
                         switch (posibleNivel) {
                             case "I" -> nivel = 1;
                             case "II" -> nivel = 2;
                             case "III" -> nivel = 3;
+                            case "IV" -> nivel = 4;
+                            case "V" -> nivel = 5;
                         }
                         tipo = String.join(" ", Arrays.copyOf(partes, partes.length - 1));
                     }
