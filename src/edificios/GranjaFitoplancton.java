@@ -27,6 +27,17 @@ public class GranjaFitoplancton {
     }
 
     /**
+     * Crea una granja con un número específico de tanques y un ciclo inicial.
+     * 
+     * @param numeroTanques Cantidad inicial de tanques.
+     * @param ciclo Ciclo de producción inicial.
+     */
+    public GranjaFitoplancton(int numeroTanques, int ciclo) {
+        this.numeroTanques = numeroTanques;
+        this.ciclo = ciclo;
+    }
+
+    /**
      * Actualiza el ciclo de producción de la granja y añade comida vegetal al almacén si se cumple el ciclo.
      * 
      * @param almacen Almacén central donde se almacena la producción de comida vegetal.
@@ -53,6 +64,24 @@ public class GranjaFitoplancton {
         } else {
             System.out.println("\nNo tienes suficientes monedas para comprar la granja de fitoplancton.");
         }
+    }
+
+    /**
+     * Devuelve el número de tanques de la granja.
+     * 
+     * @return Número de tanques actuales.
+     */
+    public int getNumeroTanques() {
+        return numeroTanques;
+    }
+
+    /**
+     * Devuelve el ciclo actual de producción.
+     * 
+     * @return Días transcurridos en el ciclo actual.
+     */
+    public int getCiclo() {
+        return ciclo;
     }
 
     /**
