@@ -3,14 +3,10 @@ package edificios;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
 import commons.Simulador;
 
 /** Representa una granja de langostinos. */
 public class GranjaLangostinos {
-
-    /** Producción total (pienso generado). */
-    private int produccion;
     
     /** Raciones disponibles por retroalimentación (1 ración = 50 unidades). */
     private int racionesRetroalimentacion;
@@ -18,29 +14,22 @@ public class GranjaLangostinos {
     /** Lista de tanques de langostinos. */
     private List<TanqueLangostinos> tanques;
 
-    /** Costo de compra de la granja. */
-    public static final int COSTO_COMPRA = 3000;
-
     /** Costo para añadir un tanque. */
-    public static final int COSTO_MEJORA = 1500;
+    private final int COSTO_MEJORA = 1500;
 
     /** Crea una granja con un tanque inicial y sin producción. */
     public GranjaLangostinos() {
-        this.produccion = 0;
         this.racionesRetroalimentacion = 0;
         this.tanques = new ArrayList<>();
         tanques.add(new TanqueLangostinos());
     }
 
-    public GranjaLangostinos(int produccion, int racionesRetroalimentacion, List<TanqueLangostinos> tanques) {
-        this.produccion = produccion;
-        this.racionesRetroalimentacion =racionesRetroalimentacion;
+    public GranjaLangostinos(int racionesRetroalimentacion, List<TanqueLangostinos> tanques) {
+        this.racionesRetroalimentacion = racionesRetroalimentacion;
         this.tanques = tanques;
     }
 
-    /** 
-     * Registra la muerte de un pez y suma una ración.
-     */
+    /** Registra la muerte de un pez y suma una ración. */
     public void agregarPezMuerto() {
         racionesRetroalimentacion++;
         System.out.println("Se ha agregado un pez muerto. Raciones disponibles: " + racionesRetroalimentacion);
@@ -58,41 +47,35 @@ public class GranjaLangostinos {
         }
     }
     
-    /**
-     * Reparte alimento a los tanques desde el almacén central.
-     * Cada tanque recibe raciones de 50 unidades hasta tener 3.
-     */
+    /** Reparte alimento a los tanques desde el almacén central. */
     private void recargarTanques() {
-        boolean recargoPosible = true;
-        while (recargoPosible) {
-            recargoPosible = false;
+        for (int ronda = 0; ronda < 3; ronda++) {
             for (TanqueLangostinos tanque : tanques) {
                 if (tanque.racionesLocal < 3) {
-                    if (Simulador.almacenCentral.getCantidadComidaAnimal() >= 50) {
-                        int nuevaCantidad = Simulador.almacenCentral.getCantidadComidaAnimal() - 50;
-                        Simulador.almacenCentral.setCantidadComidaAnimal(nuevaCantidad);
+                    if (Simulador.almacenCentral.getCantidadComidaVegetal() >= 50) {
                         tanque.racionesLocal++;
-                        recargoPosible = true;
+                        int comidaDisponible = Simulador.almacenCentral.getCantidadComidaVegetal();
+                        Simulador.almacenCentral.setCantidadComidaVegetal(comidaDisponible - 50);
                     }
                 }
             }
         }
     }
-    
+
     /**
      * Simula un día en la granja:
      * recarga tanques y produce alimento según disponibilidad.
      */
     public void simularDia() {
+        int produccion = 0;
+
         recargarTanques();
         for (TanqueLangostinos tanque : tanques) {
             int prodDia = tanque.simularDia();
             produccion += prodDia;
         }
         if (produccion > 0) {
-            System.out.println("Granja de Fitoplancton produce " + produccion + " de comida vegetal.");
-        }
-        if (Simulador.almacenCentral != null) {
+            System.out.println("\nGranja de Langostinos produce " + produccion + " de comida animal.");
             Simulador.almacenCentral.añadirComidaAnimal(produccion);
         }
     }
@@ -102,7 +85,6 @@ public class GranjaLangostinos {
     public String toString() {
         return "\nGranja de Langostinos:" +
                "\n  Tanques: " + tanques.size() +
-               "\n  Producción: " + produccion +
                "\n  Raciones retroalimentación: " + racionesRetroalimentacion;
     }
 
@@ -110,7 +92,7 @@ public class GranjaLangostinos {
      * Representa un tanque de langostinos.
      * Cada tanque produce entre 100 y 200 unidades tras 3 días de espera.
      */
-    private class TanqueLangostinos {
+    public class TanqueLangostinos {
 
         /** Días para iniciar la producción. */
         private int diasParaProduccion = 3;
@@ -119,10 +101,18 @@ public class GranjaLangostinos {
         private int diasPenalizacion = 0;
 
         /** Raciones disponibles en el tanque. */
-        private int racionesLocal = 3;
+        private int racionesLocal = 0;
 
         /** Generador de números aleatorios. */
         private Random random = new Random();
+
+        public TanqueLangostinos() {
+        }
+
+        public TanqueLangostinos(int racionesLocal, int diasPenalizacion) {
+            this.racionesLocal = racionesLocal;
+            this.diasPenalizacion = diasPenalizacion;
+        }
 
         /**
          * Simula un día en el tanque: consume alimento y produce si es posible.
@@ -155,29 +145,23 @@ public class GranjaLangostinos {
                 return 0;
             }
         }
-    }
-
-    public int getProduccion() { //TODO Vaya horas para tener que pensar...
-        return produccion;
-    }
-
-    public void setProduccion(int produccion) {
-        this.produccion = produccion;
+        
+        /** Devuelve las raciones locales (comida) disponibles en el tanque. */
+        public int getRacionesLocal() {
+            return racionesLocal;
+        }
+        
+        /** Devuelve los días de penalización (descanso) actuales. */
+        public int getDiasPenalizacion() {
+            return diasPenalizacion;
+        }
     }
 
     public int getRacionesRetroalimentacion() {
         return racionesRetroalimentacion;
     }
 
-    public void setRacionesRetroalimentacion(int racionesRetroalimentacion) {
-        this.racionesRetroalimentacion = racionesRetroalimentacion;
-    }
-
     public List<TanqueLangostinos> getTanques() {
         return tanques;
-    }
-
-    public void setTanques(List<TanqueLangostinos> tanques) {
-        this.tanques = tanques;
     }
 }
