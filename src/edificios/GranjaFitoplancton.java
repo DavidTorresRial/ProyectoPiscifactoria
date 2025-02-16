@@ -42,15 +42,13 @@ public class GranjaFitoplancton {
      * 
      * @param almacen Almacén central donde se almacena la producción de comida vegetal.
      */
-    public void actualizarCiclo(AlmacenCentral almacen) {
-        if (almacen != null) {
-            ciclo++;
-            if (ciclo > CICLO_DIAS) {
-                int produccionFitoplancton = numeroTanques * PRODUCCION_POR_TANQUE;
-                System.out.println("\nGranja de Fitoplancton produce " + produccionFitoplancton + " de comida vegetal.");
-                almacen.añadirComidaVegetal(produccionFitoplancton);
-                ciclo = 0;
-            }
+    public void nextDay(AlmacenCentral almacen) {
+        ciclo++;
+        if (ciclo > CICLO_DIAS) {
+            int produccionFitoplancton = numeroTanques * PRODUCCION_POR_TANQUE;
+            System.out.println("\nGranja de Fitoplancton produce " + produccionFitoplancton + " de comida vegetal.");
+            almacen.añadirComidaVegetal(produccionFitoplancton);
+            ciclo = 0;
         }
     }
 

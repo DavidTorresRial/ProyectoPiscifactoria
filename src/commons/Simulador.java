@@ -92,7 +92,10 @@ public class Simulador {
     /** Almacén central de comida para abastecer las piscifactorías. */
     public static AlmacenCentral almacenCentral;
 
+    /** Granja dedicada a la producción de fitoplancton. */
     public static GranjaFitoplancton granjaFitoplancton;
+
+    /** Granja dedicada a la producción de langostinos. */
     public static GranjaLangostinos granjaLangostinos;
 
     /** Registro de logs y eventos del sistema. */
@@ -375,14 +378,13 @@ public class Simulador {
 
         if (almacenCentral != null) {
             almacenCentral.distribuirComida(Simulador.piscifactorias);
-        }
-
-        if (granjaFitoplancton != null) {
-            granjaFitoplancton.actualizarCiclo(almacenCentral);
-        }
-
-        if (granjaLangostinos != null) {
-            granjaLangostinos.simularDia();
+            
+            if (granjaFitoplancton != null) {
+                granjaFitoplancton.nextDay(almacenCentral);
+            }
+            if (granjaLangostinos != null) {
+                granjaLangostinos.nextDay(almacenCentral);
+            }
         }
 
         if (dia % 10 == 0) {
