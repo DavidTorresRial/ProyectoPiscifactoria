@@ -86,6 +86,11 @@ public class Simulador {
 
     /** Almacén central de comida para abastecer las piscifactorías. */
     public static AlmacenCentral almacenCentral;
+    
+
+    public TanqueDeCria tanqueDeCria;
+    
+    public TanqueDeHuevos tanqueDeHuevos;
 
     /** Registro de logs y eventos del sistema. */
     public static Registros registro;
@@ -883,17 +888,17 @@ public class Simulador {
             System.out.println("\n================== Recompensas Disponibles =================");
             String[] opciones = FileHelper.getRewards();
             String[] opcionesSinCorchete = FileHelper.getRewardsWithoutBrackets(opciones);
-
+    
             MenuHelper.mostrarMenuCancelar(opciones);
             opcion = InputHelper.solicitarNumero(0, opciones.length) - 1;
-
+    
             if (opcion >= 0 && opcion < opciones.length) {
                 String seleccion = opcionesSinCorchete[opcion];
-
+    
                 String[] partes = seleccion.split(" ");
                 String tipo = seleccion;
                 int nivel = 1;
-
+    
                 if (partes.length > 1) {
                     String posibleNivel = partes[partes.length - 1];
                     if (posibleNivel.equals("I") || posibleNivel.equals("II") || posibleNivel.equals("III")) {
@@ -908,64 +913,76 @@ public class Simulador {
                         tipo = sb.toString();
                     }
                 }
-
+    
                 switch (tipo) {
                     case "Algas", "Comida", "Pienso":
                         UsarRecompensa.readFood(tipo.toLowerCase() + "_" + nivel + ".xml");
                         break;
-
+    
                     case "Monedas":
                         UsarRecompensa.readCoins("monedas_" + nivel + ".xml");
                         break;
-
+    
                     case "Tanque de rio":
                         Piscifactoria selectPiscRio = selectPisc();
                         if (selectPiscRio instanceof PiscifactoriaDeRio) {
                             if (selectPiscRio.getTanques().size() < selectPiscRio.getNumeroMaximoTanques()) {
                                 if (UsarRecompensa.readTank("tanque_r.xml")) {
-                                    selectPiscRio.getTanques()
-                                            .add(new Tanque(selectPiscRio.getTanques().size() + 1, 25));
+                                    selectPiscRio.getTanques().add(new Tanque(selectPiscRio.getTanques().size() + 1, 25));
                                 }
                             } else {
-                                System.out.println("\nCapacidad máxima alcanzada: no se pueden añadir más tanques a \""
+                                System.out.println("\nCapacidad máxima alcanzada: no se pueden añadir más tanques a \"" 
                                         + selectPiscRio.getNombre() + "\".");
                             }
                         } else {
                             System.out.println("\nNo puedes añadir el tanque a una Piscifactoria de Rio.");
                         }
                         break;
-
+    
                     case "Tanque de mar":
                         Piscifactoria selectPiscMar = selectPisc();
                         if (selectPiscMar instanceof PiscifactoriaDeMar) {
                             if (selectPiscMar.getTanques().size() < selectPiscMar.getNumeroMaximoTanques()) {
                                 if (UsarRecompensa.readTank("tanque_m.xml")) {
-                                    selectPiscMar.getTanques()
-                                            .add(new Tanque(selectPiscMar.getTanques().size() + 1, 100));
+                                    selectPiscMar.getTanques().add(new Tanque(selectPiscMar.getTanques().size() + 1, 100));
                                 }
                             } else {
-                                System.out.println("\nCapacidad máxima alcanzada: no se pueden añadir más tanques a \""
+                                System.out.println("\nCapacidad máxima alcanzada: no se pueden añadir más tanques a \"" 
                                         + selectPiscMar.getNombre() + "\".");
                             }
                         } else {
                             System.out.println("\nNo puedes añadir el tanque a una Piscifactoria de Mar.");
                         }
                         break;
-
+                        
+                    case "Tanque de cría":
+                        if (UsarRecompensa.readTanqueCria()) {
+                            String tipotanque = InputHelper.readString("Ingresa el tipo de tanque ");
+                            tanqueDeCria = new TanqueDeCria(tipotanque);
+                            System.out.println("\nTanque de cría canjeado correctamente.");
+                        }
+                        break;
+                        
+                    case "Tanque de huevos":
+                        if (UsarRecompensa.readTanqueHuevos()) {
+                            System.out.println("\nTanque de huevos canjeado correctamente.");
+                        }
+                        break;
+    
                     case "Piscifactoria de rio":
                         Piscifactoria pr = UsarRecompensa.readPiscifactoria(true);
                         if (pr != null) {
                             piscifactorias.add(pr);
                         }
                         break;
-
+    
                     case "Piscifactoria de mar":
                         Piscifactoria pm = UsarRecompensa.readPiscifactoria(false);
                         if (pm != null) {
                             piscifactorias.add(pm);
                         }
                         break;
-
+    
                     case "Almacen central":
                         if (almacenCentral == null) {
                             if (UsarRecompensa.readAlmacenCentral()) {
@@ -975,13 +992,14 @@ public class Simulador {
                             System.out.println("\nYa dispones de un Almacen Central.");
                         }
                         break;
-
+    
                     default:
                         System.out.println("\nOpción no válida.");
                 }
             }
         } while (opcion != -1);
     }
+    
 
     /** Genera diversas recompensas. */
     private void generarRecompensas() {
@@ -1003,6 +1021,15 @@ public class Simulador {
         CrearRecompensa.createAlmacenReward("B");
         CrearRecompensa.createAlmacenReward("C");
         CrearRecompensa.createAlmacenReward("D");
+
+        CrearRecompensa.createTanqueCriaReward("A");
+        CrearRecompensa.createTanqueCriaReward("B");
+        CrearRecompensa.createTanqueCriaReward("C");
+
+        CrearRecompensa.createTanqueHuevosReward("A");
+        CrearRecompensa.createTanqueHuevosReward("B");
+        CrearRecompensa.createTanqueHuevosReward("C");
+        CrearRecompensa.createTanqueHuevosReward("D");
     }
 
     /**
@@ -1299,8 +1326,8 @@ public class Simulador {
         boolean salir = false;
         while (!salir) {
             System.out.println("\n--- Gestión de Piscifactoría: " + pisc.getNombre() + " ---");
-            String[] opciones = { "Tanques de Cría", "Tanques de Huevos", "Salir" };
-            MenuHelper.mostrarMenu(opciones);
+            String[] opciones = { "Tanques de Cría", "Tanques de Huevos" };
+            MenuHelper.mostrarMenuCancelar(opciones);
             int opcion = InputHelper.solicitarNumero(0, opciones.length);
             switch (opcion) {
                 case 1:
@@ -1310,7 +1337,6 @@ public class Simulador {
                     gestionarTanquesHuevos(pisc);
                     break;
                 case 0:
-                case 3:
                     salir = true;
                     break;
                 default:
@@ -1334,8 +1360,8 @@ public class Simulador {
             System.out.println("\n--- Gestión de Tanques de Cría ---");
             String[] opciones = { "Mostrar estado",
                     "Comprar tanque de cría (" + tanque.TanqueDeCria.COSTO_TANQUE_CRIAS + " monedas)",
-                    "Vaciar tanque de cría", "Salir" };
-            MenuHelper.mostrarMenu(opciones);
+                    "Vaciar tanque de cría" };
+            MenuHelper.mostrarMenuCancelar(opciones);
             int opcion = InputHelper.solicitarNumero(0, opciones.length);
 
             switch (opcion) {
@@ -1400,9 +1426,7 @@ public class Simulador {
                         }
                     }
                     break;
-
                 case 0:
-                case 4:
                     salir = true;
                     break;
 
@@ -1430,8 +1454,8 @@ public class Simulador {
         while (!salir) {
             System.out.println("\n--- Gestión de Tanques de Huevos ---");
             String[] opciones = { "Listar contenido", "Vaciar tanques de huevos",
-                    "Comprar tanque de huevos (" + tanque.TanqueDeHuevos.COSTO_TANQUE_HUEVOS + " monedas)", "Salir" };
-            MenuHelper.mostrarMenu(opciones);
+                    "Comprar tanque de huevos (" + tanque.TanqueDeHuevos.COSTO_TANQUE_HUEVOS + " monedas)" };
+            MenuHelper.mostrarMenuCancelar(opciones);
 
             int opcion = InputHelper.solicitarNumero(0, opciones.length);
             switch (opcion) {
@@ -1445,7 +1469,6 @@ public class Simulador {
                     comprarTanqueHuevos(pisc);
                     break;
                 case 0:
-                case 4:
                     salir = true;
                     break;
                 default:
