@@ -20,6 +20,7 @@ import estadisticas.Estadisticas;
 import edificios.AlmacenCentral;
 import edificios.GranjaFitoplancton;
 import edificios.GranjaLangostinos;
+import edificios.TanqueLangostinos;
 import peces.Pez;
 import peces.tipos.doble.Dorada;
 import peces.tipos.doble.SalmonAtlantico;
@@ -109,7 +110,8 @@ public class GestorEstado {
             langostinosObj.addProperty("muertos", langostinos.getRacionesRetroalimentacion());
             JsonArray tanquesLangostinosArray = new JsonArray();
             if (langostinos.getTanques() != null) {
-                for (GranjaLangostinos.TanqueLangostinos tanque : langostinos.getTanques()) {
+                // Se recorre la lista de tanques externos
+                for (TanqueLangostinos tanque : langostinos.getTanques()) {
                     if (tanque != null) {
                         JsonObject tanqueJson = new JsonObject();
                         tanqueJson.addProperty("comida", tanque.getRacionesLocal());
@@ -210,10 +212,9 @@ public class GestorEstado {
         
         try (FileWriter writer = new FileWriter(archivo)) {
             writer.write(json);
-            System.out.println("Partida guardada en: " + nombreArchivo);
+            Simulador.registro.registroGuardarSistema();
         } catch (IOException e) {
-            System.err.println("Error al guardar la partida: " + e.getMessage());
-            e.printStackTrace();
+            Simulador.registro.registroLogError("Error al guardar la partida: " + e.getMessage());
         }
     }
 
@@ -288,20 +289,23 @@ public class GestorEstado {
                     boolean disponible = langostinosObj.get("disponible").getAsBoolean();
                     int muertos = langostinosObj.get("muertos").getAsInt();
                     if (disponible) {
-                        // Se obtiene el array de tanques y se crea la lista de tanques
-                        List<GranjaLangostinos.TanqueLangostinos> estadosTanques = new ArrayList<>();
-                        if (langostinosObj.has("tanques")) {
-                            JsonArray tanquesArray = langostinosObj.getAsJsonArray("tanques");
-                            // Se crea una instancia temporal para instanciar la clase interna
-                            GranjaLangostinos granjaTemporal = new GranjaLangostinos();
-                            for (JsonElement elem : tanquesArray) {
-                                JsonObject tanqueObj = elem.getAsJsonObject();
-                                int comida = tanqueObj.get("comida").getAsInt();
-                                int descanso = tanqueObj.get("descanso").getAsInt();
-                                estadosTanques.add(granjaTemporal.new TanqueLangostinos(comida, descanso));
-                            }
+                        JsonArray tanquesArray = langostinosObj.getAsJsonArray("tanques");
+                        List<TanqueLangostinos> tanquesList = new ArrayList<>();
+                        for (JsonElement elem : tanquesArray) {
+                            JsonObject tanqueObj = elem.getAsJsonObject();
+                            int comida = tanqueObj.get("comida").getAsInt();
+                            int descanso = tanqueObj.get("descanso").getAsInt();
+                            // Creamos el tanque sin referencia a la granja (se asignará posteriormente)
+                            TanqueLangostinos tanque = new TanqueLangostinos(comida, descanso);
+                            tanquesList.add(tanque);
                         }
-                        simulador.granjaLangostinos = new GranjaLangostinos(muertos, estadosTanques);
+                        // Se crea la granja usando el constructor que ya tienes
+                        GranjaLangostinos granjaLangostinos = new GranjaLangostinos(muertos, tanquesList);
+                        // Aseguramos que cada tanque tenga asignada la referencia a su granja
+                        for (TanqueLangostinos tanque : tanquesList) {
+                            tanque.setGranja(granjaLangostinos);
+                        }
+                        simulador.granjaLangostinos = granjaLangostinos;
                     } else {
                         simulador.granjaLangostinos = null;
                     }
@@ -318,7 +322,6 @@ public class GestorEstado {
                     int tipo = piscObj.get("tipo").getAsInt();
                     int capacidad = piscObj.get("capacidad").getAsInt();
                     
-                    // Obtener la comida de la piscifactoría
                     int comidaVegetal = 0, comidaAnimal = 0;
                     if (piscObj.has("comida")) {
                         JsonObject comidaPisc = piscObj.getAsJsonObject("comida");
@@ -326,7 +329,6 @@ public class GestorEstado {
                         comidaAnimal = comidaPisc.get("animal").getAsInt();
                     }
                     
-                    // Crear piscifactoría de Río o de Mar según el campo "tipo"
                     Piscifactoria pisc;
                     if (tipo == 0) {
                         pisc = new PiscifactoriaDeRio(nombre, capacidad, comidaVegetal, comidaAnimal);
@@ -334,18 +336,15 @@ public class GestorEstado {
                         pisc = new PiscifactoriaDeMar(nombre, capacidad, comidaVegetal, comidaAnimal);
                     }
                     
-                    // Cargar tanques y peces
                     pisc.getTanques().clear();
                     JsonArray tanquesArray = piscObj.getAsJsonArray("tanques");
                     for (JsonElement tanqueElem : tanquesArray) {
                         JsonObject tanqueJson = tanqueElem.getAsJsonObject();
-                        // Crear tanque usando el constructor que recibe número y capacidad.
-                        // Se asigna 25 si es de Río o 100 si es de Mar.
+
                         Tanque tanque = new Tanque(
                                 tanqueJson.get("num").getAsInt(),
                                 pisc instanceof PiscifactoriaDeRio ? 25 : 100);
                         
-                        // Cargar peces en el tanque
                         if (tanqueJson.has("peces") && !tanqueJson.get("peces").isJsonNull()) {
                             JsonArray pecesArray = tanqueJson.getAsJsonArray("peces");
                             for (JsonElement pezElement : pecesArray) {
@@ -387,11 +386,11 @@ public class GestorEstado {
                 }
             }
             
-            System.out.println("Sistema restaurado desde: " + archivoPartida);
+            Simulador.registro.registroCargarSistema();
         } catch (IOException e) {
-            System.err.println("Error al cargar la partida: " + e.getMessage());
-        } catch (Exception ex) {
-            ex.printStackTrace();
+            Simulador.registro.registroLogError("Error al cargar la partida: " + e.getMessage());
+        } catch (Exception e) {
+            Simulador.registro.registroLogError("Error al cargar la partida: " + e.getMessage());
         }
     }
 }
