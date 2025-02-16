@@ -373,9 +373,14 @@ public class Simulador {
             }
         }
 
+        if (almacenCentral != null) {
+            almacenCentral.distribuirComida(Simulador.piscifactorias);
+        }
+
         if (granjaFitoplancton != null) {
             granjaFitoplancton.actualizarCiclo(almacenCentral);
         }
+
         if (granjaLangostinos != null) {
             granjaLangostinos.simularDia();
         }
@@ -1395,9 +1400,6 @@ public class Simulador {
                     case 5: simulador.showIctio(); break;
                     case 6: 
                         simulador.nextDay();
-                        if (almacenCentral != null) {
-                            almacenCentral.distribuirComida(Simulador.piscifactorias);
-                        }
                         GestorEstado.guardarEstado(simulador);
                         break;
                     case 7: 

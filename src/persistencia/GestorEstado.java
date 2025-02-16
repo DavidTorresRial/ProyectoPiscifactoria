@@ -12,12 +12,28 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import commons.Simulador;
 import estadisticas.Estadisticas;
 import edificios.AlmacenCentral;
 import edificios.GranjaFitoplancton;
 import edificios.GranjaLangostinos;
 import peces.Pez;
+import peces.tipos.doble.Dorada;
+import peces.tipos.doble.SalmonAtlantico;
+import peces.tipos.doble.TruchaArcoiris;
+import peces.tipos.mar.ArenqueDelAtlantico;
+import peces.tipos.mar.Besugo;
+import peces.tipos.mar.LenguadoEuropeo;
+import peces.tipos.mar.LubinaRayada;
+import peces.tipos.mar.Robalo;
+import peces.tipos.rio.CarpaPlateada;
+import peces.tipos.rio.Pejerrey;
+import peces.tipos.rio.PercaEuropea;
+import peces.tipos.rio.SalmonChinook;
+import peces.tipos.rio.TilapiaDelNilo;
 import piscifactoria.Piscifactoria;
 import piscifactoria.PiscifactoriaDeMar;
 import piscifactoria.PiscifactoriaDeRio;
@@ -25,10 +41,7 @@ import tanque.Tanque;
 
 public class GestorEstado {
 
-    /**
-     * Guarda el estado actual del simulador en un archivo JSON utilizando JsonObject.
-     * Se recogen las llamadas a los métodos de obtención de datos de cada objeto.
-     */
+    /** Guarda el estado actual del simulador en un archivo JSON utilizando JsonObject. */
     public static void guardarEstado(Simulador simulador) {
         JsonObject root = new JsonObject();
 
@@ -96,12 +109,11 @@ public class GestorEstado {
             langostinosObj.addProperty("muertos", langostinos.getRacionesRetroalimentacion());
             JsonArray tanquesLangostinosArray = new JsonArray();
             if (langostinos.getTanques() != null) {
-                for (Object obj : langostinos.getTanques()) {
-                    if (obj != null) {
+                for (GranjaLangostinos.TanqueLangostinos tanque : langostinos.getTanques()) {
+                    if (tanque != null) {
                         JsonObject tanqueJson = new JsonObject();
-                        // Llamadas reales a métodos de datos para cada tanque
-                        tanqueJson.addProperty("comida", 0);
-                        tanqueJson.addProperty("descanso", 0);
+                        tanqueJson.addProperty("comida", tanque.getRacionesLocal());
+                        tanqueJson.addProperty("descanso", tanque.getDiasPenalizacion());
                         tanquesLangostinosArray.add(tanqueJson);
                     }
                 }
@@ -123,6 +135,7 @@ public class GestorEstado {
                 if (pisc != null) {
                     JsonObject piscObj = new JsonObject();
                     piscObj.addProperty("nombre", pisc.getNombre());
+                    // Usamos 0 para Río y 1 para Mar
                     piscObj.addProperty("tipo", pisc instanceof PiscifactoriaDeRio ? 0 : 1);
                     piscObj.addProperty("capacidad", pisc.getCapacidadMaximaComida());
                     
@@ -138,6 +151,10 @@ public class GestorEstado {
                         for (Tanque tanque : pisc.getTanques()) {
                             if (tanque != null) {
                                 JsonObject tanqueObj = new JsonObject();
+                                // Guardamos el identificador real del tanque
+                                tanqueObj.addProperty("num", tanque.getNumeroTanque());
+                                
+                                // Guardamos el tipo de pez (suponiendo que el primer pez define el tipo)
                                 String pezNombre = "";
                                 if (tanque.getPeces() != null && !tanque.getPeces().isEmpty()) {
                                     Pez primerPez = tanque.getPeces().get(0);
@@ -146,14 +163,12 @@ public class GestorEstado {
                                     }
                                 }
                                 tanqueObj.addProperty("pez", pezNombre);
-                                int numPeces = (tanque.getPeces() != null) ? tanque.getPeces().size() : 0;
-                                tanqueObj.addProperty("num", numPeces);
                                 
                                 // Datos del tanque
                                 JsonObject datosObj = new JsonObject();
-                                datosObj.addProperty("vivos", (tanque.getPeces() != null) ? tanque.getVivos() : 0);
-                                datosObj.addProperty("maduros", (tanque.getPeces() != null) ? tanque.getMaduros() : 0);
-                                datosObj.addProperty("fertiles", (tanque.getPeces() != null) ? tanque.getFertiles() : 0);
+                                datosObj.addProperty("vivos", tanque.getPeces() != null ? tanque.getVivos() : 0);
+                                datosObj.addProperty("maduros", tanque.getPeces() != null ? tanque.getMaduros() : 0);
+                                datosObj.addProperty("fertiles", tanque.getPeces() != null ? tanque.getFertiles() : 0);
                                 tanqueObj.add("datos", datosObj);
                                 
                                 // Lista de peces
@@ -210,7 +225,7 @@ public class GestorEstado {
      * @param archivoPartida El nombre del archivo de la partida (incluido el .save o sin él, según convenga).
      */
     public static void load(Simulador simulador, String archivoPartida) {
-        File file = new File("saves" + File.separator + archivoPartida);
+        File file = new File("saves/" + archivoPartida + ".save");
         if (!file.exists()) {
             System.err.println("El archivo " + archivoPartida + " no existe.");
             return;
@@ -272,10 +287,23 @@ public class GestorEstado {
                     JsonObject langostinosObj = edificiosObj.getAsJsonObject("langostinos");
                     boolean disponible = langostinosObj.get("disponible").getAsBoolean();
                     int muertos = langostinosObj.get("muertos").getAsInt();
-                    if (simulador.granjaLangostinos != null) {
-                        simulador.granjaLangostinos.setDisponible(disponible);
-                        simulador.granjaLangostinos.setMuertos(muertos);
-                        // Si es necesario, aquí se pueden cargar también los tanques.
+                    if (disponible) {
+                        // Se obtiene el array de tanques y se crea la lista de tanques
+                        List<GranjaLangostinos.TanqueLangostinos> estadosTanques = new ArrayList<>();
+                        if (langostinosObj.has("tanques")) {
+                            JsonArray tanquesArray = langostinosObj.getAsJsonArray("tanques");
+                            // Se crea una instancia temporal para instanciar la clase interna
+                            GranjaLangostinos granjaTemporal = new GranjaLangostinos();
+                            for (JsonElement elem : tanquesArray) {
+                                JsonObject tanqueObj = elem.getAsJsonObject();
+                                int comida = tanqueObj.get("comida").getAsInt();
+                                int descanso = tanqueObj.get("descanso").getAsInt();
+                                estadosTanques.add(granjaTemporal.new TanqueLangostinos(comida, descanso));
+                            }
+                        }
+                        simulador.granjaLangostinos = new GranjaLangostinos(muertos, estadosTanques);
+                    } else {
+                        simulador.granjaLangostinos = null;
                     }
                 }
             }
@@ -290,49 +318,70 @@ public class GestorEstado {
                     int tipo = piscObj.get("tipo").getAsInt();
                     int capacidad = piscObj.get("capacidad").getAsInt();
                     
-                    Piscifactoria pisc = new Piscifactoria(true, nombre);
-                    pisc.setTipo(tipo);
-                    pisc.setAlmacenMax(capacidad);
-                    
+                    // Obtener la comida de la piscifactoría
+                    int comidaVegetal = 0, comidaAnimal = 0;
                     if (piscObj.has("comida")) {
                         JsonObject comidaPisc = piscObj.getAsJsonObject("comida");
-                        int vegetal = comidaPisc.get("vegetal").getAsInt();
-                        int animal = comidaPisc.get("animal").getAsInt();
-                        pisc.añadirComidaVegetal(vegetal);
-                        pisc.añadirComidaAnimal(animal);
+                        comidaVegetal = comidaPisc.get("vegetal").getAsInt();
+                        comidaAnimal = comidaPisc.get("animal").getAsInt();
                     }
                     
-                    // Tanques de la piscifactoría
-                    if (piscObj.has("tanques")) {
-                        JsonArray tanquesArray = piscObj.getAsJsonArray("tanques");
-                        for (JsonElement tanqueElem : tanquesArray) {
-                            JsonObject tanqueObj = tanqueElem.getAsJsonObject();
-                            Tanque tanque = new Tanque();
-                            
-                            // Si se dispone de datos adicionales del tanque, se pueden procesar aquí.
-                            if (tanqueObj.has("datos")) {
-                                JsonObject datosObj = tanqueObj.getAsJsonObject("datos");
-                                // Ejemplo: tanque.actualizarDatos(datosObj.get("vivos").getAsInt(), ...);
-                            }
-                            
-                            // Peces del tanque
-                            if (tanqueObj.has("peces")) {
-                                JsonArray pecesArray = tanqueObj.getAsJsonArray("peces");
-                                for (JsonElement pezElem : pecesArray) {
-                                    JsonObject pezObj = pezElem.getAsJsonObject();
-                                    Pez pez = new Pez();
-                                    pez.setEdad(pezObj.get("edad").getAsInt());
-                                    pez.setSexo(pezObj.get("sexo").getAsBoolean());
-                                    pez.setVivo(pezObj.get("vivo").getAsBoolean());
-                                    pez.setMaduro(pezObj.get("maduro").getAsBoolean());
-                                    pez.setFertil(pezObj.get("fertil").getAsBoolean());
-                                    pez.setCiclo(pezObj.get("ciclo").getAsInt());
-                                    pez.setAlimentado(pezObj.get("alimentado").getAsBoolean());
-                                    tanque.agregarPez(pez);
+                    // Crear piscifactoría de Río o de Mar según el campo "tipo"
+                    Piscifactoria pisc;
+                    if (tipo == 0) {
+                        pisc = new PiscifactoriaDeRio(nombre, capacidad, comidaVegetal, comidaAnimal);
+                    } else {
+                        pisc = new PiscifactoriaDeMar(nombre, capacidad, comidaVegetal, comidaAnimal);
+                    }
+                    
+                    // Cargar tanques y peces
+                    pisc.getTanques().clear();
+                    JsonArray tanquesArray = piscObj.getAsJsonArray("tanques");
+                    for (JsonElement tanqueElem : tanquesArray) {
+                        JsonObject tanqueJson = tanqueElem.getAsJsonObject();
+                        // Crear tanque usando el constructor que recibe número y capacidad.
+                        // Se asigna 25 si es de Río o 100 si es de Mar.
+                        Tanque tanque = new Tanque(
+                                tanqueJson.get("num").getAsInt(),
+                                pisc instanceof PiscifactoriaDeRio ? 25 : 100);
+                        
+                        // Cargar peces en el tanque
+                        if (tanqueJson.has("peces") && !tanqueJson.get("peces").isJsonNull()) {
+                            JsonArray pecesArray = tanqueJson.getAsJsonArray("peces");
+                            for (JsonElement pezElement : pecesArray) {
+                                JsonObject pezJson = pezElement.getAsJsonObject();
+                                // Recuperar el tipo de pez desde la propiedad "pez" del tanque
+                                String tipoPez = tanqueJson.has("pez") ? tanqueJson.get("pez").getAsString() : "Desconocido";
+                                boolean sexo = pezJson.get("sexo").getAsBoolean();
+                                int edad = pezJson.get("edad").getAsInt();
+                                boolean vivo = pezJson.get("vivo").getAsBoolean();
+                                boolean fertil = pezJson.get("fertil").getAsBoolean();
+                                int ciclo = pezJson.get("ciclo").getAsInt();
+                                boolean alimentado = pezJson.get("alimentado").getAsBoolean();
+                                
+                                Pez pez = switch (tipoPez) {
+                                    case "Dorada" -> new Dorada(sexo, edad, vivo, fertil, ciclo, alimentado);
+                                    case "Salmón atlántico" -> new SalmonAtlantico(sexo, edad, vivo, fertil, ciclo, alimentado);
+                                    case "Trucha arcoíris" -> new TruchaArcoiris(sexo, edad, vivo, fertil, ciclo, alimentado);
+                                    case "Carpa plateada" -> new CarpaPlateada(sexo, edad, vivo, fertil, ciclo, alimentado);
+                                    case "Pejerrey" -> new Pejerrey(sexo, edad, vivo, fertil, ciclo, alimentado);
+                                    case "Perca europea" -> new PercaEuropea(sexo, edad, vivo, fertil, ciclo, alimentado);
+                                    case "Salmón chinook" -> new SalmonChinook(sexo, edad, vivo, fertil, ciclo, alimentado);
+                                    case "Tilapia del Nilo" -> new TilapiaDelNilo(sexo, edad, vivo, fertil, ciclo, alimentado);
+                                    case "Arenque del Atlántico" -> new ArenqueDelAtlantico(sexo, edad, vivo, fertil, ciclo, alimentado);
+                                    case "Besugo" -> new Besugo(sexo, edad, vivo, fertil, ciclo, alimentado);
+                                    case "Lenguado Europeo" -> new LenguadoEuropeo(sexo, edad, vivo, fertil, ciclo, alimentado);
+                                    case "Lubina Rayada" -> new LubinaRayada(sexo, edad, vivo, fertil, ciclo, alimentado);
+                                    case "Róbalo" -> new Robalo(sexo, edad, vivo, fertil, ciclo, alimentado);
+                                    default -> null;
+                                };
+
+                                if (pez != null) {
+                                    tanque.getPeces().add(pez);
                                 }
                             }
-                            pisc.agregarTanque(tanque);
                         }
+                        pisc.getTanques().add(tanque);
                     }
                     simulador.getPiscifactorias().add(pisc);
                 }
