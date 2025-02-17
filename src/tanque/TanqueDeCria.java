@@ -42,10 +42,8 @@ public class TanqueDeCria {
      * @param hembra Pez hembra a añadir.
      * @return true si la compra fue exitosa, false si el tanque ya tenía peces o si las especies no coinciden.
      */
-    public boolean comprarPareja(Pez macho, Pez hembra) {
+    public boolean comprarPareja() {
         if (estaVacio() && macho.getNombre().equals(hembra.getNombre())) {
-            this.macho = macho;
-            this.hembra = hembra;
             this.cicloReproduccion = macho.getDatos().getCiclo();
             return true;
         }
