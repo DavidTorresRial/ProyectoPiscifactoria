@@ -93,14 +93,22 @@ public abstract class Pez {
     public void grow() {
         if (vivo) {
             Random rand = new Random();
-
-            if (!alimentado && rand.nextBoolean() == true) {
+    
+            if (!alimentado && rand.nextBoolean()) {
                 vivo = false;
                 alimentado = false;
                 fertil = false;
             } else {
                 edad++;
 
+                if (enfermo) {
+                        if (alimentado) {
+                            if (rand.nextDouble() < 0.10) {
+                                enfermo = false;
+                            }
+                        }
+                    }
+    
                 if (!sexo) {
                     if (edad >= datos.getMadurez() && !maduro) {
                         fertil = true;
@@ -118,12 +126,29 @@ public abstract class Pez {
                     fertil = true;
                     maduro = true;
                 }
-
+    
                 if (edad < datos.getMadurez() && edad % 2 == 0) {
                     if (rand.nextDouble() < 0.05) {
                         vivo = false;
                         alimentado = false;
                         fertil = false;
+                    }
+                }
+                
+                if (vivo) {
+                    if (enfermo) {
+                        double posMuerte;
+                        if (maduro) {
+                            posMuerte = 0.10;
+                        } else {
+                            posMuerte = 0.25;
+                        }
+
+                        if (rand.nextDouble() < posMuerte) {
+                            vivo = false;
+                            fertil = false;
+                            alimentado = false;
+                        }
                     }
                 }
             }

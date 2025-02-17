@@ -87,7 +87,8 @@ public class GestorEstado {
                     tanqueMap.put("datos", Map.of(
                             "vivos", tanque.getPeces().size(),
                             "maduros", tanque.getMaduros(),
-                            "fertiles", tanque.getFertiles()));
+                            "fertiles", tanque.getFertiles(),
+                            "enfermos", tanque.getEnfermos()));
 
                     // Peces
                     List<Map<String, Object>> pecesList = new ArrayList<>();
@@ -100,6 +101,7 @@ public class GestorEstado {
                         pezMap.put("fertil", pez.isFertil());
                         pezMap.put("ciclo", pez.getDatos().getCiclo());
                         pezMap.put("alimentado", pez.isAlimentado());
+                        pezMap.put("enfermo", pez.isEnfermo());
                         pecesList.add(pezMap);
                     }
                     tanqueMap.put("peces", pecesList);

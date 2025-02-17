@@ -229,34 +229,6 @@ public class Tanque {
                 }
             }
         }
-
-        for (Pez pez : peces) {
-            if (pez.isVivo()) {
-                if (pez.isEnfermo()) {
-                    double posMuerte;
-                    if (pez.isMaduro()) {
-                        posMuerte = 0.10;
-                    } else {
-                        posMuerte = 0.25;
-                    }
-                    if (Math.random() < posMuerte) {
-                        pez.setVivo(false);
-                    }
-                }
-            }
-        }
-
-        for (Pez pez : peces) {
-            if (pez.isVivo()) {
-                if (pez.isEnfermo()) {
-                    if (pez.isAlimentado()) {
-                        if (Math.random() < 0.10) {
-                            pez.setEnfermo(false);
-                        }
-                    }
-                }
-            }
-        }
     }
     
     /**

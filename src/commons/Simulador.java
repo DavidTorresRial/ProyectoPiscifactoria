@@ -1193,61 +1193,63 @@ public class Simulador {
     }
 
     public void gestionarEnfermedad() {
-        System.out.println("\n=============== Enfermos ===============");
-        // Mostrar cada piscifactoría y, para cada una, el número de peces enfermos por tanque
+        System.out.println("\n=== Piscifactorías y peces enfermos ===");
+    
         for (int i = 0; i < piscifactorias.size(); i++) {
             Piscifactoria piscifactoria = piscifactorias.get(i);
-            StringBuilder sb = new StringBuilder();
-            sb.append((i + 1) + ".- Piscifactoría " + piscifactoria.getNombre() + " [");
+            System.out.print((i + 1) + ". " + piscifactoria.getNombre() + " [");
             List<Tanque> tanques = piscifactoria.getTanques();
+    
             for (int j = 0; j < tanques.size(); j++) {
-                sb.append(tanques.get(j).getEnfermos());
-                if (j < tanques.size() - 1) {
-                    sb.append("|");
-                }
+                System.out.print(tanques.get(j).getEnfermos());
+                if (j < tanques.size() - 1) System.out.print("|");
             }
-            sb.append("]");
-            System.out.println(sb.toString());
+            System.out.println("]");
         }
     
-        // Preguntar al usuario si desea curar los peces de alguna piscifactoría
-        String respuesta = InputHelper.readString("¿Desea curar los peces de alguna piscifactoría? (S/N): ");
+        String respuesta = InputHelper.readString("¿Curar peces? (S/N): ");
         if (respuesta.equalsIgnoreCase("S")) {
-            int seleccion = InputHelper.solicitarNumero(1, piscifactorias.size());
-            Piscifactoria seleccionada = piscifactorias.get(seleccion - 1);
-    
-            // Contar el total de peces enfermos en la piscifactoría seleccionada
-            int totalEnfermos = 0;
-            List<Tanque> tanques = seleccionada.getTanques();
-            for (int i = 0; i < tanques.size(); i++) {
-                totalEnfermos += tanques.get(i).getEnfermos();
+            String[] opciones = new String[piscifactorias.size()];
+            for (int i = 0; i < piscifactorias.size(); i++) {
+                opciones[i] = piscifactorias.get(i).getNombre();
             }
+            
+            MenuHelper.mostrarMenuCancelar(opciones);
+            int seleccion = InputHelper.solicitarNumero(0, piscifactorias.size());
     
-            if (totalEnfermos == 0) {
-                System.out.println("No hay peces enfermos en la piscifactoría " + seleccionada.getNombre() + ".");
-            } else {
-                int precio = totalEnfermos * 10;
-                System.out.println("Curar todos los peces enfermos costará " + precio + " monedas.");
-                String confirmar = InputHelper.readString("¿Desea continuar? (S/N): ");
-                if (confirmar.equalsIgnoreCase("S")) {
-                    if (monedas.gastarMonedas(precio)) {
-                        // Curar cada pez enfermo de cada tanque de la piscifactoría seleccionada
-                        for (int i = 0; i < tanques.size(); i++) {
-                            List<Pez> peces = tanques.get(i).getPeces();
-                            for (int j = 0; j < peces.size(); j++) {
-                                if (peces.get(j).isEnfermo()) {
-                                    peces.get(j).setEnfermo(false);
+            if (seleccion != 0) {
+                Piscifactoria piscifactoria = piscifactorias.get(seleccion - 1);
+                int totalEnfermos = 0;
+                for (Tanque tanque : piscifactoria.getTanques()) {
+                    totalEnfermos += tanque.getEnfermos();
+                }
+    
+                if (totalEnfermos > 0) {
+                    int precio = totalEnfermos * 10;
+                    System.out.println("Curar costará " + precio + " monedas.");
+                    String confirmar = InputHelper.readString("¿Confirmar? (S/N): ");
+    
+                    if (confirmar.equalsIgnoreCase("S")) {
+                        if (monedas.gastarMonedas(precio)) {
+                            for (Tanque tanque : piscifactoria.getTanques()) {
+                                for (Pez pez : tanque.getPeces()) {
+                                    pez.setEnfermo(false);
                                 }
-                            }
+                            }                            
+                            System.out.println("Peces curados.");
+                        } else {
+                            System.out.println("No hay suficientes monedas.");
                         }
-                        System.out.println("Todos los peces enfermos han sido curados.");
-                    } else {
-                        System.out.println("No tienes suficientes monedas para curar los peces.");
                     }
+                } else {
+                    System.out.println("No hay peces enfermos en " + piscifactoria.getNombre() + ".");
                 }
             }
         }
     }
+    
+    
+    
     
     
     /**
