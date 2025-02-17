@@ -8,11 +8,8 @@ import java.util.Random;
  */
 public class TanqueLangostinos {
 
-    /** Días para iniciar la producción. */
-    private int diasParaProduccion = 3;
-
     /** Días de penalización por falta de alimento (máx. 3 días). */
-    private int diasPenalizacion = 0;
+    private int diasPenalizacion = 3;
 
     /** Raciones disponibles en el tanque. */
     private int racionesLocal = 0;
@@ -59,10 +56,6 @@ public class TanqueLangostinos {
         if (alimentado) {
             if (diasPenalizacion > 0) {
                 diasPenalizacion--;
-                return 0;
-            }
-            if (diasParaProduccion > 0) {
-                diasParaProduccion--;
                 return 0;
             }
             return random.nextInt(101) + 100;
@@ -113,7 +106,6 @@ public class TanqueLangostinos {
     public String toString() {
         return "\nInformación del Tanque de Langostinos:" +
             "\n  Raciones locales         : " + racionesLocal +
-            "\n  Días de penalización     : " + diasPenalizacion +
-            "\n  Días para producción     : " + diasParaProduccion;
+            "\n  Días de penalización     : " + diasPenalizacion;
     }
 }

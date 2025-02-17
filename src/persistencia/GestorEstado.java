@@ -60,7 +60,7 @@ public class GestorEstado {
         // 2. Datos generales
         root.addProperty("empresa", simulador.getNombreEntidad() != null ? simulador.getNombreEntidad() : "");
         root.addProperty("dia", simulador.getDia());
-        root.addProperty("monedas", simulador.monedas != null ? simulador.monedas.getMonedas() : 0);
+        root.addProperty("monedas", Simulador.monedas != null ? Simulador.monedas.getMonedas() : 0);
         root.addProperty("orca", simulador.estadisticas != null
                 ? simulador.estadisticas.exportarDatos(simulador.getPecesImplementados())
                 : "0:0,0,0;0:0,0,0");
@@ -212,9 +212,9 @@ public class GestorEstado {
         
         try (FileWriter writer = new FileWriter(archivo)) {
             writer.write(json);
-            Simulador.registro.registroGuardarSistema();
+            Simulador.instance.registro.registroGuardarSistema();
         } catch (IOException e) {
-            Simulador.registro.registroLogError("Error al guardar la partida: " + e.getMessage());
+            Simulador.instance.registro.registroLogError("Error al guardar la partida: " + e.getMessage());
         }
     }
 
@@ -241,8 +241,8 @@ public class GestorEstado {
             }
             simulador.setDia(root.has("dia") ? root.get("dia").getAsInt() : 0);
             int monedas = root.has("monedas") ? root.get("monedas").getAsInt() : 0;
-            if (simulador.monedas != null) {
-                simulador.monedas.ganarMonedas(monedas);
+            if (Simulador.monedas != null) {
+                Simulador.monedas.ganarMonedas(monedas);
             }
             if (root.has("orca")) {
                 String orca = root.get("orca").getAsString();
@@ -386,11 +386,11 @@ public class GestorEstado {
                 }
             }
             
-            Simulador.registro.registroCargarSistema();
+            Simulador.instance.registro.registroCargarSistema();
         } catch (IOException e) {
-            Simulador.registro.registroLogError("Error al cargar la partida: " + e.getMessage());
+            Simulador.instance.registro.registroLogError("Error al cargar la partida: " + e.getMessage());
         } catch (Exception e) {
-            Simulador.registro.registroLogError("Error al cargar la partida: " + e.getMessage());
+            Simulador.instance.registro.registroLogError("Error al cargar la partida: " + e.getMessage());
         }
     }
 }

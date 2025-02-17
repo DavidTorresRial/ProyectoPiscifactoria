@@ -128,7 +128,7 @@ public class DAOPedidos {
             pstObtenerCliente = connection.prepareStatement(QUERY_OBTENER_CLIENTE);
             pstObtenerPez = connection.prepareStatement(QUERY_OBTENER_PEZ);
         } catch (SQLException e) {
-            Simulador.registro.registroLogError("Error al inicializar DAOPedidos: " + e.getMessage());
+            Simulador.instance.registro.registroLogError("Error al inicializar DAOPedidos: " + e.getMessage());
         }
     }
 
@@ -159,12 +159,12 @@ public class DAOPedidos {
                 if (affected > 0) {
                     DTOPedido pedido = new DTOPedido(numeroReferencia, nombreCliente, nombrePez, 0, cantidad);
                     System.out.println("\nSe ha generado el pedido: " + pedido.getNumeroReferencia());
-                    Simulador.registro.registroGenerarPedidos(pedido.getNumeroReferencia());
+                    Simulador.instance.registro.registroGenerarPedidos(pedido.getNumeroReferencia());
                     return pedido;
                 }
             }
         } catch (SQLException e) {
-            Simulador.registro.registroLogError("Error al generar pedido automático: " + e.getMessage());
+            Simulador.instance.registro.registroLogError("Error al generar pedido automático: " + e.getMessage());
         }
         return null;
     }
@@ -188,7 +188,7 @@ public class DAOPedidos {
                 pedidos.add(pedido);
             }
         } catch (SQLException e) {
-            Simulador.registro.registroLogError("Error al listar pedidos pendientes: " + e.getMessage());
+            Simulador.instance.registro.registroLogError("Error al listar pedidos pendientes: " + e.getMessage());
         }
         return pedidos;
     }
@@ -212,7 +212,7 @@ public class DAOPedidos {
                 pedidos.add(pedido);
             }
         } catch (SQLException e) {
-            Simulador.registro.registroLogError("Error al listar pedidos completados: " + e.getMessage());
+            Simulador.instance.registro.registroLogError("Error al listar pedidos completados: " + e.getMessage());
         }
         return pedidos;
     }
@@ -239,7 +239,7 @@ public class DAOPedidos {
                 }
             }
         } catch (SQLException e) {
-            Simulador.registro.registroLogError("Error al obtener pedido por referencia: " + e.getMessage());
+            Simulador.instance.registro.registroLogError("Error al obtener pedido por referencia: " + e.getMessage());
         }
         return null;
     }
@@ -256,14 +256,14 @@ public class DAOPedidos {
             pstActualizarPedido.setInt(1, pedido.getCantidadEnviada());
             pstActualizarPedido.setString(2, pedido.getNumeroReferencia());
             int affected = pstActualizarPedido.executeUpdate();
-            Simulador.registro.registroEnviadosConReferencia(
+            Simulador.instance.registro.registroEnviadosConReferencia(
                     pedido.getCantidadEnviada(),
                     pedido.getNombrePez(),
                     pedido.getNumeroReferencia()
             );
             return affected > 0;
         } catch (SQLException e) {
-            Simulador.registro.registroLogError("Error al actualizar pedido: " + e.getMessage());
+            Simulador.instance.registro.registroLogError("Error al actualizar pedido: " + e.getMessage());
         }
         return false;
     }
@@ -303,7 +303,7 @@ public class DAOPedidos {
         try {
             return pstBorrarPedidos.executeUpdate();
         } catch (SQLException e) {
-            Simulador.registro.registroLogError("Error al borrar pedidos: " + e.getMessage());
+            Simulador.instance.registro.registroLogError("Error al borrar pedidos: " + e.getMessage());
         }
         return 0;
     }
@@ -322,7 +322,7 @@ public class DAOPedidos {
                 }
             }
         } catch (SQLException e) {
-            Simulador.registro.registroLogError("Error al obtener ID de cliente aleatorio: " + e.getMessage());
+            Simulador.instance.registro.registroLogError("Error al obtener ID de cliente aleatorio: " + e.getMessage());
         }
         return -1;
     }
@@ -341,7 +341,7 @@ public class DAOPedidos {
                 }
             }
         } catch (SQLException e) {
-            Simulador.registro.registroLogError("Error al obtener ID de pez aleatorio: " + e.getMessage());
+            Simulador.instance.registro.registroLogError("Error al obtener ID de pez aleatorio: " + e.getMessage());
         }
         return -1;
     }
@@ -362,7 +362,7 @@ public class DAOPedidos {
                 }
             }
         } catch (SQLException e) {
-            Simulador.registro.registroLogError("Error al obtener el nombre del cliente: " + e.getMessage());
+            Simulador.instance.registro.registroLogError("Error al obtener el nombre del cliente: " + e.getMessage());
         }
         return null;
     }
@@ -383,7 +383,7 @@ public class DAOPedidos {
                 }
             }
         } catch (SQLException e) {
-            Simulador.registro.registroLogError("Error al obtener el nombre del pez: " + e.getMessage());
+            Simulador.instance.registro.registroLogError("Error al obtener el nombre del pez: " + e.getMessage());
         }
         return null;
     }
@@ -403,7 +403,7 @@ public class DAOPedidos {
             if (pstObtenerPez != null) pstObtenerPez.close();
             if (connection != null) connection.close();
         } catch (SQLException e) {
-            Simulador.registro.registroLogError("Error al cerrar recursos: " + e.getMessage());
+            Simulador.instance.registro.registroLogError("Error al cerrar recursos: " + e.getMessage());
         }
     }    
 }
