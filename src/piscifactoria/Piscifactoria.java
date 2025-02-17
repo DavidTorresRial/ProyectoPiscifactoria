@@ -1,20 +1,19 @@
 package piscifactoria;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import commons.Simulador;
-import helpers.InputHelper;
-import helpers.MenuHelper;
-import peces.Pez;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import peces.propiedades.Omnivoro;
+import peces.propiedades.Filtrador;
 import peces.propiedades.Carnivoro;
 import peces.propiedades.CarnivoroActivo;
-import peces.propiedades.Filtrador;
-import peces.propiedades.Omnivoro;
+
+import peces.Pez;
 import tanque.Tanque;
-import tanque.TanqueCria;
-import tanque.TanqueHuevos;
 
 /** Clase abstracta que representa una piscifactoría que gestiona tanques de peces. */
 public abstract class Piscifactoria {
@@ -24,12 +23,6 @@ public abstract class Piscifactoria {
 
     /** Lista para almacenar los tanques en la piscifactoria. */
     protected List<Tanque> tanques = new ArrayList<>();
-
-    /** Lista para almacenar los tanques de crias en la piscifactoria. */
-    protected List<TanqueCria> tanquesCrias = new ArrayList<>();
-
-    /** Lista para almacenar los tanques de crias en la piscifactoria. */
-    protected List<TanqueHuevos> tanquesHuevos = new ArrayList<>();
     
     /** Número máximo de tanques permitidos en la piscifactoría. */
     protected final int numeroMaximoTanques = 10;
@@ -248,151 +241,6 @@ public abstract class Piscifactoria {
             return false;
         }
     }
-
-    // TODO javadoc
-    public void gestionarPiscifactoria() {
-        boolean salir = false;
-
-        while (!salir) {
-            System.out.println("\n=================== Gestión de Piscifactoria ===================");
-            String[] opcionesMenuPrincipal = { "Gestionar tanque de cria", "Gestionar tanque de huevos" };
-            MenuHelper.mostrarMenuCancelar(opcionesMenuPrincipal);
-
-            int opcionPrincipal = InputHelper.solicitarNumero(0, opcionesMenuPrincipal.length);
-
-            switch (opcionPrincipal) {
-                case 1:
-                    gestionarTanquesCria();
-                    break;
-                case 2:
-                    gestionarTanquesHuevos();
-                    break;
-                case 0:
-                    salir = true;
-            }
-        }
-    }
-
-    // TODO javadoc
-    public void gestionarTanquesCria() {
-        boolean salir = false;
-
-        while (!salir) {
-            System.out.println("\n=================== Gestión de Tanques de Cría ===================");
-            String[] opcionesMenuPrincipal = { "Estado ", "Comprar peces", "Vaciar tanque" };
-            MenuHelper.mostrarMenuCancelar(opcionesMenuPrincipal);
-
-            int opcionPrincipal = InputHelper.solicitarNumero(0, opcionesMenuPrincipal.length);
-
-            switch (opcionPrincipal) {
-                case 1:
-                    
-                    break;
-                case 2:
-                    
-                    break;
-                case 3:
-                    
-                    break;
-                case 0:
-                    salir = true;
-            }
-        }
-    }
-
-    // TODO javadoc
-    public void gestionarTanquesHuevos() {
-        boolean salir = false;
-
-        while (!salir) {
-            System.out.println("\n=================== Gestión de Tanques de Huevos ===================");
-            String[] opcionesMenuPrincipal = { "Listar ", "Vaciar tanques" };
-            MenuHelper.mostrarMenuCancelar(opcionesMenuPrincipal);
-
-            int opcionPrincipal = InputHelper.solicitarNumero(0, opcionesMenuPrincipal.length);
-
-            switch (opcionPrincipal) {
-                case 1:
-                    listar();
-                    break;
-                case 2:
-                    vaciarTanquesHuevos();
-                    break;
-                case 0:
-                    salir = true;
-            }
-        }
-    }
-                    
-    private void listar() {
-    }
-    
-
-    /**
-     * Vacía todos los tanques de huevos de la piscifactoría si el usuario lo
-     * confirma.
-     * 
-     * @param pisc Piscifactoría cuyos tanques de huevos se van a vaciar.
-     */
-    public void vaciarTanquesHuevos() {
-        if (getTanquesHuevos().isEmpty()) {
-            System.out.println("No hay tanques de huevos para vaciar.");
-            return;
-        }
-
-        String confirm = InputHelper.readString("¿Está seguro de vaciar TODOS los tanques de huevos? (S/N): ")
-                .toUpperCase();
-        if (confirm.equals("S")) {
-            for (tanque.TanqueHuevos th : getTanquesHuevos()) {
-                vaciarTanquesHuevos();
-            }
-            System.out.println("Todos los tanques de huevos han sido vaciados.");
-        } else {
-            System.out.println("Operación cancelada.");
-        }
-    }
-
-
-
-    public void addTanqueCrias() {
-        int costoTanque = 500;
-
-        if (tanquesCrias.size() < 3) {
-            if (Simulador.monedas.gastarMonedas(costoTanque)) {
-                tanquesCrias.add(new TanqueCria(tanquesCrias.size() + 1, 100));
-                System.out.println("\nComprado un tanque número " + tanquesCrias.size() + " de la piscifactoría " + nombre + ".");
-                Simulador.registro.registroComprarTanque(tanquesCrias.size(), nombre);
-            } else {
-                System.out.println("\nNo tienes suficientes monedas para agregar un tanque. Necesitas " + costoTanque + " monedas.");
-            }
-        } else {
-            System.out.println("\nCapacidad máxima alcanzada: no se pueden añadir más tanques a \"" + nombre + "\".");
-        }
-    }
-
-    public void addTanqueHuevos() {
-    }
-
-
-    /**
-     * Devuelve la lista de tanques de cría.
-     *
-     * @return una lista de objetos de tipo TanqueDeCria.
-     */
-    public List<TanqueCria> getTanquesCria() {
-        return tanquesCrias;
-    }
-
-    /**
-     * Devuelve la lista de tanques de huevos.
-     *
-     * @return una lista de objetos de tipo TanqueDeHuevos.
-     */
-    public List<TanqueHuevos> getTanquesHuevos() {
-        return tanquesHuevos;
-    }
-
-
 
     /**
      * Devuelve el nombre de la piscifactoría.
