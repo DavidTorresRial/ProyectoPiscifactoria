@@ -52,14 +52,14 @@ public abstract class Omnivoro extends Pez{
                 alimentado = true;
                 return 1;
     
-            } else if (Simulador.almacenCentral != null && (Simulador.almacenCentral.getCantidadComidaAnimal() > 0 || Simulador.almacenCentral.getCantidadComidaVegetal() > 0)) {
-                if (Simulador.almacenCentral.getCantidadComidaAnimal() >= Simulador.almacenCentral.getCantidadComidaVegetal()) {
-                    Simulador.almacenCentral.setCantidadComidaAnimal(Simulador.almacenCentral.getCantidadComidaAnimal() - 1);
+            } else if (Simulador.instance.almacenCentral != null && (Simulador.instance.almacenCentral.getCantidadComidaAnimal() > 0 || Simulador.instance.almacenCentral.getCantidadComidaVegetal() > 0)) {
+                if (Simulador.instance.almacenCentral.getCantidadComidaAnimal() >= Simulador.instance.almacenCentral.getCantidadComidaVegetal()) {
+                    Simulador.instance.almacenCentral.setCantidadComidaAnimal(Simulador.instance.almacenCentral.getCantidadComidaAnimal() - 1);
                     alimentado = true;
                     return 0;
 
                 } else {
-                    Simulador.almacenCentral.setCantidadComidaVegetal(Simulador.almacenCentral.getCantidadComidaVegetal() - 1);
+                    Simulador.instance.almacenCentral.setCantidadComidaVegetal(Simulador.instance.almacenCentral.getCantidadComidaVegetal() - 1);
                     alimentado = true;
                     return 0;
                 }

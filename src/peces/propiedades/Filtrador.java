@@ -52,8 +52,8 @@ public abstract class Filtrador extends Pez {
                 alimentado = true;
                 return 1;
 
-            } else if (Simulador.almacenCentral != null && Simulador.almacenCentral.getCantidadComidaVegetal() > 0) {
-                Simulador.almacenCentral.setCantidadComidaVegetal(Simulador.almacenCentral.getCantidadComidaVegetal() - 1);
+            } else if (Simulador.instance.almacenCentral != null && Simulador.instance.almacenCentral.getCantidadComidaVegetal() > 0) {
+                Simulador.instance.almacenCentral.setCantidadComidaVegetal(Simulador.instance.almacenCentral.getCantidadComidaVegetal() - 1);
                 alimentado = true;
                 return 0;
 

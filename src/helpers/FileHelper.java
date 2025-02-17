@@ -28,13 +28,13 @@ public class FileHelper {
             try {
                 if (!carpetaFile.exists()) {
                     if (!carpetaFile.mkdirs()) {
-                        Simulador.registro.registroLogError("No se pudo crear la carpeta: " + carpetaFile);
+                        Simulador.instance.registro.registroLogError("No se pudo crear la carpeta: " + carpetaFile);
                     }
                 }
             } catch (SecurityException se) {
-                Simulador.registro.registroLogError("Permisos insuficientes para crear la carpeta: " + carpetaFile + " - " + se.getMessage());
+                Simulador.instance.registro.registroLogError("Permisos insuficientes para crear la carpeta: " + carpetaFile + " - " + se.getMessage());
             } catch (Exception e) {
-                Simulador.registro.registroLogError("Error inesperado al intentar crear la carpeta: " + carpetaFile + " - " + e.getMessage());
+                Simulador.instance.registro.registroLogError("Error inesperado al intentar crear la carpeta: " + carpetaFile + " - " + e.getMessage());
             }
         }
     }
@@ -52,7 +52,7 @@ public class FileHelper {
             return directorio.list().length > 0;
             
         } else {
-            Simulador.registro.registroLogError("El directorio no existe: " + rutaDirectorio);
+            Simulador.instance.registro.registroLogError("El directorio no existe: " + rutaDirectorio);
             return false;
         }
     }
@@ -99,11 +99,11 @@ public class FileHelper {
                 }
 
             } else {
-                Simulador.registro.registroLogError("No hay archivos en el directorio: " + rutaDirectorio);
+                Simulador.instance.registro.registroLogError("No hay archivos en el directorio: " + rutaDirectorio);
                 return null;
             }
         } else {
-            Simulador.registro.registroLogError("El directorio no existe o no es un directorio válido: "  + rutaDirectorio);
+            Simulador.instance.registro.registroLogError("El directorio no existe o no es un directorio válido: "  + rutaDirectorio);
             return null;
         }
     }
@@ -133,11 +133,11 @@ public class FileHelper {
                 }
                 return nombresArchivos.toArray(new String[0]);
             } else {
-                Simulador.registro.registroLogError("No hay archivos en el directorio: " + rutaDirectorio);
+                Simulador.instance.registro.registroLogError("No hay archivos en el directorio: " + rutaDirectorio);
                 return new String[0];
             }
         } else {
-            Simulador.registro.registroLogError("El directorio no existe o no es un directorio válido: " + rutaDirectorio);
+            Simulador.instance.registro.registroLogError("El directorio no existe o no es un directorio válido: " + rutaDirectorio);
             return new String[0];
         }
     }
@@ -302,11 +302,11 @@ public class FileHelper {
                         }
                     }
                 } catch (DocumentException e) {
-                    Simulador.registro.registroLogError("Error al leer el archivo XML: " + fileName + " - " + e.getMessage());
+                    Simulador.instance.registro.registroLogError("Error al leer el archivo XML: " + fileName + " - " + e.getMessage());
                 } catch (NullPointerException e) {
-                    Simulador.registro.registroLogError("Error: Elemento faltante en el XML (" + fileName + ") - " + e.getMessage());
+                    Simulador.instance.registro.registroLogError("Error: Elemento faltante en el XML (" + fileName + ") - " + e.getMessage());
                 } catch (Exception e) {
-                    Simulador.registro.registroLogError("Error desconocido al procesar la recompensa del archivo: " + fileName + " - " + e.getMessage());
+                    Simulador.instance.registro.registroLogError("Error desconocido al procesar la recompensa del archivo: " + fileName + " - " + e.getMessage());
                 }
             }
         }

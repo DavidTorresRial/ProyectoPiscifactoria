@@ -52,22 +52,22 @@ import registros.Registros;
 public class Simulador {
 
     /** Instancia del simulador. */
-    public Simulador instance = null; // ¿Debería ser estática, no?
+    public static Simulador instance = null;
 
     /** Días transcurridos en la simulación. */
     private int dia = 0;
 
     /** Lista de piscifactorías en el sistema. */
-    private static List<Piscifactoria> piscifactorias = new ArrayList<>();
+    private List<Piscifactoria> piscifactorias = new ArrayList<>();
 
     /** Nombre de la entidad o partida en la simulación. */
-    public static String nombreEntidad;
+    private String nombreEntidad;
 
     /** Nombre de la piscifactoría. */
     private String nombrePiscifactoria;
 
     /** Lista de nombres de peces implementados. */
-    public final static String[] pecesImplementados = {
+    public final String[] pecesImplementados = {
         AlmacenPropiedades.DORADA.getNombre(),
         AlmacenPropiedades.SALMON_ATLANTICO.getNombre(),
         AlmacenPropiedades.TRUCHA_ARCOIRIS.getNombre(),
@@ -87,19 +87,19 @@ public class Simulador {
     public static SistemaMonedas monedas = SistemaMonedas.getInstancia();
 
     /** Sistema de estadísticas para registrar la cría, venta y ganancias de los peces. */
-    public static Estadisticas estadisticas;
+    public Estadisticas estadisticas;
 
     /** Almacén central de comida para abastecer las piscifactorías. */
-    public static AlmacenCentral almacenCentral;
+    public AlmacenCentral almacenCentral;
 
     /** Granja dedicada a la producción de fitoplancton. */
-    public static GranjaFitoplancton granjaFitoplancton;
+    public GranjaFitoplancton granjaFitoplancton;
 
     /** Granja dedicada a la producción de langostinos. */
-    public static GranjaLangostinos granjaLangostinos;
+    public GranjaLangostinos granjaLangostinos;
 
     /** Registro de logs y eventos del sistema. */
-    public static Registros registro;
+    public Registros registro;
 
     /** DAO para gestionar los pedidos en la base de datos. */
     public DAOPedidos pedidos = new DAOPedidos();
@@ -377,7 +377,7 @@ public class Simulador {
         }
 
         if (almacenCentral != null) {
-            almacenCentral.distribuirComida(Simulador.piscifactorias);
+            almacenCentral.distribuirComida(piscifactorias);
             
             if (granjaFitoplancton != null) {
                 granjaFitoplancton.nextDay(almacenCentral);
@@ -1184,7 +1184,7 @@ public class Simulador {
      * @param cantidadComida La cantidad de comida a distribuir.
      * @param tipo El tipo de comida a distribuir ("algae", "animal", "general").
      */
-    public static void distribuirComida(int cantidadComida, String tipo) {
+    public void distribuirComida(int cantidadComida, String tipo) {
      
         switch (tipo) {
             case "algae":
@@ -1386,7 +1386,8 @@ public class Simulador {
         Simulador simulador = null;
         try {
             simulador = new Simulador();
-            simulador.instance = simulador;
+            Simulador.instance = simulador;
+
             simulador.init();
     
             boolean running = true;
@@ -1406,8 +1407,8 @@ public class Simulador {
                         break;
                     case 7: 
                         simulador.addFood();
-                        if (almacenCentral != null) {
-                            almacenCentral.distribuirComida(Simulador.piscifactorias);
+                        if (simulador.almacenCentral != null) {
+                            simulador.almacenCentral.distribuirComida(simulador.piscifactorias);
                         }
                         break;
                     case 8: simulador.addFish(); break;
@@ -1429,11 +1430,11 @@ public class Simulador {
                     case 99:
                         Simulador.monedas.ganarMonedas(1000);
                         System.out.println("\nAñadidas 1000 monedas mediante la opción oculta. Monedas actuales, " + monedas.getMonedas());
-                        registro.registroOpcionOcultaMonedas(monedas.getMonedas());
+                        simulador.registro.registroOpcionOcultaMonedas(monedas.getMonedas());
                         break;
                     case 16: 
                         running = false;
-                        registro.registroCierrePartida();
+                        simulador.registro.registroCierrePartida();
                         GestorEstado.guardarEstado(simulador);
                         System.out.println("\nSaliendo del simulador.");
                         break;
@@ -1442,12 +1443,12 @@ public class Simulador {
                 }
             }
         } catch (NullPointerException e) {
-            Simulador.registro.registroLogError("Error: Un elemento no fue inicializado correctamente. " + e.getMessage());
+            Simulador.instance.registro.registroLogError("Error: Un elemento no fue inicializado correctamente. " + e.getMessage());
         } catch (Exception e) {
-            Simulador.registro.registroLogError("Error inesperado en el Main: " + e.getMessage());
+            Simulador.instance.registro.registroLogError("Error inesperado en el Main: " + e.getMessage());
         } finally {
             InputHelper.close();
-            registro.closeLogError();
+            simulador.registro.closeLogError();
             if (simulador != null) {
                 simulador.cerrarConexion();
             }
@@ -1496,7 +1497,7 @@ public class Simulador {
      * @param nombreEntidad el nuevo nombre de la entidad.
      */
     public void setNombreEntidad(String nombreEntidad) {
-        Simulador.nombreEntidad = nombreEntidad;
+        this.nombreEntidad = nombreEntidad;
     }
 
     /**
@@ -1514,6 +1515,6 @@ public class Simulador {
      * @param estadisticas el objeto de estadísticas a establecer.
      */
     public void setEstadisticas(Estadisticas estadisticas) {
-        Simulador.estadisticas = estadisticas;
+        this.estadisticas = estadisticas;
     }
 }

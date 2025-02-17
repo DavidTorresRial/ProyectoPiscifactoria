@@ -45,21 +45,21 @@ public class GranjaLangostinos {
         if (Simulador.monedas.gastarMonedas(COSTO_MEJORA)) {
             tanques.add(new TanqueLangostinos(this));
             System.out.println("Granja de langostinos mejorada: Nuevo tanque añadido. Total: " + tanques.size() + " tanques.");
-            Simulador.registro.registroMejoradaGranjaLangostinos(tanques.size());
+            Simulador.instance.registro.registroMejoradaGranjaLangostinos(tanques.size());
         } else {
             System.out.println("\nNo tienes suficientes monedas para mejorar la granja de langostinos.");
         }
     }
     
     /** Reparte alimento a los tanques desde el almacén central. */
-    private void recargarTanques() {
+    private void recargarTanques(AlmacenCentral almacenCentral) {
         for (int ronda = 0; ronda < 3; ronda++) {
             for (TanqueLangostinos tanque : tanques) {
                 if (tanque.getRacionesLocal() < 3) {
-                    int comidaDisponible = Simulador.almacenCentral.getCantidadComidaVegetal();
+                    int comidaDisponible = almacenCentral.getCantidadComidaVegetal();
                     if (comidaDisponible >= 50) {
                         tanque.recargarRacion();
-                        Simulador.almacenCentral.setCantidadComidaVegetal(comidaDisponible - 50);
+                        almacenCentral.setCantidadComidaVegetal(comidaDisponible - 50);
                     }
                 }
             }
@@ -78,7 +78,7 @@ public class GranjaLangostinos {
             System.out.println("\nGranja de Langostinos produce " + produccion + " de comida animal.");
             almacenCentral.añadirComidaAnimal(produccion);
         }
-        recargarTanques();
+        recargarTanques(almacenCentral);
     }
 
     /**

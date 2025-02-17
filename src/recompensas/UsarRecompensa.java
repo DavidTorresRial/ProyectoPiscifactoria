@@ -51,25 +51,25 @@ public class UsarRecompensa {
     
                         switch (tipoDeComida) {
                             case "algae":
-                                if (Simulador.almacenCentral != null) {
-                                    Simulador.almacenCentral.añadirComidaVegetal(cantidad);
+                                if (Simulador.instance.almacenCentral != null) {
+                                    Simulador.instance.almacenCentral.añadirComidaVegetal(cantidad);
                                 } else {
-                                    Simulador.distribuirComida(cantidad , tipoDeComida);
+                                    Simulador.instance.distribuirComida(cantidad , tipoDeComida);
                                 }
                                 break;
                             case "animal":
-                                if (Simulador.almacenCentral != null) {
-                                    Simulador.almacenCentral.añadirComidaAnimal(cantidad);
+                                if (Simulador.instance.almacenCentral != null) {
+                                    Simulador.instance.almacenCentral.añadirComidaAnimal(cantidad);
                                 } else {
-                                    Simulador.distribuirComida(cantidad , tipoDeComida);
+                                    Simulador.instance.distribuirComida(cantidad , tipoDeComida);
                                 }
                                 break;
                             case "general":
-                                if (Simulador.almacenCentral != null) {
-                                    Simulador.almacenCentral.añadirComidaAnimal(cantidad / 2);
-                                    Simulador.almacenCentral.añadirComidaVegetal(cantidad / 2);
+                                if (Simulador.instance.almacenCentral != null) {
+                                    Simulador.instance.almacenCentral.añadirComidaAnimal(cantidad / 2);
+                                    Simulador.instance.almacenCentral.añadirComidaVegetal(cantidad / 2);
                                 } else {
-                                    Simulador.distribuirComida(cantidad , tipoDeComida);
+                                    Simulador.instance.distribuirComida(cantidad , tipoDeComida);
                                 }
                                 break;
                             default:
@@ -94,9 +94,9 @@ public class UsarRecompensa {
                     xmlFile.delete();
                 }
     
-                Simulador.registro.registroUsarRecompensa(name.getText());
+                Simulador.instance.registro.registroUsarRecompensa(name.getText());
             } catch (IOException | DocumentException e) {
-                Simulador.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
+                Simulador.instance.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
             }
         }
     }
@@ -140,9 +140,9 @@ public class UsarRecompensa {
                     xmlFile.delete();
                 }
 
-                Simulador.registro.registroUsarRecompensa(name.getText());
+                Simulador.instance.registro.registroUsarRecompensa(name.getText());
             } catch (IOException | DocumentException e) {
-                Simulador.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
+                Simulador.instance.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
             }
         }
     }
@@ -180,9 +180,9 @@ public class UsarRecompensa {
                     xmlFile.delete();
                 }
     
-                Simulador.registro.registroUsarRecompensa(name.getText());
+                Simulador.instance.registro.registroUsarRecompensa(name.getText());
             } catch (IOException | DocumentException e) {
-                Simulador.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
+                Simulador.instance.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
             }
             return true;
         } else {
@@ -236,10 +236,10 @@ public class UsarRecompensa {
                             }
                         }
                     } else {
-                        Simulador.registro.registroLogError("El archivo '" + fileName + "' no contiene la etiqueta <name>.");
+                        Simulador.instance.registro.registroLogError("El archivo '" + fileName + "' no contiene la etiqueta <name>.");
                     }
                 } catch (DocumentException e) {
-                    Simulador.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
+                    Simulador.instance.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
                 }
             } else {
                 if (fileName.startsWith("pisci_m") && fileName.endsWith(".xml")) {
@@ -274,10 +274,10 @@ public class UsarRecompensa {
                                 }
                             }
                         } else {
-                            Simulador.registro.registroLogError("El archivo '" + fileName + "' no contiene la etiqueta <name>.");
+                            Simulador.instance.registro.registroLogError("El archivo '" + fileName + "' no contiene la etiqueta <name>.");
                         }
                     } catch (DocumentException e) {
-                        Simulador.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
+                        Simulador.instance.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
                     }
                 }
             }
@@ -313,9 +313,9 @@ public class UsarRecompensa {
                             xmlFile.delete();
                         }
                         
-                        Simulador.registro.registroUsarRecompensa(name.getText());
+                        Simulador.instance.registro.registroUsarRecompensa(name.getText());
                     } catch (IOException | DocumentException e) {
-                        Simulador.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
+                        Simulador.instance.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
                     }
                 }
             }
@@ -352,9 +352,9 @@ public class UsarRecompensa {
                             xmlFile.delete();
                         }
 
-                        Simulador.registro.registroUsarRecompensa(name.getText());
+                        Simulador.instance.registro.registroUsarRecompensa(name.getText());
                     } catch (IOException | DocumentException e) {
-                        Simulador.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
+                        Simulador.instance.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
 
                     }
                 }
@@ -403,10 +403,10 @@ public class UsarRecompensa {
                             }
                         }
                     } else {
-                        Simulador.registro.registroLogError("El archivo '" + fileName + "' no contiene la etiqueta <name>.");
+                        Simulador.instance.registro.registroLogError("El archivo '" + fileName + "' no contiene la etiqueta <name>.");
                     }
                 } catch (DocumentException e) {
-                    Simulador.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
+                    Simulador.instance.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
                 }
             }
         }
@@ -441,9 +441,9 @@ public class UsarRecompensa {
                             xmlFile.delete();
                         }
 
-                        Simulador.registro.registroUsarRecompensa(name.getText());
+                        Simulador.instance.registro.registroUsarRecompensa(name.getText());
                     } catch (IOException | DocumentException e) {
-                        Simulador.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
+                        Simulador.instance.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
                     }
                 }
             }
@@ -487,10 +487,10 @@ public class UsarRecompensa {
                             }
                         }
                     } else {
-                        Simulador.registro.registroLogError("El archivo '" + fileName + "' no contiene la etiqueta <name>.");
+                        Simulador.instance.registro.registroLogError("El archivo '" + fileName + "' no contiene la etiqueta <name>.");
                     }
                 } catch (DocumentException e) {
-                    Simulador.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName 
+                    Simulador.instance.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName 
                             + " Detalles: " + e.getMessage());
                 }
             }
@@ -522,9 +522,9 @@ public class UsarRecompensa {
                             xmlFile.delete();
                         }
 
-                        Simulador.registro.registroUsarRecompensa(name.getText());
+                        Simulador.instance.registro.registroUsarRecompensa(name.getText());
                     } catch (IOException | DocumentException e) {
-                        Simulador.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName 
+                        Simulador.instance.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName 
                                 + " Detalles: " + e.getMessage());
                     }
                 }
@@ -569,10 +569,10 @@ public class UsarRecompensa {
                             }
                         }
                     } else {
-                        Simulador.registro.registroLogError("El archivo '" + fileName + "' no contiene la etiqueta <name>.");
+                        Simulador.instance.registro.registroLogError("El archivo '" + fileName + "' no contiene la etiqueta <name>.");
                     }
                 } catch (DocumentException e) {
-                    Simulador.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName 
+                    Simulador.instance.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName 
                             + " Detalles: " + e.getMessage());
                 }
             }
@@ -604,9 +604,9 @@ public class UsarRecompensa {
                             xmlFile.delete();
                         }
 
-                        Simulador.registro.registroUsarRecompensa(name.getText());
+                        Simulador.instance.registro.registroUsarRecompensa(name.getText());
                     } catch (IOException | DocumentException e) {
-                        Simulador.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName 
+                        Simulador.instance.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName 
                                 + " Detalles: " + e.getMessage());
                     }
                 }

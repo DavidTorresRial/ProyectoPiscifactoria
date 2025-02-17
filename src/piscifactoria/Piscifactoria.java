@@ -192,7 +192,7 @@ public abstract class Piscifactoria {
     
                 if (pez.getEdad() >= pez.getDatos().getMadurez() && pez.isVivo()) {
                     Simulador.monedas.ganarMonedas(pez.getDatos().getMonedas());
-                    Simulador.estadisticas.registrarVenta(pez.getNombre(), pez.getDatos().getMonedas());
+                    Simulador.instance.estadisticas.registrarVenta(pez.getNombre(), pez.getDatos().getMonedas());
     
                     totalDinero += (pez.getDatos().getMonedas() / 2);
                     pecesVendidos++;

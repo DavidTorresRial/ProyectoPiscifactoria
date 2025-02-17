@@ -52,7 +52,7 @@ public class CrearRecompensa {
                 Element root = document.addElement("reward");
                 
                 root.addElement("name").addText(name);
-                root.addElement("origin").addText(Simulador.nombreEntidad);
+                root.addElement("origin").addText(Simulador.instance.getNombreEntidad());
                 root.addElement("desc").addText(description);
                 root.addElement("rarity").addText(rarity);
                 
@@ -67,9 +67,9 @@ public class CrearRecompensa {
             writer.write(document);
             writer.close();
             
-            Simulador.registro.registroCrearRecompensa(name);
+            Simulador.instance.registro.registroCrearRecompensa(name);
         } catch (IOException | DocumentException e) {
-            Simulador.registro.registroLogError("Error al crear la recompensa '" + name + "' en el archivo '" + fileName + "': " + e.getMessage());
+            Simulador.instance.registro.registroLogError("Error al crear la recompensa '" + name + "' en el archivo '" + fileName + "': " + e.getMessage());
         }
     }
 

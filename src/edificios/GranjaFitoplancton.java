@@ -58,7 +58,7 @@ public class GranjaFitoplancton {
             numeroTanques++;
             ciclo = 0;
             System.out.println("\nGranja de fitoplancton mejorada: Nuevo tanque añadido. Total: " + numeroTanques + " tanques.");
-            Simulador.registro.registroMejoradaGranjaFitoplancton(numeroTanques);
+            Simulador.instance.registro.registroMejoradaGranjaFitoplancton(numeroTanques);
         } else {
             System.out.println("\nNo tienes suficientes monedas para comprar la granja de fitoplancton.");
         }
