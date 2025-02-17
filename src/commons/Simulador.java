@@ -9,35 +9,31 @@ import java.util.Random;
 import database.DAOPedidos;
 import database.GeneradorBD;
 import database.dtos.DTOPedido;
-import estadisticas.Estadisticas;
 import helpers.FileHelper;
 import helpers.InputHelper;
 import helpers.MenuHelper;
-import peces.Pez;
-import peces.tipos.doble.Dorada;
-import peces.tipos.doble.SalmonAtlantico;
-import peces.tipos.doble.TruchaArcoiris;
-import peces.tipos.mar.ArenqueDelAtlantico;
-import peces.tipos.mar.Besugo;
-import peces.tipos.mar.LenguadoEuropeo;
-import peces.tipos.mar.LubinaRayada;
-import peces.tipos.mar.Robalo;
-import peces.tipos.rio.CarpaPlateada;
-import peces.tipos.rio.Pejerrey;
-import peces.tipos.rio.PercaEuropea;
-import peces.tipos.rio.SalmonChinook;
-import peces.tipos.rio.TilapiaDelNilo;
-import persistencia.GestorEstado;
+
 import piscifactoria.Piscifactoria;
 import piscifactoria.PiscifactoriaDeMar;
 import piscifactoria.PiscifactoriaDeRio;
+
+import tanque.Tanque;
+
+import peces.Pez;
+import peces.tipos.doble.*;
+import peces.tipos.mar.*;
+import peces.tipos.rio.*;
+
+import persistencia.GestorEstado;
+import estadisticas.Estadisticas;
+
 import propiedades.AlmacenPropiedades;
 import propiedades.PecesDatos;
 import propiedades.PecesProps;
+
 import recompensas.CrearRecompensa;
 import recompensas.UsarRecompensa;
 import registros.Registros;
-import tanque.Tanque;
 
 /**
  * La clase Simulador gestiona la simulación de una piscifactoría,
@@ -156,7 +152,6 @@ public class Simulador {
                 "Recompensas",
                 "Pasar varios días",
                 "Enviar pedido",
-                "Gestionar piscifactoría",
                 "Salir"
         });
     }
@@ -726,7 +721,7 @@ public class Simulador {
 
         while (!salir) {
             System.out.println("\n=================== Mejorar Piscifactoría ==================");
-            String[] opcionesMejoraPiscifactoria = { "Comprar tanque", "Comprar tanque de crias", "Comprar tanque de huevos", "Aumentar almacén de comida" };
+            String[] opcionesMejoraPiscifactoria = { "Comprar tanque", "Aumentar almacén de comida" };
             MenuHelper.mostrarMenuCancelar(opcionesMejoraPiscifactoria);
 
             int mejoraPiscifactoria = InputHelper.solicitarNumero(0, opcionesMejoraPiscifactoria.length);
@@ -739,12 +734,6 @@ public class Simulador {
                         piscifactoriaSeleccionada.addTanque();
                         break;
                     case 2:
-                        piscifactoriaSeleccionada.addTanqueCrias();
-                        break;
-                    case 3:
-                        piscifactoriaSeleccionada.addTanqueHuevos();
-                        break;
-                    case 4:
                         piscifactoriaSeleccionada.upgradeFood();
                         break;
                     case 0:
@@ -1201,7 +1190,7 @@ public class Simulador {
             System.out.println("Aún no has completado ningún pedido.");
         }
     }
-
+    
     /**
      * Método principal que gestiona el flujo del simulador, 
      * mostrando el menú y procesando las opciones del usuario.
@@ -1252,7 +1241,6 @@ public class Simulador {
                         GestorEstado.guardarEstado(simulador);
                         break;
                     case 15: simulador.enviarPedidoManual(); break;
-                    case 16: ; break;
                     case 95: simulador.borrarPedidos(); break;
                     case 96: simulador.listarPedidosCompletados(); break;
                     case 97: simulador.generarRecompensas(); break;
@@ -1262,7 +1250,7 @@ public class Simulador {
                         System.out.println("\nAñadidas 1000 monedas mediante la opción oculta. Monedas actuales, " + monedas.getMonedas());
                         registro.registroOpcionOcultaMonedas(monedas.getMonedas());
                         break;
-                    case 17: 
+                    case 16: 
                         running = false;
                         registro.registroCierrePartida();
                         GestorEstado.guardarEstado(simulador);
