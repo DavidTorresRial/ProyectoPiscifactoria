@@ -44,7 +44,7 @@ public class GranjaLangostinos {
     public void mejorar() {
         if (Simulador.monedas.gastarMonedas(COSTO_MEJORA)) {
             tanques.add(new TanqueLangostinos(this));
-            System.out.println("Granja de langostinos mejorada: Nuevo tanque añadido. Total: " + tanques.size() + " tanques.");
+            System.out.println("\nGranja de langostinos mejorada: Nuevo tanque añadido. Total: " + tanques.size() + " tanques.");
             Simulador.instance.registro.registroMejoradaGranjaLangostinos(tanques.size());
         } else {
             System.out.println("\nNo tienes suficientes monedas para mejorar la granja de langostinos.");

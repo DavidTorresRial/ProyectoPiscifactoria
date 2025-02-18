@@ -1150,7 +1150,7 @@ public class Simulador {
                                     ? new Pez[] {
                                             new Dorada(sexo),
                                             new SalmonAtlantico(sexo),
-                                            new ArenqueDelAtlantico(sexo),
+                                            new TruchaArcoiris(sexo),
                                             new CarpaPlateada(sexo),
                                             new Pejerrey(sexo),
                                             new PercaEuropea(sexo),
