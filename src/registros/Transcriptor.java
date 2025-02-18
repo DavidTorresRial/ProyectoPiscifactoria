@@ -263,4 +263,14 @@ class Transcriptor {
     void transcribirEnviadosConReferencia(int cantidadPeces, String nombrePez, String referenciaPedido) {
         transcribir("Enviados " + cantidadPeces + " peces al pedido de " + nombrePez + " con referencia " + referenciaPedido + ".");
     }
+
+    /**
+     * Registra la cantidad de peces curados de una piscifactoria con las monedas gastadas.
+     * @param pecesCurados Cantidad de peces curados.
+     * @param nombrePiscifactoria Nombre de la piscifactoria.
+     * @param monedas Monedas usadas.
+     */
+    void transcribirPecesCurados(int pecesCurados, String nombrePiscifactoria, int monedas) {
+        transcribir("Curados " + pecesCurados + " peces de la piscifactoria " + nombrePiscifactoria + " por " + monedas + " monedas");
+    }
 }

@@ -379,6 +379,7 @@ public class Tanque {
                 "\n  Peces Adultos       : " + getMaduros() +
                 "\n  Hembras             : " + getHembras() +
                 "\n  Machos              : " + getMachos() +
-                "\n  Peces Fértiles      : " + getFertiles();
+                "\n  Peces Fértiles      : " + getFertiles() +
+                "\n  Peces Enfermos      : " + getEnfermos();
     }
 }

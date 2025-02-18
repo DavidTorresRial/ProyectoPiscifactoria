@@ -72,6 +72,7 @@ public abstract class Piscifactoria {
         int totalHembras = getTotalHembras();
         int totalMachos = getTotalMachos();
         int totalFertiles = getTotalFertiles();
+        int totalEnfermos = getTotalEnfermos();
 
         int porcentajeOcupacion = (capacidadTotal > 0) ? (totalPeces * 100) / capacidadTotal : 0;
         int porcentajeVivos = (totalPeces > 0) ? (totalVivos * 100) / totalPeces : 0;
@@ -85,6 +86,7 @@ public abstract class Piscifactoria {
         System.out.println("Peces adultos: " + totalAdultos + " / " + totalVivos + " (" + porcentajeAdultos + "%)");
         System.out.println("Hembras / Machos: " + totalHembras + " / " + totalMachos);
         System.out.println("Fértiles: " + totalFertiles + " / " + totalVivos);
+        System.out.println("Enfermos: " + totalEnfermos + " / " + totalVivos);
     
         showFood();
     }
@@ -437,6 +439,19 @@ public abstract class Piscifactoria {
     }
 
     /**
+     * Devuelve el total de peces enfermos en la piscifactoría.
+     *
+     * @return El total de peces enfermos.
+     */
+    public int getTotalEnfermos() {
+        int totalEnfermos = 0;
+        for (Tanque tanque : tanques) {
+            totalEnfermos += tanque.getEnfermos();
+        }
+        return totalEnfermos;
+    }
+
+    /**
      * Devuelve una representación en cadena del estado de la piscifactoría.
      * 
      * @return una cadena que representa el estado de la piscifactoría.
@@ -452,6 +467,7 @@ public abstract class Piscifactoria {
                 "\n  Hembras              : " + getTotalHembras() +
                 "\n  Machos               : " + getTotalMachos() +
                 "\n  Peces Fértiles       : " + getTotalFertiles() +
+                "\n  Peces Enfermos       : " + getTotalEnfermos() +
                 "\n  Comida Vegetal       : " + getComidaVegetalActual() + " / " + getCapacidadTotal() +
                 "\n  Comida Animal        : " + getComidaAnimalActual() + " / " + getCapacidadTotal();
     }

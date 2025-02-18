@@ -226,6 +226,16 @@ public class Registros {
         transcriptor.transcribirEnviadosConReferencia(cantidadPeces, nombrePez, referenciaPedido);
     }
 
+    /**
+     * Registra la cantidad de peces curados de una piscifactoria con las monedas gastadas.
+     * @param pecesCurados Cantidad de peces curados.
+     * @param nombrePiscifactoria Nombre de la piscifactoria.
+     * @param monedas Monedas usadas.
+     */
+    public void registrarPecesCurados(int pecesCurados, String nombrePiscifactoria, int monedas) {
+        transcriptor.transcribirPecesCurados(pecesCurados, nombrePiscifactoria, monedas);
+    }
+
     /* ↓↓↓ Métodos que no tienen trancripción. ↓↓↓ */
 
     /**
