@@ -90,7 +90,9 @@ public class Tanque {
         for (Pez pez : peces) {
             pez.grow();
         }
-        retroalimentacionMuertos();
+        if (Simulador.instance.granjaLangostinos != null) {
+            retroalimentacionMuertos();
+        }
         reproduccion();
         return sellFish();
     }
@@ -202,9 +204,7 @@ public class Tanque {
             Pez pez = iterator.next();
             if (!pez.isVivo()) {
                 iterator.remove();
-                if (Simulador.instance.granjaLangostinos != null) {
-                    Simulador.instance.granjaLangostinos.agregarPezMuerto();
-                }
+                Simulador.instance.granjaLangostinos.agregarPezMuerto();
             }
         }
     }
