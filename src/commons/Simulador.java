@@ -3,6 +3,7 @@ package commons;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -52,22 +53,22 @@ import registros.Registros;
 public class Simulador {
 
     /** Instancia del simulador. */
-    public Simulador instance = null; // ¿Debería ser estática, no?
+    public static Simulador instance = null;
 
     /** Días transcurridos en la simulación. */
     private int dia = 0;
 
     /** Lista de piscifactorías en el sistema. */
-    private static List<Piscifactoria> piscifactorias = new ArrayList<>();
+    private List<Piscifactoria> piscifactorias = new ArrayList<>();
 
     /** Nombre de la entidad o partida en la simulación. */
-    public static String nombreEntidad;
+    private String nombreEntidad;
 
     /** Nombre de la piscifactoría. */
     private String nombrePiscifactoria;
 
     /** Lista de nombres de peces implementados. */
-    public final static String[] pecesImplementados = {
+    public final String[] pecesImplementados = {
         AlmacenPropiedades.DORADA.getNombre(),
         AlmacenPropiedades.SALMON_ATLANTICO.getNombre(),
         AlmacenPropiedades.TRUCHA_ARCOIRIS.getNombre(),
@@ -87,16 +88,19 @@ public class Simulador {
     public static SistemaMonedas monedas = SistemaMonedas.getInstancia();
 
     /** Sistema de estadísticas para registrar la cría, venta y ganancias de los peces. */
-    public static Estadisticas estadisticas;
+    public Estadisticas estadisticas;
 
     /** Almacén central de comida para abastecer las piscifactorías. */
-    public static AlmacenCentral almacenCentral;
+    public AlmacenCentral almacenCentral;
 
-    public static GranjaFitoplancton granjaFitoplancton;
-    public static GranjaLangostinos granjaLangostinos;
+    /** Granja dedicada a la producción de fitoplancton. */
+    public GranjaFitoplancton granjaFitoplancton;
+
+    /** Granja dedicada a la producción de langostinos. */
+    public GranjaLangostinos granjaLangostinos;
 
     /** Registro de logs y eventos del sistema. */
-    public static Registros registro;
+    public Registros registro;
 
     /** DAO para gestionar los pedidos en la base de datos. */
     public DAOPedidos pedidos = new DAOPedidos();
@@ -373,11 +377,15 @@ public class Simulador {
             }
         }
 
-        if (granjaFitoplancton != null) {
-            granjaFitoplancton.actualizarCiclo(almacenCentral);
-        }
-        if (granjaLangostinos != null) {
-            granjaLangostinos.simularDia();
+        if (almacenCentral != null) {
+            almacenCentral.distribuirComida(piscifactorias);
+            
+            if (granjaFitoplancton != null) {
+                granjaFitoplancton.nextDay(almacenCentral);
+            }
+            if (granjaLangostinos != null) {
+                granjaLangostinos.nextDay(almacenCentral);
+            }
         }
 
         if (dia % 10 == 0) {
@@ -935,11 +943,18 @@ public class Simulador {
 
                 if (partes.length > 1) {
                 String posibleNivel = partes[partes.length - 1];
-                    if (posibleNivel.equals("I") || posibleNivel.equals("II") || posibleNivel.equals("III")) {
+                    if (posibleNivel.equals("I") || 
+                        posibleNivel.equals("II") || 
+                        posibleNivel.equals("III") || 
+                        posibleNivel.equals("IV") ||
+                        posibleNivel.equals("V")) {
+
                         switch (posibleNivel) {
                             case "I" -> nivel = 1;
                             case "II" -> nivel = 2;
                             case "III" -> nivel = 3;
+                            case "IV" -> nivel = 4;
+                            case "V" -> nivel = 5;
                         }
                         tipo = String.join(" ", Arrays.copyOf(partes, partes.length - 1));
                     }
@@ -1059,16 +1074,35 @@ public class Simulador {
     /** Genera diversas recompensas. */
     private void generarRecompensas() {
         CrearRecompensa.createAlgasReward(1);
+        CrearRecompensa.createAlgasReward(2);
+        CrearRecompensa.createAlgasReward(3);
+        CrearRecompensa.createAlgasReward(4);
+        CrearRecompensa.createAlgasReward(5);
+
         CrearRecompensa.createPiensoReward(1);
+        CrearRecompensa.createPiensoReward(2);
+        CrearRecompensa.createPiensoReward(3);
+        CrearRecompensa.createPiensoReward(4);
+        CrearRecompensa.createPiensoReward(5);
+
         CrearRecompensa.createComidaReward(1);
+        CrearRecompensa.createComidaReward(2);
+        CrearRecompensa.createComidaReward(3);
+        CrearRecompensa.createComidaReward(4);
+        CrearRecompensa.createComidaReward(5);
 
         CrearRecompensa.createMonedasReward(1);
+        CrearRecompensa.createMonedasReward(2);
+        CrearRecompensa.createMonedasReward(3);
+        CrearRecompensa.createMonedasReward(4);
+        CrearRecompensa.createMonedasReward(5);
 
         CrearRecompensa.createTanqueReward(1);
         CrearRecompensa.createTanqueReward(2);
 
         CrearRecompensa.createPiscifactoriaReward(1, "A");
         CrearRecompensa.createPiscifactoriaReward(1, "B");
+
         CrearRecompensa.createPiscifactoriaReward(2, "A");
         CrearRecompensa.createPiscifactoriaReward(2, "B");
 
@@ -1117,7 +1151,7 @@ public class Simulador {
                                     ? new Pez[] {
                                             new Dorada(sexo),
                                             new SalmonAtlantico(sexo),
-                                            new ArenqueDelAtlantico(sexo),
+                                            new TruchaArcoiris(sexo),
                                             new CarpaPlateada(sexo),
                                             new Pejerrey(sexo),
                                             new PercaEuropea(sexo),
@@ -1151,7 +1185,7 @@ public class Simulador {
      * @param cantidadComida La cantidad de comida a distribuir.
      * @param tipo El tipo de comida a distribuir ("algae", "animal", "general").
      */
-    public static void distribuirComida(int cantidadComida, String tipo) {
+    public void distribuirComida(int cantidadComida, String tipo) {
      
         switch (tipo) {
             case "algae":
@@ -1251,11 +1285,11 @@ public class Simulador {
             String[] opciones = new String[pedidosPendientes.size()];
             for (int i = 0; i < pedidosPendientes.size(); i++) {
                 DTOPedido pedido = pedidosPendientes.get(i);
-                
+
                 int cantidadEnviada = pedido.getCantidadEnviada();
                 int cantidadSolicitada = pedido.getCantidadTotal();
                 int porcentaje = cantidadSolicitada > 0 ? (cantidadEnviada * 100 / cantidadSolicitada) : 0;
-                
+
                 // [numero_referencia] NombreCliente: NombrePez cantidadEnviada/cantidadSolicitada (porcentaje%)
                 opciones[i] = String.format("[%s] %s: %s %d/%d (%d%%)",
                         pedido.getNumeroReferencia(),
@@ -1268,49 +1302,74 @@ public class Simulador {
             System.out.println("\n=================== Selecciona un pedido ===================");
             MenuHelper.mostrarMenuCancelar(opciones);
             int numeroPedido = InputHelper.solicitarNumero(0, pedidosPendientes.size());
-    
+
             if (numeroPedido != 0) {
                 DTOPedido pedidoSeleccionado = pedidosPendientes.get(numeroPedido - 1);
-    
+                int cantidadEnviadaAnterior = pedidoSeleccionado.getCantidadEnviada();
+
                 Tanque tanque = selectTank().getValue();
                 int cantidadDisponible = (tanque != null) ? tanque.getMaduros() : 0;
-    
+
                 DTOPedido pedidoActualizado = pedidos.enviarPedido(pedidoSeleccionado, cantidadDisponible);
+                if (cantidadDisponible > 0) {
+                    if (tanque.getPeces().get(0).getNombre().equals(pedidoActualizado.getNombrePez())) {
+                        List<Pez> peces = tanque.getPeces();
 
-                if (cantidadDisponible > 0 && (tanque.getPeces().get(1).getNombre() == pedidoActualizado.getNombrePez())) { //TODO
-                    List<Pez> peces = tanque.getPeces();
-                    peces.removeIf(Pez::isMaduro);
-                }
+                        int pecesEnviados = pedidoActualizado.getCantidadEnviada() - cantidadEnviadaAnterior;
+                        System.out.println("Cantidad de peces enviados en esta operación: " + pecesEnviados);
 
-                if (pedidoActualizado != null && pedidoActualizado.getCantidadEnviada() == pedidoActualizado.getCantidadTotal()) {
-                    System.out.println("El pedido ha sido completado.");
-                    registro.registroPedidoEnviado(pedidoActualizado.getNombrePez(), pedidoActualizado.getNumeroReferencia());
-    
-                    Random random = new Random();
-                    int probabilidad = random.nextInt(100);
-    
-                    if (probabilidad < 50) {
-                        int nivel = (random.nextInt(100) < 60) ? 1 : (random.nextInt(100) < 90) ? 2 : 3;
-                        CrearRecompensa.createComidaReward(nivel);
-                        System.out.println("\n¡Felicidades! Has recibido una recompensa de comida de nivel " + nivel + " por completar el pedido.");
-                    } else if (probabilidad < 90) {
-                        int nivel = (random.nextInt(100) < 60) ? 1 : (random.nextInt(100) < 90) ? 2 : 3;
-                        CrearRecompensa.createMonedasReward(nivel);
-                        System.out.println("\n¡Felicidades! Has recibido una recompensa de monedas de nivel " + nivel + " por completar el pedido.");
+                        int pecesEliminados = 0;
+                        Iterator<Pez> iterator = peces.iterator();
+                        while (iterator.hasNext() && pecesEliminados < pecesEnviados) {
+                            Pez pez = iterator.next();
+                            if (pez.isMaduro()) {
+                                iterator.remove();
+                                pecesEliminados++;
+                            }
+                        }
+
+                        if (pedidoActualizado.getCantidadEnviada() == pedidoActualizado.getCantidadTotal()) {
+                            System.out.println("\nEl pedido ha sido completado.");
+                            registro.registroPedidoEnviado(pedidoActualizado.getNombrePez(), pedidoActualizado.getNumeroReferencia());
+
+                            Random random = new Random();
+                            int probabilidad = random.nextInt(100);
+
+                            if (probabilidad < 50) {
+                                int nivel = (random.nextInt(100) < 60) ? 1 : (random.nextInt(100) < 90) ? 2 : 3;
+                                CrearRecompensa.createComidaReward(nivel);
+                                System.out.println("\n¡Felicidades! Has recibido una recompensa de comida de nivel " 
+                                        + nivel + " por completar el pedido.");
+                            } else if (probabilidad < 90) {
+                                int nivel = (random.nextInt(100) < 60) ? 1 : (random.nextInt(100) < 90) ? 2 : 3;
+                                CrearRecompensa.createMonedasReward(nivel);
+                                System.out.println("\n¡Felicidades! Has recibido una recompensa de monedas de nivel " 
+                                        + nivel + " por completar el pedido.");
+                            } else {
+                                int tipoTanque = random.nextInt(100) < 60 ? 1 : 2;
+                                CrearRecompensa.createTanqueReward(tipoTanque);
+                                System.out.println("\n¡Felicidades! Has recibido una recompensa de tanque de " 
+                                        + (tipoTanque == 1 ? "río" : "mar") + " por completar el pedido.");
+                            }
+                        } else {
+                            System.out.println("\nEl pedido no se ha completado. Aún faltan " 
+                                    + (pedidoActualizado.getCantidadTotal() - pedidoActualizado.getCantidadEnviada()) 
+                                    + " unidades de " + pedidoActualizado.getNombrePez() + " por enviar.");
+                        }
                     } else {
-                        int tipoTanque = random.nextInt(100) < 60 ? 1 : 2;
-                        CrearRecompensa.createTanqueReward(tipoTanque);
-                        System.out.println("\n¡Felicidades! Has recibido una recompensa de tanque de " + (tipoTanque == 1 ? "río" : "mar") + " por completar el pedido.");
+                        System.out.println("\nNo puedes añadir " + pedidoActualizado.getNombrePez() 
+                                + " al pedido de " + pedidoSeleccionado.getNombrePez() + ".");
                     }
                 } else {
-                    System.out.println("\nEl pedido no se ha completado. Aún faltan " + (pedidoActualizado.getCantidadTotal() - pedidoActualizado.getCantidadEnviada()) + " unidades de " + pedidoActualizado.getNombrePez() + " por enviar.");
+                    System.out.println("\nNo se encontraron peces maduros de tipo " 
+                            + pedidoActualizado.getNombrePez() + " en el tanque.");
                 }
+            } else {
+                System.out.println("\nNo hay pedidos disponibles.");
             }
-        } else {
-            System.out.println("\nNo hay pedidos disponibles.");
         }
     }
-    
+
     /** Borra todos los pedidos almacenados. */
     public void borrarPedidos() {
         int pedidosBorrados = pedidos.borrarPedidos();
@@ -1319,6 +1378,7 @@ public class Simulador {
             : "\nNo se encontraron pedidos para eliminar.");
     }
 
+    /** Cierra la conexión de pedidos. */
     public void cerrarConexion() {
         pedidos.close();
     }
@@ -1353,7 +1413,8 @@ public class Simulador {
         Simulador simulador = null;
         try {
             simulador = new Simulador();
-            simulador.instance = simulador;
+            Simulador.instance = simulador;
+
             simulador.init();
     
             boolean running = true;
@@ -1369,15 +1430,12 @@ public class Simulador {
                     case 5: simulador.showIctio(); break;
                     case 6: 
                         simulador.nextDay();
-                        if (almacenCentral != null) {
-                            almacenCentral.distribuirComida(Simulador.piscifactorias);
-                        }
                         GestorEstado.guardarEstado(simulador);
                         break;
                     case 7: 
                         simulador.addFood();
-                        if (almacenCentral != null) {
-                            almacenCentral.distribuirComida(Simulador.piscifactorias);
+                        if (simulador.almacenCentral != null) {
+                            simulador.almacenCentral.distribuirComida(simulador.piscifactorias);
                         }
                         break;
                     case 8: simulador.addFish(); break;
@@ -1399,11 +1457,11 @@ public class Simulador {
                     case 99:
                         Simulador.monedas.ganarMonedas(1000);
                         System.out.println("\nAñadidas 1000 monedas mediante la opción oculta. Monedas actuales, " + monedas.getMonedas());
-                        registro.registroOpcionOcultaMonedas(monedas.getMonedas());
+                        simulador.registro.registroOpcionOcultaMonedas(monedas.getMonedas());
                         break;
                     case 16: 
                         running = false;
-                        registro.registroCierrePartida();
+                        simulador.registro.registroCierrePartida();
                         GestorEstado.guardarEstado(simulador);
                         System.out.println("\nSaliendo del simulador.");
                         break;
@@ -1412,12 +1470,12 @@ public class Simulador {
                 }
             }
         } catch (NullPointerException e) {
-            Simulador.registro.registroLogError("Error: Un elemento no fue inicializado correctamente. " + e.getMessage());
+            Simulador.instance.registro.registroLogError("Error: Un elemento no fue inicializado correctamente. " + e.getMessage());
         } catch (Exception e) {
-            Simulador.registro.registroLogError("Error inesperado en el Main: " + e.getMessage());
+            Simulador.instance.registro.registroLogError("Error inesperado en el Main: " + e.getMessage());
         } finally {
             InputHelper.close();
-            registro.closeLogError();
+            simulador.registro.closeLogError();
             if (simulador != null) {
                 simulador.cerrarConexion();
             }
@@ -1466,7 +1524,7 @@ public class Simulador {
      * @param nombreEntidad el nuevo nombre de la entidad.
      */
     public void setNombreEntidad(String nombreEntidad) {
-        Simulador.nombreEntidad = nombreEntidad;
+        this.nombreEntidad = nombreEntidad;
     }
 
     /**
@@ -1484,6 +1542,6 @@ public class Simulador {
      * @param estadisticas el objeto de estadísticas a establecer.
      */
     public void setEstadisticas(Estadisticas estadisticas) {
-        Simulador.estadisticas = estadisticas;
+        this.estadisticas = estadisticas;
     }
 }

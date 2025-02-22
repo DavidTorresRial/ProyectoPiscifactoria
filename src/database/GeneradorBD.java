@@ -40,14 +40,14 @@ public class GeneradorBD {
             stm = connection.createStatement();
             stm.executeUpdate(query);
         } catch (SQLException e) {
-            Simulador.registro.registroLogError("Error al crear la tabla Cliente: " + e.getMessage());
+            Simulador.instance.registro.registroLogError("Error al crear la tabla Cliente: " + e.getMessage());
         } finally {
             try { 
                 if (stm != null) { 
                     stm.close(); 
                 }
             } catch (SQLException e) {
-                Simulador.registro.registroLogError("Error al cerrar Statement en crearTablaPez: " + e.getMessage());
+                Simulador.instance.registro.registroLogError("Error al cerrar Statement en crearTablaPez: " + e.getMessage());
             }
         }
     }
@@ -65,14 +65,14 @@ public class GeneradorBD {
             stm = connection.createStatement();
             stm.executeUpdate(query);
         } catch (SQLException e) {
-            Simulador.registro.registroLogError("Error al crear la tabla Pez: " + e.getMessage());
+            Simulador.instance.registro.registroLogError("Error al crear la tabla Pez: " + e.getMessage());
         } finally {
             try { 
                 if (stm != null) {
                     stm.close(); 
                 }
             } catch (SQLException e) {
-                Simulador.registro.registroLogError("Error al cerrar Statement en crearTablaPez: " + e.getMessage());
+                Simulador.instance.registro.registroLogError("Error al cerrar Statement en crearTablaPez: " + e.getMessage());
             }
         }
     }
@@ -94,14 +94,14 @@ public class GeneradorBD {
             stm = connection.createStatement();
             stm.executeUpdate(query);
         } catch (SQLException e) {
-            Simulador.registro.registroLogError("Error al crear la tabla Pedido: " + e.getMessage());
+            Simulador.instance.registro.registroLogError("Error al crear la tabla Pedido: " + e.getMessage());
         } finally {
             try { 
                 if (stm != null) { 
                     stm.close(); 
                 }
             } catch (SQLException e) {
-                Simulador.registro.registroLogError("Error al cerrar Statement en crearTablaPedido: " + e.getMessage());
+                Simulador.instance.registro.registroLogError("Error al cerrar Statement en crearTablaPedido: " + e.getMessage());
             }
         }
     }
@@ -128,14 +128,14 @@ public class GeneradorBD {
             }
             pstm.executeBatch();
         } catch (SQLException e) {
-            Simulador.registro.registroLogError("Error al agregar clientes a la base de datos: " + e.getMessage());
+            Simulador.instance.registro.registroLogError("Error al agregar clientes a la base de datos: " + e.getMessage());
         }
     }
     
     /** Agrega peces a la base de datos verificando si ya existen. */
     public void agregarPeces() {
         try (PreparedStatement pstm = connection.prepareStatement(QUERY_AGREGAR_PEZ)) {
-            for (String pez : Simulador.pecesImplementados) {
+            for (String pez : Simulador.instance.pecesImplementados) {
                 pstm.setString(1, pez);
                 pstm.setString(2, AlmacenPropiedades.getPropByName(pez).getCientifico());
                 pstm.setString(3, pez);
@@ -143,7 +143,7 @@ public class GeneradorBD {
             }
             pstm.executeBatch();
         } catch (SQLException e) {
-            Simulador.registro.registroLogError("Error al agregar peces a la base de datos: " + e.getMessage());
+            Simulador.instance.registro.registroLogError("Error al agregar peces a la base de datos: " + e.getMessage());
         }
     }
     

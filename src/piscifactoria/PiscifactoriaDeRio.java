@@ -45,7 +45,7 @@ public class PiscifactoriaDeRio extends Piscifactoria {
             if (Simulador.monedas.gastarMonedas(COSTO_MEJORA)) {
                 capacidadMaximaComida += INCREMENTO_CAPACIDAD;
                 System.out.println("\nMejorada la piscifactoría " + nombre + " aumentando su capacidad de comida hasta un total de " + capacidadMaximaComida + " por " + COSTO_MEJORA + " monedas.");
-                Simulador.registro.registroMejorarPiscifactoria(nombre, capacidadMaximaComida, COSTO_MEJORA);
+                Simulador.instance.registro.registroMejorarPiscifactoria(nombre, capacidadMaximaComida, COSTO_MEJORA);
             } else {
                 System.out.println("No tienes suficientes monedas para mejorar el almacén de comida de la piscifactoría " + nombre + ".");
             }
@@ -62,7 +62,7 @@ public class PiscifactoriaDeRio extends Piscifactoria {
             if (Simulador.monedas.gastarMonedas(costoTanque)) {
                 tanques.add(new Tanque(tanques.size() + 1, 25));
                 System.out.println("\nComprado un tanque número " + tanques.size() + " de la piscifactoría " + nombre + ".");
-                Simulador.registro.registroComprarTanque(tanques.size(), nombre);
+                Simulador.instance.registro.registroComprarTanque(tanques.size(), nombre);
             } else {
                 System.out.println("\nNo tienes suficientes monedas para agregar un tanque de río. Necesitas " + costoTanque + " monedas.");
             }

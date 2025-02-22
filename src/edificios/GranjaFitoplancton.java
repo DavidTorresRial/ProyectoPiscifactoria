@@ -27,19 +27,28 @@ public class GranjaFitoplancton {
     }
 
     /**
+     * Crea una granja con un número específico de tanques y un ciclo inicial.
+     * 
+     * @param numeroTanques Cantidad inicial de tanques.
+     * @param ciclo Ciclo de producción inicial.
+     */
+    public GranjaFitoplancton(int numeroTanques, int ciclo) {
+        this.numeroTanques = numeroTanques;
+        this.ciclo = ciclo;
+    }
+
+    /**
      * Actualiza el ciclo de producción de la granja y añade comida vegetal al almacén si se cumple el ciclo.
      * 
      * @param almacen Almacén central donde se almacena la producción de comida vegetal.
      */
-    public void actualizarCiclo(AlmacenCentral almacen) {
-        if (almacen != null) {
-            ciclo++;
-            if (ciclo > CICLO_DIAS) {
-                int produccionFitoplancton = numeroTanques * PRODUCCION_POR_TANQUE;
-                System.out.println("\nGranja de Fitoplancton produce " + produccionFitoplancton + " de comida vegetal.");
-                almacen.añadirComidaVegetal(produccionFitoplancton);
-                ciclo = 0;
-            }
+    public void nextDay(AlmacenCentral almacen) {
+        ciclo++;
+        if (ciclo > CICLO_DIAS) {
+            int produccionFitoplancton = numeroTanques * PRODUCCION_POR_TANQUE;
+            System.out.println("\nGranja de Fitoplancton produce " + produccionFitoplancton + " de comida vegetal.");
+            almacen.añadirComidaVegetal(produccionFitoplancton);
+            ciclo = 0;
         }
     }
 
@@ -49,10 +58,28 @@ public class GranjaFitoplancton {
             numeroTanques++;
             ciclo = 0;
             System.out.println("\nGranja de fitoplancton mejorada: Nuevo tanque añadido. Total: " + numeroTanques + " tanques.");
-            Simulador.registro.registroMejoradaGranjaFitoplancton(numeroTanques);
+            Simulador.instance.registro.registroMejoradaGranjaFitoplancton(numeroTanques);
         } else {
             System.out.println("\nNo tienes suficientes monedas para comprar la granja de fitoplancton.");
         }
+    }
+
+    /**
+     * Devuelve el número de tanques de la granja.
+     * 
+     * @return Número de tanques actuales.
+     */
+    public int getNumeroTanques() {
+        return numeroTanques;
+    }
+
+    /**
+     * Devuelve el ciclo actual de producción.
+     * 
+     * @return Días transcurridos en el ciclo actual.
+     */
+    public int getCiclo() {
+        return ciclo;
     }
 
     /**
