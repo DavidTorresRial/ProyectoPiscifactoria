@@ -3,6 +3,7 @@ package commons;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -1284,11 +1285,11 @@ public class Simulador {
             String[] opciones = new String[pedidosPendientes.size()];
             for (int i = 0; i < pedidosPendientes.size(); i++) {
                 DTOPedido pedido = pedidosPendientes.get(i);
-                
+
                 int cantidadEnviada = pedido.getCantidadEnviada();
                 int cantidadSolicitada = pedido.getCantidadTotal();
                 int porcentaje = cantidadSolicitada > 0 ? (cantidadEnviada * 100 / cantidadSolicitada) : 0;
-                
+
                 // [numero_referencia] NombreCliente: NombrePez cantidadEnviada/cantidadSolicitada (porcentaje%)
                 opciones[i] = String.format("[%s] %s: %s %d/%d (%d%%)",
                         pedido.getNumeroReferencia(),
@@ -1301,55 +1302,74 @@ public class Simulador {
             System.out.println("\n=================== Selecciona un pedido ===================");
             MenuHelper.mostrarMenuCancelar(opciones);
             int numeroPedido = InputHelper.solicitarNumero(0, pedidosPendientes.size());
-    
+
             if (numeroPedido != 0) {
                 DTOPedido pedidoSeleccionado = pedidosPendientes.get(numeroPedido - 1);
-    
+                int cantidadEnviadaAnterior = pedidoSeleccionado.getCantidadEnviada();
+
                 Tanque tanque = selectTank().getValue();
                 int cantidadDisponible = (tanque != null) ? tanque.getMaduros() : 0;
-    
-                DTOPedido pedidoActualizado = pedidos.enviarPedido(pedidoSeleccionado, cantidadDisponible);
 
+                DTOPedido pedidoActualizado = pedidos.enviarPedido(pedidoSeleccionado, cantidadDisponible);
                 if (cantidadDisponible > 0) {
                     if (tanque.getPeces().get(0).getNombre().equals(pedidoActualizado.getNombrePez())) {
                         List<Pez> peces = tanque.getPeces();
-                        peces.removeIf(Pez::isMaduro);
 
-                        if (pedidoActualizado != null && pedidoActualizado.getCantidadEnviada() == pedidoActualizado.getCantidadTotal()) {
-                            System.out.println("El pedido ha sido completado.");
+                        int pecesEnviados = pedidoActualizado.getCantidadEnviada() - cantidadEnviadaAnterior;
+                        System.out.println("Cantidad de peces enviados en esta operación: " + pecesEnviados);
+
+                        int pecesEliminados = 0;
+                        Iterator<Pez> iterator = peces.iterator();
+                        while (iterator.hasNext() && pecesEliminados < pecesEnviados) {
+                            Pez pez = iterator.next();
+                            if (pez.isMaduro()) {
+                                iterator.remove();
+                                pecesEliminados++;
+                            }
+                        }
+
+                        if (pedidoActualizado.getCantidadEnviada() == pedidoActualizado.getCantidadTotal()) {
+                            System.out.println("\nEl pedido ha sido completado.");
                             registro.registroPedidoEnviado(pedidoActualizado.getNombrePez(), pedidoActualizado.getNumeroReferencia());
-            
+
                             Random random = new Random();
                             int probabilidad = random.nextInt(100);
-            
+
                             if (probabilidad < 50) {
                                 int nivel = (random.nextInt(100) < 60) ? 1 : (random.nextInt(100) < 90) ? 2 : 3;
                                 CrearRecompensa.createComidaReward(nivel);
-                                System.out.println("\n¡Felicidades! Has recibido una recompensa de comida de nivel " + nivel + " por completar el pedido.");
+                                System.out.println("\n¡Felicidades! Has recibido una recompensa de comida de nivel " 
+                                        + nivel + " por completar el pedido.");
                             } else if (probabilidad < 90) {
                                 int nivel = (random.nextInt(100) < 60) ? 1 : (random.nextInt(100) < 90) ? 2 : 3;
                                 CrearRecompensa.createMonedasReward(nivel);
-                                System.out.println("\n¡Felicidades! Has recibido una recompensa de monedas de nivel " + nivel + " por completar el pedido.");
+                                System.out.println("\n¡Felicidades! Has recibido una recompensa de monedas de nivel " 
+                                        + nivel + " por completar el pedido.");
                             } else {
                                 int tipoTanque = random.nextInt(100) < 60 ? 1 : 2;
                                 CrearRecompensa.createTanqueReward(tipoTanque);
-                                System.out.println("\n¡Felicidades! Has recibido una recompensa de tanque de " + (tipoTanque == 1 ? "río" : "mar") + " por completar el pedido.");
+                                System.out.println("\n¡Felicidades! Has recibido una recompensa de tanque de " 
+                                        + (tipoTanque == 1 ? "río" : "mar") + " por completar el pedido.");
                             }
                         } else {
-                            System.out.println("\nEl pedido no se ha completado. Aún faltan " + (pedidoActualizado.getCantidadTotal() - pedidoActualizado.getCantidadEnviada()) + " unidades de " + pedidoActualizado.getNombrePez() + " por enviar.");
+                            System.out.println("\nEl pedido no se ha completado. Aún faltan " 
+                                    + (pedidoActualizado.getCantidadTotal() - pedidoActualizado.getCantidadEnviada()) 
+                                    + " unidades de " + pedidoActualizado.getNombrePez() + " por enviar.");
                         }
                     } else {
-                        System.out.println("\nNo puedes añadir " + pedidoActualizado.getNombrePez() + " al pedido de " + pedidoSeleccionado.getNombrePez() + ".");
+                        System.out.println("\nNo puedes añadir " + pedidoActualizado.getNombrePez() 
+                                + " al pedido de " + pedidoSeleccionado.getNombrePez() + ".");
                     }
                 } else {
-                    System.out.println("\nNo se encontraron peces maduros de tipo " + pedidoActualizado.getNombrePez() + " en el tanque.");
+                    System.out.println("\nNo se encontraron peces maduros de tipo " 
+                            + pedidoActualizado.getNombrePez() + " en el tanque.");
                 }
-            }else {
+            } else {
                 System.out.println("\nNo hay pedidos disponibles.");
             }
-        } 
+        }
     }
-    
+
     /** Borra todos los pedidos almacenados. */
     public void borrarPedidos() {
         int pedidosBorrados = pedidos.borrarPedidos();
