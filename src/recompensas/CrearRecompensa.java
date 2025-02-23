@@ -3,7 +3,6 @@ package recompensas;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.function.Consumer;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -15,30 +14,32 @@ import org.dom4j.io.XMLWriter;
 
 import commons.Simulador;
 
-/** Clase responsable de la creación y gestión de recompensas en formato XML. */
+/** Clase que gestiona la creación de recompensas en formato XML. */
 public class CrearRecompensa {
 
     /** Directorio donde se almacenan los archivos de recompensas. */
     private static final String REWARDS_DIRECTORY = "rewards/";
 
     /**
-     * Crea o actualiza un archivo de recompensa con los datos proporcionados.
-     *
-     * @param fileName    Nombre del archivo XML donde se guardará la recompensa.
-     * @param name        Nombre de la recompensa.
-     * @param description Descripción de la recompensa.
-     * @param rarity      Rareza de la recompensa (del 1 al 5).
-     * @param addGive     Acción que define los elementos de la etiqueta <give>.
+     * Crea una recompensa de pienso basada en el tipo especificado.
+     * 
+     * @param type el nivel de la recompensa (1-5).
      */
-    private static void createOrUpdateReward(String fileName, String name, String description, String rarity, Consumer<Element> addGive) {
+    public static void createPiensoReward(int type) {
+        String fileName = REWARDS_DIRECTORY + "pienso_" + type + ".xml";
+        String name = "Pienso " + romanize(type);
+        int rarity = type - 1;
+        int foodAmount = getFoodAmount(type);
+        String description = foodAmount + " unidades de pienso hecho a partir de peces, moluscos y otros seres marinos para alimentar a peces carnívoros y omnívoros.";
+
         try {
             File file = new File(fileName);
             Document document;
-            
+
             if (file.exists()) {
                 SAXReader reader = new SAXReader();
                 document = reader.read(file);
-                
+
                 Element root = document.getRootElement();
                 Element quantityElement = root.element("quantity");
                 if (quantityElement != null) {
@@ -47,219 +48,391 @@ public class CrearRecompensa {
                 } else {
                     root.addElement("quantity").addText("1");
                 }
+
             } else {
                 document = DocumentHelper.createDocument();
                 Element root = document.addElement("reward");
-                
+
                 root.addElement("name").addText(name);
                 root.addElement("origin").addText(Simulador.nombreEntidad);
                 root.addElement("desc").addText(description);
-                root.addElement("rarity").addText(rarity);
-                
+                root.addElement("rarity").addText(String.valueOf(rarity));
+
                 Element give = root.addElement("give");
-                addGive.accept(give);
-                
+                give.addElement("food")
+                    .addAttribute("type", "animal")
+                    .addText(String.valueOf(foodAmount));
+
                 root.addElement("quantity").addText("1");
             }
-            
+
             OutputFormat format = OutputFormat.createPrettyPrint();
             XMLWriter writer = new XMLWriter(new FileWriter(file), format);
             writer.write(document);
             writer.close();
-            
+
             Simulador.registro.registroCrearRecompensa(name);
         } catch (IOException | DocumentException e) {
             Simulador.registro.registroLogError("Error al crear la recompensa '" + name + "' en el archivo '" + fileName + "': " + e.getMessage());
         }
     }
 
-    // MÉTODOS DE CREACIÓN DE RECOMPENSAS
-
     /**
-     * Crea una recompensa de pienso para peces carnívoros y omnívoros.
-     *
-     * @param type Nivel del pienso (1-5).
-     */
-    public static void createPiensoReward(int type) {
-        String fileName = REWARDS_DIRECTORY + "pienso_" + type + ".xml";
-        String name = "Pienso " + romanize(type);
-        String rarity = String.valueOf(type - 1);
-        int foodAmount = getFoodAmount(type);
-        String description = foodAmount + " unidades de pienso hecho a partir de peces, moluscos y otros seres marinos para alimentar a peces carnívoros y omnívoros.";
-
-        createOrUpdateReward(fileName, name, description, rarity, give -> 
-            give.addElement("food")
-                .addAttribute("type", "animal")
-                .addText(String.valueOf(foodAmount))
-        );
-    }
-
-    /**
-     * Crea una recompensa de algas para peces filtradores.
-     *
-     * @param type Nivel de las algas (1-5).
+     * Crea una recompensa de algas basada en el tipo especificado.
+     * 
+     * @param type el nivel de la recompensa (1-5).
      */
     public static void createAlgasReward(int type) {
         String fileName = REWARDS_DIRECTORY + "algas_" + type + ".xml";
         String name = "Algas " + romanize(type);
-        String rarity = String.valueOf(type - 1);
+        int rarity = type - 1;
         int foodAmount = getFoodAmount(type);
         String description = foodAmount + " cápsulas de algas para alimentar peces filtradores y omnívoros.";
 
-        createOrUpdateReward(fileName, name, description, rarity, give ->
-            give.addElement("food")
-                .addAttribute("type", "algae")
-                .addText(String.valueOf(foodAmount))
-        );
+        try {
+            File file = new File(fileName);
+            Document document;
+
+            if (file.exists()) {
+                SAXReader reader = new SAXReader();
+                document = reader.read(file);
+
+                Element root = document.getRootElement();
+                Element quantityElement = root.element("quantity");
+                if (quantityElement != null) {
+                    int currentQuantity = Integer.parseInt(quantityElement.getText());
+                    quantityElement.setText(String.valueOf(currentQuantity + 1));
+                } else {
+                    root.addElement("quantity").addText("1");
+                }
+
+            } else {
+                document = DocumentHelper.createDocument();
+                Element root = document.addElement("reward");
+
+                root.addElement("name").addText(name);
+                root.addElement("origin").addText(Simulador.nombreEntidad);
+                root.addElement("desc").addText(description);
+                root.addElement("rarity").addText(String.valueOf(rarity));
+
+                Element give = root.addElement("give");
+                give.addElement("food")
+                    .addAttribute("type", "algae")
+                    .addText(String.valueOf(foodAmount));
+
+                root.addElement("quantity").addText("1");
+            }
+
+            OutputFormat format = OutputFormat.createPrettyPrint();
+            XMLWriter writer = new XMLWriter(new FileWriter(file), format);
+            writer.write(document);
+            writer.close();
+
+            Simulador.registro.registroCrearRecompensa(name);
+        } catch (IOException | DocumentException e) {
+            Simulador.registro.registroLogError("Error al crear la recompensa '" + name + "' en el archivo '" + fileName + "': " + e.getMessage());
+        }
     }
 
     /**
-     * Crea una recompensa de comida general apta para todos los peces.
-     *
-     * @param type Nivel de la comida (1-5).
+     * Crea una recompensa de comida multipropósito basada en el tipo especificado.
+     * 
+     * @param type el nivel de la recompensa (1-5).
      */
     public static void createComidaReward(int type) {
         String fileName = REWARDS_DIRECTORY + "comida_" + type + ".xml";
-        String name = "Comida general " + romanize(type);
-        String rarity = String.valueOf(type - 1);
+        String name = "Comida " + romanize(type);
+        int rarity = type - 1;
         int foodAmount = getSharedFoodAmount(type);
         String description = foodAmount + " unidades de pienso multipropósito para todo tipo de peces.";
 
-        createOrUpdateReward(fileName, name, description, rarity, give ->
-            give.addElement("food")
-                .addAttribute("type", "general")
-                .addText(String.valueOf(foodAmount))
-        );
+        try {
+            File file = new File(fileName);
+            Document document;
+
+            if (file.exists()) {
+                SAXReader reader = new SAXReader();
+                document = reader.read(file);
+
+                Element root = document.getRootElement();
+                Element quantityElement = root.element("quantity");
+                if (quantityElement != null) {
+                    int currentQuantity = Integer.parseInt(quantityElement.getText());
+                    quantityElement.setText(String.valueOf(currentQuantity + 1));
+                } else {
+                    root.addElement("quantity").addText("1");
+                }
+
+            } else {
+                document = DocumentHelper.createDocument();
+                Element root = document.addElement("reward");
+
+                root.addElement("name").addText(name);
+                root.addElement("origin").addText(Simulador.nombreEntidad);
+                root.addElement("desc").addText(description);
+                root.addElement("rarity").addText(String.valueOf(rarity));
+
+                Element give = root.addElement("give");
+                give.addElement("food")
+                    .addAttribute("type", "general")
+                    .addText(String.valueOf(foodAmount));
+
+                root.addElement("quantity").addText("1");
+            }
+
+            OutputFormat format = OutputFormat.createPrettyPrint();
+            XMLWriter writer = new XMLWriter(new FileWriter(file), format);
+            writer.write(document);
+            writer.close();
+
+            Simulador.registro.registroCrearRecompensa(name);
+        } catch (IOException | DocumentException e) {
+            Simulador.registro.registroLogError("Error al crear la recompensa '" + name + "' en el archivo '" + fileName + "': " + e.getMessage());
+        }
     }
 
     /**
-     * Crea una recompensa de monedas.
-     *
-     * @param type Nivel de las monedas (1-5).
+     * Crea una recompensa de monedas basada en el tipo especificado.
+     * 
+     * @param type el nivel de la recompensa (1-5).
      */
     public static void createMonedasReward(int type) {
         String fileName = REWARDS_DIRECTORY + "monedas_" + type + ".xml";
         String name = "Monedas " + romanize(type);
-        String rarity = String.valueOf(type - 1);
+        int rarity = type - 1;
         int coinsAmount = getCoinsAmount(type);
         String description = coinsAmount + " monedas";
 
-        createOrUpdateReward(fileName, name, description, rarity, give ->
-            give.addElement("coins")
-                .addText(String.valueOf(coinsAmount))
-        );
-    }
+        try {
+            File file = new File(fileName);
+            Document document;
 
+            if (file.exists()) {
+                SAXReader reader = new SAXReader();
+                document = reader.read(file);
+
+                Element root = document.getRootElement();
+                Element quantityElement = root.element("quantity");
+                if (quantityElement != null) {
+                    int currentQuantity = Integer.parseInt(quantityElement.getText());
+                    quantityElement.setText(String.valueOf(currentQuantity + 1));
+                } else {
+                    root.addElement("quantity").addText("1");
+                }
+
+            } else {
+                document = DocumentHelper.createDocument();
+                Element root = document.addElement("reward");
+
+                root.addElement("name").addText(name);
+                root.addElement("origin").addText(Simulador.nombreEntidad);
+                root.addElement("desc").addText(description);
+                root.addElement("rarity").addText(String.valueOf(rarity));
+
+                Element give = root.addElement("give");
+                give.addElement("coins")
+                    .addText(String.valueOf(coinsAmount));
+
+                root.addElement("quantity").addText("1");
+            }
+
+            OutputFormat format = OutputFormat.createPrettyPrint();
+            XMLWriter writer = new XMLWriter(new FileWriter(file), format);
+            writer.write(document);
+            writer.close();
+
+            Simulador.registro.registroCrearRecompensa(name);
+        } catch (IOException | DocumentException e) {
+            Simulador.registro.registroLogError("Error al crear la recompensa '" + name + "' en el archivo '" + fileName + "': " + e.getMessage());
+        }
+    }
+    
     /**
-     * Crea una recompensa para la construcción de un tanque de piscifactoría.
-     *
-     * @param type Tipo de tanque (1 para río, 2 para mar).
+     * Crea una recompensa para un tanque de piscifactoría.
+     * 
+     * @param type el tipo de tanque (1-5).
+     * @param part la parte del tanque (A o B).
      */
     public static void createTanqueReward(int type) {
-        char t = getTypeAmount(type);
-        String tipo = (t == 'r' ? "rio" : "mar");
-        String fileName = REWARDS_DIRECTORY + "tanque_" + t + ".xml";
+        String tipo = getTypeAmount(type) == 'r' ? "rio" : "mar";
+        String fileName = REWARDS_DIRECTORY + "tanque_" + getTypeAmount(type) + ".xml";
         String name = "Tanque de " + tipo;
-        String rarity = (t == 'r' ? "2" : "3");
         String description = "Materiales para la construcción, de forma gratuita, de un tanque de una piscifactoría de " + tipo + ".";
 
-        createOrUpdateReward(fileName, name, description, rarity, give -> {
-            give.addElement("building")
-                .addAttribute("code", (t == 'r' ? "2" : "3"))
-                .addText("Tanque de " + tipo);
-            give.addElement("part").addText("A");
-            give.addElement("total").addText("A");
-        });
+        try {
+            File file = new File(fileName);
+            Document document;
+
+            if (file.exists()) {
+                SAXReader reader = new SAXReader();
+                document = reader.read(file);
+
+                Element root = document.getRootElement();
+                Element quantityElement = root.element("quantity");
+                if (quantityElement != null) {
+                    int currentQuantity = Integer.parseInt(quantityElement.getText());
+                    quantityElement.setText(String.valueOf(currentQuantity + 1));
+                } else {
+                    root.addElement("quantity").addText("1");
+                }
+
+            } else {
+                document = DocumentHelper.createDocument();
+                Element root = document.addElement("reward");
+
+                root.addElement("name").addText(name);
+                root.addElement("origin").addText(Simulador.nombreEntidad);
+                root.addElement("desc").addText(description);
+                root.addElement("rarity").addText(getTypeAmount(type) == 'r' ? "2" : "3");
+
+                Element give = root.addElement("give");
+                give.addElement("building")
+                    .addAttribute("code", getTypeAmount(type) == 'r' ? "2" : "3")
+                    .addText("Tanque de " + tipo);
+                give.addElement("part")
+                    .addText("A");
+                give.addElement("total")
+                    .addText("A");
+
+                root.addElement("quantity").addText("1");
+            }
+
+            OutputFormat format = OutputFormat.createPrettyPrint();
+            XMLWriter writer = new XMLWriter(new FileWriter(file), format);
+            writer.write(document);
+            writer.close();
+
+            Simulador.registro.registroCrearRecompensa(name);
+        } catch (IOException | DocumentException e) {
+            Simulador.registro.registroLogError("Error al crear la recompensa '" + name + "' en el archivo '" + fileName + "': " + e.getMessage());
+        }
     }
 
     /**
-     * Crea una recompensa para la construcción de una piscifactoría.
-     *
-     * @param type Tipo de piscifactoría (1 para río, 2 para mar).
-     * @param part Parte específica (A o B).
+     * Crea una recompensa para una piscifactoría.
+     * 
+     * @param type el tipo de piscifactoría (1-5).
+     * @param part la parte de la piscifactoría (A o B).
      */
     public static void createPiscifactoriaReward(int type, String part) {
-        char t = getTypeAmount(type);
-        String fileName = REWARDS_DIRECTORY + "pisci_" + t + "_" + part.toLowerCase() + ".xml";
-        String tipo = (t == 'r' ? "rio" : "mar");
+        String tipo = getTypeAmount(type) == 'r' ? "rio" : "mar";
+        String fileName = REWARDS_DIRECTORY + "piscifactoria_" + getTypeAmount(type) + "_" +  part.toLowerCase() + ".xml";
         String name = "Piscifactoria de " + tipo + " [" + part + "]";
-        String rarity = (t == 'r' ? "3" : "4");
         String description = "Materiales para la construcción de una piscifactoría de " + tipo + ". Con la parte A y B, puedes obtenerla de forma gratuita.";
 
-        createOrUpdateReward(fileName, name, description, rarity, give -> {
-            give.addElement("building")
-                .addAttribute("code", (t == 'r' ? "0" : "1"))
-                .addText("Piscifactoria de " + tipo);
-            give.addElement("part").addText(part);
-            give.addElement("total").addText("AB");
-        });
+        try {
+            File file = new File(fileName);
+            Document document;
+
+            if (file.exists()) {
+                SAXReader reader = new SAXReader();
+                document = reader.read(file);
+
+                Element root = document.getRootElement();
+                Element quantityElement = root.element("quantity");
+                if (quantityElement != null) {
+                    int currentQuantity = Integer.parseInt(quantityElement.getText());
+                    quantityElement.setText(String.valueOf(currentQuantity + 1));
+                } else {
+                    root.addElement("quantity").addText("1");
+                }
+
+            } else {
+                document = DocumentHelper.createDocument();
+                Element root = document.addElement("reward");
+
+                root.addElement("name").addText(name);
+                root.addElement("origin").addText(Simulador.nombreEntidad);
+                root.addElement("desc").addText(description);
+                root.addElement("rarity").addText(getTypeAmount(type) == 'r' ? "3" : "4");
+
+                Element give = root.addElement("give");
+                give.addElement("building")
+                    .addAttribute("code", getTypeAmount(type) == 'r' ? "0" : "1")
+                    .addText("Piscifactoria de " + tipo);
+                give.addElement("part")
+                    .addText(part);
+                give.addElement("total")
+                    .addText("AB");
+
+                root.addElement("quantity").addText("1");
+            }
+
+            OutputFormat format = OutputFormat.createPrettyPrint();
+            XMLWriter writer = new XMLWriter(new FileWriter(file), format);
+            writer.write(document);
+            writer.close();
+
+            Simulador.registro.registroCrearRecompensa(name);
+        } catch (IOException | DocumentException e) {
+            Simulador.registro.registroLogError("Error al crear la recompensa '" + name + "' en el archivo '" + fileName + "': " + e.getMessage());
+        }
     }
 
     /**
-     * Crea una recompensa para la construcción de un almacén central.
-     *
-     * @param part Parte específica (A, B, C o D).
+     * Crea una recompensa para un almacén central.
+     * 
+     * @param part la parte del almacén (A, B, C o D).
      */
     public static void createAlmacenReward(String part) {
-        String fileName = REWARDS_DIRECTORY + "almacen_" + part.toLowerCase() + ".xml";
-        String name = "Almacen central [" + part + "]";
-        String rarity = "3";
+        String fileName = REWARDS_DIRECTORY + "almacen_" +  part.toLowerCase() + ".xml";
+        String name = "Almacen central " + " [" + part + "]";
         String description = "Materiales para la construcción de un almacén central. Con la parte A, B, C y D, puedes obtenerlo de forma gratuita.";
 
-        createOrUpdateReward(fileName, name, description, rarity, give -> {
-            give.addElement("building")
-                .addAttribute("code", "4")
-                .addText("Almacen central");
-            give.addElement("part").addText(part);
-            give.addElement("total").addText("ABCD");
-        });
+        try {
+            File file = new File(fileName);
+            Document document;
+
+            if (file.exists()) {
+                SAXReader reader = new SAXReader();
+                document = reader.read(file);
+
+                Element root = document.getRootElement();
+                Element quantityElement = root.element("quantity");
+                if (quantityElement != null) {
+                    int currentQuantity = Integer.parseInt(quantityElement.getText());
+                    quantityElement.setText(String.valueOf(currentQuantity + 1));
+                } else {
+                    root.addElement("quantity").addText("1");
+                }
+
+            } else {
+                document = DocumentHelper.createDocument();
+                Element root = document.addElement("reward");
+
+                root.addElement("name").addText(name);
+                root.addElement("origin").addText(Simulador.nombreEntidad);
+                root.addElement("desc").addText(description);
+                root.addElement("rarity").addText("3");
+
+                Element give = root.addElement("give");
+                give.addElement("building")
+                    .addAttribute("code", "4")
+                    .addText("Almacen central");
+                give.addElement("part")
+                    .addText(part);
+                give.addElement("total")
+                    .addText("ABCD");
+
+                root.addElement("quantity").addText("1");
+            }
+
+            OutputFormat format = OutputFormat.createPrettyPrint();
+            XMLWriter writer = new XMLWriter(new FileWriter(file), format);
+            writer.write(document);
+            writer.close();
+
+            Simulador.registro.registroCrearRecompensa(name);
+        } catch (IOException | DocumentException e) {
+            Simulador.registro.registroLogError("Error al crear la recompensa '" + name + "' en el archivo '" + fileName + "': " + e.getMessage());
+        }
     }
 
     /**
-     * Crea una recompensa para la construcción de un tanque de cría, que consta de tres partes: A, B y C.
-     *
-     * @param part Parte específica de la recompensa (A, B o C).
-     */
-    public static void createTanqueCriaReward(String part) {
-        String fileName = REWARDS_DIRECTORY + "tanque_cria_" + part.toLowerCase() + ".xml";
-        String name = "Tanque de cría [" + part + "]";
-        String rarity = "3";
-        String description = "Materiales para la construcción de un tanque de cría. Con la parte A, B y C, puedes obtenerla de forma gratuita.";
-
-        createOrUpdateReward(fileName, name, description, rarity, give -> {
-            give.addElement("building")
-                .addAttribute("code", "7")
-                .addText("Tanque de cría");
-            give.addElement("part").addText(part);
-            give.addElement("total").addText("ABC");
-        });
-    }
-
-    /**
-     * Crea una recompensa para la construcción de un tanque de huevos, que consta de cuatro partes: A, B, C y D.
-     *
-     * @param part Parte específica de la recompensa (A, B, C o D).
-     */
-    public static void createTanqueHuevosReward(String part) {
-        String fileName = REWARDS_DIRECTORY + "tanque_huevos_" + part.toLowerCase() + ".xml";
-        String name = "Tanque de huevos [" + part + "]";
-        String rarity = "3";
-        String description = "Materiales para la construcción de un tanque de huevos. Con la parte A, B, C y D, puedes obtenerla de forma gratuita.";
-
-        createOrUpdateReward(fileName, name, description, rarity, give -> {
-            give.addElement("building")
-                .addAttribute("code", "8")
-                .addText("Tanque de huevos");
-            give.addElement("part").addText(part);
-            give.addElement("total").addText("ABCD");
-        });
-    }
-
-    /**
-     * Convierte un número entero entre 1 y 5 a su representación en números romanos.
-     *
-     * @param number Número a convertir.
-     * @return Representación en números romanos (I, II, III, IV o V).
+     * Convierte un número entero a su representación en números romanos.
+     * 
+     * @param number el número a convertir (1-5).
+     * @return la representación en números romanos.
      */
     private static String romanize(int number) {
         String[] romans = {"I", "II", "III", "IV", "V"};
@@ -267,10 +440,10 @@ public class CrearRecompensa {
     }
 
     /**
-     * Calcula la cantidad de comida específica según el nivel.
-     *
-     * @param type Nivel de recompensa (1-5).
-     * @return Cantidad de comida asignada.
+     * Obtiene la cantidad de comida vegetal o animal según el tipo.
+     * 
+     * @param type el nivel de la recompensa (1-5).
+     * @return la cantidad de comida asignada.
      */
     private static int getFoodAmount(int type) {
         switch (type) {
@@ -284,10 +457,10 @@ public class CrearRecompensa {
     }
 
     /**
-     * Calcula la cantidad de comida multipropósito según el nivel.
-     *
-     * @param type Nivel de recompensa (1-5).
-     * @return Cantidad de comida multipropósito.
+     * Obtiene la cantidad de comida multipropósito según el tipo.
+     * 
+     * @param type el nivel de la recompensa (1-5).
+     * @return la cantidad de comida asignada.
      */
     private static int getSharedFoodAmount(int type) {
         switch (type) {
@@ -301,10 +474,10 @@ public class CrearRecompensa {
     }
 
     /**
-     * Calcula la cantidad de monedas según el nivel.
-     *
-     * @param type Nivel de recompensa (1-5).
-     * @return Cantidad de monedas.
+     * Obtiene la cantidad de monedas según el tipo.
+     * 
+     * @param type el nivel de la recompensa (1-5).
+     * @return la cantidad de monedas asignada.
      */
     private static int getCoinsAmount(int type) {
         switch (type) {
@@ -315,13 +488,13 @@ public class CrearRecompensa {
             case 5: return 1000;
             default: throw new IllegalArgumentException("Tipo inválido: " + type);
         }
-    }
-
+    }  
+    
     /**
-     * Determina el tipo de piscifactoría asociado al nivel proporcionado.
-     *
-     * @param type Nivel de recompensa (1 o 2).
-     * @return 'r' para río o 'm' para mar.
+     * Obtiene el tipo de recompensa ('r' para río, 'm' para mar).
+     * 
+     * @param type el nivel de la recompensa (1-5).
+     * @return el tipo de recompensa ('r' o 'm').
      */
     private static char getTypeAmount(int type) {
         switch (type) {
