@@ -151,31 +151,28 @@ public class FileHelper {
         List<String> rewardNames = new ArrayList<>();
         
         Boolean[] partesAlmacen = {false, false, false, false};
-
         Boolean[] partesPiscifactoriaRio = {false, false};
         Boolean[] partesPiscifactoriaMar = {false, false};
-        
+        Boolean[] partesTanqueCria = {false, false, false};
+        Boolean[] partesTanqueHuevos = {false, false, false, false};
+    
         String[] xmlOptions = FileHelper.obtenerArchivosEnDirectorio("rewards");
-
+    
         for (String fileName : xmlOptions) {
             if (fileName.endsWith(".xml")) {
                 try {
                     File xmlFile = new File("rewards", fileName);
-
                     SAXReader reader = new SAXReader();
                     Document document = reader.read(xmlFile);
-
+    
                     Element nameElement = document.getRootElement().element("name");
                     Element buildingElement = document.getRootElement().element("give").element("building");
-
-                    // Si no tiene la etiqueta <building>, lo agregamos como recompensa
+    
                     if (nameElement != null && buildingElement == null) {
                         rewardNames.add(nameElement.getText());
                     } else {
-                        // Procesar las partes para Almacén central
                         if (buildingElement != null && buildingElement.getText().contains("Almacen central")) {
                             Element partElement = document.getRootElement().element("give").element("part");
-
                             if (partElement != null) {
                                 String partName = partElement.getText().trim();
                                 switch (partName) {
@@ -195,11 +192,9 @@ public class FileHelper {
                                 }
                             }
                         }
-
-                        // Procesar las partes para Piscifactoria de Mar
+    
                         if (buildingElement != null && buildingElement.getText().contains("Piscifactoria de mar")) {
                             Element partElement = document.getRootElement().element("give").element("part");
-
                             if (partElement != null) {
                                 String partName = partElement.getText().trim();
                                 switch (partName) {
@@ -213,11 +208,9 @@ public class FileHelper {
                                 }
                             }
                         }
-
-                        // Procesar las partes para Piscifactoria de Río
+    
                         if (buildingElement != null && buildingElement.getText().contains("Piscifactoria de rio")) {
                             Element partElement = document.getRootElement().element("give").element("part");
-
                             if (partElement != null) {
                                 String partName = partElement.getText().trim();
                                 switch (partName) {
@@ -231,23 +224,60 @@ public class FileHelper {
                                 }
                             }
                         }
-
-                        // Procesar las partes para Tanque de mar
+    
                         if (buildingElement != null && buildingElement.getText().contains("Tanque de mar")) {
                             Element partElement = document.getRootElement().element("give").element("part");
-
                             if (partElement != null) {
                                 rewardNames.add("Tanque de mar [A]");
-
                             }
                         }
-
-                        // Procesar las partes para Tanque de rio
+    
+                        //
                         if (buildingElement != null && buildingElement.getText().contains("Tanque de rio")) {
                             Element partElement = document.getRootElement().element("give").element("part");
-
                             if (partElement != null) {
                                 rewardNames.add("Tanque de rio [A]");
+                            }
+                        }
+                        
+                        if (buildingElement != null && buildingElement.getText().contains("Tanque de cría")) {
+                            Element partElement = document.getRootElement().element("give").element("part");
+                            if (partElement != null) {
+                                String partName = partElement.getText().trim();
+                                switch (partName) {
+                                    case "A":
+                                        partesTanqueCria[0] = true;
+                                        break;
+                                    case "B":
+                                        partesTanqueCria[1] = true;
+                                        break;
+                                    case "C":
+                                        partesTanqueCria[2] = true;
+                                        break;
+                                    default:
+                                }
+                            }
+                        }
+                        
+                        if (buildingElement != null && buildingElement.getText().contains("Tanque de huevos")) {
+                            Element partElement = document.getRootElement().element("give").element("part");
+                            if (partElement != null) {
+                                String partName = partElement.getText().trim();
+                                switch (partName) {
+                                    case "A":
+                                        partesTanqueHuevos[0] = true;
+                                        break;
+                                    case "B":
+                                        partesTanqueHuevos[1] = true;
+                                        break;
+                                    case "C":
+                                        partesTanqueHuevos[2] = true;
+                                        break;
+                                    case "D":
+                                        partesTanqueHuevos[3] = true;
+                                        break;
+                                    default:
+                                }
                             }
                         }
                     }
@@ -260,46 +290,45 @@ public class FileHelper {
                 }
             }
         }
-
-        // Procesar y agregar el "Almacen central" a las recompensas
+    
         String almacenParts = "";
         for (int i = 0; i < partesAlmacen.length; i++) {
-            if (partesAlmacen[i]) {
-                almacenParts += (char) ('A' + i);
-            } else {
-                almacenParts += "x";
-            }
+            almacenParts += partesAlmacen[i] ? (char) ('A' + i) : "x";
         }
-        if (partesAlmacen[0] == true || partesAlmacen[1] == true || partesAlmacen[2] == true || partesAlmacen[3] == true) {
+        if (partesAlmacen[0] || partesAlmacen[1] || partesAlmacen[2] || partesAlmacen[3]) {
             rewardNames.add("Almacen central [" + almacenParts + "]");
         }
-
-
-        // Procesar y agregar la "Piscifactoria de Mar" a las recompensas
+    
         String piscifactoriaMarParts = "";
         for (int i = 0; i < partesPiscifactoriaMar.length; i++) {
-            if (partesPiscifactoriaMar[i]) {
-                piscifactoriaMarParts += (char) ('A' + i);
-            } else {
-                piscifactoriaMarParts += "x";
-            }
+            piscifactoriaMarParts += partesPiscifactoriaMar[i] ? (char) ('A' + i) : "x";
         }
-        if (partesPiscifactoriaMar[0] == true || partesPiscifactoriaMar[1] == true) {
+        if (partesPiscifactoriaMar[0] || partesPiscifactoriaMar[1]) {
             rewardNames.add("Piscifactoria de mar [" + piscifactoriaMarParts + "]");
         }
         
-
-        // Procesar y agregar la "Piscifactoria de Río" a las recompensas
         String piscifactoriaRioParts = "";
         for (int i = 0; i < partesPiscifactoriaRio.length; i++) {
-            if (partesPiscifactoriaRio[i]) {
-                piscifactoriaRioParts += (char) ('A' + i);
-            } else {
-                piscifactoriaRioParts += "x";
-            }
+            piscifactoriaRioParts += partesPiscifactoriaRio[i] ? (char) ('A' + i) : "x";
         }
-        if (partesPiscifactoriaRio[0] == true || partesPiscifactoriaRio[1] == true) {
+        if (partesPiscifactoriaRio[0] || partesPiscifactoriaRio[1]) {
             rewardNames.add("Piscifactoria de rio [" + piscifactoriaRioParts + "]");
+        }
+        
+        String tanqueCriaParts = "";
+        for (int i = 0; i < partesTanqueCria.length; i++) {
+            tanqueCriaParts += partesTanqueCria[i] ? (char) ('A' + i) : "x";
+        }
+        if (partesTanqueCria[0] || partesTanqueCria[1] || partesTanqueCria[2]) {
+            rewardNames.add("Tanque de cría [" + tanqueCriaParts + "]");
+        }
+        
+        String tanqueHuevosParts = "";
+        for (int i = 0; i < partesTanqueHuevos.length; i++) {
+            tanqueHuevosParts += partesTanqueHuevos[i] ? (char) ('A' + i) : "x";
+        }
+        if (partesTanqueHuevos[0] || partesTanqueHuevos[1] || partesTanqueHuevos[2] || partesTanqueHuevos[3]) {
+            rewardNames.add("Tanque de huevos [" + tanqueHuevosParts + "]");
         }
         
         return rewardNames.toArray(new String[0]);

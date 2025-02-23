@@ -452,4 +452,161 @@ public class UsarRecompensa {
             return false;
         }
     }
+
+    /**
+     * Procesa una recompensa de tipo "Tanque de cría" desde un archivo XML.
+     * 
+     * @param fileName Nombre del archivo XML que contiene la recompensa (por ejemplo, "tanque_cria.xml").
+     * @return true si la recompensa se canjeó correctamente, false en caso contrario.
+     */
+    public static boolean readTanqueCria() {
+        String partesTanqueCria = "";
+        String total = "";
+        String[] xmlOptions = FileHelper.obtenerArchivosEnDirectorio("rewards");
+    
+        for (String fileName : xmlOptions) {
+            if (fileName.startsWith("tanque_cria") && fileName.endsWith(".xml")) {
+                try {
+                    File xmlFile = new File("rewards", fileName);
+                    SAXReader reader = new SAXReader();
+                    Document document = reader.read(xmlFile);
+                    Element root = document.getRootElement();
+                    Element nameElement = root.element("name");
+                    if (nameElement != null) {
+                        String name = nameElement.getText();
+                        if (name.contains("Tanque de cría")) {
+                            Element giveElement = root.element("give");
+                            if (giveElement != null) {
+                                String part = giveElement.elementText("part");
+                                total = giveElement.elementText("total"); // Por ejemplo "ABC"
+                                if (part != null && !partesTanqueCria.contains(part)) {
+                                    partesTanqueCria += part;
+                                }
+                            }
+                        }
+                    } else {
+                        Simulador.registro.registroLogError("El archivo '" + fileName + "' no contiene la etiqueta <name>.");
+                    }
+                } catch (DocumentException e) {
+                    Simulador.registro.registroLogError("Error al procesar la recompensa del archivo: " 
+                            + fileName + " Detalles: " + e.getMessage());
+                }
+            }
+        }
+    
+        if (partesTanqueCria.length() == total.length() && total.length() > 0) {
+            for (String fileName : xmlOptions) {
+                if (fileName.startsWith("tanque_cria") && fileName.endsWith(".xml")) {
+                    try {
+                        File xmlFile = new File("rewards", fileName);
+                        SAXReader reader = new SAXReader();
+                        Document document = reader.read(xmlFile);
+                        Element root = document.getRootElement();
+                        Element name = root.element("name");
+                        Element quantityElement = root.element("quantity");
+                        int quantity = Integer.parseInt(quantityElement.getText());
+                        quantity--;
+                        quantityElement.setText(String.valueOf(quantity));
+                        
+                        OutputFormat format = OutputFormat.createPrettyPrint();
+                        XMLWriter writer = new XMLWriter(new FileWriter(xmlFile), format);
+                        writer.write(document);
+                        writer.close();
+                        
+                        if (quantity <= 0) {
+                            xmlFile.delete();
+                        }
+                        
+                        Simulador.registro.registroUsarRecompensa(name.getText());
+                    } catch (IOException | DocumentException e) {
+                        Simulador.registro.registroLogError("Error al procesar la recompensa del archivo: " 
+                                + fileName + " Detalles: " + e.getMessage());
+                    }
+                }
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+
+    /**
+     * Procesa una recompensa de tipo "Tanque de huevos" desde un archivo XML.
+     * 
+     * @param fileName Nombre del archivo XML que contiene la recompensa (por ejemplo, "tanque_huevos.xml").
+     * @return true si la recompensa se canjeó correctamente, false en caso contrario.
+     */
+    public static boolean readTanqueHuevos() {
+        String partesTanqueHuevos = "";
+        String total = "";
+        String[] xmlOptions = FileHelper.obtenerArchivosEnDirectorio("rewards");
+    
+        for (String fileName : xmlOptions) {
+            if (fileName.startsWith("tanque_huevos") && fileName.endsWith(".xml")) {
+                try {
+                    File xmlFile = new File("rewards", fileName);
+                    SAXReader reader = new SAXReader();
+                    Document document = reader.read(xmlFile);
+                    Element root = document.getRootElement();
+                    Element nameElement = root.element("name");
+                    if (nameElement != null) {
+                        String name = nameElement.getText();
+                        if (name.contains("Tanque de huevos")) {
+                            Element giveElement = root.element("give");
+                            if (giveElement != null) {
+                                String part = giveElement.elementText("part");
+                                total = giveElement.elementText("total"); // Por ejemplo "ABCD"
+                                if (part != null && !partesTanqueHuevos.contains(part)) {
+                                    partesTanqueHuevos += part;
+                                }
+                            }
+                        }
+                    } else {
+                        Simulador.registro.registroLogError("El archivo '" + fileName + "' no contiene la etiqueta <name>.");
+                    }
+                } catch (DocumentException e) {
+                    Simulador.registro.registroLogError("Error al procesar la recompensa del archivo: " 
+                            + fileName + " Detalles: " + e.getMessage());
+                }
+            }
+        }
+    
+        if (partesTanqueHuevos.length() == total.length() && total.length() > 0) {
+            for (String fileName : xmlOptions) {
+                if (fileName.startsWith("tanque_huevos") && fileName.endsWith(".xml")) {
+                    try {
+                        File xmlFile = new File("rewards", fileName);
+                        SAXReader reader = new SAXReader();
+                        Document document = reader.read(xmlFile);
+                        Element root = document.getRootElement();
+                        Element name = root.element("name");
+                        Element quantityElement = root.element("quantity");
+                        int quantity = Integer.parseInt(quantityElement.getText());
+                        quantity--;
+                        quantityElement.setText(String.valueOf(quantity));
+                        
+                        OutputFormat format = OutputFormat.createPrettyPrint();
+                        XMLWriter writer = new XMLWriter(new FileWriter(xmlFile), format);
+                        writer.write(document);
+                        writer.close();
+                        
+                        if (quantity <= 0) {
+                            xmlFile.delete();
+                        }
+                        
+                        Simulador.registro.registroUsarRecompensa(name.getText());
+                    } catch (IOException | DocumentException e) {
+                        Simulador.registro.registroLogError("Error al procesar la recompensa del archivo: " 
+                                + fileName + " Detalles: " + e.getMessage());
+                    }
+                }
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+
 }
