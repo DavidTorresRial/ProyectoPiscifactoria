@@ -1,19 +1,21 @@
 package piscifactoria;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import commons.Simulador;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-
-import peces.propiedades.Omnivoro;
-import peces.propiedades.Filtrador;
+import helpers.InputHelper;
+import helpers.MenuHelper;
+import peces.Pez;
 import peces.propiedades.Carnivoro;
 import peces.propiedades.CarnivoroActivo;
-
-import peces.Pez;
+import peces.propiedades.Filtrador;
+import peces.propiedades.Omnivoro;
+import registros.Registros;
 import tanque.Tanque;
+import tanque.TanqueCria;
+import tanque.TanqueHuevos;
 
 /** Clase abstracta que representa una piscifactoría que gestiona tanques de peces. */
 public abstract class Piscifactoria {
@@ -23,7 +25,14 @@ public abstract class Piscifactoria {
 
     /** Lista para almacenar los tanques en la piscifactoria. */
     protected List<Tanque> tanques = new ArrayList<>();
-    
+
+    /** Lista para almacenar los tanques de cria en la piscifactoria. */
+    protected List<TanqueCria> tanquesCria = new ArrayList<>();
+
+    /** Lista para almacenar los tanques de huevos en la piscifactoria. */
+    protected List<TanqueHuevos> tanquesHuevos = new ArrayList<>();
+
+
     /** Número máximo de tanques permitidos en la piscifactoría. */
     protected final int numeroMaximoTanques = 10;
     
@@ -35,6 +44,9 @@ public abstract class Piscifactoria {
 
     /** Capacidad máxima para ambos tipos de comida. */
     protected int capacidadMaximaComida;
+
+    /** Cantidad máxima de tanques de cria. */
+    protected int CANTIDAD_MAXIMA_TANQUES_CRIA = 3;
 
     /**
      * Constructor para crear una nueva piscifactoría.
@@ -135,11 +147,16 @@ public abstract class Piscifactoria {
     
         for (Tanque tanque : tanques) {
             alimentarPeces(tanque);
-            int[] resultadoTanque = tanque.nextDay();
+            int[] resultadoTanque = tanque.nextDay(tanquesHuevos.isEmpty() ? false : true);
             pecesVendidos += resultadoTanque[0];
             monedasGanadas += resultadoTanque[1];
         }
-    
+        if (tanquesCria.size() > 0) {
+            for (TanqueCria tanqueCria : tanquesCria) {
+                tanqueCria.pasarDia(this);
+            }
+        }
+        redistribuirCrias();
         return new int[]{pecesVendidos, monedasGanadas};
     }
     
@@ -243,6 +260,172 @@ public abstract class Piscifactoria {
     }
 
     /**
+     * Gestiona la interacción del usuario para administrar los tanques de cría y de huevos de la piscifactoría.
+     * Este método muestra un menú con las opciones para gestionar los tanques de cría y de huevos, y
+     * permite al usuario seleccionar una de ellas. Dependiendo de la opción seleccionada, se llamará
+     * a los métodosgestionarTanquesCria ogestionarTanquesHuevos respectivamente.
+     */
+    public void gestionarPiscifactoria() {
+        boolean salir = false;
+
+        while (!salir) {
+            System.out.println("\n=================== Gestiónar piscifactoria ===================");
+            String[] opcionesMenuPrincipal = { "Gestionar tanque de cria", "Gestionar tanque de huevos" };
+            MenuHelper.mostrarMenuCancelar(opcionesMenuPrincipal);
+
+            int opcionPrincipal = InputHelper.solicitarNumero(0, opcionesMenuPrincipal.length);
+
+            switch (opcionPrincipal) {
+                case 1:
+                    gestionarTanquesCria();
+                    break;
+                case 2:
+                    gestionarTanquesHuevos();
+                    break;
+                case 0:
+                    salir = true;
+            }
+        }
+    }
+
+    /**
+     * Gestiona la interacción del usuario para administrar los tanques de cría.
+     * Este método muestra un menú con los tanques de cría disponibles, permite seleccionar uno
+     * y, dependiendo de si el tanque está vacío o no, ofrece opciones para mostrar el estado,
+     * comprar peces o vaciar el tanque.
+     */
+    public void gestionarTanquesCria() {
+        boolean salir = false;
+        TanqueCria tanqueCria;
+        System.out.println("\n=================== Gestión de Tanques de Cría ===================");
+        for (int i = 0; i < tanquesCria.size(); i++) {
+            System.out.println((i + 1) + ". Tanque de Cría " + (i + 1));
+        }
+        int tanqueCriaSeleccionado = InputHelper.solicitarNumero(0, tanquesCria.size());
+        if (tanqueCriaSeleccionado != 0) {
+            tanqueCria = tanquesCria.get(tanqueCriaSeleccionado - 1);
+        } else {
+            tanqueCria = null;
+        }
+
+        if (tanqueCria != null) {
+            while (!salir) {
+                System.out.println("\n=================== Gestión de Tanques de Cría ===================");
+                boolean vacio = tanqueCria.getPadres().isEmpty();
+                String[] opcionesMenuPrincipal = vacio ? new String[] { "Estado", "Comprar peces" } : new String[] {"Estado", "Vaciar tanque" };
+    
+                MenuHelper.mostrarMenuCancelar(opcionesMenuPrincipal);
+    
+                int opcionPrincipal = InputHelper.solicitarNumero(0, opcionesMenuPrincipal.length);
+    
+                switch (opcionPrincipal) {
+                    case 1:
+                        tanqueCria.mostrarEstado();
+                        break;
+                    case 2:
+                        if (vacio) {
+                            tanqueCria.comprarPeces(this instanceof PiscifactoriaDeRio);
+                        } else {
+                            tanqueCria.getPadres().clear();
+                        }
+                        break;
+                    case 0:
+                        salir = true;
+                }
+            }
+        }
+    }
+
+    /**
+     * Permite gestionar el tanque de huevos de la piscifactoría.
+     * 
+     * @author David, Fran, Marcos.
+     */
+    public void gestionarTanquesHuevos() {
+        boolean salir = false;
+
+        while (!salir) {
+            System.out.println("\n=================== Gestión de Tanques de Huevos ===================");
+            String[] opcionesMenuPrincipal = { "Listar ", "Vaciar tanque" };
+            MenuHelper.mostrarMenuCancelar(opcionesMenuPrincipal);
+
+            int opcionPrincipal = InputHelper.solicitarNumero(0, opcionesMenuPrincipal.length);
+
+            switch (opcionPrincipal) {
+                case 1:
+                    listar();
+                    break;
+                case 2:
+                    vaciarTanqueHuevos();
+                    break;
+                case 0:
+                    salir = true;
+            }
+        }
+    }
+
+    /**
+     * Muestra la lista de peces en los tanques de huevos de la piscifactoría.
+     * Si no hay tanques de huevos, muestra un mensaje indicando que no hay.
+     */
+    public void listar() {
+        if (tanquesHuevos.isEmpty()) {
+            System.out.println("No hay tanques de huevos en la piscifactoría.");
+        } else {
+            for (int i = 0; i < tanquesHuevos.size(); i++) {
+                System.out.println("Tanque de Huevos " + (i + 1) + ":");
+                tanquesHuevos.get(i).listarPeces();
+            }
+        }
+    }
+
+    /**
+     * Vacía todos los tanques de huevos de la piscifactoría.
+     */
+    public void vaciarTanqueHuevos() {
+        if (tanquesHuevos.isEmpty()) {
+            System.out.println("\nNo hay tanques de huevo en la piscifactoría: " + nombre);
+        } else{
+            for (TanqueHuevos tanque : tanquesHuevos) {
+                tanque.getHuevos().clear();
+            }
+        }
+    }
+
+    /** Comprar un tanque de Cria. */
+    public void comprarTanqueCria() {
+        if (tanquesCria.size() < CANTIDAD_MAXIMA_TANQUES_CRIA) {
+            if (Simulador.monedas.ganarMonedas(500)) {
+                tanquesCria.add(new TanqueCria());
+                System.out.println("\nAcabas de comprar un tanque de cria por: 500 monedas.");
+                Simulador.registro.registroComprarTanquesCrias(nombre);
+            } else {
+                System.out.println("\nNecesitas 500 monedas para comprarte el tanque de cria numero " + tanquesCria.size() + ":");
+            }
+        } else {
+            System.out.println("\nNo puedes añadir mas tanques de cria a la piscifactoría: " + nombre);
+        }
+    }
+
+    /** Comprar un tanque de Huevos. */
+    public void comprarTanqueHuevos() {
+        if (Simulador.monedas.ganarMonedas(1500)) {
+            tanquesHuevos.add(new TanqueHuevos());
+            System.out.println("\nAcabas de comprar un tanque de huevos por: 1500 monedas.");
+            Simulador.registro.registroComprarTanquesHuevos(nombre);
+        } else {
+            System.out.println("\nNecesitas 1500 monedas para comprarte el tanque de huevos numero " + tanquesHuevos.size() + ":");
+        }
+    }
+
+    /** Redistribuye las crias si es posible. */
+    public void redistribuirCrias() {
+        for (TanqueHuevos tanque : tanquesHuevos) {
+            tanque.redistribuirCrias(tanques);
+        }    
+    }
+
+    /**
      * Devuelve el nombre de la piscifactoría.
      *
      * @return El nombre de la piscifactoría.
@@ -258,6 +441,25 @@ public abstract class Piscifactoria {
      */
     public List<Tanque> getTanques() {
         return this.tanques;
+    }
+
+    /**
+     * Devuelve la lista de tanques de cría de la piscifactoría.
+     *
+     * @return La lista de tanques de cría.
+     */
+
+    public List<TanqueCria> getTanquesCria() {
+        return tanquesCria;
+    }
+
+    /**
+     * Devuelve la lista de tanques de huevos de la piscifactoría.
+     * 
+     * @return La lista de tanques de huevos.
+     */
+    public List<TanqueHuevos> getTanquesHuevos() {
+        return tanquesHuevos;
     }
 
     /**

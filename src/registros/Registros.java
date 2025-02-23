@@ -226,6 +226,44 @@ public class Registros {
         transcriptor.transcribirEnviadosConReferencia(cantidadPeces, nombrePez, referenciaPedido);
     }
 
+    /**
+     * Registra y transcribe la compra de un tanque de cria adicional para una piscifactoría.
+     * @param nombrePiscifactoria Nombre de la piscifactoría donde se compra el tanque.
+     */
+    public void registroComprarTanquesCrias(String nombrePisc) {
+        logger.logComprarTanqueCria(nombrePisc);
+        transcriptor.transcribirComprarTanqueCria(nombrePisc);
+    }
+
+    /**
+     * Registra y transcribe la compra de un tanque de huevos adicional para una piscifactoría.
+     * @param nombrePiscifactoria Nombre de la piscifactoría donde se compra el tanque.
+     */
+    public void registroComprarTanquesHuevos(String nombrePisc) {
+        logger.logComprarTanqueHuevos(nombrePisc);
+        transcriptor.transcribirComprarTanqueHuevos(nombrePisc);
+    }
+
+    /**
+     * Registra y transcribe el paso de un día para los tanques de crías.
+     * @param pecesCriados Cantidad de peces criados.
+     * @param nombrePisc Nombre de la piscifactoría.
+     */
+    public void registroPasarDiaCrias(int pecesCriados, String nombrePisc) {
+        logger.logPasarDiaCrias(pecesCriados, nombrePisc);
+        transcriptor.transcribirPasarDiaCrias(pecesCriados, nombrePisc);
+    }
+
+    /**
+     * Registra y transcribe el paso de un día para los tanques de huevos.
+     * @param pecesTransferidos Cantidad de peces transferidos.
+     * @param nombrePisc Nombre de la piscifactoría.
+     */
+    public void registroPasarDiaHuevos(int pecesTransferidos, String nombrePisc) {
+        logger.logPasarDiaHuevos(pecesTransferidos, nombrePisc);
+        transcriptor.transcribirPasarDiaHuevos(pecesTransferidos, nombrePisc);
+    }
+
     /* ↓↓↓ Métodos que no tienen trancripción. ↓↓↓ */
 
     /**
