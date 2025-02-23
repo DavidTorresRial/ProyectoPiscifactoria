@@ -84,18 +84,19 @@ public class Tanque {
      * 
      * @return Un arreglo con el número de peces vendidos y las monedas ganadas.
      */
-    public int[] nextDay() {
+    public int[] nextDay(boolean comprado) {
         for (Pez pez : peces) {
             pez.grow();
         }
-        reproduccion();
+        reproduccion(comprado);
         return sellFish();
     }
 
     /** Método que maneja la reproducción de los peces en el tanque. */
-    public void reproduccion() {
-        boolean hayMachoFertil = false;
+    public void reproduccion(boolean comprado) {
+        int huevosSobrantes = 0;
 
+        boolean hayMachoFertil = false;
         for (Pez pez : peces) {
             if (pez.isSexo() && pez.isFertil()) {
                 hayMachoFertil = true;
@@ -105,36 +106,42 @@ public class Tanque {
 
         if (hayMachoFertil) {
             List<Pez> hembrasFertiles = new ArrayList<>();
-
             for (Pez pez : peces) {
-                if (pez.isFertil() && pez.isVivo()) {
-                    if (!pez.isSexo()) {
-                        hembrasFertiles.add(pez);
-                    }
+                if (pez.isFertil() && pez.isVivo() && !pez.isSexo()) {
+                    hembrasFertiles.add(pez);
                 }
             }
 
             if (!hembrasFertiles.isEmpty()) {
-                for (Pez hembra : hembrasFertiles) {
-                    for (int i = 0; i < hembra.getDatos().getHuevos(); i++) {
+                boolean capacidadLlena = false;
+                for (int h = 0; h < hembrasFertiles.size(); h++) {
+                    if (capacidadLlena) {
+                        for (int k = h; k < hembrasFertiles.size(); k++) {
+                            huevosSobrantes += hembrasFertiles.get(k).getDatos().getHuevos();
+                        }
+                        break;
+                    }
+
+                    Pez hembra = hembrasFertiles.get(h);
+                    int totalHuevos = hembra.getDatos().getHuevos();
+
+                    for (int i = 0; i < totalHuevos; i++) {
                         if (peces.size() < capacidadMaxima) {
                             boolean nuevoSexo = (getHembras() <= getMachos()) ? false : true;
-
                             Pez nuevoPez = (Pez) hembra.clonar(nuevoSexo);
                             peces.add(nuevoPez);
-
-                            if (nuevoSexo) {
-                                Simulador.estadisticas.registrarNacimiento(hembra.getDatos().getNombre());
-                            } else {
-                                Simulador.estadisticas.registrarNacimiento(hembra.getDatos().getNombre());
-                            }
+                            Simulador.estadisticas.registrarNacimiento(hembra.getDatos().getNombre());
                         } else {
-                            System.out.println("No hay espacio para añadir más peces. Capacidad máxima alcanzada.");
+                            huevosSobrantes += (totalHuevos - i);
+                            capacidadLlena = true;
                             break;
                         }
                     }
                     hembra.setFertil(false);
                 }
+            }
+            if (huevosSobrantes > 0 && comprado) {
+                TanqueHuevos.añadirCria(peces.get(0), huevosSobrantes);
             }
         }
     }

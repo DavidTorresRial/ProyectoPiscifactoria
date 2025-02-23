@@ -263,4 +263,38 @@ class Transcriptor {
     void transcribirEnviadosConReferencia(int cantidadPeces, String nombrePez, String referenciaPedido) {
         transcribir("Enviados " + cantidadPeces + " peces al pedido de " + nombrePez + " con referencia " + referenciaPedido + ".");
     }
+   
+    /**
+     * Registra la compra de un tanque de cría para una piscifactoría.
+     * @param nombrePisc Nombre de la piscifactoría donde se añade el tanque de cría.
+     */
+    void transcribirComprarTanqueCria(String nombrePisc) {
+        transcribir("Comprado un tanque de cría de la piscifactoria " + nombrePisc + ".");
+    }
+
+    /**
+     * Registra la compra de un tanque de huevos para una piscifactoría.
+     * @param nombrePisc Nombre de la piscifactoría donde se añade el tanque de huevos.
+     */
+    void transcribirComprarTanqueHuevos(String nombrePisc) {
+        transcribir("Comprado un tanque de huevos de la piscifactoria " + nombrePisc + ".");
+    }
+
+    /**
+     * Registra el pase de un día en los tanques de cría de una piscifactoría.
+     * @param pecesCriados Cantidad de peces criados en el tanque de cría.
+     * @param nombrePisc Nombre de la piscifactoría donde se encuentra el tanque de cría.
+     */
+    void transcribirPasarDiaCrias(int pecesCriados, String nombrePisc) {
+        transcribir(pecesCriados + "peces criados en el tanque de cría de la piscifactoria " + nombrePisc + ".");
+    }
+
+    /**
+     * Registra el pase de un día en los tanques de huevos de una piscifactoría.
+     * @param pecesTransferidos Cantidad de peces transferidos desde los tanques de huevos.
+     * @param nombrePisc Nombre de la piscifactoría donde se transfieren los peces.
+     */
+    void transcribirPasarDiaHuevos(int pecesTransferidos, String nombrePisc) {
+        transcribir(pecesTransferidos + "peces transferidos a los tanques de la piscifactoria " + nombrePisc + "desde sus tanques de huevos.");
+    }
 }
