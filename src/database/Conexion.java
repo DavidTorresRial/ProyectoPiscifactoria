@@ -36,7 +36,7 @@ public class Conexion {
             try {
                 connection = DriverManager.getConnection("jdbc:mysql://" + SERVER + ":" + PORT + "/" + DATABASE + "?rewriteBatchedStatements=true", USER, PASSWORD);
             } catch (SQLException e) {
-                Simulador.registro.registroLogError("Error al conectar: " + e.getMessage());
+                Simulador.instance.registro.registroLogError("Error al conectar: " + e.getMessage());
             }
         }
         return connection;
@@ -49,7 +49,7 @@ public class Conexion {
                 connection.close();
                 connection = null;
             } catch (SQLException e) {
-                Simulador.registro.registroLogError("Error al cerrar conexión: " + e.getMessage());
+                Simulador.instance.registro.registroLogError("Error al cerrar conexión: " + e.getMessage());
             }
         }
     }

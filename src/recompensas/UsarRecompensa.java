@@ -51,25 +51,25 @@ public class UsarRecompensa {
     
                         switch (tipoDeComida) {
                             case "algae":
-                                if (Simulador.almacenCentral != null) {
-                                    Simulador.almacenCentral.añadirComidaVegetal(cantidad);
+                                if (Simulador.instance.almacenCentral != null) {
+                                    Simulador.instance.almacenCentral.añadirComidaVegetal(cantidad);
                                 } else {
-                                    Simulador.distribuirComida(cantidad , tipoDeComida);
+                                    Simulador.instance.distribuirComida(cantidad , tipoDeComida);
                                 }
                                 break;
                             case "animal":
-                                if (Simulador.almacenCentral != null) {
-                                    Simulador.almacenCentral.añadirComidaAnimal(cantidad);
+                                if (Simulador.instance.almacenCentral != null) {
+                                    Simulador.instance.almacenCentral.añadirComidaAnimal(cantidad);
                                 } else {
-                                    Simulador.distribuirComida(cantidad , tipoDeComida);
+                                    Simulador.instance.distribuirComida(cantidad , tipoDeComida);
                                 }
                                 break;
                             case "general":
-                                if (Simulador.almacenCentral != null) {
-                                    Simulador.almacenCentral.añadirComidaAnimal(cantidad / 2);
-                                    Simulador.almacenCentral.añadirComidaVegetal(cantidad / 2);
+                                if (Simulador.instance.almacenCentral != null) {
+                                    Simulador.instance.almacenCentral.añadirComidaAnimal(cantidad / 2);
+                                    Simulador.instance.almacenCentral.añadirComidaVegetal(cantidad / 2);
                                 } else {
-                                    Simulador.distribuirComida(cantidad , tipoDeComida);
+                                    Simulador.instance.distribuirComida(cantidad , tipoDeComida);
                                 }
                                 break;
                             default:
@@ -94,9 +94,9 @@ public class UsarRecompensa {
                     xmlFile.delete();
                 }
     
-                Simulador.registro.registroUsarRecompensa(name.getText());
+                Simulador.instance.registro.registroUsarRecompensa(name.getText());
             } catch (IOException | DocumentException e) {
-                Simulador.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
+                Simulador.instance.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
             }
         }
     }
@@ -140,9 +140,9 @@ public class UsarRecompensa {
                     xmlFile.delete();
                 }
 
-                Simulador.registro.registroUsarRecompensa(name.getText());
+                Simulador.instance.registro.registroUsarRecompensa(name.getText());
             } catch (IOException | DocumentException e) {
-                Simulador.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
+                Simulador.instance.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
             }
         }
     }
@@ -180,9 +180,9 @@ public class UsarRecompensa {
                     xmlFile.delete();
                 }
     
-                Simulador.registro.registroUsarRecompensa(name.getText());
+                Simulador.instance.registro.registroUsarRecompensa(name.getText());
             } catch (IOException | DocumentException e) {
-                Simulador.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
+                Simulador.instance.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
             }
             return true;
         } else {
@@ -204,7 +204,7 @@ public class UsarRecompensa {
         String[] xmlOptions = FileHelper.obtenerArchivosEnDirectorio("rewards");
     
         for (String fileName : xmlOptions) {
-            if (fileName.startsWith("piscifactoria_r") && fileName.endsWith(".xml")) {
+            if (fileName.startsWith("pisci_r") && fileName.endsWith(".xml")) {
                 try {
                     File xmlFile = new File("rewards", fileName);
 
@@ -236,13 +236,13 @@ public class UsarRecompensa {
                             }
                         }
                     } else {
-                        Simulador.registro.registroLogError("El archivo '" + fileName + "' no contiene la etiqueta <name>.");
+                        Simulador.instance.registro.registroLogError("El archivo '" + fileName + "' no contiene la etiqueta <name>.");
                     }
                 } catch (DocumentException e) {
-                    Simulador.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
+                    Simulador.instance.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
                 }
             } else {
-                if (fileName.startsWith("piscifactoria_m") && fileName.endsWith(".xml")) {
+                if (fileName.startsWith("pisci_m") && fileName.endsWith(".xml")) {
                     try {
                         File xmlFile = new File("rewards", fileName);
     
@@ -274,10 +274,10 @@ public class UsarRecompensa {
                                 }
                             }
                         } else {
-                            Simulador.registro.registroLogError("El archivo '" + fileName + "' no contiene la etiqueta <name>.");
+                            Simulador.instance.registro.registroLogError("El archivo '" + fileName + "' no contiene la etiqueta <name>.");
                         }
                     } catch (DocumentException e) {
-                        Simulador.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
+                        Simulador.instance.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
                     }
                 }
             }
@@ -285,7 +285,7 @@ public class UsarRecompensa {
     
         if (partesRio.length() == total.length() && piscifactoriaRio) {
             for (String fileName : xmlOptions) {
-                if (fileName.startsWith("piscifactoria_r") && fileName.endsWith(".xml")) {
+                if (fileName.startsWith("pisci_r") && fileName.endsWith(".xml")) {
                     try {
                         File xmlFile = new File("rewards", fileName);
 
@@ -313,9 +313,9 @@ public class UsarRecompensa {
                             xmlFile.delete();
                         }
                         
-                        Simulador.registro.registroUsarRecompensa(name.getText());
+                        Simulador.instance.registro.registroUsarRecompensa(name.getText());
                     } catch (IOException | DocumentException e) {
-                        Simulador.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
+                        Simulador.instance.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
                     }
                 }
             }
@@ -324,7 +324,7 @@ public class UsarRecompensa {
 
         } else if (partesMar.length() == total.length() && !piscifactoriaRio) {
             for (String fileName : xmlOptions) {
-                if (fileName.startsWith("piscifactoria_m") && fileName.endsWith(".xml")) {
+                if (fileName.startsWith("pisci_m") && fileName.endsWith(".xml")) {
                     try {
                         File xmlFile = new File("rewards", fileName);
 
@@ -352,9 +352,9 @@ public class UsarRecompensa {
                             xmlFile.delete();
                         }
 
-                        Simulador.registro.registroUsarRecompensa(name.getText());
+                        Simulador.instance.registro.registroUsarRecompensa(name.getText());
                     } catch (IOException | DocumentException e) {
-                        Simulador.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
+                        Simulador.instance.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
 
                     }
                 }
@@ -403,10 +403,10 @@ public class UsarRecompensa {
                             }
                         }
                     } else {
-                        Simulador.registro.registroLogError("El archivo '" + fileName + "' no contiene la etiqueta <name>.");
+                        Simulador.instance.registro.registroLogError("El archivo '" + fileName + "' no contiene la etiqueta <name>.");
                     }
                 } catch (DocumentException e) {
-                    Simulador.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
+                    Simulador.instance.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
                 }
             }
         }
@@ -441,9 +441,173 @@ public class UsarRecompensa {
                             xmlFile.delete();
                         }
 
-                        Simulador.registro.registroUsarRecompensa(name.getText());
+                        Simulador.instance.registro.registroUsarRecompensa(name.getText());
                     } catch (IOException | DocumentException e) {
-                        Simulador.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
+                        Simulador.instance.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName + " Detalles: " + e.getMessage());
+                    }
+                }
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Verifica si se han reunido todas las partes necesarias para la Granja de fitoplancton.
+     * 
+     * @return true si todas las partes de la Granja de fitoplancton están completas, 
+     *         false si faltan partes para completarla.
+     */
+    public static boolean readGranjaFitoplancton() {
+        String partesGranjaFitoplancton = "";
+        String total = "";
+
+        String[] xmlOptions = FileHelper.obtenerArchivosEnDirectorio("rewards");
+
+        for (String fileName : xmlOptions) {
+            if (fileName.startsWith("fitoplancton") && fileName.endsWith(".xml")) {
+                try {
+                    File xmlFile = new File("rewards", fileName);
+                    SAXReader reader = new SAXReader();
+                    Document document = reader.read(xmlFile);
+                    Element root = document.getRootElement();
+
+                    Element nameElement = root.element("name");
+                    if (nameElement != null) {
+                        String name = nameElement.getText();
+                        if (name.contains("Granja de fitoplancton")) {
+                            Element giveElement = root.element("give");
+                            if (giveElement != null) {
+                                String part = giveElement.elementText("part");
+                                total = giveElement.elementText("total");
+                                if (part != null && !partesGranjaFitoplancton.contains(part)) {
+                                    partesGranjaFitoplancton += part;
+                                }
+                            }
+                        }
+                    } else {
+                        Simulador.instance.registro.registroLogError("El archivo '" + fileName + "' no contiene la etiqueta <name>.");
+                    }
+                } catch (DocumentException e) {
+                    Simulador.instance.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName 
+                            + " Detalles: " + e.getMessage());
+                }
+            }
+        }
+
+        if (!total.isEmpty() && partesGranjaFitoplancton.length() == total.length()) {
+            // Si se han reunido todas las partes, se procesa cada archivo
+            for (String fileName : xmlOptions) {
+                if (fileName.startsWith("fitoplancton") && fileName.endsWith(".xml")) {
+                    try {
+                        File xmlFile = new File("rewards", fileName);
+                        SAXReader reader = new SAXReader();
+                        Document document = reader.read(xmlFile);
+                        Element root = document.getRootElement();
+
+                        Element name = root.element("name");
+                        Element quantityElement = root.element("quantity");
+                        int quantity = Integer.parseInt(quantityElement.getText());
+
+                        quantity--;
+                        quantityElement.setText(String.valueOf(quantity));
+
+                        OutputFormat format = OutputFormat.createPrettyPrint();
+                        XMLWriter writer = new XMLWriter(new FileWriter(xmlFile), format);
+                        writer.write(document);
+                        writer.close();
+
+                        if (quantity <= 0) {
+                            xmlFile.delete();
+                        }
+
+                        Simulador.instance.registro.registroUsarRecompensa(name.getText());
+                    } catch (IOException | DocumentException e) {
+                        Simulador.instance.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName 
+                                + " Detalles: " + e.getMessage());
+                    }
+                }
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Verifica si se han reunido todas las partes necesarias para la Granja de langostinos.
+     * 
+     * @return true si todas las partes de la Granja de langostinos están completas, 
+     *         false si faltan partes para completarla.
+     */
+    public static boolean readGranjaLangostinos() {
+        String partesGranjaLangostinos = "";
+        String total = "";
+
+        String[] xmlOptions = FileHelper.obtenerArchivosEnDirectorio("rewards");
+
+        for (String fileName : xmlOptions) {
+            if (fileName.startsWith("langostinos") && fileName.endsWith(".xml")) {
+                try {
+                    File xmlFile = new File("rewards", fileName);
+                    SAXReader reader = new SAXReader();
+                    Document document = reader.read(xmlFile);
+                    Element root = document.getRootElement();
+
+                    Element nameElement = root.element("name");
+                    if (nameElement != null) {
+                        String name = nameElement.getText();
+                        if (name.contains("Granja de langostinos")) {
+                            Element giveElement = root.element("give");
+                            if (giveElement != null) {
+                                String part = giveElement.elementText("part");
+                                total = giveElement.elementText("total");
+                                if (part != null && !partesGranjaLangostinos.contains(part)) {
+                                    partesGranjaLangostinos += part;
+                                }
+                            }
+                        }
+                    } else {
+                        Simulador.instance.registro.registroLogError("El archivo '" + fileName + "' no contiene la etiqueta <name>.");
+                    }
+                } catch (DocumentException e) {
+                    Simulador.instance.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName 
+                            + " Detalles: " + e.getMessage());
+                }
+            }
+        }
+
+        if (!total.isEmpty() && partesGranjaLangostinos.length() == total.length()) {
+            // Si se han reunido todas las partes, se procesa cada archivo
+            for (String fileName : xmlOptions) {
+                if (fileName.startsWith("langostinos") && fileName.endsWith(".xml")) {
+                    try {
+                        File xmlFile = new File("rewards", fileName);
+                        SAXReader reader = new SAXReader();
+                        Document document = reader.read(xmlFile);
+                        Element root = document.getRootElement();
+
+                        Element name = root.element("name");
+                        Element quantityElement = root.element("quantity");
+                        int quantity = Integer.parseInt(quantityElement.getText());
+
+                        quantity--;
+                        quantityElement.setText(String.valueOf(quantity));
+
+                        OutputFormat format = OutputFormat.createPrettyPrint();
+                        XMLWriter writer = new XMLWriter(new FileWriter(xmlFile), format);
+                        writer.write(document);
+                        writer.close();
+
+                        if (quantity <= 0) {
+                            xmlFile.delete();
+                        }
+
+                        Simulador.instance.registro.registroUsarRecompensa(name.getText());
+                    } catch (IOException | DocumentException e) {
+                        Simulador.instance.registro.registroLogError("Error al procesar la recompensa del archivo: " + fileName 
+                                + " Detalles: " + e.getMessage());
                     }
                 }
             }

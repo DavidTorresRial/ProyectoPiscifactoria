@@ -90,6 +90,9 @@ public class Tanque {
         for (Pez pez : peces) {
             pez.grow();
         }
+        if (Simulador.instance.granjaLangostinos != null) {
+            retroalimentacionMuertos();
+        }
         reproduccion();
         return sellFish();
     }
@@ -126,9 +129,9 @@ public class Tanque {
                             peces.add(nuevoPez);
 
                             if (nuevoSexo) {
-                                Simulador.estadisticas.registrarNacimiento(hembra.getDatos().getNombre());
+                                Simulador.instance.estadisticas.registrarNacimiento(hembra.getDatos().getNombre());
                             } else {
-                                Simulador.estadisticas.registrarNacimiento(hembra.getDatos().getNombre());
+                                Simulador.instance.estadisticas.registrarNacimiento(hembra.getDatos().getNombre());
                             }
                         } else {
                             System.out.println("No hay espacio para añadir más peces. Capacidad máxima alcanzada.");
@@ -183,7 +186,7 @@ public class Tanque {
             Pez pez = iterator.next();
             if (pez.getEdad() >= pez.getDatos().getOptimo() && pez.isVivo()) {
                 Simulador.monedas.ganarMonedas(pez.getDatos().getMonedas());
-                Simulador.estadisticas.registrarVenta(pez.getNombre(), pez.getDatos().getMonedas());
+                Simulador.instance.estadisticas.registrarVenta(pez.getNombre(), pez.getDatos().getMonedas());
 
                 monedasGanadas += pez.getDatos().getMonedas();
                 pecesVendidos++;
@@ -191,6 +194,19 @@ public class Tanque {
             }
         }
         return new int[] { pecesVendidos, monedasGanadas };
+    }
+
+    /** Recolecta los peces muertos, eliminándolos de la lista y agregándolos a la granja de langostinos. */
+    public void retroalimentacionMuertos() {
+        Iterator<Pez> iterator = peces.iterator();
+
+        while (iterator.hasNext()) {
+            Pez pez = iterator.next();
+            if (!pez.isVivo()) {
+                iterator.remove();
+                Simulador.instance.granjaLangostinos.agregarPezMuerto();
+            }
+        }
     }
 
     /**

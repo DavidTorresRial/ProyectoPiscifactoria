@@ -17,8 +17,8 @@ public class InputHelper {
      * @return Cadena ingresada válida.
      */
     public static String readString(String prompt) {
-        boolean entradaValida = false;
         String string = "";
+        boolean entradaValida = false;
 
         while (!entradaValida) {
             System.out.print(prompt);
@@ -26,14 +26,11 @@ public class InputHelper {
 
             if (string.isEmpty()) {
                 System.out.println("\nLa entrada no puede estar vacía. Intente nuevamente.");
-                continue;
-            }
-
-            if (!string.matches("[a-zA-Z0-9\\s]*")) {
+            } else if (!string.matches("[a-zA-Z0-9\\s]*")) {
                 System.out.println("\nEntrada no válida. Por favor, no ingrese caracteres especiales.");
-                continue;
+            } else {
+                entradaValida = true;
             }
-            entradaValida = true;
         }
         return string;
     }
@@ -100,7 +97,7 @@ public class InputHelper {
                 scanner.close();
             }
         } catch (IllegalStateException e) {
-            Simulador.registro.registroLogError("El Scanner ya fue cerrado previamente: \n" + e);
+            Simulador.instance.registro.registroLogError("El Scanner ya fue cerrado previamente: \n" + e);
         }
     }
 }

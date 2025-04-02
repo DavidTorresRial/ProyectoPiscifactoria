@@ -94,6 +94,7 @@ public abstract class Pez {
                 vivo = false;
                 alimentado = false;
                 fertil = false;
+                maduro = false;
             } else {
                 edad++;
 
@@ -120,6 +121,7 @@ public abstract class Pez {
                         vivo = false;
                         alimentado = false;
                         fertil = false;
+                        maduro = false;
                     }
                 }
             }

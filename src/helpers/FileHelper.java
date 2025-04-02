@@ -28,13 +28,13 @@ public class FileHelper {
             try {
                 if (!carpetaFile.exists()) {
                     if (!carpetaFile.mkdirs()) {
-                        Simulador.registro.registroLogError("No se pudo crear la carpeta: " + carpetaFile);
+                        Simulador.instance.registro.registroLogError("No se pudo crear la carpeta: " + carpetaFile);
                     }
                 }
             } catch (SecurityException se) {
-                Simulador.registro.registroLogError("Permisos insuficientes para crear la carpeta: " + carpetaFile + " - " + se.getMessage());
+                Simulador.instance.registro.registroLogError("Permisos insuficientes para crear la carpeta: " + carpetaFile + " - " + se.getMessage());
             } catch (Exception e) {
-                Simulador.registro.registroLogError("Error inesperado al intentar crear la carpeta: " + carpetaFile + " - " + e.getMessage());
+                Simulador.instance.registro.registroLogError("Error inesperado al intentar crear la carpeta: " + carpetaFile + " - " + e.getMessage());
             }
         }
     }
@@ -52,7 +52,7 @@ public class FileHelper {
             return directorio.list().length > 0;
             
         } else {
-            Simulador.registro.registroLogError("El directorio no existe: " + rutaDirectorio);
+            Simulador.instance.registro.registroLogError("El directorio no existe: " + rutaDirectorio);
             return false;
         }
     }
@@ -99,11 +99,11 @@ public class FileHelper {
                 }
 
             } else {
-                Simulador.registro.registroLogError("No hay archivos en el directorio: " + rutaDirectorio);
+                Simulador.instance.registro.registroLogError("No hay archivos en el directorio: " + rutaDirectorio);
                 return null;
             }
         } else {
-            Simulador.registro.registroLogError("El directorio no existe o no es un directorio válido: "  + rutaDirectorio);
+            Simulador.instance.registro.registroLogError("El directorio no existe o no es un directorio válido: "  + rutaDirectorio);
             return null;
         }
     }
@@ -133,11 +133,11 @@ public class FileHelper {
                 }
                 return nombresArchivos.toArray(new String[0]);
             } else {
-                Simulador.registro.registroLogError("No hay archivos en el directorio: " + rutaDirectorio);
+                Simulador.instance.registro.registroLogError("No hay archivos en el directorio: " + rutaDirectorio);
                 return new String[0];
             }
         } else {
-            Simulador.registro.registroLogError("El directorio no existe o no es un directorio válido: " + rutaDirectorio);
+            Simulador.instance.registro.registroLogError("El directorio no existe o no es un directorio válido: " + rutaDirectorio);
             return new String[0];
         }
     }
@@ -150,10 +150,12 @@ public class FileHelper {
     public static String[] getRewards() {
         List<String> rewardNames = new ArrayList<>();
         
+        // Arrays para las partes de recompensas que se construyen por partes
         Boolean[] partesAlmacen = {false, false, false, false};
-
         Boolean[] partesPiscifactoriaRio = {false, false};
         Boolean[] partesPiscifactoriaMar = {false, false};
+        Boolean[] partesGranjaFitoplancton = {false, false, false, false};
+        Boolean[] partesGranjaLangostinos = {false, false, false, false};
         
         String[] xmlOptions = FileHelper.obtenerArchivosEnDirectorio("rewards");
 
@@ -161,102 +163,150 @@ public class FileHelper {
             if (fileName.endsWith(".xml")) {
                 try {
                     File xmlFile = new File("rewards", fileName);
-
                     SAXReader reader = new SAXReader();
                     Document document = reader.read(xmlFile);
 
-                    Element nameElement = document.getRootElement().element("name");
-                    Element buildingElement = document.getRootElement().element("give").element("building");
+                    Element root = document.getRootElement();
+                    Element nameElement = root.element("name");
+                    Element buildingElement = null;
+                    if (root.element("give") != null) {
+                        buildingElement = root.element("give").element("building");
+                    }
 
-                    // Si no tiene la etiqueta <building>, lo agregamos como recompensa
+                    // Si no tiene la etiqueta <building>, se agrega directamente la recompensa
                     if (nameElement != null && buildingElement == null) {
                         rewardNames.add(nameElement.getText());
                     } else {
-                        // Procesar las partes para Almacén central
-                        if (buildingElement != null && buildingElement.getText().contains("Almacen central")) {
-                            Element partElement = document.getRootElement().element("give").element("part");
+                        // Procesar recompensas basadas en edificios (se construyen por partes)
+                        if (buildingElement != null) {
+                            String buildingText = buildingElement.getText();
 
-                            if (partElement != null) {
-                                String partName = partElement.getText().trim();
-                                switch (partName) {
-                                    case "A":
-                                        partesAlmacen[0] = true;
-                                        break;
-                                    case "B":
-                                        partesAlmacen[1] = true;
-                                        break;
-                                    case "C":
-                                        partesAlmacen[2] = true;
-                                        break;
-                                    case "D":
-                                        partesAlmacen[3] = true;
-                                        break;
-                                    default:
+                            // Almacén central
+                            if (buildingText.contains("Almacen central")) {
+                                Element partElement = root.element("give").element("part");
+                                if (partElement != null) {
+                                    String partName = partElement.getText().trim();
+                                    switch (partName) {
+                                        case "A":
+                                            partesAlmacen[0] = true;
+                                            break;
+                                        case "B":
+                                            partesAlmacen[1] = true;
+                                            break;
+                                        case "C":
+                                            partesAlmacen[2] = true;
+                                            break;
+                                        case "D":
+                                            partesAlmacen[3] = true;
+                                            break;
+                                        default:
+                                            break;
+                                    }
                                 }
                             }
-                        }
 
-                        // Procesar las partes para Piscifactoria de Mar
-                        if (buildingElement != null && buildingElement.getText().contains("Piscifactoria de mar")) {
-                            Element partElement = document.getRootElement().element("give").element("part");
-
-                            if (partElement != null) {
-                                String partName = partElement.getText().trim();
-                                switch (partName) {
-                                    case "A":
-                                        partesPiscifactoriaMar[0] = true;
-                                        break;
-                                    case "B":
-                                        partesPiscifactoriaMar[1] = true;
-                                        break;
-                                    default:
+                            // Piscifactoria de mar
+                            if (buildingText.contains("Piscifactoria de mar")) {
+                                Element partElement = root.element("give").element("part");
+                                if (partElement != null) {
+                                    String partName = partElement.getText().trim();
+                                    switch (partName) {
+                                        case "A":
+                                            partesPiscifactoriaMar[0] = true;
+                                            break;
+                                        case "B":
+                                            partesPiscifactoriaMar[1] = true;
+                                            break;
+                                        default:
+                                            break;
+                                    }
                                 }
                             }
-                        }
 
-                        // Procesar las partes para Piscifactoria de Río
-                        if (buildingElement != null && buildingElement.getText().contains("Piscifactoria de rio")) {
-                            Element partElement = document.getRootElement().element("give").element("part");
-
-                            if (partElement != null) {
-                                String partName = partElement.getText().trim();
-                                switch (partName) {
-                                    case "A":
-                                        partesPiscifactoriaRio[0] = true;
-                                        break;
-                                    case "B":
-                                        partesPiscifactoriaRio[1] = true;
-                                        break;
-                                    default:
+                            // Piscifactoria de rio
+                            if (buildingText.contains("Piscifactoria de rio")) {
+                                Element partElement = root.element("give").element("part");
+                                if (partElement != null) {
+                                    String partName = partElement.getText().trim();
+                                    switch (partName) {
+                                        case "A":
+                                            partesPiscifactoriaRio[0] = true;
+                                            break;
+                                        case "B":
+                                            partesPiscifactoriaRio[1] = true;
+                                            break;
+                                        default:
+                                            break;
+                                    }
                                 }
                             }
-                        }
 
-                        // Procesar las partes para Tanque de mar
-                        if (buildingElement != null && buildingElement.getText().contains("Tanque de mar")) {
-                            Element partElement = document.getRootElement().element("give").element("part");
-
-                            if (partElement != null) {
+                            // Tanque de mar (se muestra de forma directa)
+                            if (buildingText.contains("Tanque de mar")) {
+                                // Suponemos que Tanque tiene siempre la parte A
                                 rewardNames.add("Tanque de mar [A]");
-
                             }
-                        }
 
-                        // Procesar las partes para Tanque de rio
-                        if (buildingElement != null && buildingElement.getText().contains("Tanque de rio")) {
-                            Element partElement = document.getRootElement().element("give").element("part");
-
-                            if (partElement != null) {
+                            // Tanque de rio (se muestra de forma directa)
+                            if (buildingText.contains("Tanque de rio")) {
                                 rewardNames.add("Tanque de rio [A]");
+                            }
+
+                            // Granja de fitoplancton
+                            if (buildingText.contains("Granja de fitoplancton")) {
+                                Element partElement = root.element("give").element("part");
+                                if (partElement != null) {
+                                    String partName = partElement.getText().trim();
+                                    switch (partName) {
+                                        case "A":
+                                            partesGranjaFitoplancton[0] = true;
+                                            break;
+                                        case "B":
+                                            partesGranjaFitoplancton[1] = true;
+                                            break;
+                                        case "C":
+                                            partesGranjaFitoplancton[2] = true;
+                                            break;
+                                        case "D":
+                                            partesGranjaFitoplancton[3] = true;
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                }
+                            }
+
+                            // Granja de langostinos
+                            if (buildingText.contains("Granja de langostinos")) {
+                                Element partElement = root.element("give").element("part");
+                                if (partElement != null) {
+                                    String partName = partElement.getText().trim();
+                                    switch (partName) {
+                                        case "A":
+                                            partesGranjaLangostinos[0] = true;
+                                            break;
+                                        case "B":
+                                            partesGranjaLangostinos[1] = true;
+                                            break;
+                                        case "C":
+                                            partesGranjaLangostinos[2] = true;
+                                            break;
+                                        case "D":
+                                            partesGranjaLangostinos[3] = true;
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                }
                             }
                         }
                     }
                 } catch (DocumentException e) {
-                    Simulador.registro.registroLogError("Error al leer el archivo XML: " + fileName + " - " + e.getMessage());
+                    Simulador.instance.registro.registroLogError("Error al leer el archivo XML: " + fileName + " - " + e.getMessage());
                 } catch (NullPointerException e) {
-                    Simulador.registro.registroLogError("Error: Elemento faltante en el XML (" + fileName + ") - " + e.getMessage());
+                    Simulador.instance.registro.registroLogError("Error: Elemento faltante en el XML (" + fileName + ") - " + e.getMessage());
                 } catch (Exception e) {
-                    Simulador.registro.registroLogError("Error desconocido al procesar la recompensa del archivo: " + fileName + " - " + e.getMessage());
+                    Simulador.instance.registro.registroLogError("Error desconocido al procesar la recompensa del archivo: " + fileName + " - " + e.getMessage());
                 }
             }
         }
@@ -270,12 +320,11 @@ public class FileHelper {
                 almacenParts += "x";
             }
         }
-        if (partesAlmacen[0] == true || partesAlmacen[1] == true || partesAlmacen[2] == true || partesAlmacen[3] == true) {
+        if (partesAlmacen[0] || partesAlmacen[1] || partesAlmacen[2] || partesAlmacen[3]) {
             rewardNames.add("Almacen central [" + almacenParts + "]");
         }
 
-
-        // Procesar y agregar la "Piscifactoria de Mar" a las recompensas
+        // Procesar y agregar la "Piscifactoria de mar" a las recompensas
         String piscifactoriaMarParts = "";
         for (int i = 0; i < partesPiscifactoriaMar.length; i++) {
             if (partesPiscifactoriaMar[i]) {
@@ -284,12 +333,11 @@ public class FileHelper {
                 piscifactoriaMarParts += "x";
             }
         }
-        if (partesPiscifactoriaMar[0] == true || partesPiscifactoriaMar[1] == true) {
+        if (partesPiscifactoriaMar[0] || partesPiscifactoriaMar[1]) {
             rewardNames.add("Piscifactoria de mar [" + piscifactoriaMarParts + "]");
         }
-        
 
-        // Procesar y agregar la "Piscifactoria de Río" a las recompensas
+        // Procesar y agregar la "Piscifactoria de rio" a las recompensas
         String piscifactoriaRioParts = "";
         for (int i = 0; i < partesPiscifactoriaRio.length; i++) {
             if (partesPiscifactoriaRio[i]) {
@@ -298,8 +346,34 @@ public class FileHelper {
                 piscifactoriaRioParts += "x";
             }
         }
-        if (partesPiscifactoriaRio[0] == true || partesPiscifactoriaRio[1] == true) {
+        if (partesPiscifactoriaRio[0] || partesPiscifactoriaRio[1]) {
             rewardNames.add("Piscifactoria de rio [" + piscifactoriaRioParts + "]");
+        }
+
+        // Procesar y agregar la "Granja de fitoplancton" a las recompensas
+        String granjaFitoplanctonParts = "";
+        for (int i = 0; i < partesGranjaFitoplancton.length; i++) {
+            if (partesGranjaFitoplancton[i]) {
+                granjaFitoplanctonParts += (char) ('A' + i);
+            } else {
+                granjaFitoplanctonParts += "x";
+            }
+        }
+        if (partesGranjaFitoplancton[0] || partesGranjaFitoplancton[1] || partesGranjaFitoplancton[2] || partesGranjaFitoplancton[3]) {
+            rewardNames.add("Granja de fitoplancton [" + granjaFitoplanctonParts + "]");
+        }
+
+        // Procesar y agregar la "Granja de langostinos" a las recompensas
+        String granjaLangostinosParts = "";
+        for (int i = 0; i < partesGranjaLangostinos.length; i++) {
+            if (partesGranjaLangostinos[i]) {
+                granjaLangostinosParts += (char) ('A' + i);
+            } else {
+                granjaLangostinosParts += "x";
+            }
+        }
+        if (partesGranjaLangostinos[0] || partesGranjaLangostinos[1] || partesGranjaLangostinos[2] || partesGranjaLangostinos[3]) {
+            rewardNames.add("Granja de langostinos [" + granjaLangostinosParts + "]");
         }
         
         return rewardNames.toArray(new String[0]);

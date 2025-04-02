@@ -226,6 +226,38 @@ public class Registros {
         transcriptor.transcribirEnviadosConReferencia(cantidadPeces, nombrePez, referenciaPedido);
     }
 
+    /** Registra la compra de una granja de fitoplancton. */
+    public void registroCompradaGranjaFitoplancton() {
+        logger.logCompraGranjaFitoplancton();
+        transcriptor.transcribirCompraGranjaFitoplancton();
+    }
+
+    /** Registra la compra de una granja de langostinos. */
+    public void registroCompradaGranjaLangostinos() {
+        logger.logCompraGranjaLangostinos();
+        transcriptor.transcribirCompraGranjaLangostinos();
+    }
+
+    /**
+     * Registra la mejora de la granja de fitoplancton añadiendo un nuevo tanque.
+     * 
+     * @param totalTanques Número total de tanques después de la mejora.
+     */
+    public void registroMejoradaGranjaFitoplancton(int totalTanques) {
+        logger.logMejoraGranjaFitoplancton(totalTanques);
+        transcriptor.transcribirMejoraGranjaFitoplancton(totalTanques);
+    }
+
+    /**
+     * Registra la mejora de la granja de langostinos añadiendo un nuevo tanque.
+     * 
+     * @param totalTanques Número total de tanques después de la mejora.
+     */
+    public void registroMejoradaGranjaLangostinos(int totalTanques) {
+        logger.logMejoraGranjaLangostinos(totalTanques);
+        transcriptor.transcribirMejoraGranjaLangostinos(totalTanques);
+    }
+
     /* ↓↓↓ Métodos que no tienen trancripción. ↓↓↓ */
 
     /**
@@ -252,7 +284,7 @@ public class Registros {
     }
 
     /** Cierra el sistema de logs de errores, liberando los recursos utilizados. */
-     public void closeLogError() {
+    public void closeLogError() {
         logger.close();
     }
 }

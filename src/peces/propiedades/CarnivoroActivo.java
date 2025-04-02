@@ -52,8 +52,8 @@ public abstract class CarnivoroActivo extends Pez {
                 alimentado = true;
                 return 2;
                 
-            } else if (Simulador.almacenCentral != null && Simulador.almacenCentral.getCantidadComidaAnimal() > 1) {
-                Simulador.almacenCentral.setCantidadComidaAnimal(Simulador.almacenCentral.getCantidadComidaAnimal() - 2);
+            } else if (Simulador.instance.almacenCentral != null && Simulador.instance.almacenCentral.getCantidadComidaAnimal() > 1) {
+                Simulador.instance.almacenCentral.setCantidadComidaAnimal(Simulador.instance.almacenCentral.getCantidadComidaAnimal() - 2);
                 alimentado = true;
                 return 0;
 
@@ -66,8 +66,8 @@ public abstract class CarnivoroActivo extends Pez {
                 alimentado = true;
                 return 1;
                 
-            } else if (Simulador.almacenCentral != null && Simulador.almacenCentral.getCantidadComidaAnimal() > 0) {
-                Simulador.almacenCentral.setCantidadComidaAnimal(Simulador.almacenCentral.getCantidadComidaAnimal() - 1);
+            } else if (Simulador.instance.almacenCentral != null && Simulador.instance.almacenCentral.getCantidadComidaAnimal() > 0) {
+                Simulador.instance.almacenCentral.setCantidadComidaAnimal(Simulador.instance.almacenCentral.getCantidadComidaAnimal() - 1);
                 alimentado = true;
                 return 0;
 
