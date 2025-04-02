@@ -46,4 +46,4 @@ Este proyecto tiene como objetivo desarrollar un programa que simule una piscifa
 1. Clona este repositorio en tu máquina local usando el siguiente comando:
 
    ```bash
-   git clone <github.com/DavidTorresRial/ProyectoPiscifactoria>
+   git clone https://github.com/DavidTorresRial/ProyectoPiscifactoria.git
