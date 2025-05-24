@@ -10,13 +10,13 @@ import commons.Simulador;
 public class Conexion {
 
     /** Usuario de la base de datos. */
-    private static final String USER = "admin_pisc"; 
+    private static final String USER = "proyecto-piscifactoria"; 
 
     /** Contraseña del usuario de la base de datos. */
-    private static final String PASSWORD = "adminpisc";
+    private static final String PASSWORD = "p80094Zn\"6#CLHo9£=#T";
 
     /** Dirección del servidor de la base de datos. */
-    private static final String SERVER = "fmiser.iescotarelo.es";
+    private static final String SERVER = "92.58.129.163";
 
     /** Puerto del servidor de la base de datos. */
     private static final String PORT = "3344";

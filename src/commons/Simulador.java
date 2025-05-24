@@ -111,7 +111,7 @@ public class Simulador {
     /** Metodo que inicializa todo el sistema. */
     public void init() {
         FileHelper.crearCarpetas(new String[] {"transcripciones", "logs", "saves", "rewards"});
-        generador.crearTablas();
+        //generador.crearTablas(); // Creación de tablas comentada: el esquema ya está inicializado y los datos ya insertados.
 
         String respuesta = "N";
 
@@ -1470,12 +1470,24 @@ public class Simulador {
                 }
             }
         } catch (NullPointerException e) {
-            Simulador.instance.registro.registroLogError("Error: Un elemento no fue inicializado correctamente. " + e.getMessage());
+            if (Simulador.instance != null && Simulador.instance.registro != null) {
+                Simulador.instance.registro.registroLogError(
+                        "Error: Un elemento no fue inicializado correctamente. " + e.getMessage());
+            } else {
+                e.printStackTrace();
+            }
         } catch (Exception e) {
-            Simulador.instance.registro.registroLogError("Error inesperado en el Main: " + e.getMessage());
+            if (Simulador.instance != null && Simulador.instance.registro != null) {
+                Simulador.instance.registro.registroLogError(
+                        "Error inesperado en el Main: " + e.getMessage());
+            } else {
+                e.printStackTrace();
+            }
         } finally {
             InputHelper.close();
-            simulador.registro.closeLogError();
+            if (simulador != null && simulador.registro != null) {
+                simulador.registro.closeLogError();
+            }
             if (simulador != null) {
                 simulador.cerrarConexion();
             }
